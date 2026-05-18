@@ -1,0 +1,61 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { I18nProvider } from "@/lib/i18n";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+
+export const metadata: Metadata = {
+  title: {
+    default: "SpringHub · Community-Driven Spring Restoration",
+    template: "%s · SpringHub",
+  },
+  description:
+    "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
+  openGraph: {
+    title: "SpringHub · Community-Driven Spring Restoration",
+    description:
+      "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
+    url: "https://springhub.id",
+    siteName: "SpringHub",
+    locale: "id_ID",
+    type: "website",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){
+                var m = document.cookie.match(/(?:^|; )locale=([^;]*)/);
+                if (m && (m[1]==="id"||m[1]==="en")) document.documentElement.lang = m[1];
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-screen font-sans">
+        <I18nProvider>
+          <SiteHeader />
+          <main>{children}</main>
+          <SiteFooter />
+        </I18nProvider>
+      </body>
+    </html>
+  );
+}

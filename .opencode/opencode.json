@@ -1,0 +1,155 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "username": "springhub",
+  "instructions": ["AGENTS.md"],
+  "disabled_providers": [],
+
+
+
+  "permission": {
+    "websearch": "allow",
+    "webfetch": "allow",
+    "skill": "allow"
+  },
+
+  "lsp": true,
+
+  "provider": {
+    "qwen3": {
+      "name": "Qwen3",
+      "npm": "@ai-sdk/openai-compatible",
+      "models": {
+        "qwen/qwen3-coder-30b": {
+          "name": "qwen"
+        }
+      },
+      "options": {
+        "baseURL": "http://localhost:1234/v1"
+      }
+    },
+    "qwen3-coder": {
+      "name": "qwen3-coder",
+      "npm": "@ai-sdk/openai-compatible",
+      "models": {
+        "qwen/qwen3-coder-30b": {
+          "name": "qwen3-coder-30b"
+        }
+      },
+      "options": {
+        "baseURL": "http://localhost:1234/v1"
+      }
+    }
+  },
+
+  "mcp": {
+    "filesystem": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "Y:\\PC\\Downloads\\jaga semesta"],
+      "enabled": true
+    },
+    "supabase": {
+      "type": "local",
+      "command": ["npx", "-y", "@supabase/mcp-server-supabase"],
+      "enabled": true,
+      "env": {
+        "SUPABASE_PROJECT_ID": "",
+        "SUPABASE_SERVICE_ROLE_KEY": "",
+        "SUPABASE_DB_PASSWORD": ""
+      }
+    },
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@upstash/context7-mcp", "--api-key", "ctx7sk-b9fd032e-e2ca-4268-bfe6-a906c7111a36"],
+      "enabled": true
+    },
+    "memory": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-memory", "--file", "Y:\\PC\\Downloads\\jaga semesta\\.opencode\\memory.json"],
+      "enabled": true
+    },
+    "fetch": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-fetch"],
+      "enabled": true
+    },
+    "puppeteer": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-puppeteer"],
+      "enabled": true,
+      "env": {}
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": true,
+      "env": {}
+    },
+    "supermemory": {
+      "type": "remote",
+      "url": "https://mcp.supermemory.ai/mcp",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer sm_7St9xgpRkBWeYdXsBXfvR4_RxdlcKvRTh12BFsumcPAutMc4JhzZNcY5c6LByBROtNuLSu8vEttyoDjmW2Fz8LH"
+      }
+    }
+  },
+
+  "agent": {
+    "springhub-plan": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "mode": "primary",
+      "description": "Plan mode for SpringHub project. Analyze codebase, propose architecture, create backlog. READ-ONLY: no file edits, no bash execution.",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      },
+      "prompt": "You are a planning agent for the SpringHub project. Your role: 1) Analyze codebase and requirements, 2) Propose architecture and design decisions, 3) Create backlogs and timelines, 4) Review code quality. You are in READ-ONLY mode — never edit files or run destructive commands. Use read, glob, grep tools for analysis. Always reference AGENTS.md for project context."
+    },
+    "springhub-build": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "mode": "primary",
+      "description": "Build mode for SpringHub project. Implement features, fix bugs, write code. CAN edit files and run commands.",
+      "prompt": "You are a build agent for the SpringHub project. Your role: 1) Implement features per backlog and AGENTS.md, 2) Write clean TypeScript/Next.js code, 3) Run lint and typecheck after changes, 4) Follow existing code conventions (component structure, naming, patterns). Always check AGENTS.md for context before coding."
+    },
+    "springhub-db": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "mode": "subagent",
+      "description": "Supabase database specialist for SpringHub. Create and manage database schemas, RLS policies, migrations, and queries.",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      },
+      "prompt": "You are a database specialist for SpringHub. Create Supabase schemas, RLS policies, migrations, and optimized queries. Follow the AGENTS.md data model: profiles, reports, donations, projects, points_log. Always use RLS for data security — public users should never see sensitive fields (email, phone, precise coordinates). Write clean SQL with proper indexes."
+    },
+    "springhub-form": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "mode": "subagent",
+      "description": "Form & reporting system specialist for SpringHub. Implement form schemas, API endpoints, validation, and anti-spam.",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      },
+      "prompt": "You are a form system specialist for SpringHub. Implement: 1) POST /api/reports endpoint with Zod validation matching lib/forms.ts schemas, 2) Anti-spam (honey pot, time gate, rate limit), 3) Geolocation one-tap, 4) Foto upload + validasi MIME + kompresi + hapus EXIF, 5) Points awarding on accepted submission. All validation must happen server-side."
+    },
+    "springhub-donate": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "mode": "subagent",
+      "description": "Donation & Xendit integration specialist for SpringHub.",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      },
+      "prompt": "You are a donation system specialist for SpringHub. Implement: 1) Real Xendit createInvoice call (lib/xendit.ts), 2) Webhook handler for payment success notifications, 3) Link payments to projects and impact tiers, 4) Featured projects with real funding progress from DB, 5) Donation form validation (server-side amount, never trust client)."
+    },
+    "springhub-admin": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "mode": "subagent",
+      "description": "Admin panel specialist for SpringHub. Create admin dashboard with user management, report review, and data export.",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      },
+      "prompt": "You are an admin panel specialist for SpringHub. Create: 1) /admin/users — daftar user + email + phone + role management, 2) /admin/reports — semua laporan dengan koordinat presisi, 3) /admin/donations — semua transaksi donasi, 4) /admin/review — approve/reject queue with reason, 5) Admin-only middleware protection. All admin pages must check role=admin before rendering sensitive data."
+    }
+  },
+}

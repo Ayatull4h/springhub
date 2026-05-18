@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SpringHub · Community-Driven Spring Restoration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: "#f0f9ff", 100: "#e0f2fe", 200: "#bae6fd", 300: "#7dd3fc",
+              400: "#38bdf8", 500: "#0ea5e9", 600: "#0284c7", 700: "#0369a1",
+              800: "#075985", 900: "#0c4a6e"
+            },
+            ink: { DEFAULT: "#0f172a", muted: "#475569", subtle: "#94a3b8", line: "#e2e8f0" }
+          },
+          boxShadow: { card: "0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.04)" }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/lucide@0.408.0/dist/umd/lucide.js"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; color: #0f172a; }
+    .container-page { max-width: 72rem; margin: 0 auto; padding-left: 1rem; padding-right: 1rem; }
+    @media (min-width: 640px) { .container-page { padding-left: 1.5rem; padding-right: 1.5rem; } }
+    @media (min-width: 1024px) { .container-page { padding-left: 2rem; padding-right: 2rem; } }
+    .btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border-radius:.375rem; background:#0284c7; padding:.625rem 1rem; font-size:.875rem; font-weight:600; color:#fff; box-shadow: 0 1px 2px rgba(0,0,0,.06); transition: background .15s; }
+    .btn-primary:hover { background:#0369a1; }
+    .btn-secondary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border-radius:.375rem; border:1px solid #e2e8f0; background:#fff; padding:.625rem 1rem; font-size:.875rem; font-weight:600; color:#0f172a; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .btn-secondary:hover { background:#f8fafc; }
+    .btn-disabled { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border-radius:.375rem; background:#e2e8f0; padding:.625rem 1rem; font-size:.875rem; font-weight:600; color:#64748b; cursor: not-allowed; }
+    .card { border-radius: .75rem; border: 1px solid #e2e8f0; background:#fff; padding: 1.25rem; box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.04); }
+    .chip { display:inline-flex; align-items:center; gap:.25rem; border-radius:9999px; padding:.25rem .625rem; font-size:.75rem; font-weight:500; }
+    [data-lucide] { width: 1rem; height: 1rem; }
+    #leaflet-map { height: 100%; width: 100%; }
+    .leaflet-container { font-family: inherit; }
+  </style>
+</head>
+<body class="min-h-screen bg-white">
+
+<!-- ============== HEADER ============== -->
+<header class="sticky top-0 z-40 border-b border-ink-line bg-white/85 backdrop-blur">
+  <div class="container-page flex h-16 items-center justify-between">
+    <a href="#" class="flex items-center gap-2" aria-label="SpringHub home">
+      <span class="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-white">
+        <i data-lucide="droplets" style="width:1.25rem;height:1.25rem"></i>
+      </span>
+      <div class="leading-tight">
+        <div class="text-base font-bold tracking-tight">SPRINGHUB</div>
+        <div class="text-[10px] font-medium uppercase tracking-wider text-ink-subtle">by Jaga Semesta</div>
+      </div>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="#map" class="rounded-md px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink">Map</a>
+      <a href="#dashboard" class="rounded-md px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink">Dashboard</a>
+      <a href="#community" class="rounded-md px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink">Community</a>
+      <a href="#learn" class="rounded-md px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink">Learn</a>
+      <a href="#media" class="rounded-md px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink">Media</a>
+      <a href="#donate" class="rounded-md px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink">Donate</a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button class="hidden sm:inline-flex items-center gap-1 rounded-md px-2.5 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink">
+        <i data-lucide="globe"></i> EN
+      </button>
+      <a href="#" class="hidden sm:inline text-sm font-medium text-ink-muted hover:text-ink">Sign In</a>
+      <a href="#" class="btn-primary">Join Now</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============== HERO ============== -->
+<section class="container-page grid gap-10 pt-12 pb-16 md:grid-cols-2 md:items-center md:pt-20">
+  <div>
+    <h1 class="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight text-brand-700">
+      Community-Driven<br/>Spring Restoration
+    </h1>
+    <p class="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-ink-muted">
+      Join the grassroots movement to protect and restore Indonesia's precious artesian springs. Monitor, restore, and preserve our water sources for future generations.
+    </p>
+    <div class="mt-8 flex flex-wrap items-center gap-3">
+      <a href="#map" class="btn-primary px-5 py-3 text-base">Start Monitoring <i data-lucide="arrow-right"></i></a>
+      <a href="https://jagasemesta.id" class="btn-secondary px-5 py-3 text-base">Back to Jaga Semesta <i data-lucide="arrow-right"></i></a>
+    </div>
+  </div>
+
+  <div class="relative aspect-video overflow-hidden rounded-2xl border border-ink-line bg-slate-900 shadow-card">
+    <iframe
+      class="absolute inset-0 h-full w-full"
+      src="https://www.youtube.com/embed/oUDA1loE8BE?rel=0&modestbranding=1"
+      title="Jaga Semesta · SpringHub"
+      loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen></iframe>
+  </div>
+</section>
+
+<!-- ============== IMPACT DASHBOARD ============== -->
+<section id="dashboard" class="container-page py-16">
+  <h2 class="text-center text-3xl md:text-4xl font-extrabold tracking-tight">
+    Real-Time Impact <span class="text-brand-600">Dashboard</span>
+  </h2>
+
+  <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="card">
+      <div class="flex items-center justify-between">
+        <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600"><i data-lucide="droplets"></i></span>
+        <span class="chip bg-brand-50 text-brand-700"><i data-lucide="trending-up" style="width:.75rem;height:.75rem"></i>+12</span>
+      </div>
+      <div class="mt-4 text-3xl font-bold tracking-tight">500+</div>
+      <div class="mt-1 text-sm text-ink-muted">Monitored Springs</div>
+    </div>
+    <div class="card">
+      <div class="flex items-center justify-between">
+        <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600"><i data-lucide="sparkles"></i></span>
+        <span class="chip bg-brand-50 text-brand-700"><i data-lucide="trending-up" style="width:.75rem;height:.75rem"></i>+3</span>
+      </div>
+      <div class="mt-4 text-3xl font-bold tracking-tight">30+</div>
+      <div class="mt-1 text-sm text-ink-muted">Restored Springs</div>
+    </div>
+    <div class="card">
+      <div class="flex items-center justify-between">
+        <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600"><i data-lucide="sprout"></i></span>
+        <span class="chip bg-brand-50 text-brand-700"><i data-lucide="trending-up" style="width:.75rem;height:.75rem"></i>+89</span>
+      </div>
+      <div class="mt-4 text-3xl font-bold tracking-tight">20,000</div>
+      <div class="mt-1 text-sm text-ink-muted">Endemic Trees Planted</div>
+    </div>
+    <div class="card">
+      <div class="flex items-center justify-between">
+        <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600"><i data-lucide="layers"></i></span>
+        <span class="chip bg-brand-50 text-brand-700"><i data-lucide="trending-up" style="width:.75rem;height:.75rem"></i>+12</span>
+      </div>
+      <div class="mt-4 text-3xl font-bold tracking-tight">150</div>
+      <div class="mt-1 text-sm text-ink-muted">Trenches</div>
+    </div>
+  </div>
+
+  <div class="mt-6 grid gap-4 md:grid-cols-3">
+    <div class="card">
+      <h3 class="flex items-center gap-2 text-sm font-semibold"><i data-lucide="trending-up" style="color:#0284c7"></i>Monthly Progress</h3>
+      <ul class="mt-4 space-y-4 text-sm">
+        <li>
+          <div class="flex items-center justify-between"><span>Springs Monitored</span><span class="font-medium">12 now</span></div>
+          <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-brand-500" style="width:60%"></div></div>
+        </li>
+        <li>
+          <div class="flex items-center justify-between"><span>Trees Planted</span><span class="font-medium">89 now</span></div>
+          <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-brand-500" style="width:74%"></div></div>
+        </li>
+        <li>
+          <div class="flex items-center justify-between"><span>New Volunteers</span><span class="font-medium">45 joined</span></div>
+          <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-brand-500" style="width:75%"></div></div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 class="text-sm font-semibold">Top Regions</h3>
+      <ol class="mt-4 space-y-3">
+        <li class="flex items-start gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5">
+          <span class="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">1</span>
+          <div class="min-w-0 flex-1">
+            <div class="text-sm font-semibold">Jawa Barat</div>
+            <div class="text-xs text-ink-muted">43 springs · 234 trees</div>
+          </div>
+        </li>
+        <li class="flex items-start gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5">
+          <span class="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">2</span>
+          <div class="min-w-0 flex-1">
+            <div class="text-sm font-semibold">Bali</div>
+            <div class="text-xs text-ink-muted">28 springs · 198 trees</div>
+          </div>
+        </li>
+        <li class="flex items-start gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5">
+          <span class="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">3</span>
+          <div class="min-w-0 flex-1">
+            <div class="text-sm font-semibold">Jawa Tengah</div>
+            <div class="text-xs text-ink-muted">21 springs · 165 trees</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3 class="text-sm font-semibold">Top Volunteers</h3>
+      <ol class="mt-4 space-y-3">
+        <li class="flex items-center gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5">
+          <span class="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">1</span>
+          <div class="min-w-0 flex-1">
+            <div class="text-sm font-semibold">Maya Putri</div>
+            <div class="text-xs text-ink-muted">Yogyakarta · <span class="text-emerald-600">eligible to propose</span></div>
+          </div>
+          <div class="text-sm font-bold text-brand-700">24,168<span class="ml-1 text-[10px] font-medium text-ink-subtle">pts</span></div>
+        </li>
+        <li class="flex items-center gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5">
+          <span class="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">2</span>
+          <div class="min-w-0 flex-1">
+            <div class="text-sm font-semibold">Budi Santoso</div>
+            <div class="text-xs text-ink-muted">Jawa Tengah · <span class="text-emerald-600">eligible to propose</span></div>
+          </div>
+          <div class="text-sm font-bold text-brand-700">21,858<span class="ml-1 text-[10px] font-medium text-ink-subtle">pts</span></div>
+        </li>
+        <li class="flex items-center gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5">
+          <span class="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">3</span>
+          <div class="min-w-0 flex-1">
+            <div class="text-sm font-semibold">Sari Dewi</div>
+            <div class="text-xs text-ink-muted">Bali · 7,420 pts to threshold</div>
+          </div>
+          <div class="text-sm font-bold text-brand-700">12,580<span class="ml-1 text-[10px] font-medium text-ink-subtle">pts</span></div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SPRING MAP ============== -->
+<section id="map" class="container-page py-16">
+  <h2 class="text-center text-3xl md:text-4xl font-extrabold tracking-tight">Interactive Spring <span class="text-brand-600">Map</span></h2>
+  <p class="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+    Explore springs across Indonesia. View their current status, community reports, and contribute your own observations through our native field-reporting forms.
+  </p>
+
+  <div class="mx-auto mt-4 flex max-w-3xl items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2 text-xs text-amber-900">
+    <i data-lucide="shield-check" class="mt-0.5 flex-none"></i>
+    <span><strong>Source protection:</strong> public spring locations are snapped to a 5 km grid — every spring within that radius shares the same coordinate. Field leads &amp; admins see precise locations after sign-in.</span>
+  </div>
+
+  <!-- Full-width map -->
+  <div class="card mt-6 overflow-hidden p-0">
+    <div class="flex flex-wrap items-center gap-2 border-b border-ink-line p-4">
+      <span class="mr-1 text-sm font-semibold">Spring Locations</span>
+      <button data-filter="all" class="map-filter chip border border-brand-200 bg-brand-50 text-brand-700">All</button>
+      <button data-filter="healthy" class="map-filter chip border border-ink-line bg-white text-ink-muted hover:bg-slate-50">Healthy</button>
+      <button data-filter="degraded" class="map-filter chip border border-ink-line bg-white text-ink-muted hover:bg-slate-50">Degraded</button>
+      <button data-filter="restoration" class="map-filter chip border border-ink-line bg-white text-ink-muted hover:bg-slate-50">Restoration</button>
+      <span class="ml-auto text-[10px] uppercase tracking-wider text-ink-subtle">OpenStreetMap</span>
+    </div>
+    <div class="aspect-[21/9] w-full md:aspect-[21/8]">
+      <div id="leaflet-map" role="application" aria-label="Spring locations across Indonesia"></div>
+    </div>
+  </div>
+
+  <!-- Below the map: details + Report Your Contribution -->
+  <div class="mt-4 grid gap-4 lg:grid-cols-12">
+    <div class="card lg:col-span-6">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-semibold">Spring Details</h3>
+        <span id="spring-count" class="text-xs text-ink-subtle">6 shown</span>
+      </div>
+      <ul id="spring-list" class="mt-3 grid gap-2 sm:grid-cols-2"></ul>
+    </div>
+
+    <div class="card bg-gradient-to-br from-brand-50 to-white lg:col-span-6">
+      <div class="flex items-center justify-between gap-2">
+        <h3 class="flex items-center gap-2 text-sm font-semibold"><i data-lucide="clipboard-list" style="color:#0284c7"></i>Report Your Contribution</h3>
+        <span class="chip bg-brand-50 text-brand-700"><i data-lucide="sparkles" style="width:.75rem;height:.75rem"></i>Earn points</span>
+      </div>
+      <p class="mt-1 text-sm text-ink-muted">Lightweight, mobile-friendly forms hosted by SpringHub. No app install needed — they work in your browser.</p>
+      <div class="mt-3 grid gap-2 sm:grid-cols-2">
+        <a href="/report/spring-monitoring" class="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300">
+          <span class="min-w-0"><span class="block truncate font-medium text-ink">Spring Monitoring</span><span class="block truncate text-xs text-ink-muted">+25 pts on submit</span></span>
+          <i data-lucide="arrow-right" class="flex-none" style="color:#94a3b8"></i>
+        </a>
+        <a href="/report/spring-restoration" class="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300">
+          <span class="min-w-0"><span class="block truncate font-medium text-ink">Spring Restoration</span><span class="block truncate text-xs text-ink-muted">+100 pts on submit</span></span>
+          <i data-lucide="arrow-right" class="flex-none" style="color:#94a3b8"></i>
+        </a>
+        <a href="/report/trench-development" class="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300">
+          <span class="min-w-0"><span class="block truncate font-medium text-ink">Trench Development</span><span class="block truncate text-xs text-ink-muted">+50 pts on submit</span></span>
+          <i data-lucide="arrow-right" class="flex-none" style="color:#94a3b8"></i>
+        </a>
+        <a href="/report/tree-planting" class="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300">
+          <span class="min-w-0"><span class="block truncate font-medium text-ink">Tree Planting</span><span class="block truncate text-xs text-ink-muted">+50 pts on submit</span></span>
+          <i data-lucide="arrow-right" class="flex-none" style="color:#94a3b8"></i>
+        </a>
+        <a href="/report/seedling-stock" class="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300 sm:col-span-2">
+          <span class="min-w-0"><span class="block truncate font-medium text-ink">Tree Seedling Stock</span><span class="block truncate text-xs text-ink-muted">+15 pts on submit</span></span>
+          <i data-lucide="arrow-right" class="flex-none" style="color:#94a3b8"></i>
+        </a>
+      </div>
+      <div class="mt-3 flex items-start gap-2 rounded-lg border border-ink-line/60 bg-white px-3 py-2 text-xs text-ink-muted">
+        <i data-lucide="alert-circle" class="mt-0.5 flex-none" style="width:.875rem;height:.875rem;color:#0284c7"></i>
+        <span>Spotted a spring not on the map? <a href="/report/spring-monitoring" class="font-semibold text-brand-700 hover:underline">Add it via Spring Monitoring</a>.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== VOLUNTEER ACTIVITIES ============== -->
+<section id="community" class="container-page py-16">
+  <h2 class="text-center text-3xl md:text-4xl font-extrabold tracking-tight">Volunteer <span class="text-brand-600">Activities</span></h2>
+  <p class="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+    Join thousands of environmental heroes making a difference across Indonesia. Earn points, and unlock eligibility to submit your own spring restoration project once you reach 20,000 pts.
+  </p>
+
+  <div class="mt-10 grid gap-4 lg:grid-cols-12">
+    <div class="lg:col-span-7">
+      <h3 class="text-sm font-semibold">Recent Activities</h3>
+      <ul class="mt-3 grid gap-3 md:grid-cols-2">
+        <li class="card">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="text-sm font-semibold">Rini A.</div>
+              <div class="text-xs text-ink-muted">logged a spring monitoring report</div>
+            </div>
+            <span class="chip bg-brand-50 text-brand-700"><i data-lucide="sparkles" style="width:.75rem;height:.75rem"></i>+25 pts</span>
+          </div>
+          <div class="mt-3 aspect-[16/9] rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50"></div>
+          <div class="mt-3 flex items-center gap-2 text-xs text-ink-muted"><i data-lucide="map-pin" style="width:.875rem;height:.875rem"></i>Mata Air Cibeureum, Bogor · 2h ago</div>
+          <div class="mt-3 flex items-center justify-between gap-2 border-t border-ink-line pt-3 text-xs text-ink-muted">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center gap-1"><i data-lucide="thumbs-up" style="width:.875rem;height:.875rem"></i> 24</span>
+              <span class="inline-flex items-center gap-1"><i data-lucide="message-square" style="width:.875rem;height:.875rem"></i> 6</span>
+            </div>
+            <span class="chip bg-slate-100 text-slate-600">Form · Pemantauan Mata Air</span>
+          </div>
+        </li>
+        <li class="card">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="text-sm font-semibold">Raya P.</div>
+              <div class="text-xs text-ink-muted">planted 12 endemic trees</div>
+            </div>
+            <span class="chip bg-brand-50 text-brand-700"><i data-lucide="sparkles" style="width:.75rem;height:.75rem"></i>+60 pts</span>
+          </div>
+          <div class="mt-3 aspect-[16/9] rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50"></div>
+          <div class="mt-3 flex items-center gap-2 text-xs text-ink-muted"><i data-lucide="map-pin" style="width:.875rem;height:.875rem"></i>Bedugul, Bali · 6h ago</div>
+          <div class="mt-3 flex items-center justify-between gap-2 border-t border-ink-line pt-3 text-xs text-ink-muted">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center gap-1"><i data-lucide="thumbs-up" style="width:.875rem;height:.875rem"></i> 41</span>
+              <span class="inline-flex items-center gap-1"><i data-lucide="message-square" style="width:.875rem;height:.875rem"></i> 12</span>
+            </div>
+            <span class="chip bg-slate-100 text-slate-600">Form · Tracker Rorak &amp; Tanaman</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card flex flex-col bg-gradient-to-br from-brand-50 to-white lg:col-span-5">
+      <div class="flex items-center justify-between gap-2">
+        <h3 class="text-base font-semibold">Submit your Project</h3>
+        <span class="chip bg-emerald-50 text-emerald-700">Eligible</span>
+      </div>
+      <h4 class="mt-1 text-lg font-bold text-brand-700">Have a Project Idea? Let's Make It Happen!</h4>
+      <p class="mt-3 text-sm leading-relaxed text-ink-muted">
+        Spring restoration, endemic tree planting, infiltration pits — share your initiative with the community. Proposals are reviewed by our admin team before publishing.
+      </p>
+
+      <div class="mt-4 rounded-lg border border-ink-line/60 bg-white p-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-medium">Your points (Maya Putri)</span>
+          <span class="text-ink-muted">24,168 / 20,000</span>
+        </div>
+        <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+          <div class="h-full rounded-full bg-brand-500" style="width:100%"></div>
+        </div>
+        <div class="mt-2 flex items-center gap-1 text-[11px] text-ink-muted">
+          <i data-lucide="shield-check" style="width:.75rem;height:.75rem;color:#10b981"></i>
+          Reviewed by admin before publishing
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <button class="btn-primary w-full">Register your Project <i data-lucide="arrow-right"></i></button>
+      </div>
+
+      <details class="mt-4 rounded-lg border border-ink-line/60 bg-white px-3 py-2 text-xs">
+        <summary class="cursor-pointer font-medium text-ink-muted">Not eligible yet? See locked state</summary>
+        <div class="mt-3 rounded-md bg-slate-50 p-3">
+          <div class="flex items-center justify-between"><span class="font-medium">Your points (Sari Dewi)</span><span class="text-ink-muted">12,580 / 20,000</span></div>
+          <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-brand-500" style="width:63%"></div></div>
+          <button class="btn-disabled mt-3 w-full"><i data-lucide="lock"></i> Earn 7,420 more pts to unlock</button>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============== DONATE ============== -->
+<section id="donate" class="container-page py-16">
+  <h2 class="text-center text-3xl md:text-4xl font-extrabold tracking-tight">Support <span class="text-brand-600">Conservation Efforts</span></h2>
+  <p class="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+    Donations are processed through Xendit. Every rupiah is tied to a measurable output reported by our field volunteers — and only admin-verified projects are open for funding.
+  </p>
+
+  <div class="mt-10 grid gap-4 lg:grid-cols-12">
+    <div class="card lg:col-span-5">
+      <h3 class="flex items-center gap-2 text-sm font-semibold"><i data-lucide="heart" style="color:#0284c7"></i>Make a Donation</h3>
+      <div class="mt-2 flex flex-wrap gap-1.5">
+        <span class="inline-flex items-center rounded border border-ink-line bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">OVO</span>
+        <span class="inline-flex items-center rounded border border-ink-line bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">GoPay</span>
+        <span class="inline-flex items-center rounded border border-ink-line bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">DANA</span>
+        <span class="inline-flex items-center rounded border border-ink-line bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">ShopeePay</span>
+        <span class="inline-flex items-center rounded border border-ink-line bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">QRIS</span>
+        <span class="inline-flex items-center rounded border border-ink-line bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">Debit / Credit Card</span>
+        <span class="inline-flex items-center rounded border border-ink-line bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">Virtual Account</span>
+      </div>
+      <div id="donate-presets" class="mt-4 grid grid-cols-2 gap-2">
+        <button data-amount="20000" class="donate-preset rounded-lg border border-ink-line px-3 py-3 text-left hover:border-brand-300">
+          <div class="flex items-center gap-2"><i data-lucide="sprout" style="color:#0284c7"></i><div class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle">Rp 20K</div></div>
+          <div class="mt-1 text-xs text-ink-muted">1 tree seedling</div>
+        </button>
+        <button data-amount="50000" class="donate-preset rounded-lg border border-brand-500 bg-brand-50 px-3 py-3 text-left">
+          <div class="flex items-center gap-2"><i data-lucide="layers" style="color:#0284c7"></i><div class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle">Rp 50K</div></div>
+          <div class="mt-1 text-xs text-ink-muted">1 trench (rorak)</div>
+        </button>
+        <button data-amount="100000" class="donate-preset rounded-lg border border-ink-line px-3 py-3 text-left hover:border-brand-300">
+          <div class="flex items-center gap-2"><i data-lucide="droplets" style="color:#0284c7"></i><div class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle">Rp 100K</div></div>
+          <div class="mt-1 text-xs text-ink-muted">1 m³ sediment removed from a spring</div>
+        </button>
+        <button data-amount="1000000" class="donate-preset rounded-lg border border-ink-line px-3 py-3 text-left hover:border-brand-300">
+          <div class="flex items-center gap-2"><i data-lucide="telescope" style="color:#0284c7"></i><div class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle">Rp 1 juta</div></div>
+          <div class="mt-1 text-xs text-ink-muted">50 springs monitored</div>
+        </button>
+      </div>
+      <label class="mt-4 block text-xs font-medium">Custom Amount (IDR)
+        <input type="number" placeholder="e.g. 75,000" class="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+      </label>
+      <label class="mt-3 block text-xs font-medium">Full Name
+        <input type="text" class="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+      </label>
+      <label class="mt-3 block text-xs font-medium">Email
+        <input type="email" class="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+      </label>
+      <button class="btn-primary mt-5 w-full">Continue to Xendit Checkout <i data-lucide="arrow-right"></i></button>
+    </div>
+
+    <div class="grid gap-4 lg:col-span-7">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-semibold">Featured Projects</h3>
+        <span class="text-xs text-ink-subtle">4 project types accepted</span>
+      </div>
+
+      <article class="card flex gap-4">
+        <div class="aspect-square w-28 flex-none rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50"></div>
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="chip bg-brand-50 text-brand-700"><i data-lucide="droplets" style="width:.75rem;height:.75rem"></i>Spring Restoration</span>
+            <span class="chip bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"><i data-lucide="shield-check" style="width:.75rem;height:.75rem"></i>Verified</span>
+          </div>
+          <h4 class="mt-1 text-sm font-semibold">Restore Cibeureum Spring</h4>
+          <p class="mt-1 line-clamp-2 text-xs text-ink-muted">Sediment removal and riparian replanting around a degraded spring serving 200+ families.</p>
+          <div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-brand-500" style="width:73%"></div></div>
+          <div class="mt-2 flex items-center justify-between text-xs">
+            <span class="font-medium">Rp 18,250,000<span class="text-ink-subtle"> / Rp 25,000,000</span></span>
+            <span class="text-ink-muted">142 supporters</span>
+          </div>
+          <button class="btn-secondary mt-3 w-full">Support Project</button>
+        </div>
+      </article>
+
+      <article class="card flex gap-4">
+        <div class="aspect-square w-28 flex-none rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50"></div>
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="chip bg-brand-50 text-brand-700"><i data-lucide="sprout" style="width:.75rem;height:.75rem"></i>Endemic Tree Planting</span>
+            <span class="chip bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"><i data-lucide="shield-check" style="width:.75rem;height:.75rem"></i>Verified</span>
+          </div>
+          <h4 class="mt-1 text-sm font-semibold">Endemic Tree Planting · Tabanan</h4>
+          <p class="mt-1 line-clamp-2 text-xs text-ink-muted">Plant 500 endemic trees in the recharge area of five sacred springs in central Bali.</p>
+          <div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-brand-500" style="width:61%"></div></div>
+          <div class="mt-2 flex items-center justify-between text-xs">
+            <span class="font-medium">Rp 9,100,000<span class="text-ink-subtle"> / Rp 15,000,000</span></span>
+            <span class="text-ink-muted">87 supporters</span>
+          </div>
+          <button class="btn-secondary mt-3 w-full">Support Project</button>
+        </div>
+      </article>
+
+      <article class="card flex gap-4 opacity-90">
+        <div class="aspect-square w-28 flex-none rounded-lg bg-gradient-to-br from-amber-50 to-orange-50"></div>
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="chip bg-brand-50 text-brand-700"><i data-lucide="layers" style="width:.75rem;height:.75rem"></i>Trench Development</span>
+            <span class="chip bg-amber-50 text-amber-700 ring-1 ring-amber-200"><i data-lucide="clock" style="width:.75rem;height:.75rem"></i>Under Review</span>
+          </div>
+          <h4 class="mt-1 text-sm font-semibold">Senjoyo Trench Network</h4>
+          <p class="mt-1 line-clamp-2 text-xs text-ink-muted">Submitted by Budi Santoso. Build 50 infiltration trenches around Mata Air Senjoyo to recharge the watershed.</p>
+          <div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-slate-300" style="width:0%"></div></div>
+          <div class="mt-2 flex items-center justify-between text-xs">
+            <span class="font-medium">Rp 0<span class="text-ink-subtle"> / Rp 18,000,000</span></span>
+            <span class="text-ink-muted">awaiting verification</span>
+          </div>
+          <button class="mt-3 inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-md border border-ink-line bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500">Awaiting Admin Verification</button>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Become Partner / Sponsor / Donor : full-width, no logos -->
+  <div class="mt-6 card grid gap-6 bg-gradient-to-br from-brand-50 to-white md:grid-cols-3 md:items-center">
+    <div class="md:col-span-2">
+      <div class="flex items-center gap-2 text-sm font-semibold">
+        <i data-lucide="handshake" style="color:#0284c7"></i>Become Partner / Sponsor / Donor
+      </div>
+      <h3 class="mt-1 text-2xl font-extrabold tracking-tight text-brand-700">Multiply impact across Indonesian springs</h3>
+      <p class="mt-2 max-w-2xl text-sm text-ink-muted">
+        We work with corporates, foundations, government bodies and community networks. Sponsor a region, fund a project type, or co-design a volunteer programme with us — outputs and locations are reported through verified field forms.
+      </p>
+      <ul class="mt-4 grid gap-2 text-xs text-ink-muted sm:grid-cols-2">
+        <li class="flex items-start gap-2"><i data-lucide="sprout" class="mt-0.5 flex-none" style="color:#0284c7"></i><span><span class="font-semibold text-ink">Endemic Tree Planting</span> · Plant native species around a spring or its recharge area.</span></li>
+        <li class="flex items-start gap-2"><i data-lucide="layers" class="mt-0.5 flex-none" style="color:#0284c7"></i><span><span class="font-semibold text-ink">Trench (Rorak) Development</span> · Build infiltration trenches that recharge groundwater.</span></li>
+        <li class="flex items-start gap-2"><i data-lucide="droplets" class="mt-0.5 flex-none" style="color:#0284c7"></i><span><span class="font-semibold text-ink">Spring Restoration</span> · Remove sediment and rehabilitate a degraded spring.</span></li>
+        <li class="flex items-start gap-2"><i data-lucide="telescope" class="mt-0.5 flex-none" style="color:#0284c7"></i><span><span class="font-semibold text-ink">Monitoring Expedition</span> · Field expedition to inventory and assess springs.</span></li>
+      </ul>
+    </div>
+    <div class="flex flex-col items-stretch gap-2">
+      <button class="btn-primary justify-center">Become a Partner <i data-lucide="arrow-right"></i></button>
+      <button class="btn-secondary justify-center">Download Partnership Deck</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============== LEARNING HUB ============== -->
+<section id="learn" class="container-page py-16">
+  <h2 class="text-center text-3xl md:text-4xl font-extrabold tracking-tight">Learning <span class="text-brand-600">Hub</span></h2>
+  <p class="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+    Expand your knowledge with our courses on spring conservation, tree planting, and traditional water wisdom.
+  </p>
+
+  <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <article class="card flex flex-col">
+      <div class="aspect-[16/9] rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50"></div>
+      <span class="chip mt-4 self-start bg-brand-50 text-brand-700">Beginner</span>
+      <h3 class="mt-2 text-base font-semibold">Spring Conservation Basics</h3>
+      <p class="mt-1 text-sm text-ink-muted">Learn the fundamentals of spring ecosystems and conservation techniques used across Indonesia.</p>
+      <div class="mt-4 flex items-center gap-4 text-xs text-ink-muted">
+        <span class="inline-flex items-center gap-1"><i data-lucide="clock" style="width:.875rem;height:.875rem"></i>45 min</span>
+        <span class="inline-flex items-center gap-1"><i data-lucide="layers" style="width:.875rem;height:.875rem"></i>6 modules</span>
+      </div>
+      <button class="btn-secondary mt-5"><i data-lucide="book-open"></i>Start Course</button>
+    </article>
+
+    <article class="card flex flex-col">
+      <div class="aspect-[16/9] rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50"></div>
+      <span class="chip mt-4 self-start bg-brand-50 text-brand-700">Intermediate</span>
+      <h3 class="mt-2 text-base font-semibold">Endemic Tree Planting Guide</h3>
+      <p class="mt-1 text-sm text-ink-muted">Master site-selection, planting, and care for Indonesia's native tree species in watershed areas.</p>
+      <div class="mt-4 flex items-center gap-4 text-xs text-ink-muted">
+        <span class="inline-flex items-center gap-1"><i data-lucide="clock" style="width:.875rem;height:.875rem"></i>60 min</span>
+        <span class="inline-flex items-center gap-1"><i data-lucide="layers" style="width:.875rem;height:.875rem"></i>8 modules</span>
+      </div>
+      <button class="btn-secondary mt-5"><i data-lucide="book-open"></i>Start Course</button>
+    </article>
+
+    <article class="card flex flex-col">
+      <div class="aspect-[16/9] rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50"></div>
+      <span class="chip mt-4 self-start bg-brand-50 text-brand-700">Beginner</span>
+      <h3 class="mt-2 text-base font-semibold">Field Reporting with SpringHub Forms</h3>
+      <p class="mt-1 text-sm text-ink-muted">Walk through the four native SpringHub forms — monitoring, restoration, seedling stock, and trench/tree tracker.</p>
+      <div class="mt-4 flex items-center gap-4 text-xs text-ink-muted">
+        <span class="inline-flex items-center gap-1"><i data-lucide="clock" style="width:.875rem;height:.875rem"></i>30 min</span>
+        <span class="inline-flex items-center gap-1"><i data-lucide="layers" style="width:.875rem;height:.875rem"></i>4 modules</span>
+      </div>
+      <button class="btn-secondary mt-5"><i data-lucide="book-open"></i>Start Course</button>
+    </article>
+  </div>
+</section>
+
+<!-- ============== MEDIA ============== -->
+<section id="media" class="container-page py-16">
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Latest <span class="text-brand-600">Media</span></h2>
+      <p class="mt-2 max-w-2xl text-ink-muted">Events, publications, and press from Jaga Semesta and SpringHub.</p>
+    </div>
+    <a href="https://youtube.com/@jagasemesta" target="_blank" rel="noreferrer" class="btn-secondary">Visit our YouTube <i data-lucide="external-link" style="width:.875rem;height:.875rem"></i></a>
+  </div>
+
+  <div class="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <article class="card flex flex-col">
+      <div class="grid aspect-[16/9] place-items-center rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
+        <i data-lucide="play-circle" style="width:2rem;height:2rem;color:#0284c7;opacity:0.7"></i>
+      </div>
+      <span class="chip mt-4 self-start bg-red-50 text-red-700 ring-1 ring-red-200"><i data-lucide="play-circle" style="width:.75rem;height:.75rem"></i>Video</span>
+      <h3 class="mt-2 text-base font-semibold leading-snug">Jaga Semesta · Restorasi Mata Air</h3>
+      <div class="mt-1 text-xs text-ink-subtle">Apr 2026</div>
+      <p class="mt-2 line-clamp-3 text-sm text-ink-muted">Tonton perjalanan komunitas kami merestorasi mata air dari Bali sampai Madura.</p>
+      <a href="https://youtu.be/oUDA1loE8BE" target="_blank" rel="noreferrer" class="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-brand-700 hover:underline">Watch on YouTube <i data-lucide="external-link" style="width:.875rem;height:.875rem"></i></a>
+    </article>
+
+    <article class="card flex flex-col">
+      <div class="grid aspect-[16/9] place-items-center rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
+        <i data-lucide="calendar" style="width:2rem;height:2rem;color:#0284c7;opacity:0.7"></i>
+      </div>
+      <span class="chip mt-4 self-start bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"><i data-lucide="calendar" style="width:.75rem;height:.75rem"></i>Event</span>
+      <h3 class="mt-2 text-base font-semibold leading-snug">Restorasi Mata Air Sumber Sabrangan, Mojokerto</h3>
+      <div class="mt-1 text-xs text-ink-subtle">9 Feb 2025 · 200 relawan · 5000 bibit bambu</div>
+      <p class="mt-2 line-clamp-3 text-sm text-ink-muted">Kegiatan kolektif membersihkan sedimen, memasang flowmeter, dan menanam 5000 bambu di catchment Sumber Sabrangan.</p>
+      <a href="#" class="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-brand-700 hover:underline">Read recap <i data-lucide="arrow-right" style="width:.875rem;height:.875rem"></i></a>
+    </article>
+
+    <article class="card flex flex-col">
+      <div class="grid aspect-[16/9] place-items-center rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
+        <i data-lucide="file-text" style="width:2rem;height:2rem;color:#0284c7;opacity:0.7"></i>
+      </div>
+      <span class="chip mt-4 self-start bg-brand-50 text-brand-700 ring-1 ring-brand-200"><i data-lucide="file-text" style="width:.75rem;height:.75rem"></i>Publication</span>
+      <h3 class="mt-2 text-base font-semibold leading-snug">Laporan Dampak 2025: 200+ Mata Air Terlindungi</h3>
+      <div class="mt-1 text-xs text-ink-subtle">Jan 2026 · PDF, 36 hal.</div>
+      <p class="mt-2 line-clamp-3 text-sm text-ink-muted">Ringkasan capaian tahunan: pemantauan, restorasi, penanaman, dan kemitraan strategis di tujuh provinsi.</p>
+      <a href="#" class="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-brand-700 hover:underline">Download report <i data-lucide="arrow-right" style="width:.875rem;height:.875rem"></i></a>
+    </article>
+
+    <article class="card flex flex-col">
+      <div class="grid aspect-[16/9] place-items-center rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
+        <i data-lucide="newspaper" style="width:2rem;height:2rem;color:#0284c7;opacity:0.7"></i>
+      </div>
+      <span class="chip mt-4 self-start bg-amber-50 text-amber-700 ring-1 ring-amber-200"><i data-lucide="newspaper" style="width:.75rem;height:.75rem"></i>Press</span>
+      <h3 class="mt-2 text-base font-semibold leading-snug">Kompas: Sumber Air di Kebumen Diselamatkan Warga</h3>
+      <div class="mt-1 text-xs text-ink-subtle">Jan 2026</div>
+      <p class="mt-2 line-clamp-3 text-sm text-ink-muted">Liputan media tentang gerakan warga Kebumen menolak tambang dan menjaga 28 titik mata air karst.</p>
+      <a href="#" class="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-brand-700 hover:underline">Read article <i data-lucide="arrow-right" style="width:.875rem;height:.875rem"></i></a>
+    </article>
+  </div>
+</section>
+
+</main>
+
+<!-- ============== FOOTER ============== -->
+<footer class="mt-24 bg-slate-900 text-slate-300">
+  <div class="container-page grid gap-10 py-14 md:grid-cols-12">
+    <div class="md:col-span-4">
+      <div class="flex items-center gap-2">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-white"><i data-lucide="droplets" style="width:1.25rem;height:1.25rem"></i></span>
+        <div class="leading-tight">
+          <div class="text-base font-bold tracking-tight text-white">SPRINGHUB</div>
+          <div class="text-[10px] font-medium uppercase tracking-wider text-white/60">by Jaga Semesta</div>
+        </div>
+      </div>
+      <p class="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
+        Empowering communities across Indonesia to protect and restore our precious water sources through collaborative conservation efforts.
+      </p>
+      <div class="mt-6">
+        <div class="text-sm font-semibold text-white">Stay Updated</div>
+        <form class="mt-2 flex max-w-sm gap-2">
+          <input type="email" placeholder="Enter your email" class="flex-1 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40" />
+          <button class="btn-primary">Subscribe</button>
+        </form>
+      </div>
+
+      <!-- Social row -->
+      <div class="mt-6 flex items-center gap-3">
+        <a href="https://www.instagram.com/jagasemesta?igsh=MXBxdDk4d3gyZTNwdA%3D%3D&utm_source=qr" target="_blank" rel="noreferrer" aria-label="Instagram · @jagasemesta" class="grid h-9 w-9 place-items-center rounded-full bg-slate-800 hover:bg-slate-700 hover:text-white">
+          <i data-lucide="instagram"></i>
+        </a>
+        <a href="https://youtube.com/@jagasemesta?si=eUuyORclR8QeD97O" target="_blank" rel="noreferrer" aria-label="YouTube · @jagasemesta" class="grid h-9 w-9 place-items-center rounded-full bg-slate-800 hover:bg-slate-700 hover:text-white">
+          <i data-lucide="youtube"></i>
+        </a>
+        <a href="https://www.tiktok.com/@jagasemesta?_r=1&_t=ZS-95vqTV1Q0A5" target="_blank" rel="noreferrer" aria-label="TikTok · @jagasemesta" class="grid h-9 w-9 place-items-center rounded-full bg-slate-800 hover:bg-slate-700 hover:text-white">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.66 20.1a6.34 6.34 0 0 0 10.86-4.43V8.94a8.16 8.16 0 0 0 4.78 1.52V7.05a4.83 4.83 0 0 1-1.71-.36z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/jagasemesta" target="_blank" rel="noreferrer" aria-label="Facebook · Jaga Semesta" class="grid h-9 w-9 place-items-center rounded-full bg-slate-800 hover:bg-slate-700 hover:text-white">
+          <i data-lucide="facebook"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-8 md:col-span-5 md:grid-cols-4">
+      <div>
+        <div class="text-sm font-semibold text-white">Platform</div>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="#map" class="text-slate-400 hover:text-white">Spring Map</a></li>
+          <li><a href="#dashboard" class="text-slate-400 hover:text-white">Dashboard</a></li>
+          <li><a href="#community" class="text-slate-400 hover:text-white">Community</a></li>
+          <li><a href="#learn" class="text-slate-400 hover:text-white">Learning Hub</a></li>
+          <li><a href="#media" class="text-slate-400 hover:text-white">Media</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-white">Support</div>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="#" class="text-slate-400 hover:text-white">Help Center</a></li>
+          <li><a href="https://wa.me/628112995190" target="_blank" rel="noreferrer" class="text-slate-400 hover:text-white">Contact Us (WhatsApp)</a></li>
+          <li><a href="#" class="text-slate-400 hover:text-white">Report Issue</a></li>
+          <li><a href="#" class="text-slate-400 hover:text-white">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-white">About</div>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="#" class="text-slate-400 hover:text-white">Our Mission</a></li>
+          <li><a href="#donate" class="text-slate-400 hover:text-white">Become a Partner</a></li>
+          <li><a href="#media" class="text-slate-400 hover:text-white">Impact Report</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-white">Legal</div>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="#" class="text-slate-400 hover:text-white">Privacy Policy</a></li>
+          <li><a href="#" class="text-slate-400 hover:text-white">Terms of Service</a></li>
+          <li><a href="#" class="text-slate-400 hover:text-white">Cookie Policy</a></li>
+          <li><a href="#" class="text-slate-400 hover:text-white">Data Protection</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="md:col-span-3">
+      <ul class="space-y-3 text-sm text-slate-400">
+        <li class="flex items-start gap-2">
+          <i data-lucide="message-circle" class="mt-0.5" style="color:#34d399"></i>
+          <span><span class="block text-xs uppercase tracking-wider text-slate-500">WhatsApp</span><a href="https://wa.me/628112995190" target="_blank" rel="noreferrer" class="hover:text-white">+62 811-2995-190</a></span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="phone" class="mt-0.5"></i>
+          <span><span class="block text-xs uppercase tracking-wider text-slate-500">Phone</span><a href="tel:+628112995190" class="hover:text-white">+62 811-2995-190</a></span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="mail" class="mt-0.5"></i>
+          <span><span class="block text-xs uppercase tracking-wider text-slate-500">Email</span><a href="mailto:info@jagasemesta.id" class="hover:text-white">info@jagasemesta.id</a></span>
+        </li>
+        <li class="flex items-start gap-2"><i data-lucide="map-pin" class="mt-0.5"></i><span><span class="block text-xs uppercase tracking-wider text-slate-500">Address</span>Jakarta, Indonesia</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-slate-800">
+    <div class="container-page flex flex-col items-start justify-between gap-3 py-5 text-xs text-slate-500 sm:flex-row sm:items-center">
+      <div>© 2026 SPRINGHUB by Jaga Semesta. All rights reserved.</div>
+      <div class="flex items-center gap-3">
+        <a href="https://www.instagram.com/jagasemesta?igsh=MXBxdDk4d3gyZTNwdA%3D%3D&utm_source=qr" target="_blank" rel="noreferrer" aria-label="Instagram" class="hover:text-white"><i data-lucide="instagram"></i></a>
+        <a href="https://youtube.com/@jagasemesta?si=eUuyORclR8QeD97O" target="_blank" rel="noreferrer" aria-label="YouTube" class="hover:text-white"><i data-lucide="youtube"></i></a>
+        <a href="https://www.tiktok.com/@jagasemesta?_r=1&_t=ZS-95vqTV1Q0A5" target="_blank" rel="noreferrer" aria-label="TikTok" class="hover:text-white">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.66 20.1a6.34 6.34 0 0 0 10.86-4.43V8.94a8.16 8.16 0 0 0 4.78 1.52V7.05a4.83 4.83 0 0 1-1.71-.36z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/jagasemesta" target="_blank" rel="noreferrer" aria-label="Facebook" class="hover:text-white"><i data-lucide="facebook"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Render lucide icons
+  if (window.lucide) lucide.createIcons();
+
+  // ---------------- Spring data + protection ----------------
+  const PROTECTION_GRID_DEG = 0.045; // ~5km
+  const STATUS = {
+    healthy:     { color: "#10b981", chip: "bg-emerald-50 text-emerald-700", label: "Healthy" },
+    degraded:    { color: "#ef4444", chip: "bg-red-50 text-red-700",          label: "Degraded" },
+    restoration: { color: "#f59e0b", chip: "bg-amber-50 text-amber-700",      label: "Restoration" },
+  };
+  const SPRINGS = [
+    { id:1, name:"Mata Air Cibeureum",     region:"Bogor, Jawa Barat",    status:"healthy",    reports:24, last:"2 days ago", lat:-6.6447, lng:106.7892 },
+    { id:2, name:"Sumber Beratan",          region:"Bedugul, Bali",         status:"degraded",   reports:11, last:"5 days ago", lat:-8.2750, lng:115.1670 },
+    { id:3, name:"Mata Air Sebatu",         region:"Gianyar, Bali",         status:"restoration",reports: 8, last:"1 week ago", lat:-8.4231, lng:115.2779 },
+    { id:4, name:"Mata Air Umbul Ponggok",  region:"Klaten, Jawa Tengah",   status:"healthy",    reports:19, last:"3 days ago", lat:-7.6891, lng:110.6472 },
+    { id:5, name:"Mata Air Cikahuripan",    region:"Sukabumi, Jawa Barat",  status:"healthy",    reports:14, last:"1 day ago",  lat:-6.9210, lng:106.9270 },
+    { id:6, name:"Mata Air Senjoyo",        region:"Semarang, Jawa Tengah", status:"degraded",   reports: 9, last:"4 days ago", lat:-7.2389, lng:110.5063 },
+  ];
+
+  function snap(lat, lng) {
+    return [
+      Math.round(lat / PROTECTION_GRID_DEG) * PROTECTION_GRID_DEG,
+      Math.round(lng / PROTECTION_GRID_DEG) * PROTECTION_GRID_DEG,
+    ];
+  }
+  SPRINGS.forEach(s => { const [a,b] = snap(s.lat, s.lng); s.publicLat=a; s.publicLng=b; });
+
+  // ---------------- Leaflet map ----------------
+  const map = L.map("leaflet-map", { scrollWheelZoom: false }).setView([-7.5, 110], 6);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18,
+  }).addTo(map);
+
+  const layerByStatus = { healthy: L.layerGroup(), degraded: L.layerGroup(), restoration: L.layerGroup() };
+  Object.values(layerByStatus).forEach(l => l.addTo(map));
+
+  SPRINGS.forEach(s => {
+    const sty = STATUS[s.status];
+    const marker = L.circleMarker([s.publicLat, s.publicLng], {
+      radius: 8, color: "#fff", weight: 2, fillColor: sty.color, fillOpacity: 1,
+    }).bindTooltip(`<div style="font-size:11px">
+        <div style="font-weight:600">${s.name}</div>
+        <div style="color:#64748b">${s.region}</div>
+        <div style="color:#94a3b8;font-size:10px;margin-top:2px">Snapped to 5 km grid</div>
+      </div>`);
+    const buffer = L.circle([s.publicLat, s.publicLng], {
+      radius: 5000, color: sty.color, weight: 1, fillColor: sty.color, fillOpacity: 0.08, dashArray: "4 4",
+    });
+    layerByStatus[s.status].addLayer(buffer);
+    layerByStatus[s.status].addLayer(marker);
+  });
+
+  // ---------------- Spring details list ----------------
+  const list = document.getElementById("spring-list");
+  const counter = document.getElementById("spring-count");
+  function renderList(filter) {
+    const items = (filter === "all") ? SPRINGS : SPRINGS.filter(s => s.status === filter);
+    list.innerHTML = items.map(s => {
+      const sty = STATUS[s.status];
+      return `<li class="flex items-start gap-3 rounded-lg border border-ink-line/60 p-3">
+          <span class="mt-1.5 h-2 w-2 flex-none rounded-full" style="background:${sty.color}"></span>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-2">
+              <div class="truncate text-sm font-semibold">${s.name}</div>
+              <span class="chip ${sty.chip}">${sty.label}</span>
+            </div>
+            <div class="text-xs text-ink-muted">${s.region}</div>
+            <div class="mt-1 text-xs text-ink-subtle">${s.reports} reports · ${s.last}</div>
+          </div>
+        </li>`;
+    }).join("");
+    counter.textContent = items.length + " shown";
+  }
+  renderList("all");
+
+  // ---------------- Filter behaviour ----------------
+  const filterBtns = document.querySelectorAll(".map-filter");
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const f = btn.dataset.filter;
+      filterBtns.forEach(b => {
+        b.classList.remove("border-brand-200","bg-brand-50","text-brand-700");
+        b.classList.add("border-ink-line","bg-white","text-ink-muted");
+      });
+      btn.classList.remove("border-ink-line","bg-white","text-ink-muted");
+      btn.classList.add("border-brand-200","bg-brand-50","text-brand-700");
+
+      Object.entries(layerByStatus).forEach(([status, layer]) => {
+        const visible = (f === "all" || f === status);
+        if (visible && !map.hasLayer(layer)) layer.addTo(map);
+        if (!visible && map.hasLayer(layer)) map.removeLayer(layer);
+      });
+      renderList(f);
+    });
+  });
+
+  // ---------------- Donation preset selection ----------------
+  const presets = document.querySelectorAll(".donate-preset");
+  presets.forEach(p => {
+    p.addEventListener("click", () => {
+      presets.forEach(x => {
+        x.classList.remove("border-brand-500","bg-brand-50");
+        x.classList.add("border-ink-line","hover:border-brand-300");
+      });
+      p.classList.remove("border-ink-line","hover:border-brand-300");
+      p.classList.add("border-brand-500","bg-brand-50");
+    });
+  });
+
+  // Make sure the map renders correctly after layout settles.
+  window.addEventListener("load", () => setTimeout(() => map.invalidateSize(), 100));
+</script>
+</body>
+</html>

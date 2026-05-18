@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ─── ENUMs ─────────────────────────────────────────────────────────────────
+
+enum Role {
+  user
+  volunteer
+  field_lead
+  admin
+}
+
+enum FormSlug {
+  spring_monitoring
+  spring_restoration
+  trench_development
+  tree_planting
+  seedling_stock
+}
+
+enum ReportStatus {
+  pending
+  approved
+  rejected
+}
+
+enum ProjectStatus {
+  pending
+  under_review
+  approved
+  rejected
+  completed
+}
+
+enum DonationStatus {
+  pending
+  paid
+  expired
+  failed
+}
+
+// ─── TABLES ─────────────────────────────────────────────────────────────────
+
+model Profile {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  username      String   @default("")
+  role          Role     @default(volunteer)
+  phone         String   @default("")
+  phoneVerified Boolean  @default(false)
+  region        String   @default("")
+  points        Int      @default(0)
+  trustScore    Int      @default(50)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  reports       Report[]
+  donations     Donation[]
+  projects      Project[]
+  pointsLogs    PointsLog[]
+  sessions      Session[]
+  courses       CoursesProgress[]
+  reviewedReports Report[] @relation("reviewedReports")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  profileId String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id            String       @id @default(uuid())
+  userId        String?
+  guestId       String?
+  formSlug      String
+  status        ReportStatus @default(pending)
+  fieldData     String       // JSON string of form fields
+  preciseLat    Float?
+  preciseLng    Float?
+  snappedLat    Float?
+  snappedLng    Float?
+  reviewedById  String?
+  reviewNote    String       @default("")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  user       Profile?     @relation(fields: [userId], references: [id])
+  reviewedBy Profile?     @relation("reviewedReports", fields: [reviewedById], references: [id])
+  photos     ReportPhoto[]
+  pointsLogs PointsLog[]
+}
+
+model ReportPhoto {
+  id          String   @id @default(uuid())
+  reportId    String
+  fieldId     String
+  storagePath String   @default("")
+  mimeType    String   @default("image/jpeg")
+  width       Int      @default(0)
+  height      Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id            String        @id @default(uuid())
+  userId        String?
+  title         String
+  summary       String        @default("")
+  region        String        @default("")
+  typeId        String
+  status        ProjectStatus @default(pending)
+  goalAmount    Int           @default(0)
+  raisedAmount  Int           @default(0)
+  contactName   String        @default("")
+  contactEmail  String        @default("")
+  contactPhone  String        @default("")
+  proposalFile  String        @default("")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user      Profile?   @relation(fields: [userId], references: [id])
+  donations Donation[]
+}
+
+model Donation {
+  id         String         @id @default(uuid())
+  userId     String?
+  projectId  String?
+  invoiceId  String         @default("")
+  externalId String         @default("")
+  amountIdr  Int
+  tierId     String         @default("")
+  donorName  String         @default("")
+  donorEmail String         @default("")
+  status     DonationStatus @default(pending)
+  paidAt     DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  user    Profile? @relation(fields: [userId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+}
+
+model PointsLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  guestId   String?
+  reportId  String?
+  amount    Int
+  reason    String
+  metadata  String   @default("{}") // JSON
+  createdAt DateTime @default(now())
+
+  user   Profile? @relation(fields: [userId], references: [id])
+  report Report?  @relation(fields: [reportId], references: [id])
+}
+
+model CoursesProgress {
+  id              String   @id @default(uuid())
+  userId          String
+  courseId        String   @default("")
+  courseSlug      String
+  completedModules Int     @default(0)
+  totalModules    Int      @default(1)
+  completed       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user   Profile @relation(fields: [userId], references: [id])
+  course Course?  @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseSlug])
+}
+
+model PointRule {
+  id          String   @id @default(uuid())
+  name        String
+  description String   @default("")
+  points      Int
+  category    String   // "basic", "bonus", "milestone"
+  icon        String   @default("Star")
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  description String   @default("")
+  level       String   @default("Beginner")
+  duration    String   @default("30 min")
+  icon        String   @default("BookOpen")
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  modules  CourseModule[]
+  progress CoursesProgress[]
+}
+
+model CourseModule {
+  id          String   @id @default(uuid())
+  courseId    String
+  title       String
+  content     String   @default("") // Markdown atau HTML content
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}

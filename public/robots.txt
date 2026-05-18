@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://springhub.vercel.app/sitemap.xml

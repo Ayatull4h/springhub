@@ -1,0 +1,28 @@
+{
+  "memories": [
+    {
+      "id": "session-1",
+      "date": "2026-05-15",
+      "session": "Sesi 1",
+      "content": "Arsitektur: Vercel (frontend) + Supabase (backend). Prioritas fitur: Form -> Donasi -> Point. Anti-spam berlapis (Zod + rate limit + honey pot + time gate + trust score). RLS-first untuk data privacy. Publik bisa lihat, login wajib isi form. Points system: dasar (15-100) + bonus (streak, kualitas, discovery, milestone, event). Status: POC."
+    },
+    {
+      "id": "session-2",
+      "date": "2026-05-15",
+      "session": "Sesi 2",
+      "content": "Setup persistensi chat via AGENTS.md. Buka opencode dari folder proyek agar konteks terbaca. User ingin fokus penuh ke SpringHub."
+    },
+    {
+      "id": "session-3",
+      "date": "2026-05-15",
+      "session": "Sesi 3 - Audit Lengkap",
+      "content": "Audit menyeluruh. Critical issues: POST /api/reports 404, Xendit Checkout tidak jalan, field donasi tidak kebaca, createInvoice() stub, /sign-in dan /join 404, /projects/new 404, Start Course inert, Newsletter form tidak jalan."
+    },
+    {
+      "id": "session-4",
+      "date": "2026-05-15",
+      "session": "Sesi 4 (current)",
+      "content": "Memori pertama dibuat. User mengkonfirmasi setup SpringHub via batch file. Konteks harus terbawa antar sesi."
+    }
+  ]
+}

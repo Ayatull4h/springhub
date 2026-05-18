@@ -1,0 +1,692 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "SpringHub home" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]:
+          - img [ref=e7]
+          - generic [ref=e10]:
+            - generic [ref=e11]: SPRINGHUB
+            - generic [ref=e12]: by Jaga Semesta
+      - link "Join Now" [ref=e14] [cursor=pointer]:
+        - /url: /join
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - heading "Community-Driven Spring Restoration" [level=1] [ref=e18]:
+          - text: Community-Driven
+          - text: Spring Restoration
+        - paragraph [ref=e19]: Join the grassroots movement to protect and restore Indonesia’s precious artesian springs. Monitor, restore, and preserve our water sources for future generations.
+        - generic [ref=e20]:
+          - link "Start Monitoring" [ref=e21] [cursor=pointer]:
+            - /url: "#map"
+            - text: Start Monitoring
+            - img [ref=e22]
+          - link "Back to Jaga Semesta" [ref=e24] [cursor=pointer]:
+            - /url: https://jagasemesta.id
+            - text: Back to Jaga Semesta
+            - img [ref=e25]
+      - iframe [ref=e28]:
+        - generic [active] [ref=f3e1]:
+          - generic "YouTube Video Player" [ref=f3e3]
+          - generic [ref=f3e5]:
+            - generic:
+              - generic:
+                - button "Play video" [ref=f3e10] [cursor=pointer]:
+                  - generic [ref=f3e13]:
+                    - img
+                - button "Hide player controls" [ref=f3e14] [cursor=pointer]
+                - generic [ref=f3e16]:
+                  - generic [ref=f3e21]:
+                    - generic [ref=f3e22]:
+                      - link "Jaga Semesta Intro" [ref=f3e23] [cursor=pointer]:
+                        - /url: https://www.youtube.com/watch?v=oUDA1loE8BE
+                      - link "Jaga Semesta" [ref=f3e24] [cursor=pointer]:
+                        - /url: /channel/UC-1OZDM3aDqq2KRF6Cf4HRQ
+                        - generic [ref=f3e25]: Jaga Semesta
+                    - generic [ref=f3e26]:
+                      - button "thumbnail-image" [ref=f3e27] [cursor=pointer]:
+                        - img "thumbnail-image" [ref=f3e28]
+                      - generic [ref=f3e30]:
+                        - generic: Jaga Semesta
+                        - generic: 16k subscribers
+                  - generic [ref=f3e31]:
+                    - button "Share" [ref=f3e34] [cursor=pointer]:
+                      - generic [ref=f3e38]:
+                        - img
+                    - link "Watch on YouTube" [ref=f3e45] [cursor=pointer]:
+                      - /url: https://www.youtube.com/watch?v=oUDA1loE8BE
+                      - generic [ref=f3e48]:
+                        - text: Watch on
+                        - img [ref=f3e50]:
+                          - generic [ref=f3e52]:
+                            - img
+    - generic [ref=e29]:
+      - heading "Real-Time Impact Dashboard" [level=2] [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img [ref=e35]
+            - generic [ref=e38]:
+              - img [ref=e39]
+              - text: "+12"
+          - generic [ref=e42]: 500+
+          - generic [ref=e43]: Monitored Springs
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - generic [ref=e49]:
+              - img [ref=e50]
+              - text: "+3"
+          - generic [ref=e53]: 30+
+          - generic [ref=e54]: Restored Springs
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - img [ref=e58]
+            - generic [ref=e62]:
+              - img [ref=e63]
+              - text: "+89"
+          - generic [ref=e66]: 20,000
+          - generic [ref=e67]: Endemic Trees Planted
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - img [ref=e71]
+            - generic [ref=e75]:
+              - img [ref=e76]
+              - text: "+12"
+          - generic [ref=e79]: "150"
+          - generic [ref=e80]: Trenches
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - heading "Monthly Progress" [level=3] [ref=e83]:
+            - img [ref=e84]
+            - text: Monthly Progress
+          - list [ref=e87]:
+            - listitem [ref=e88]:
+              - generic [ref=e89]:
+                - generic [ref=e90]: Springs Monitored
+                - generic [ref=e91]: 12 now
+            - listitem [ref=e94]:
+              - generic [ref=e95]:
+                - generic [ref=e96]: Trees Planted
+                - generic [ref=e97]: 89 now
+            - listitem [ref=e100]:
+              - generic [ref=e101]:
+                - generic [ref=e102]: New Volunteers
+                - generic [ref=e103]: 45 joined
+        - generic [ref=e106]:
+          - heading "Top Regions" [level=3] [ref=e107]
+          - list [ref=e108]:
+            - listitem [ref=e109]:
+              - generic [ref=e110]: "1"
+              - generic [ref=e111]:
+                - generic [ref=e112]: Jawa Barat
+                - generic [ref=e113]: 43 springs · 234 trees
+            - listitem [ref=e114]:
+              - generic [ref=e115]: "2"
+              - generic [ref=e116]:
+                - generic [ref=e117]: Bali
+                - generic [ref=e118]: 28 springs · 198 trees
+            - listitem [ref=e119]:
+              - generic [ref=e120]: "3"
+              - generic [ref=e121]:
+                - generic [ref=e122]: Jawa Tengah
+                - generic [ref=e123]: 21 springs · 165 trees
+        - generic [ref=e124]:
+          - heading "Top Volunteers" [level=3] [ref=e125]
+          - list [ref=e126]:
+            - listitem [ref=e127]:
+              - generic [ref=e128]: "1"
+              - generic [ref=e129]:
+                - generic [ref=e130]: Maya Putri
+                - generic [ref=e131]: Yogyakarta
+              - generic [ref=e132]: 24,168pts
+            - listitem [ref=e133]:
+              - generic [ref=e134]: "2"
+              - generic [ref=e135]:
+                - generic [ref=e136]: Budi Santoso
+                - generic [ref=e137]: Jawa Tengah
+              - generic [ref=e138]: 21,858pts
+            - listitem [ref=e139]:
+              - generic [ref=e140]: "3"
+              - generic [ref=e141]:
+                - generic [ref=e142]: Sari Dewi
+                - generic [ref=e143]: Bali
+              - generic [ref=e144]: 12,580pts
+    - generic [ref=e145]:
+      - heading "Interactive Spring Map" [level=2] [ref=e146]
+      - paragraph [ref=e147]: Explore springs across Indonesia. View their current status, community reports, and contribute your own observations.
+      - generic [ref=e148]:
+        - img [ref=e149]
+        - generic [ref=e152]:
+          - strong [ref=e153]: "Source protection:"
+          - text: public spring locations are snapped to a 5 km grid — every spring within that radius shares the same coordinate. Field leads and admins see precise locations after sign-in.
+      - generic [ref=e154]:
+        - generic [ref=e155]:
+          - generic [ref=e156]: Spring Locations
+          - button "All" [ref=e157] [cursor=pointer]
+          - button "Healthy" [ref=e158] [cursor=pointer]
+          - button "Degraded" [ref=e159] [cursor=pointer]
+          - button "Restoration" [ref=e160] [cursor=pointer]
+          - generic [ref=e161]: OpenStreetMap
+        - generic [ref=e163]: Loading OpenStreetMap…
+      - generic [ref=e164]:
+        - generic [ref=e165]:
+          - generic [ref=e166]:
+            - heading "Spring Details" [level=3] [ref=e167]
+            - generic [ref=e168]: 6 shown
+          - list [ref=e169]:
+            - listitem [ref=e170]:
+              - generic [ref=e172]:
+                - generic [ref=e173]:
+                  - generic [ref=e174]: Mata Air Cibeureum
+                  - generic [ref=e175]: Healthy
+                - generic [ref=e176]: Bogor, Jawa Barat
+                - generic [ref=e177]: 24 reports · 2 days ago
+            - listitem [ref=e178]:
+              - generic [ref=e180]:
+                - generic [ref=e181]:
+                  - generic [ref=e182]: Sumber Beratan
+                  - generic [ref=e183]: Degraded
+                - generic [ref=e184]: Bedugul, Bali
+                - generic [ref=e185]: 11 reports · 5 days ago
+            - listitem [ref=e186]:
+              - generic [ref=e188]:
+                - generic [ref=e189]:
+                  - generic [ref=e190]: Mata Air Sebatu
+                  - generic [ref=e191]: Restoration
+                - generic [ref=e192]: Gianyar, Bali
+                - generic [ref=e193]: 8 reports · 1 week ago
+            - listitem [ref=e194]:
+              - generic [ref=e196]:
+                - generic [ref=e197]:
+                  - generic [ref=e198]: Mata Air Umbul Ponggok
+                  - generic [ref=e199]: Healthy
+                - generic [ref=e200]: Klaten, Jawa Tengah
+                - generic [ref=e201]: 19 reports · 3 days ago
+            - listitem [ref=e202]:
+              - generic [ref=e204]:
+                - generic [ref=e205]:
+                  - generic [ref=e206]: Mata Air Cikahuripan
+                  - generic [ref=e207]: Healthy
+                - generic [ref=e208]: Sukabumi, Jawa Barat
+                - generic [ref=e209]: 14 reports · 1 day ago
+            - listitem [ref=e210]:
+              - generic [ref=e212]:
+                - generic [ref=e213]:
+                  - generic [ref=e214]: Mata Air Senjoyo
+                  - generic [ref=e215]: Degraded
+                - generic [ref=e216]: Semarang, Jawa Tengah
+                - generic [ref=e217]: 9 reports · 4 days ago
+        - generic [ref=e218]:
+          - generic [ref=e219]:
+            - heading "Report Your Contribution" [level=3] [ref=e220]:
+              - img [ref=e221]
+              - text: Report Your Contribution
+            - generic [ref=e224]:
+              - img [ref=e225]
+              - text: Earn points
+          - paragraph [ref=e227]: Lightweight, mobile-friendly forms hosted by SpringHub. No app install needed — they work in your browser.
+          - generic [ref=e228]:
+            - link "Spring Monitoring +25 pts on submit" [ref=e229] [cursor=pointer]:
+              - /url: /report/spring-monitoring
+              - generic [ref=e230]:
+                - generic [ref=e231]: Spring Monitoring
+                - generic [ref=e232]: +25 pts on submit
+              - img [ref=e233]
+            - link "Spring Restoration +100 pts on submit" [ref=e235] [cursor=pointer]:
+              - /url: /report/spring-restoration
+              - generic [ref=e236]:
+                - generic [ref=e237]: Spring Restoration
+                - generic [ref=e238]: +100 pts on submit
+              - img [ref=e239]
+            - link "Trench Development +50 pts on submit" [ref=e241] [cursor=pointer]:
+              - /url: /report/trench-development
+              - generic [ref=e242]:
+                - generic [ref=e243]: Trench Development
+                - generic [ref=e244]: +50 pts on submit
+              - img [ref=e245]
+            - link "Tree Planting +50 pts on submit" [ref=e247] [cursor=pointer]:
+              - /url: /report/tree-planting
+              - generic [ref=e248]:
+                - generic [ref=e249]: Tree Planting
+                - generic [ref=e250]: +50 pts on submit
+              - img [ref=e251]
+            - link "Tree Seedling Stock +15 pts on submit" [ref=e253] [cursor=pointer]:
+              - /url: /report/seedling-stock
+              - generic [ref=e254]:
+                - generic [ref=e255]: Tree Seedling Stock
+                - generic [ref=e256]: +15 pts on submit
+              - img [ref=e257]
+          - generic [ref=e259]:
+            - img [ref=e260]
+            - generic [ref=e262]:
+              - text: Spotted a spring not on the map?
+              - link "Add it via Spring Monitoring" [ref=e263] [cursor=pointer]:
+                - /url: /report/spring-monitoring
+              - text: .
+    - generic [ref=e264]:
+      - heading "Volunteer Activities" [level=2] [ref=e265]
+      - paragraph [ref=e266]: Join thousands of environmental heroes making a difference across Indonesia. Earn points, and unlock eligibility to submit your own spring restoration project once you reach 20,000 pts.
+      - generic [ref=e267]:
+        - generic [ref=e268]:
+          - heading "Recent Activities" [level=3] [ref=e269]
+          - list [ref=e270]:
+            - listitem [ref=e271]:
+              - generic [ref=e272]:
+                - generic [ref=e273]:
+                  - generic [ref=e274]: Rini A.
+                  - generic [ref=e275]: filed a Pemantauan Mata Air report
+                - generic [ref=e276]:
+                  - img [ref=e277]
+                  - text: +25 pts
+              - generic [ref=e280]:
+                - img [ref=e281]
+                - text: Mata Air Cibeureum, Bogor · 2h ago
+              - generic [ref=e284]:
+                - generic [ref=e285]:
+                  - button "24" [ref=e286] [cursor=pointer]:
+                    - img [ref=e287]
+                    - text: "24"
+                  - button "6" [ref=e289] [cursor=pointer]:
+                    - img [ref=e290]
+                    - text: "6"
+                - generic [ref=e292]: Form · Spring Monitoring
+            - listitem [ref=e293]:
+              - generic [ref=e294]:
+                - generic [ref=e295]:
+                  - generic [ref=e296]: Raya P.
+                  - generic [ref=e297]: logged tree planting (12 endemic trees)
+                - generic [ref=e298]:
+                  - img [ref=e299]
+                  - text: +60 pts
+              - generic [ref=e302]:
+                - img [ref=e303]
+                - text: Bedugul, Bali · 6h ago
+              - generic [ref=e306]:
+                - generic [ref=e307]:
+                  - button "24" [ref=e308] [cursor=pointer]:
+                    - img [ref=e309]
+                    - text: "24"
+                  - button "6" [ref=e311] [cursor=pointer]:
+                    - img [ref=e312]
+                    - text: "6"
+                - generic [ref=e314]: Form · Tree Planting
+        - generic [ref=e315]:
+          - generic [ref=e316]:
+            - heading "Submit your Project" [level=3] [ref=e317]
+            - generic [ref=e318]: Eligible
+          - heading "Have a Project Idea? Let’s Make It Happen!" [level=4] [ref=e319]
+          - paragraph [ref=e320]: Spring restoration, endemic tree planting, infiltration trenches, monitoring expeditions — share your initiative with the community. Proposals are reviewed by our admin team before publishing.
+          - generic [ref=e321]:
+            - generic [ref=e322]:
+              - generic [ref=e323]: Your points
+              - generic [ref=e324]: 24,168 / 20,000
+            - generic [ref=e327]:
+              - img [ref=e328]
+              - text: Reviewed by admin before publishing
+          - link "Register your Project" [ref=e332] [cursor=pointer]:
+            - /url: /projects/new
+            - text: Register your Project
+            - img [ref=e333]
+    - generic [ref=e335]:
+      - heading "Support Conservation Efforts" [level=2] [ref=e336]
+      - paragraph [ref=e337]: Donations are processed through Xendit (cards, virtual accounts, e-wallets, QRIS). Every rupiah is tied to a measurable output reported by our field volunteers — and only admin-verified projects are open for funding.
+      - generic [ref=e338]:
+        - generic [ref=e339]:
+          - heading "Make a Donation" [level=3] [ref=e340]:
+            - img [ref=e341]
+            - text: Make a Donation
+          - generic [ref=e343]:
+            - generic [ref=e344]: OVO
+            - generic [ref=e345]: GoPay
+            - generic [ref=e346]: DANA
+            - generic [ref=e347]: ShopeePay
+            - generic [ref=e348]: QRIS
+            - generic [ref=e349]: Debit / Credit Card
+            - generic [ref=e350]: Virtual Account
+          - generic [ref=e351]:
+            - button "Rp 20K 1 tree seedling" [ref=e352] [cursor=pointer]:
+              - generic [ref=e353]:
+                - img [ref=e354]
+                - generic [ref=e358]: Rp 20K
+              - generic [ref=e359]: 1 tree seedling
+            - button "Rp 50K 1 trench (rorak)" [ref=e360] [cursor=pointer]:
+              - generic [ref=e361]:
+                - img [ref=e362]
+                - generic [ref=e366]: Rp 50K
+              - generic [ref=e367]: 1 trench (rorak)
+            - button "Rp 100K 1 m³ sediment removed from a spring" [ref=e368] [cursor=pointer]:
+              - generic [ref=e369]:
+                - img [ref=e370]
+                - generic [ref=e373]: Rp 100K
+              - generic [ref=e374]: 1 m³ sediment removed from a spring
+            - button "Rp 1 juta 50 springs monitored" [ref=e375] [cursor=pointer]:
+              - generic [ref=e376]:
+                - img [ref=e377]
+                - generic [ref=e385]: Rp 1 juta
+              - generic [ref=e386]: 50 springs monitored
+          - generic [ref=e387]:
+            - text: Custom Amount (IDR)
+            - spinbutton "Custom Amount (IDR)" [ref=e388]
+          - generic [ref=e389]:
+            - text: Full Name
+            - textbox "Full Name" [ref=e390]
+          - generic [ref=e391]:
+            - text: Email
+            - textbox "Email" [ref=e392]
+          - button "Continue to Xendit Checkout" [ref=e393] [cursor=pointer]:
+            - text: Continue to Xendit Checkout
+            - img [ref=e394]
+        - generic [ref=e396]:
+          - generic [ref=e397]:
+            - heading "Featured Projects" [level=3] [ref=e398]
+            - generic [ref=e399]: 4 project types accepted
+          - article [ref=e400]:
+            - generic [ref=e402]:
+              - generic [ref=e403]:
+                - generic [ref=e404]:
+                  - img [ref=e405]
+                  - text: Spring Restoration
+                - generic [ref=e408]:
+                  - img [ref=e409]
+                  - text: Verified
+              - heading "Restore Cibeureum Spring" [level=4] [ref=e412]
+              - paragraph [ref=e413]: Sediment removal and riparian replanting around a degraded spring serving 200+ families.
+              - generic [ref=e416]:
+                - generic [ref=e417]:
+                  - text: Rp 18,250,000
+                  - generic [ref=e418]: / Rp 25,000,000
+                - generic [ref=e419]: 142 supporters
+              - button "Support Project" [ref=e420] [cursor=pointer]
+          - article [ref=e421]:
+            - generic [ref=e423]:
+              - generic [ref=e424]:
+                - generic [ref=e425]:
+                  - img [ref=e426]
+                  - text: Endemic Tree Planting
+                - generic [ref=e430]:
+                  - img [ref=e431]
+                  - text: Verified
+              - heading "Endemic Tree Planting · Tabanan" [level=4] [ref=e434]
+              - paragraph [ref=e435]: Plant 500 endemic trees in the recharge area of five sacred springs in central Bali.
+              - generic [ref=e438]:
+                - generic [ref=e439]:
+                  - text: Rp 9,100,000
+                  - generic [ref=e440]: / Rp 15,000,000
+                - generic [ref=e441]: 87 supporters
+              - button "Support Project" [ref=e442] [cursor=pointer]
+          - article [ref=e443]:
+            - generic [ref=e445]:
+              - generic [ref=e446]:
+                - generic [ref=e447]:
+                  - img [ref=e448]
+                  - text: Trench (Rorak) Development
+                - generic [ref=e452]:
+                  - img [ref=e453]
+                  - text: Under Review
+              - heading "Senjoyo Trench Network" [level=4] [ref=e456]
+              - paragraph [ref=e457]: Submitted by Budi Santoso. Build 50 infiltration trenches around Mata Air Senjoyo to recharge the watershed.
+              - generic [ref=e459]:
+                - generic [ref=e460]:
+                  - text: Rp 0
+                  - generic [ref=e461]: / Rp 18,000,000
+                - generic [ref=e462]: 0 supporters
+              - button "Awaiting Admin Verification" [disabled] [ref=e463]
+      - generic [ref=e464]:
+        - generic [ref=e465]:
+          - generic [ref=e466]:
+            - img [ref=e467]
+            - text: Become Partner / Sponsor / Donor
+          - heading "Multiply impact across Indonesian springs" [level=3] [ref=e472]
+          - paragraph [ref=e473]: We work with corporates, foundations, government bodies and community networks. Sponsor a region, fund a project type, or co-design a volunteer programme with us — outputs and locations are reported through verified field forms.
+          - list [ref=e474]:
+            - listitem [ref=e475]:
+              - img [ref=e476]
+              - generic [ref=e480]: Endemic Tree Planting · Plant native species around a spring or its recharge area.
+            - listitem [ref=e481]:
+              - img [ref=e482]
+              - generic [ref=e486]: Trench (Rorak) Development · Build infiltration trenches that recharge groundwater.
+            - listitem [ref=e487]:
+              - img [ref=e488]
+              - generic [ref=e491]: Spring Restoration · Remove sediment and rehabilitate a degraded spring.
+            - listitem [ref=e492]:
+              - img [ref=e493]
+              - generic [ref=e501]: Monitoring Expedition · Field expedition to inventory and assess springs.
+        - generic [ref=e502]:
+          - button "Become a Partner" [ref=e503] [cursor=pointer]:
+            - text: Become a Partner
+            - img [ref=e504]
+          - button "Download Partnership Deck" [ref=e506] [cursor=pointer]
+    - generic [ref=e507]:
+      - heading "Learning Hub" [level=2] [ref=e508]
+      - paragraph [ref=e509]: Expand your knowledge with our courses on spring conservation, tree planting, and traditional water wisdom.
+      - generic [ref=e510]:
+        - article [ref=e511]:
+          - generic [ref=e513]: Beginner
+          - heading "Spring Conservation Basics" [level=3] [ref=e514]
+          - paragraph [ref=e515]: Learn the fundamentals of spring ecosystems and conservation techniques used across Indonesia.
+          - generic [ref=e516]:
+            - generic [ref=e517]:
+              - img [ref=e518]
+              - text: 45 min
+            - generic [ref=e521]:
+              - img [ref=e522]
+              - text: 6 modules
+          - button "Start Course" [ref=e526] [cursor=pointer]:
+            - img [ref=e527]
+            - text: Start Course
+        - article [ref=e530]:
+          - generic [ref=e532]: Intermediate
+          - heading "Endemic Tree Planting Guide" [level=3] [ref=e533]
+          - paragraph [ref=e534]: Master site-selection, planting, and care for Indonesia's native tree species in watershed areas.
+          - generic [ref=e535]:
+            - generic [ref=e536]:
+              - img [ref=e537]
+              - text: 60 min
+            - generic [ref=e540]:
+              - img [ref=e541]
+              - text: 8 modules
+          - button "Start Course" [ref=e545] [cursor=pointer]:
+            - img [ref=e546]
+            - text: Start Course
+        - article [ref=e549]:
+          - generic [ref=e551]: Beginner
+          - heading "Field Reporting with SpringHub Forms" [level=3] [ref=e552]
+          - paragraph [ref=e553]: Walk through the four SpringHub forms — monitoring, restoration, seedling stock, and trench/tree tracker.
+          - generic [ref=e554]:
+            - generic [ref=e555]:
+              - img [ref=e556]
+              - text: 30 min
+            - generic [ref=e559]:
+              - img [ref=e560]
+              - text: 4 modules
+          - button "Start Course" [ref=e564] [cursor=pointer]:
+            - img [ref=e565]
+            - text: Start Course
+    - generic [ref=e568]:
+      - generic [ref=e569]:
+        - generic [ref=e570]:
+          - heading "Latest Media" [level=2] [ref=e571]
+          - paragraph [ref=e572]: Events, publications, and press from Jaga Semesta and SpringHub.
+        - link "Visit our YouTube" [ref=e573] [cursor=pointer]:
+          - /url: https://youtube.com/@jagasemesta
+          - text: Visit our YouTube
+          - img [ref=e574]
+      - generic [ref=e578]:
+        - article [ref=e579]:
+          - img [ref=e581]
+          - generic [ref=e584]:
+            - img [ref=e585]
+            - text: Video
+          - heading "Jaga Semesta · Restorasi Mata Air" [level=3] [ref=e588]
+          - generic [ref=e589]: Apr 2026
+          - paragraph [ref=e590]: Tonton perjalanan komunitas kami merestorasi mata air dari Bali sampai Madura.
+          - link "Watch on YouTube" [ref=e591] [cursor=pointer]:
+            - /url: https://youtu.be/oUDA1loE8BE
+            - text: Watch on YouTube
+            - img [ref=e592]
+        - article [ref=e596]:
+          - img [ref=e598]
+          - generic [ref=e600]:
+            - img [ref=e601]
+            - text: Event
+          - heading "Restorasi Mata Air Sumber Sabrangan, Mojokerto" [level=3] [ref=e603]
+          - generic [ref=e604]: 9 Feb 2025 · 200 relawan · 5000 bibit bambu
+          - paragraph [ref=e605]: Kegiatan kolektif membersihkan sedimen, memasang flowmeter, dan menanam 5000 bambu di catchment Sumber Sabrangan.
+          - link "Read recap" [ref=e606] [cursor=pointer]:
+            - /url: "#"
+            - text: Read recap
+            - img [ref=e607]
+        - article [ref=e609]:
+          - img [ref=e611]
+          - generic [ref=e614]:
+            - img [ref=e615]
+            - text: Publication
+          - 'heading "Laporan Dampak 2025: 200+ Mata Air Terlindungi" [level=3] [ref=e618]'
+          - generic [ref=e619]: Jan 2026 · PDF, 36 hal.
+          - paragraph [ref=e620]: "Ringkasan capaian tahunan: pemantauan, restorasi, penanaman, dan kemitraan strategis di tujuh provinsi."
+          - link "Download report" [ref=e621] [cursor=pointer]:
+            - /url: "#"
+            - text: Download report
+            - img [ref=e622]
+        - article [ref=e624]:
+          - img [ref=e626]
+          - generic [ref=e629]:
+            - img [ref=e630]
+            - text: Press
+          - 'heading "Kompas: Sumber Air di Kebumen Diselamatkan Warga" [level=3] [ref=e633]'
+          - generic [ref=e634]: Jan 2026
+          - paragraph [ref=e635]: Liputan media tentang gerakan warga Kebumen menolak tambang dan menjaga 28 titik mata air karst.
+          - link "Read article" [ref=e636] [cursor=pointer]:
+            - /url: "#"
+            - text: Read article
+            - img [ref=e637]
+  - contentinfo [ref=e639]:
+    - generic [ref=e640]:
+      - generic [ref=e641]:
+        - generic [ref=e642]:
+          - img [ref=e644]
+          - generic [ref=e647]:
+            - generic [ref=e648]: SPRINGHUB
+            - generic [ref=e649]: by Jaga Semesta
+        - paragraph [ref=e650]: Empowering communities across Indonesia to protect and restore our precious water sources through collaborative conservation efforts.
+        - generic [ref=e651]:
+          - generic [ref=e652]: Stay Updated
+          - generic [ref=e653]:
+            - textbox "Enter your email" [ref=e654]
+            - button "Subscribe" [ref=e655] [cursor=pointer]
+        - generic [ref=e656]:
+          - link "Instagram · @jagasemesta" [ref=e657] [cursor=pointer]:
+            - /url: https://www.instagram.com/jagasemesta?igsh=MXBxdDk4d3gyZTNwdA%3D%3D&utm_source=qr
+            - img [ref=e658]
+          - link "YouTube · @jagasemesta" [ref=e661] [cursor=pointer]:
+            - /url: https://youtube.com/@jagasemesta?si=eUuyORclR8QeD97O
+            - img [ref=e662]
+          - link "TikTok · @jagasemesta" [ref=e665] [cursor=pointer]:
+            - /url: https://www.tiktok.com/@jagasemesta?_r=1&_t=ZS-95vqTV1Q0A5
+            - img [ref=e666]
+          - link "Facebook · Jaga Semesta" [ref=e668] [cursor=pointer]:
+            - /url: https://www.facebook.com/jagasemesta
+            - img [ref=e669]
+      - generic [ref=e671]:
+        - generic [ref=e672]:
+          - generic [ref=e673]: Platform
+          - list [ref=e674]:
+            - listitem [ref=e675]:
+              - link "Spring Map" [ref=e676] [cursor=pointer]:
+                - /url: "#map"
+            - listitem [ref=e677]:
+              - link "Dashboard" [ref=e678] [cursor=pointer]:
+                - /url: "#dashboard"
+            - listitem [ref=e679]:
+              - link "Community" [ref=e680] [cursor=pointer]:
+                - /url: "#community"
+            - listitem [ref=e681]:
+              - link "Learning Hub" [ref=e682] [cursor=pointer]:
+                - /url: "#learn"
+            - listitem [ref=e683]:
+              - link "Media" [ref=e684] [cursor=pointer]:
+                - /url: "#media"
+        - generic [ref=e685]:
+          - generic [ref=e686]: Support
+          - list [ref=e687]:
+            - listitem [ref=e688]:
+              - link "Help Center" [ref=e689] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e690]:
+              - link "Contact Us" [ref=e691] [cursor=pointer]:
+                - /url: https://wa.me/628112995190
+            - listitem [ref=e692]:
+              - link "Report Issue" [ref=e693] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e694]:
+              - link "FAQ" [ref=e695] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=e696]:
+          - generic [ref=e697]: About
+          - list [ref=e698]:
+            - listitem [ref=e699]:
+              - link "Our Mission" [ref=e700] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e701]:
+              - link "Become a Partner" [ref=e702] [cursor=pointer]:
+                - /url: "#donate"
+            - listitem [ref=e703]:
+              - link "Impact Report" [ref=e704] [cursor=pointer]:
+                - /url: "#media"
+        - generic [ref=e705]:
+          - generic [ref=e706]: Legal
+          - list [ref=e707]:
+            - listitem [ref=e708]:
+              - link "Privacy Policy" [ref=e709] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e710]:
+              - link "Terms of Service" [ref=e711] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e712]:
+              - link "Cookie Policy" [ref=e713] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e714]:
+              - link "Data Protection" [ref=e715] [cursor=pointer]:
+                - /url: "#"
+      - list [ref=e717]:
+        - listitem [ref=e718]:
+          - img [ref=e719]
+          - generic [ref=e721]:
+            - generic [ref=e722]: WhatsApp
+            - link "+62 811-2995-190" [ref=e723] [cursor=pointer]:
+              - /url: https://wa.me/628112995190
+        - listitem [ref=e724]:
+          - img [ref=e725]
+          - generic [ref=e727]:
+            - generic [ref=e728]: Phone
+            - link "+62 811-2995-190" [ref=e729] [cursor=pointer]:
+              - /url: tel:+628112995190
+        - listitem [ref=e730]:
+          - img [ref=e731]
+          - generic [ref=e734]:
+            - generic [ref=e735]: Email
+            - link "info@jagasemesta.id" [ref=e736] [cursor=pointer]:
+              - /url: mailto:info@jagasemesta.id
+        - listitem [ref=e737]:
+          - img [ref=e738]
+          - generic [ref=e741]:
+            - generic [ref=e742]: Address
+            - text: Jakarta, Indonesia
+    - generic [ref=e744]:
+      - generic [ref=e745]: © 2026 SPRINGHUB by Jaga Semesta. All rights reserved.
+      - generic [ref=e746]:
+        - link "Instagram" [ref=e747] [cursor=pointer]:
+          - /url: https://www.instagram.com/jagasemesta?igsh=MXBxdDk4d3gyZTNwdA%3D%3D&utm_source=qr
+          - img [ref=e748]
+        - link "YouTube" [ref=e751] [cursor=pointer]:
+          - /url: https://youtube.com/@jagasemesta?si=eUuyORclR8QeD97O
+          - img [ref=e752]
+        - link "TikTok" [ref=e755] [cursor=pointer]:
+          - /url: https://www.tiktok.com/@jagasemesta?_r=1&_t=ZS-95vqTV1Q0A5
+          - img [ref=e756]
+        - link "Facebook" [ref=e758] [cursor=pointer]:
+          - /url: https://www.facebook.com/jagasemesta
+          - img [ref=e759]
+  - alert [ref=e761]
