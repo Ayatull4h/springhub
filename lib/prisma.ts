@@ -6,13 +6,7 @@ const globalForPrisma = globalThis as unknown as {
 
 function getPrisma(): PrismaClient {
   if (!globalForPrisma.prisma) {
-    const url = process.env.DATABASE_URL;
-    if (!url && process.env.NODE_ENV === "production") {
-      throw new Error("DATABASE_URL is not set");
-    }
-    globalForPrisma.prisma = new PrismaClient({
-      datasourceUrl: url,
-    });
+    globalForPrisma.prisma = new PrismaClient();
   }
   return globalForPrisma.prisma;
 }
