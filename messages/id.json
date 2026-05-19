@@ -266,6 +266,8 @@
   "profile.editSaving": "Menyimpan...",
   "profile.editSaved": "Profil berhasil diperbarui!",
   "profile.editError": "Gagal memperbarui profil.",
+  "profile.recentActivity": "Aktivitas Terbaru",
+  "profile.noActivity": "Belum ada aktivitas terbaru.",
 
   "report.formNotFound": "Formulir tidak ditemukan",
   "report.formNotFoundDesc": "Formulir yang Anda cari tidak ada.",

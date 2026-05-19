@@ -425,81 +425,57 @@ export default function ProfilePage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="mt-8">
-        <h2 className="text-lg font-bold text-ink">{t("profile.recentActivity")}</h2>
-        {(() => {
-          const items: { id: string; type: string; message: string; icon: typeof Bell; time: string; color: string }[] = [];
-          pointsLogs.forEach((p) => {
-            items.push({
-              id: `p-${p.id}`,
-              type: "points",
-              message: `+${p.amount} pts: ${p.reason}`,
-              icon: Sparkles,
-              time: p.createdAt,
-              color: "text-brand-600",
+      {(() => {
+        const activityItems: { id: string; message: string; icon: typeof Sparkles; time: string; color: string }[] = [];
+        pointsLogs.forEach((p) => {
+          activityItems.push({
+            id: `p-${p.id}`,
+            message: `+${p.amount} pts: ${p.reason}`,
+            icon: Sparkles,
+            time: p.createdAt,
+            color: "text-brand-600",
+          });
+        });
+        reports.forEach((r) => {
+          if (r.status === "approved" || r.status === "rejected") {
+            activityItems.push({
+              id: `r-${r.id}`,
+              message: `Laporan ${r.formSlug} ${r.status === "approved" ? "disetujui" : "ditolak"}`,
+              icon: r.status === "approved" ? CheckCircle2 : XCircle,
+              time: r.createdAt,
+              color: r.status === "approved" ? "text-emerald-600" : "text-red-600",
             });
-          });
-          reports.forEach((r) => {
-            if (r.status === "approved" || r.status === "rejected") {
-              items.push({
-                id: `r-${r.id}`,
-                type: r.status,
-                message: `Laporan ${r.formSlug} ${r.status === "approved" ? "disetujui" : "ditolak"}`,
-                icon: r.status === "approved" ? CheckCircle2 : XCircle,
-                time: r.createdAt,
-                color: r.status === "approved" ? "text-emerald-600" : "text-red-600",
-              });
-            }
-          });
-          items.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
-          return items.slice(0, 10);
-        })().length === 0 ? (
-          <p className="mt-2 text-sm text-ink-muted">{t("profile.noActivity")}</p>
-        ) : (
-          <div className="mt-3 space-y-1">
-            {(() => {
-              const items: { id: string; type: string; message: string; icon: typeof Bell; time: string; color: string }[] = [];
-              pointsLogs.forEach((p) => {
-                items.push({
-                  id: `p-${p.id}`,
-                  type: "points",
-                  message: `+${p.amount} pts: ${p.reason}`,
-                  icon: Sparkles,
-                  time: p.createdAt,
-                  color: "text-brand-600",
-                });
-              });
-              reports.forEach((r) => {
-                if (r.status === "approved" || r.status === "rejected") {
-                  items.push({
-                    id: `r-${r.id}`,
-                    type: r.status,
-                    message: `Laporan ${r.formSlug} ${r.status === "approved" ? "disetujui" : "ditolak"}`,
-                    icon: r.status === "approved" ? CheckCircle2 : XCircle,
-                    time: r.createdAt,
-                    color: r.status === "approved" ? "text-emerald-600" : "text-red-600",
-                  });
-                }
-              });
-              items.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
-              return items.slice(0, 10);
-            })().map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.id} className="flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-slate-50">
-                  <Icon className={`h-4 w-4 shrink-0 ${item.color}`} />
-                  <div className="flex-1">
-                    <span className="text-ink">{item.message}</span>
-                  </div>
-                  <span className="text-xs text-ink-subtle whitespace-nowrap">
-                    {new Date(item.time).toLocaleDateString("id-ID")}
-                  </span>
-                </div>
-              );
-            })}
+          }
+        });
+        activityItems.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+        const top = activityItems.slice(0, 10);
+
+        return (
+          <div className="mt-8">
+            <h2 className="text-lg font-bold text-ink">{t("profile.recentActivity")}</h2>
+            {top.length === 0 ? (
+              <p className="mt-2 text-sm text-ink-muted">{t("profile.noActivity")}</p>
+            ) : (
+              <div className="mt-3 space-y-1">
+                {top.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.id} className="flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-slate-50">
+                      <Icon className={`h-4 w-4 shrink-0 ${item.color}`} />
+                      <div className="flex-1">
+                        <span className="text-ink">{item.message}</span>
+                      </div>
+                      <span className="text-xs text-ink-subtle whitespace-nowrap">
+                        {new Date(item.time).toLocaleDateString("id-ID")}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        );
+      })()}
     </div>
   );
 }
