@@ -4,6 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   reactStrictMode: true,
+  output: "standalone",
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**" },
