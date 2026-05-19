@@ -1,25 +1,17 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import enMessages from "@/messages/en.json";
+import idMessages from "@/messages/id.json";
 
 export type Locale = "en" | "id";
 
 type Messages = Record<string, string>;
 
-const messagesCache: Partial<Record<Locale, Messages>> = {};
-
-async function loadMessages(locale: Locale): Promise<Messages> {
-  if (messagesCache[locale]) return messagesCache[locale]!;
-
-  try {
-    const mod = await import(`@/messages/${locale}.json`);
-    messagesCache[locale] = mod.default ?? mod;
-    return messagesCache[locale]!;
-  } catch {
-    console.error(`Failed to load messages for ${locale}`);
-    return {};
-  }
-}
+const allMessages: Record<Locale, Messages> = {
+  en: enMessages as Messages,
+  id: idMessages as Messages,
+};
 
 type I18nParams = Record<string, string>;
 
@@ -44,33 +36,24 @@ function getInitialLocale(): Locale {
     .find((row) => row.startsWith("locale="))
     ?.split("=")[1];
   if (cookie === "id" || cookie === "en") return cookie;
-  // Default to browser language
   const lang = navigator.language?.slice(0, 2);
   return lang === "id" ? "id" : "en";
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en");
-  const [messages, setMessages] = useState<Messages>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const initial = getInitialLocale();
     setLocaleState(initial);
-    loadMessages(initial).then((msgs) => {
-      setMessages(msgs);
-      setLoading(false);
-    });
+    setLoading(false);
   }, []);
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
-    setLoading(true);
+    setLoading(false);
     document.cookie = `locale=${l};path=/;max-age=${60 * 60 * 24 * 365}`;
-    loadMessages(l).then((msgs) => {
-      setMessages(msgs);
-      setLoading(false);
-    });
   }, []);
 
   const interpolate = useCallback(
@@ -80,6 +63,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     },
     []
   );
+
+  const messages = allMessages[locale] ?? {};
 
   const t = useCallback(
     (key: string, paramsOrFallback?: I18nParams | string) => {
