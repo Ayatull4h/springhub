@@ -119,6 +119,12 @@ export default function SignInPage() {
             </div>
           </div>
 
+          <div className="flex justify-end">
+            <Link href="/forgot-password" className="text-xs text-brand-600 hover:text-brand-700">
+              Lupa password?
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
