@@ -20,6 +20,28 @@ export default function AdminUsersPage() {
   const { t } = useI18n();
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingRole, setEditingRole] = useState<string | null>(null);
+  const [savingRole, setSavingRole] = useState(false);
+
+  async function handleRoleSave(userId: string, newRole: string) {
+    setSavingRole(true);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
+      if (res.ok) {
+        const data = await fetch("/api/admin/users").then(r => r.json());
+        setUsers(data.users ?? []);
+      }
+    } catch (e) {
+      console.error("Failed to update role", e);
+    } finally {
+      setSavingRole(false);
+      setEditingRole(null);
+    }
+  }
 
   useEffect(() => {
     fetch("/api/admin/users")
@@ -84,7 +106,36 @@ export default function AdminUsersPage() {
                   </span>
                 </td>
                 <td className="py-3 pr-4">
-                  <span className="chip capitalize bg-brand-50 text-brand-700">{u.role}</span>
+                  {editingRole === u.id ? (
+                    <div className="flex items-center gap-1">
+                      <select
+                        defaultValue={u.role}
+                        onChange={(e) => {
+                          handleRoleSave(u.id, e.target.value);
+                        }}
+                        disabled={savingRole}
+                        className="rounded-md border border-ink-line px-2 py-1 text-xs"
+                      >
+                        <option value="user">User</option>
+                        <option value="volunteer">Volunteer</option>
+                        <option value="field_lead">Field Lead</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                      <button
+                        onClick={() => setEditingRole(null)}
+                        className="text-xs text-ink-muted hover:text-ink"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setEditingRole(u.id)}
+                      className="chip capitalize bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer"
+                    >
+                      {u.role}
+                    </button>
+                  )}
                 </td>
                 <td className="py-3 pr-4 text-ink-muted">
                   <span className="inline-flex items-center gap-1">
