@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 export function Hero() {
@@ -28,6 +28,13 @@ export function Hero() {
           >
             {t("hero.cta.back")}
             <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            href="#community"
+            className="btn-secondary px-5 py-3 text-base"
+          >
+            Cara Dapat Poin
+            <Info className="h-4 w-4" />
           </Link>
         </div>
       </div>

@@ -320,11 +320,12 @@ async function main() {
   });
 
   // ─── PointRule seed data ──────────────────────────────────────────────
+  // Uses deterministic slug IDs to prevent duplicate inserts on re-seed
   const pointRules = [
     { name: "Spring Monitoring", description: "Melaporkan kondisi mata air", points: 25, category: "basic", icon: "Eye", sortOrder: 1 },
     { name: "Spring Restoration", description: "Melaporkan kegiatan restorasi", points: 100, category: "basic", icon: "Wrench", sortOrder: 2 },
-    { name: "Trench Development", description: "Membuat rorak/parit resapan", points: 50, category: "basic", icon: "Trench", sortOrder: 3 },
-    { name: "Tree Planting", description: "Menanam pohon", points: 50, category: "basic", icon: "TreePine", sortOrder: 4 },
+    { name: "Trench Development", description: "Membuat rorak/parit resapan", points: 50, category: "basic", icon: "TreePine", sortOrder: 3 },
+    { name: "Tree Planting", description: "Menanam pohon", points: 50, category: "basic", icon: "Sprout", sortOrder: 4 },
     { name: "Seedling Stock", description: "Melaporkan stok bibit", points: 15, category: "basic", icon: "Sprout", sortOrder: 5 },
     { name: "Streak Harian", description: "Lapor 3 hari berturut-turut", points: 5, category: "bonus", icon: "Flame", sortOrder: 6 },
     { name: "Streak Mingguan", description: "Lapor setiap hari dalam seminggu", points: 50, category: "bonus", icon: "CalendarCheck", sortOrder: 7 },
@@ -339,17 +340,11 @@ async function main() {
   ];
 
   for (const rule of pointRules) {
+    const id = rule.name.toLowerCase().replace(/\s+/g, "-");
     await prisma.pointRule.upsert({
-      where: { id: rule.name },
-      update: {},
-      create: {
-        name: rule.name,
-        description: rule.description,
-        points: rule.points,
-        category: rule.category,
-        icon: rule.icon,
-        sortOrder: rule.sortOrder,
-      },
+      where: { id },
+      update: { isActive: true },
+      create: { id, ...rule, isActive: true },
     });
   }
   console.log(`✓ ${pointRules.length} point rules created`);
