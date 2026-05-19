@@ -18,10 +18,10 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/logo-dark.png", type: "image/png" },
+      { url: "/logo-light.png", type: "image/png" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
-    apple: "/apple-touch-icon.png",
+    apple: "/logo-light.png",
   },
   openGraph: {
     title: "SpringHub · Community-Driven Spring Restoration",
