@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 import {
   AlertCircle,
@@ -169,12 +170,15 @@ export function SpringMap() {
                   key={r.id}
                   className="flex items-start gap-3 rounded-lg border border-ink-line/60 p-3"
                 >
-                  <span
-                    className={cn(
-                      "mt-1.5 h-2 w-2 flex-none rounded-full",
-                      styles.dot
-                    )}
-                  />
+                  <span className="h-10 w-10 flex-none overflow-hidden rounded-md">
+                    <Image
+                      src="https://images.unsplash.com/photo-1588279103569-1ce0b0fc9d2a?w=80&h=80&fit=crop"
+                      alt="Spring"
+                      width={40}
+                      height={40}
+                      className="h-full w-full object-cover"
+                    />
+                  </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <div className="truncate text-sm font-semibold text-ink">

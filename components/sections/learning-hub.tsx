@@ -24,6 +24,12 @@ type ProgressItem = {
   completed: boolean;
 };
 
+const courseImages = [
+  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=250&fit=crop",
+  "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=250&fit=crop",
+  "https://images.unsplash.com/photo-1518173946687-a36f968f7fcc?w=400&h=250&fit=crop",
+];
+
 export function LearningHub() {
   const { t } = useI18n();
   const [courses, setCourses] = useState<CourseItem[]>([]);
@@ -87,7 +93,7 @@ export function LearningHub() {
             return (
               <article key={c.id} className="card flex flex-col">
                 <div className="aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
-                  <Image src="/images/course.svg" alt={c.title} width={400} height={250} className="h-full w-full object-cover" />
+                  <Image src={courseImages[courses.indexOf(c) % courseImages.length]} alt={c.title} width={400} height={250} className="h-full w-full object-cover" />
                 </div>
                 <span className="chip mt-4 self-start bg-brand-50 text-brand-700">
                   {c.level}

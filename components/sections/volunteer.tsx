@@ -23,6 +23,12 @@ import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 
+const activityImages = [
+  "https://images.unsplash.com/photo-1588279103569-1ce0b0fc9d2a?w=400&h=250&fit=crop",
+  "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=250&fit=crop",
+  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=250&fit=crop",
+];
+
 export function VolunteerActivities() {
   const { t } = useI18n();
   const [showPoints, setShowPoints] = useState(false);
@@ -64,7 +70,7 @@ export function VolunteerActivities() {
                     </span>
                   </div>
                   <div className="mt-3 aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
-                    <Image src="/images/activity.svg" alt="Activity" width={400} height={250} className="h-full w-full object-cover" />
+                    <Image src={activityImages[i % activityImages.length]} alt="Activity" width={400} height={250} className="h-full w-full object-cover" />
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-xs text-ink-muted">
                     <MapPin className="h-3.5 w-3.5" />

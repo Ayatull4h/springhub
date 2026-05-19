@@ -13,6 +13,13 @@ import {
 import { mediaItems, type MediaItem } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
 
+const mediaImages = [
+  "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=400&h=250&fit=crop",
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
+  "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=250&fit=crop",
+  "https://images.unsplash.com/photo-1552799446-159ba9523315?w=400&h=250&fit=crop",
+];
+
 const typeMeta: Record<MediaItem["type"], { Icon: typeof PlayCircle; chip: string }> = {
   Video: {
     Icon: PlayCircle,
@@ -66,7 +73,7 @@ export function MediaSection() {
           return (
             <article key={m.title} className="card flex flex-col">
               <div className="aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
-                <Image src="/images/media.svg" alt={m.title} width={400} height={250} className="h-full w-full object-cover" />
+                <Image src={mediaImages[mediaItems.indexOf(m) % mediaImages.length]} alt={m.title} width={400} height={250} className="h-full w-full object-cover" />
               </div>
               <span className={`chip mt-4 self-start ${meta.chip}`}>
                 <Icon className="h-3 w-3" />
