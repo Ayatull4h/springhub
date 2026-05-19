@@ -23,7 +23,7 @@ const LeafletMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="grid h-full w-full place-items-center bg-slate-50 text-sm text-ink-subtle">
+      <div className="grid h-full w-full place-items-center bg-slate-50 text-sm text-ink-subtle dark:bg-slate-800 dark:text-slate-400">
         Loading OpenStreetMap…
       </div>
     ),
@@ -106,7 +106,7 @@ export function SpringMap() {
         {t("map.description")}
       </p>
 
-      <div className="mx-auto mt-4 flex max-w-3xl items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2 text-xs text-amber-900">
+      <div className="mx-auto mt-4 flex max-w-3xl items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2 text-xs text-amber-900 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-200">
         <ShieldCheck className="mt-0.5 h-4 w-4 flex-none" />
         <span
           dangerouslySetInnerHTML={{
@@ -119,7 +119,7 @@ export function SpringMap() {
 
       {/* Full-width map */}
       <div className="card mt-6 overflow-hidden p-0">
-        <div className="flex flex-wrap items-center gap-2 border-b border-ink-line p-4">
+        <div className="flex flex-wrap items-center gap-2 border-b border-ink-line p-4 dark:border-slate-700">
           <span className="mr-1 text-sm font-semibold text-ink">
             {t("map.springLocations")}
           </span>
@@ -130,8 +130,8 @@ export function SpringMap() {
               className={cn(
                 "chip border transition",
                 filter === f.id
-                  ? "border-brand-200 bg-brand-50 text-brand-700"
-                  : "border-ink-line bg-white text-ink-muted hover:bg-slate-50"
+                  ? "border-brand-200 bg-brand-50 text-brand-700 dark:border-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
+                  : "border-ink-line bg-white text-ink-muted hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
               )}
             >
               {f.label}
@@ -168,7 +168,7 @@ export function SpringMap() {
               return (
                 <li
                   key={r.id}
-                  className="flex items-start gap-3 rounded-lg border border-ink-line/60 p-3"
+                  className="flex items-start gap-3 rounded-lg border border-ink-line/60 p-3 dark:border-slate-700"
                 >
                   <span className="h-10 w-10 flex-none overflow-hidden rounded-md">
                     <Image
@@ -206,7 +206,7 @@ export function SpringMap() {
           </ul>
         </div>
 
-        <div className="card bg-gradient-to-br from-brand-50 to-white lg:col-span-6">
+        <div className="card bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 lg:col-span-6">
           <div className="flex items-center justify-between gap-2">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ClipboardList className="h-4 w-4 text-brand-600" />
@@ -224,7 +224,7 @@ export function SpringMap() {
               <Link
                 key={f.slug}
                 href={`/report/${f.slug}`}
-                className="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300"
+                className="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300 dark:border-slate-700 dark:bg-slate-800"
               >
                 <span className="min-w-0">
                   <span className="block truncate font-medium text-ink">
@@ -238,7 +238,7 @@ export function SpringMap() {
               </Link>
             ))}
           </div>
-          <div className="mt-3 flex items-start gap-2 rounded-lg border border-ink-line/60 bg-white px-3 py-2 text-xs text-ink-muted">
+          <div className="mt-3 flex items-start gap-2 rounded-lg border border-ink-line/60 bg-white px-3 py-2 text-xs text-ink-muted dark:border-slate-700 dark:bg-slate-800">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-none text-brand-600" />
             <span
               dangerouslySetInnerHTML={{

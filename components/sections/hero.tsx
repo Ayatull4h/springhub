@@ -39,7 +39,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="relative aspect-video overflow-hidden rounded-2xl border border-ink-line bg-slate-900 shadow-card">
+      <div className="relative aspect-video overflow-hidden rounded-2xl border border-ink-line bg-slate-900 shadow-card dark:border-slate-700">
         <iframe
           className="absolute inset-0 h-full w-full"
           src="https://www.youtube.com/embed/oUDA1loE8BE?rel=0&modestbranding=1"

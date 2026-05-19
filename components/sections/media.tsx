@@ -63,10 +63,10 @@ export function MediaSection() {
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[1,2,3,4].map(i => (
             <div key={i} className="card animate-pulse">
-              <div className="h-40 rounded-lg bg-slate-200" />
-              <div className="mt-3 h-4 w-16 rounded bg-slate-200" />
-              <div className="mt-2 h-4 w-3/4 rounded bg-slate-200" />
-              <div className="mt-1 h-3 w-1/2 rounded bg-slate-200" />
+              <div className="h-40 rounded-lg bg-slate-200 dark:bg-slate-700" />
+              <div className="mt-3 h-4 w-16 rounded bg-slate-200 dark:bg-slate-700" />
+              <div className="mt-2 h-4 w-3/4 rounded bg-slate-200 dark:bg-slate-700" />
+              <div className="mt-1 h-3 w-1/2 rounded bg-slate-200 dark:bg-slate-700" />
             </div>
           ))}
         </div>
@@ -91,9 +91,9 @@ export function MediaSection() {
                     <img src={item.imageUrl} alt={item.title} className="h-40 w-full object-cover transition group-hover:scale-105" />
                   </div>
                 ) : (
-                  <div className="-mx-4 -mt-4 mb-3 h-40 rounded-t-xl bg-gradient-to-br from-brand-100 to-brand-50" />
+                  <div className="-mx-4 -mt-4 mb-3 h-40 rounded-t-xl bg-gradient-to-br from-brand-100 to-brand-50 dark:from-brand-900/30 dark:to-brand-800/30" />
                 )}
-                <span className={`chip text-xs ${typeColors[item.type] || "bg-slate-100 text-slate-700"}`}>
+                <span className={`chip text-xs ${typeColors[item.type] || "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"}`}>
                   {item.type}
                 </span>
                 <h3 className="mt-2 text-sm font-semibold text-ink">{item.title}</h3>

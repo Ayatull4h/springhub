@@ -33,10 +33,10 @@ export function ImpactDashboard() {
           return (
             <div key={s.label} className="card">
               <div className="flex items-center justify-between">
-                <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600">
+                <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-300">
                   <Icon className="h-5 w-5" />
                 </span>
-                <span className="chip bg-brand-50 text-brand-700">
+                <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                   <TrendingUp className="h-3 w-3" />
                   {(s.delta.match(/^[+-]?\d+/) ?? ["0"])[0]}
                 </span>
@@ -68,7 +68,7 @@ export function ImpactDashboard() {
                       {p.value} {suffix}
                     </span>
                   </div>
-                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                     <div
                       className="h-full rounded-full bg-brand-500"
                       style={{ width: `${pct}%` }}
@@ -86,9 +86,9 @@ export function ImpactDashboard() {
             {topRegions.map((r) => (
               <li
                 key={r.rank}
-                className="flex items-start gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5"
+                className="flex items-start gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5 dark:border-slate-700"
               >
-                <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">
+                <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                   {r.rank}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -106,9 +106,9 @@ export function ImpactDashboard() {
             {topVolunteers.map((v) => (
               <li
                 key={v.rank}
-                className="flex items-center gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5"
+                className="flex items-center gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5 dark:border-slate-700"
               >
-                <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">
+                <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                   {v.rank}
                 </span>
                 <div className="min-w-0 flex-1">

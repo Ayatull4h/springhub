@@ -183,7 +183,7 @@ export function DonateSection() {
             {PAYMENT_METHODS.map((m) => (
               <span
                 key={m.id}
-                className="inline-flex items-center rounded border border-ink-line bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink-muted"
+                className="inline-flex items-center rounded border border-ink-line bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink-muted dark:border-slate-700 dark:bg-slate-800"
               >
                 {m.label}
               </span>
@@ -204,8 +204,8 @@ export function DonateSection() {
                   className={cn(
                     "rounded-lg border px-3 py-3 text-left transition",
                     selected
-                      ? "border-brand-500 bg-brand-50"
-                      : "border-ink-line hover:border-brand-300"
+                      ? "border-brand-500 bg-brand-50 dark:border-brand-700 dark:bg-brand-900/30"
+                      : "border-ink-line hover:border-brand-300 dark:border-slate-700 dark:hover:border-brand-700"
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -232,7 +232,7 @@ export function DonateSection() {
                 if (val) setTierId("custom");
               }}
               placeholder={t("donate.customAmountPlaceholder")}
-              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </label>
 
@@ -250,7 +250,7 @@ export function DonateSection() {
               value={donorName}
               onChange={(e) => setDonorName(e.target.value)}
               placeholder={t("donate.fullNamePlaceholder")}
-              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </label>
           <label className="mt-3 block text-xs font-medium text-ink">
@@ -260,7 +260,7 @@ export function DonateSection() {
               value={donorEmail}
               onChange={(e) => setDonorEmail(e.target.value)}
               placeholder={t("donate.emailPlaceholder")}
-              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </label>
 
@@ -312,7 +312,7 @@ export function DonateSection() {
             const typeMeta = PROJECT_TYPES.find((t) => t.id === p.typeId);
             return (
               <article key={p.title} className="card flex gap-4">
-                <div className="aspect-square w-28 flex-none rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50" />
+                <div className="aspect-square w-28 flex-none rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50 dark:from-emerald-900/30 dark:to-sky-900/30" />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="chip bg-brand-50 text-brand-700">
@@ -330,7 +330,7 @@ export function DonateSection() {
                   <p className="mt-1 line-clamp-2 text-xs text-ink-muted">
                     {p.summary}
                   </p>
-                  <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                  <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                     <div
                       className="h-full rounded-full bg-brand-500"
                       style={{ width: `${pct}%` }}
@@ -351,7 +351,7 @@ export function DonateSection() {
                     disabled={blocked}
                     className={
                       blocked
-                        ? "mt-3 inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-md border border-ink-line bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500"
+                        ? "mt-3 inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-md border border-ink-line bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 dark:border-slate-700 dark:bg-slate-800"
                         : "btn-secondary mt-3 w-full"
                     }
                   >
@@ -367,7 +367,7 @@ export function DonateSection() {
       </div>
 
       {/* Partner section */}
-      <div className="mt-6 card grid gap-6 bg-gradient-to-br from-brand-50 to-white md:grid-cols-3 md:items-center">
+      <div className="mt-6 card grid gap-6 bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 md:grid-cols-3 md:items-center">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2 text-sm font-semibold text-ink">
             <Handshake className="h-4 w-4 text-brand-600" />

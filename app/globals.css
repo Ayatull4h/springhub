@@ -41,3 +41,33 @@
   background-color: #1e293b !important;
   border-color: #334155 !important;
 }
+
+.dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-slate-50 {
+  background-color: #0f172a !important;
+}
+
+.dark .text-ink {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-ink-muted {
+  color: #94a3b8 !important;
+}
+
+.dark .text-ink-subtle {
+  color: #64748b !important;
+}
+
+.dark .border-ink-line {
+  border-color: #334155 !important;
+}
+
+.dark .btn-secondary {
+  background-color: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}

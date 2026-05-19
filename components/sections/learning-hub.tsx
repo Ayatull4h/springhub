@@ -83,7 +83,7 @@ export function LearningHub() {
         </div>
       ) : courses.length === 0 ? (
         <div className="mt-10 text-center">
-          <BookOpen className="mx-auto h-10 w-10 text-slate-300" />
+          <BookOpen className="mx-auto h-10 w-10 text-slate-300 dark:text-slate-600" />
           <p className="mt-2 text-sm text-ink-muted">No courses available yet</p>
         </div>
       ) : (
@@ -92,10 +92,10 @@ export function LearningHub() {
             const prog = getProgress(c.slug);
             return (
               <article key={c.id} className="card flex flex-col">
-                <div className="aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
+                <div className="aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50 dark:from-emerald-900/30 dark:to-sky-900/30">
                   <Image src={courseImages[courses.indexOf(c) % courseImages.length]} alt={c.title} width={400} height={250} className="h-full w-full object-cover" />
                 </div>
-                <span className="chip mt-4 self-start bg-brand-50 text-brand-700">
+                <span className="chip mt-4 self-start bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                   {c.level}
                 </span>
                 <h3 className="mt-2 text-base font-semibold text-ink">
@@ -119,7 +119,7 @@ export function LearningHub() {
                 {/* Progress indicator */}
                 {prog && (
                   <div className="mt-3">
-                    <div className="flex h-1.5 overflow-hidden rounded-full bg-slate-100">
+                    <div className="flex h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                       <div
                         className="rounded-full bg-brand-600 transition-all"
                         style={{
