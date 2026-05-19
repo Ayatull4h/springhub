@@ -17,11 +17,8 @@ export const metadata: Metadata = {
     "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
   manifest: "/manifest.json",
   icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/logo-light.png", type: "image/png" },
-    ],
-    apple: "/logo-light.png",
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
   },
   openGraph: {
     title: "SpringHub · Community-Driven Spring Restoration",
