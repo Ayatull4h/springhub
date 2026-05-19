@@ -7,6 +7,7 @@ import {
   FileText,
   Heart,
   HardHat,
+  Award,
   CheckCircle2,
   Clock,
   XCircle,
@@ -14,6 +15,8 @@ import {
   Download,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+
+export const dynamic = "force-dynamic";
 
 type ReportItem = {
   id: string;
@@ -25,8 +28,9 @@ type ReportItem = {
 
 export default function AdminDashboard() {
   const { t } = useI18n();
-  const [stats, setStats] = useState({ users: 0, reports: 0, donations: 0, projects: 0 });
+  const [stats, setStats] = useState({ users: 0, reports: 0, donations: 0, projects: 0, points: 0 });
   const [recentReports, setRecentReports] = useState<ReportItem[]>([]);
+  const [recentUsers, setRecentUsers] = useState<{ id: string; username: string; role: string; createdAt: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,15 +39,22 @@ export default function AdminDashboard() {
       fetch("/api/admin/reports").then((r) => r.json()),
       fetch("/api/admin/donations").then((r) => r.json()),
       fetch("/api/admin/projects").then((r) => r.json()),
+      fetch("/api/admin/points").then((r) => r.json()),
     ])
-      .then(([usersData, reportsData, donationsData, projectsData]) => {
+      .then(([usersData, reportsData, donationsData, projectsData, pointsData]) => {
+        const allUsers = usersData.users ?? [];
+        const sorted = [...allUsers].sort(
+          (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
         setStats({
-          users: usersData.users?.length ?? 0,
+          users: allUsers.length,
           reports: reportsData.reports?.length ?? 0,
           donations: donationsData.donations?.length ?? 0,
           projects: projectsData.projects?.length ?? 0,
+          points: pointsData.total ?? 0,
         });
         setRecentReports((reportsData.reports ?? []).slice(0, 10));
+        setRecentUsers(sorted.slice(0, 5));
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -58,6 +69,7 @@ export default function AdminDashboard() {
   const statCards = [
     { label: t("admin.totalUsers"), value: stats.users.toString(), change: "Registered", icon: Users, color: "text-blue-600" },
     { label: t("admin.totalReports"), value: stats.reports.toString(), change: "All time", icon: FileText, color: "text-emerald-600" },
+    { label: t("admin.totalPoints"), value: stats.points.toLocaleString("id-ID"), change: "Awarded", icon: Award, color: "text-purple-600" },
     { label: t("admin.donations"), value: stats.donations.toString(), change: "Total transactions", icon: Heart, color: "text-rose-600" },
     { label: t("admin.activeProjects"), value: stats.projects.toString(), change: "All time", icon: HardHat, color: "text-amber-600" },
   ];
@@ -130,6 +142,49 @@ export default function AdminDashboard() {
             <Download className="h-4 w-4" />
             Export Projects CSV
           </button>
+        </div>
+      </div>
+
+      {/* Recent Registrations */}
+      <div className="card">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-ink">Recent Registrations</h3>
+          <Link href="/admin/users" className="text-xs font-medium text-brand-600 hover:text-brand-700">
+            {t("admin.viewAll")}
+          </Link>
+        </div>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
+                <th className="pb-2 pr-4">Username</th>
+                <th className="pb-2 pr-4">Role</th>
+                <th className="pb-2">Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentUsers.map((u) => (
+                <tr key={u.id} className="border-b border-ink-line last:border-0">
+                  <td className="py-3 pr-4 text-ink">{u.username}</td>
+                  <td className="py-3 pr-4">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                      {u.role}
+                    </span>
+                  </td>
+                  <td className="py-3 text-ink-muted">
+                    {new Date(u.createdAt).toLocaleDateString("id-ID")}
+                  </td>
+                </tr>
+              ))}
+              {recentUsers.length === 0 && (
+                <tr>
+                  <td colSpan={3} className="py-6 text-center text-sm text-ink-muted">
+                    No users yet
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
