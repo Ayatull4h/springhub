@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 
 /**
  * Xendit webhook handler for payment success notifications.

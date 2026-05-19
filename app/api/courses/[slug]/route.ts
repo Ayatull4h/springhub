@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 
 // GET /api/courses/[slug] — detail course termasuk semua modul
 export async function GET(

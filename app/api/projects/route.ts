@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 import { PROJECT_PROPOSAL_THRESHOLD } from "@/lib/data";
 
 const projectSchema = z.object({

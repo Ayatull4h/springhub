@@ -6,6 +6,7 @@ import {
   getForm,
 } from "@/lib/forms";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 import { snapToProtectionGrid } from "@/lib/geo";
 import { verifyCsrfToken } from "@/lib/csrf";
 

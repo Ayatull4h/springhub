@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 import { verifyPassword, createSession, getSession } from "@/lib/auth";
 import { getExistingGuestId } from "@/lib/guest";
 

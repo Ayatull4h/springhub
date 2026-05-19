@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getExistingGuestId } from "@/lib/guest";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 
 export async function POST() {
   const session = await getSession();

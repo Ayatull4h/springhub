@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 
 function isAdmin(session: { userId: string; role: string } | null) {

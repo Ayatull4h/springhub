@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 import { createInvoice } from "@/lib/xendit";
 import { getSession } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";

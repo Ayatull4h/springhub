@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 
 // Public endpoint — no auth required, only returns active rules
 export async function GET() {
