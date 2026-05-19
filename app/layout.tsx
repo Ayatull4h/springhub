@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   },
   description:
     "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
+  metadataBase: new URL("https://springhub.vercel.app"),
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.svg",
