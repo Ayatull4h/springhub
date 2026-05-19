@@ -5,6 +5,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { I18nProvider } from "@/lib/i18n";
+import { DarkModeProvider } from "@/lib/darkmode";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -52,11 +53,13 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen font-sans">
-        <I18nProvider>
-          <SiteHeader />
-          <main>{children}</main>
-          <SiteFooter />
-        </I18nProvider>
+        <DarkModeProvider>
+          <I18nProvider>
+            <SiteHeader />
+            <main>{children}</main>
+            <SiteFooter />
+          </I18nProvider>
+        </DarkModeProvider>
         <Script
           id="register-sw"
           strategy="afterInteractive"
