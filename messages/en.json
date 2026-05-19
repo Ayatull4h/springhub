@@ -254,6 +254,12 @@
   "profile.form.trenchDevelopment": "Trench Development",
   "profile.form.treePlanting": "Tree Planting",
   "profile.form.seedlingStock": "Seedling Stock",
+  "profile.claimGuest": "Claim Guest Reports",
+  "profile.claiming": "Claiming...",
+  "profile.claimSuccess": "{count} reports claimed! Points added.",
+  "profile.claimNone": "No guest reports to claim.",
+  "profile.claimError": "Failed to claim reports",
+  "profile.claimNetworkError": "Network error",
 
   "report.formNotFound": "Form not found",
   "report.formNotFoundDesc": "The form you're looking for doesn't exist.",
