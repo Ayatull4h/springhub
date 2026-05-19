@@ -21,9 +21,9 @@ export const CONTACTS = {
     instagram:
       "https://www.instagram.com/jagasemesta",
     youtube:
-      "https://youtube.com/@jagasemesta?si=eUuyORclR8QeD97O",
+      "https://youtube.com/@jagasemesta",
     tiktok:
-      "https://www.tiktok.com/@jagasemesta?_r=1&_t=ZS-95vqTV1Q0A5",
+      "https://www.tiktok.com/@jagasemesta",
     facebook: "https://www.facebook.com/jagasemesta",
   },
 } as const;

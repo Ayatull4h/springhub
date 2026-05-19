@@ -1,63 +1,59 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { POINTS_MAP } from "@/lib/forms";
+import { getSession } from "@/lib/auth";
+import { awardReportPoints, checkDailyStreak, updateTrustScore } from "@/lib/points";
 
 export async function POST(
   _request: Request,
   { params }: { params: { id: string } }
 ) {
-  const session = await getSession();
-  if (!session || session.role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
+  try {
+    const session = await getSession();
+    if (!session || session.role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
 
-  const report = await prisma.report.findUnique({
-    where: { id: params.id },
-  });
+    const report = await prisma.report.findUnique({
+      where: { id: params.id },
+    });
 
-  if (!report) {
-    return NextResponse.json({ error: "Report not found" }, { status: 404 });
-  }
+    if (!report) {
+      return NextResponse.json({ error: "Report not found" }, { status: 404 });
+    }
 
-  // Update report status
-  await prisma.report.update({
-    where: { id: params.id },
-    data: {
-      status: "approved",
-      reviewedById: session.userId,
-    },
-  });
+    if (report.status !== "pending") {
+      return NextResponse.json({ error: "Report already reviewed" }, { status: 400 });
+    }
 
-  // Award points if user is logged in and points haven't been awarded
-  if (report.userId) {
-    const existingPoints = await prisma.pointsLog.findFirst({
-      where: {
-        reportId: report.id,
-        reason: { contains: "approved" },
+    await prisma.report.update({
+      where: { id: params.id },
+      data: {
+        status: "approved",
+        reviewedById: session.userId,
       },
     });
 
-    if (!existingPoints) {
-      const basePoints = POINTS_MAP[report.formSlug] ?? 0;
-      const approvalPoints = basePoints > 0 ? basePoints : 25;
+    if (report.userId) {
+      const fieldData = JSON.parse(
+        typeof report.fieldData === "string"
+          ? report.fieldData
+          : JSON.stringify(report.fieldData ?? {})
+      );
 
-      await prisma.pointsLog.create({
-        data: {
-          userId: report.userId,
-          reportId: report.id,
-          amount: approvalPoints,
-          reason: `Laporan disetujui: ${report.formSlug}`,
-          metadata: JSON.stringify({ approved: true }),
-        },
+      const existingPoints = await prisma.pointsLog.findFirst({
+        where: { reportId: report.id, reason: { contains: "Approved" } },
       });
 
-      await prisma.profile.update({
-        where: { id: report.userId },
-        data: { points: { increment: approvalPoints } },
-      });
+      if (!existingPoints) {
+        await awardReportPoints(report.userId, report.id, report.formSlug, fieldData);
+        await checkDailyStreak(report.userId);
+        await updateTrustScore(report.userId, true);
+      }
     }
-  }
 
-  return NextResponse.json({ success: true, status: "approved" });
+    return NextResponse.json({ success: true, status: "approved" });
+  } catch (error) {
+    console.error("Approve error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

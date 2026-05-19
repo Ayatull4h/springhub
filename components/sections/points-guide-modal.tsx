@@ -2,6 +2,7 @@
 
 import { X, Star, Eye, Wrench, TreePine, Sprout, Flame, CalendarCheck, ClipboardCheck, Camera, Compass, Award, Trophy, Crown, BookOpen, Gem, Sparkles, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useI18n } from "@/lib/i18n";
 
 type PointRule = {
   id: string;
@@ -40,6 +41,7 @@ interface Props {
 export function PointsGuideModal({ open, onClose }: Props) {
   const [rules, setRules] = useState<PointRule[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState<{ points: number; trustScore: number } | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -51,6 +53,15 @@ export function PointsGuideModal({ open, onClose }: Props) {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+
+    fetch("/api/user/profile")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.profile) {
+          setUserData({ points: data.profile.points, trustScore: data.profile.trustScore });
+        }
+      })
+      .catch(() => {});
   }, [open]);
 
   if (!open) return null;
@@ -81,6 +92,21 @@ export function PointsGuideModal({ open, onClose }: Props) {
         <p className="mt-1 text-sm text-ink-muted">
           Kumpulkan poin dengan berkontribusi dan raih milestone!
         </p>
+
+        {userData !== null && (
+          <div className="mt-4 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 p-4 text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-white/80">Poin Kamu</p>
+                <p className="text-2xl font-bold">{userData.points.toLocaleString("id-ID")}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs font-medium uppercase tracking-wider text-white/80">Trust Score</p>
+                <p className="text-lg font-semibold">{userData.trustScore}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="mt-6 flex justify-center">

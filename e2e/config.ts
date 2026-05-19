@@ -1,0 +1,42 @@
+// SpringHub E2E Test Configuration
+export const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+
+export const TEST_USERS = {
+  volunteer: { email: "volunteer@test.com", password: "test123" },
+  admin: { email: "admin@test.com", password: "test123" },
+};
+
+export const FORM_SLUGS = [
+  "spring-monitoring",
+  "spring-restoration",
+  "trench-development",
+  "tree-planting",
+  "seedling-stock",
+] as const;
+
+export const ADMIN_ROUTES = [
+  "/admin",
+  "/admin/users",
+  "/admin/reports",
+  "/admin/donations",
+  "/admin/projects",
+  "/admin/review",
+  "/admin/points",
+  "/admin/courses",
+] as const;
+
+export const PUBLIC_ROUTES = [
+  { path: "/", name: "Landing Page" },
+  { path: "/sign-in", name: "Sign In" },
+  { path: "/join", name: "Join" },
+  { path: "/faq", name: "FAQ" },
+  { path: "/help", name: "Help Center" },
+  { path: "/privacy", name: "Privacy Policy" },
+  { path: "/terms", name: "Terms of Service" },
+  { path: "/not-found-test", name: "404 Test" },
+] as const;
+
+export const REPORT_ROUTES = FORM_SLUGS.map((s) => ({
+  path: `/report/${s}`,
+  slug: s,
+}));

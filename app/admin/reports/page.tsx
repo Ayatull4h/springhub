@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin, CheckCircle2, Clock, XCircle, Eye, EyeOff } from "lucide-react";
+import { MapPin, CheckCircle2, Clock, XCircle, Eye, EyeOff, Download } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 type ReportItem = {
@@ -65,13 +65,22 @@ export default function AdminReportsPage() {
             {t("admin.reports.count", { count: String(reports.length) })}
           </p>
         </div>
-        <button
-          onClick={() => setShowPrecise(!showPrecise)}
-          className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100"
-        >
-          {showPrecise ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          {showPrecise ? t("admin.reports.hideCoords") : t("admin.reports.showCoords")}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => window.open("/api/admin/export?entity=reports&format=csv", "_blank")}
+            className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100"
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </button>
+          <button
+            onClick={() => setShowPrecise(!showPrecise)}
+            className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100"
+          >
+            {showPrecise ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPrecise ? t("admin.reports.hideCoords") : t("admin.reports.showCoords")}
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto">

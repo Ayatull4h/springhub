@@ -11,6 +11,7 @@ import {
   Clock,
   XCircle,
   ArrowUpRight,
+  Download,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
@@ -33,13 +34,14 @@ export default function AdminDashboard() {
       fetch("/api/admin/users").then((r) => r.json()),
       fetch("/api/admin/reports").then((r) => r.json()),
       fetch("/api/admin/donations").then((r) => r.json()),
+      fetch("/api/admin/projects").then((r) => r.json()),
     ])
-      .then(([usersData, reportsData, donationsData]) => {
+      .then(([usersData, reportsData, donationsData, projectsData]) => {
         setStats({
           users: usersData.users?.length ?? 0,
           reports: reportsData.reports?.length ?? 0,
           donations: donationsData.donations?.length ?? 0,
-          projects: 0,
+          projects: projectsData.projects?.length ?? 0,
         });
         setRecentReports((reportsData.reports ?? []).slice(0, 10));
       })
@@ -57,7 +59,7 @@ export default function AdminDashboard() {
     { label: t("admin.totalUsers"), value: stats.users.toString(), change: "Registered", icon: Users, color: "text-blue-600" },
     { label: t("admin.totalReports"), value: stats.reports.toString(), change: "All time", icon: FileText, color: "text-emerald-600" },
     { label: t("admin.donations"), value: stats.donations.toString(), change: "Total transactions", icon: Heart, color: "text-rose-600" },
-    { label: t("admin.activeProjects"), value: stats.projects.toString(), change: "Coming soon", icon: HardHat, color: "text-amber-600" },
+    { label: t("admin.activeProjects"), value: stats.projects.toString(), change: "All time", icon: HardHat, color: "text-amber-600" },
   ];
 
   if (loading) {
@@ -92,6 +94,43 @@ export default function AdminDashboard() {
             </div>
           );
         })}
+      </div>
+
+      {/* Export Section */}
+      <div className="card">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-ink">Export Data</h3>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            onClick={() => window.open("/api/admin/export?entity=users&format=csv", "_blank")}
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+          >
+            <Download className="h-4 w-4" />
+            Export Users CSV
+          </button>
+          <button
+            onClick={() => window.open("/api/admin/export?entity=reports&format=csv", "_blank")}
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+          >
+            <Download className="h-4 w-4" />
+            Export Reports CSV
+          </button>
+          <button
+            onClick={() => window.open("/api/admin/export?entity=donations&format=csv", "_blank")}
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+          >
+            <Download className="h-4 w-4" />
+            Export Donations CSV
+          </button>
+          <button
+            onClick={() => window.open("/api/admin/export?entity=projects&format=csv", "_blank")}
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+          >
+            <Download className="h-4 w-4" />
+            Export Projects CSV
+          </button>
+        </div>
       </div>
 
       <div className="card">

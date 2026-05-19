@@ -44,3 +44,13 @@ next-env.d.ts
 .idea/
 *.swp
 *.swo
+
+# dev server
+dev-server.pid
+
+# e2e
+test-results/
+e2e-report/
+
+# opencode
+.opencode/

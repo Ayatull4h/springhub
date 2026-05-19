@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
@@ -10,11 +10,12 @@ import {
   ClipboardList,
   Sparkles,
 } from "lucide-react";
-import { springs, type SpringStatus } from "@/lib/data";
+import { type SpringStatus } from "@/lib/data";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
 import { FORMS } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { StatusInfo } from "@/components/sections/status-info";
 
 const LeafletMap = dynamic(
   () => import("@/components/map/leaflet-map").then((m) => m.LeafletMap),
@@ -34,9 +35,50 @@ const statusStyles: Record<SpringStatus, { dot: string; chip: string }> = {
   restoration: { dot: "bg-amber-500", chip: "bg-amber-50 text-amber-700" },
 };
 
+function getStatusFromForm(formSlug: string): SpringStatus {
+  switch (formSlug) {
+    case "spring-monitoring":
+      return "healthy";
+    case "spring-restoration":
+      return "restoration";
+    case "trench-development":
+    case "tree-planting":
+      return "restoration";
+    case "seedling-stock":
+      return "healthy";
+    default:
+      return "degraded";
+  }
+}
+
+function getLabelFromStatus(status: SpringStatus): string {
+  switch (status) {
+    case "healthy": return "Sehat";
+    case "degraded": return "Terdegradasi";
+    case "restoration": return "Restorasi";
+  }
+}
+
+type ReportItem = {
+  id: string;
+  formSlug: string;
+  snappedLat: number | null;
+  snappedLng: number | null;
+  createdAt: string;
+  user?: { username: string; region: string };
+};
+
 export function SpringMap() {
   const { t } = useI18n();
   const [filter, setFilter] = useState<SpringStatus | "all">("all");
+  const [reports, setReports] = useState<ReportItem[]>([]);
+
+  useEffect(() => {
+    fetch("/api/reports")
+      .then((r) => r.json())
+      .then((data) => setReports(data.reports || []))
+      .catch(() => {});
+  }, []);
 
   const filters: { id: SpringStatus | "all"; label: string }[] = [
     { id: "all", label: t("map.filterAll") },
@@ -46,8 +88,11 @@ export function SpringMap() {
   ];
 
   const visible = useMemo(
-    () => (filter === "all" ? springs : springs.filter((s) => s.status === filter)),
-    [filter]
+    () =>
+      filter === "all"
+        ? reports
+        : reports.filter((r) => getStatusFromForm(r.formSlug) === filter),
+    [filter, reports]
   );
 
   return (
@@ -91,8 +136,11 @@ export function SpringMap() {
               {f.label}
             </button>
           ))}
-          <span className="ml-auto text-[10px] uppercase tracking-wider text-ink-subtle">
-            OpenStreetMap
+          <span className="ml-auto flex items-center gap-2">
+            <StatusInfo />
+            <span className="text-[10px] uppercase tracking-wider text-ink-subtle">
+              OpenStreetMap
+            </span>
           </span>
         </div>
         <div className="aspect-[21/9] w-full md:aspect-[21/8]">
@@ -100,7 +148,7 @@ export function SpringMap() {
         </div>
       </div>
 
-      {/* Below the map: spring details (left) + Report Your Contribution (right) */}
+      {/* Below the map: report details (left) + Report Your Contribution (right) */}
       <div className="mt-4 grid gap-4 lg:grid-cols-12">
         <div className="card lg:col-span-6">
           <div className="flex items-center justify-between">
@@ -112,26 +160,40 @@ export function SpringMap() {
             </span>
           </div>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            {visible.map((s) => {
-              const styles = statusStyles[s.status];
-              const statusLabel = t(`map.status.${s.status}`);
+            {visible.map((r) => {
+              const status = getStatusFromForm(r.formSlug);
+              const styles = statusStyles[status];
+              const statusLabel = getLabelFromStatus(status);
               return (
                 <li
-                  key={s.id}
+                  key={r.id}
                   className="flex items-start gap-3 rounded-lg border border-ink-line/60 p-3"
                 >
-                  <span className={cn("mt-1.5 h-2 w-2 flex-none rounded-full", styles.dot)} />
+                  <span
+                    className={cn(
+                      "mt-1.5 h-2 w-2 flex-none rounded-full",
+                      styles.dot
+                    )}
+                  />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <div className="truncate text-sm font-semibold text-ink">
-                        {s.name}
+                        {r.formSlug.replace(/-/g, " ")}
                       </div>
-                      <span className={cn("chip", styles.chip)}>{statusLabel}</span>
+                      <span className={cn("chip", styles.chip)}>
+                        {statusLabel}
+                      </span>
                     </div>
-                    <div className="text-xs text-ink-muted">{s.region}</div>
+                    <div className="text-xs text-ink-muted">
+                      {r.user?.region ?? "Lokasi tidak diketahui"}
+                    </div>
                     <div className="mt-1 text-xs text-ink-subtle">
-                      {t("map.reportCount", { count: String(s.reports) })} ·{" "}
-                      {s.lastReport}
+                      {new Date(r.createdAt).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}{" "}
+                      · {r.user?.username ?? "anonim"}
                     </div>
                   </div>
                 </li>

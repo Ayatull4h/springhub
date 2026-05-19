@@ -7,12 +7,15 @@ import {
   LayoutDashboard,
   Users,
   FileText,
+  ClipboardList,
   Heart,
   ShieldCheck,
   BookOpen,
   Award,
+  FolderKanban,
   LogOut,
   ChevronDown,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,10 +23,13 @@ const sidebar = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Reports", href: "/admin/reports", icon: FileText },
+  { label: "Forms", href: "/admin/forms", icon: ClipboardList },
   { label: "Donations", href: "/admin/donations", icon: Heart },
   { label: "Points", href: "/admin/points", icon: Award },
   { label: "Courses", href: "/admin/courses", icon: BookOpen },
+  { label: "Feedback", href: "/admin/feedback", icon: MessageSquare },
   { label: "Review Queue", href: "/admin/review", icon: ShieldCheck },
+  { label: "Projects", href: "/admin/projects", icon: FolderKanban },
 ];
 
 export default function AdminLayout({
@@ -66,7 +72,7 @@ export default function AdminLayout({
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      <aside className="hidden w-64 flex-col border-r border-ink-line bg-white md:flex">
+      <aside data-testid="admin-sidebar" className="hidden w-64 flex-col border-r border-ink-line bg-white md:flex">
         <div className="flex h-16 items-center gap-2 border-b border-ink-line px-5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">
             S
@@ -121,7 +127,7 @@ export default function AdminLayout({
           </h1>
           <div className="flex items-center gap-3">
             <span className="hidden text-xs text-ink-subtle sm:inline">
-              Live data from SQLite
+              Live data from Postgres
             </span>
             <div className="flex items-center gap-2 rounded-lg border border-ink-line px-3 py-1.5 text-sm text-ink-muted">
               <span className="hidden sm:inline">SpringHub / Local</span>

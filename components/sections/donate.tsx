@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowRight,
   Heart,
@@ -40,12 +40,20 @@ export function DonateSection() {
   const [customAmount, setCustomAmount] = useState<string>("");
   const [donorName, setDonorName] = useState("");
   const [donorEmail, setDonorEmail] = useState("");
+  const [csrfToken, setCsrfToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<{
     invoiceUrl: string;
     invoiceId: string;
   } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/csrf")
+      .then((r) => r.json())
+      .then((data) => { if (data.token) setCsrfToken(data.token); })
+      .catch(() => {});
+  }, []);
 
   const amountIdr = customAmount
     ? parseInt(customAmount.replace(/[^0-9]/g, ""), 10) || 0
@@ -72,7 +80,10 @@ export function DonateSection() {
     try {
       const res = await fetch("/api/donations/invoice", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
+        },
         body: JSON.stringify({
           amountIdr,
           donorName: donorName.trim(),

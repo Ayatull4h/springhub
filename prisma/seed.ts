@@ -1,18 +1,10 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import bcrypt from "bcryptjs";
-import path from "path";
 
-const dbUrl = process.env.DATABASE_URL ?? "file:./prisma/dev.db";
-const cleanPath = dbUrl.replace(/^file:/, "").replace(/^\.\//, "");
-const absolutePath = path.resolve(process.cwd(), cleanPath);
-
-const prisma = new PrismaClient({
-  adapter: new PrismaLibSql({
-    url: `file:${absolutePath}`,
-  }),
-});
+const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL ?? "file:./prisma/dev.db" });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Seeding database...");
@@ -50,6 +42,156 @@ async function main() {
   });
 
   console.log(`✓ Users created: volunteer@test.com, admin@test.com`);
+
+  // ─── Form & FormField seed data (must be created before reports due to FK) ──
+  const formsData = [
+    {
+      slug: "spring-monitoring",
+      title: "Spring Monitoring",
+      description: "Log a spring's current condition — flow, water quality, cleanliness, and a geo-tagged photo.",
+      pointsOnSubmit: 25,
+      contributionType: "monitoring",
+      sortOrder: 1,
+      fields: [
+        { fieldId: "spring_name", label: "Nama mata air", type: "text", required: true, placeholder: "e.g. Mata Air Cibeureum", helpText: "", options: "[]" },
+        { fieldId: "village", label: "Desa", type: "text", required: false, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "subdistrict", label: "Kecamatan", type: "text", required: false, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "regency", label: "Kota / Kabupaten", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "date", label: "Tanggal pemantauan", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "flow_condition", label: "Kondisi debit / aliran", type: "select", required: true, placeholder: "", helpText: "", options: JSON.stringify(["Mengalir deras", "Mengalir kecil", "Mengalir kecil sekali", "Tidak mengalir / mati"]) },
+        { fieldId: "water_quality", label: "Kondisi kualitas air", type: "select", required: true, placeholder: "", helpText: "", options: JSON.stringify(["Air jernih", "Air agak keruh", "Air keruh"]) },
+        { fieldId: "cleanliness", label: "Kondisi kebersihan", type: "select", required: true, placeholder: "", helpText: "", options: JSON.stringify(["Bebas dari sampah plastik", "Ada sampah plastik sedikit", "Banyak sampah plastik"]) },
+        { fieldId: "photo", label: "Foto mata air", type: "photo", required: true, placeholder: "", helpText: "Rekam tampilan utama mata air saat ini.", options: "[]" },
+        { fieldId: "location", label: "Lokasi mata air", type: "location", required: true, placeholder: "", helpText: "Akan di-snap ke grid 5 km sebelum dipublikasikan.", options: "[]" },
+        { fieldId: "notes", label: "Catatan pengamatan", type: "longtext", required: false, placeholder: "Sejarah mata air, kondisi sekitar, kebutuhan masyarakat…", helpText: "", options: "[]" },
+      ],
+    },
+    {
+      slug: "spring-restoration",
+      title: "Spring Restoration",
+      description: "Report a restoration activity — what was done, before/after photos, volunteer turnout, and any measurements taken.",
+      pointsOnSubmit: 100,
+      contributionType: "restoration",
+      sortOrder: 2,
+      fields: [
+        { fieldId: "spring_name", label: "Nama mata air", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "regency", label: "Kota / Kabupaten", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "date", label: "Tanggal kegiatan", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "location", label: "Tag lokasi mata air", type: "location", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "activity_types", label: "Jenis kegiatan yang dilakukan", type: "multiselect", required: true, placeholder: "", helpText: "", options: JSON.stringify(["Edukasi kepada Masyarakat", "Pembersihan Sedimen / Lumpur", "Pembuatan Rorak / Parit Buntu", "Menanam Pohon"]) },
+        { fieldId: "photo_before", label: "Foto mata air sebelum kegiatan", type: "photo", required: false, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "photo_after", label: "Foto mata air sesudah kegiatan", type: "photo", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "volunteer_count", label: "Berapa orang relawan ikut serta?", type: "number", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "measurement", label: "Jika bisa mengukur (m³ sedimen, debit, dst)", type: "number", required: false, placeholder: "", helpText: "Opsional. Volume sedimen yang diangkat, atau debit setelah restorasi.", options: "[]" },
+        { fieldId: "notes", label: "Catatan kondisi & perubahan", type: "longtext", required: false, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "coordinator_phone", label: "Nomor HP koordinator", type: "phone", required: false, placeholder: "", helpText: "", options: "[]" },
+      ],
+    },
+    {
+      slug: "trench-development",
+      title: "Trench Development",
+      description: "Log infiltration trenches you've dug. These help groundwater recharge in the spring's catchment area.",
+      pointsOnSubmit: 50,
+      contributionType: "trench",
+      sortOrder: 3,
+      fields: [
+        { fieldId: "volunteer_name", label: "Nama Anda", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "regency", label: "Kota / Kabupaten", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "date", label: "Tanggal kegiatan", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "trench_count", label: "Jumlah rorak yang dibuat", type: "number", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "location", label: "Lokasi pembuatan rorak", type: "location", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "photo", label: "Foto rorak", type: "photo", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "dimensions", label: "Catatan dimensi rorak (P × L × D)", type: "longtext", required: false, placeholder: "e.g. 100 × 50 × 50 cm", helpText: "", options: "[]" },
+      ],
+    },
+    {
+      slug: "tree-planting",
+      title: "Tree Planting",
+      description: "Log endemic / native trees you've planted around a spring or its recharge area.",
+      pointsOnSubmit: 50,
+      contributionType: "tree_planting",
+      sortOrder: 4,
+      fields: [
+        { fieldId: "volunteer_name", label: "Nama Anda", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "regency", label: "Kota / Kabupaten", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "date", label: "Tanggal kegiatan", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "tree_count", label: "Jumlah pohon yang ditanam", type: "number", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "tree_species", label: "Jenis tanaman", type: "text", required: false, placeholder: "e.g. Bambu petung, Beringin, Ficus", helpText: "", options: "[]" },
+        { fieldId: "location", label: "Lokasi penanaman", type: "location", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "photo", label: "Foto pohon yang ditanam", type: "photo", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "notes", label: "Catatan tambahan", type: "longtext", required: false, placeholder: "", helpText: "", options: "[]" },
+      ],
+    },
+    {
+      slug: "seedling-stock",
+      title: "Tree Seedling Stock",
+      description: "Update SpringHub on the seedlings available at your nursery, so we can match them with planting projects.",
+      pointsOnSubmit: 15,
+      contributionType: "seedling_stock",
+      sortOrder: 5,
+      fields: [
+        { fieldId: "species", label: "Jenis tanaman", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "count", label: "Jumlah bibit", type: "number", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "photo", label: "Foto bibit", type: "photo", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "regency", label: "Kota / Kabupaten lokasi", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "contact_name", label: "Nama narahubung", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "contact_phone", label: "Nomor HP narahubung", type: "phone", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "location", label: "Lokasi bibit", type: "location", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "date", label: "Tanggal update", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
+        { fieldId: "notes", label: "Keterangan tambahan", type: "longtext", required: false, placeholder: "", helpText: "", options: "[]" },
+      ],
+    },
+  ];
+
+  for (const formData of formsData) {
+    const { fields, ...formMeta } = formData;
+    const form = await prisma.form.upsert({
+      where: { slug: formData.slug },
+      update: {
+        title: formData.title,
+        description: formData.description,
+        pointsOnSubmit: formData.pointsOnSubmit,
+        contributionType: formData.contributionType,
+        sortOrder: formData.sortOrder,
+      },
+      create: formMeta,
+    });
+
+    // Delete any fields that no longer exist in the definition
+    const currentFieldIds = fields.map((f) => f.fieldId);
+    await prisma.formField.deleteMany({
+      where: { formId: form.id, fieldId: { notIn: currentFieldIds } },
+    });
+
+    // Upsert each field
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i];
+      await prisma.formField.upsert({
+        where: { formId_fieldId: { formId: form.id, fieldId: field.fieldId } },
+        update: {
+          label: field.label,
+          type: field.type,
+          required: field.required,
+          placeholder: field.placeholder,
+          helpText: field.helpText,
+          options: field.options,
+          sortOrder: i,
+        },
+        create: {
+          formId: form.id,
+          fieldId: field.fieldId,
+          label: field.label,
+          type: field.type,
+          required: field.required,
+          placeholder: field.placeholder,
+          helpText: field.helpText,
+          options: field.options,
+          sortOrder: i,
+        },
+      });
+    }
+  }
+  console.log(`✓ ${formsData.length} default forms created with all fields`);
 
   // Create seed reports
   const report1 = await prisma.report.create({

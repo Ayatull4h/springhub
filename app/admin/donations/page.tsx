@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, CheckCircle2, Clock, XCircle, AlertTriangle } from "lucide-react";
+import { Heart, CheckCircle2, Clock, XCircle, AlertTriangle, Download } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 type DonationItem = {
@@ -62,6 +62,13 @@ export default function AdminDonationsPage() {
             </span>
           </p>
         </div>
+        <button
+          onClick={() => window.open("/api/admin/export?entity=donations&format=csv", "_blank")}
+          className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+        >
+          <Download className="h-4 w-4" />
+          Export CSV
+        </button>
       </div>
 
       <div className="overflow-x-auto">

@@ -99,6 +99,7 @@ model Report {
   reviewedBy Profile?     @relation("reviewedReports", fields: [reviewedById], references: [id])
   photos     ReportPhoto[]
   pointsLogs PointsLog[]
+  form       Form?        @relation(fields: [formSlug], references: [slug])
 }
 
 model ReportPhoto {
@@ -226,4 +227,51 @@ model CourseModule {
   updatedAt   DateTime @updatedAt
 
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Form {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  title            String
+  description      String   @default("")
+  pointsOnSubmit   Int      @default(25)
+  contributionType String   @default("monitoring")
+  isActive         Boolean  @default(true)
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  fields  FormField[]
+  reports Report[]
+}
+
+model FormField {
+  id          String   @id @default(uuid())
+  formId      String
+  fieldId     String
+  label       String
+  type        String   @default("text")
+  required    Boolean  @default(false)
+  placeholder String   @default("")
+  helpText    String   @default("")
+  options     String   @default("[]")
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@unique([formId, fieldId])
+}
+
+model Feedback {
+  id             String   @id @default(uuid())
+  type           String   @default("bug") // "bug", "kritik", "saran", "both"
+  kritik         String   @default("")
+  saran          String   @default("")
+  bugDescription String   @default("")
+  bugScreenshot  String   @default("") // storage path
+  status         String   @default("open") // "open", "read", "resolved"
+  userId         String?  // null if guest
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }

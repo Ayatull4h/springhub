@@ -1,10 +1,12 @@
-// Xendit integration stub.
+// Xendit integration — real implementation.
 //
 // Xendit is the Indonesian payment gateway SpringHub uses to collect
 // donations (cards, virtual accounts, e-wallets, QRIS). This module is the
-// thin wrapper our donation API will call once XENDIT_SECRET_KEY is set.
+// thin wrapper our donation API calls once XENDIT_SECRET_KEY is set.
 //
 // Docs: https://developers.xendit.co/
+
+const XENDIT_API_BASE = "https://api.xendit.co";
 
 export type DonationTier = {
   id: string;
@@ -34,29 +36,81 @@ export const PAYMENT_METHODS = [
 ] as const;
 
 export type CreateInvoiceInput = {
-  amountIdr: number;
-  donorName: string;
-  donorEmail: string;
-  /** Optional — if the donation is earmarked for a specific verified project. */
-  projectId?: string;
-  /** Resolves to the same id used in DONATION_TIERS, or "custom". */
-  tierId: string | "custom";
+  externalId: string;
+  amount: number;
+  payerEmail?: string;
+  description?: string;
+  paymentMethods?: string[];
 };
 
 export type CreateInvoiceResult = {
-  invoiceId: string;
-  invoiceUrl: string; // Xendit-hosted checkout URL
-  expiresAt: string;
+  id: string;
+  invoiceUrl: string;
+  externalId: string;
+  amount: number;
+  status: string;
+  expiryDate: string | null;
 };
 
 /**
- * Stub. The real implementation calls POST /v2/invoices with Basic auth and
- * returns the hosted checkout URL. Server-only — never call from the client.
+ * Create a Xendit v2 invoice.
+ * Server-only — never call from the client.
+ *
+ * @throws Error if XENDIT_SECRET_KEY is missing or the API call fails.
  */
 export async function createInvoice(
-  _input: CreateInvoiceInput
+  input: CreateInvoiceInput
 ): Promise<CreateInvoiceResult> {
-  throw new Error(
-    "createInvoice is not implemented yet. Set XENDIT_SECRET_KEY and wire the /v2/invoices call."
-  );
+  const secretKey = process.env.XENDIT_SECRET_KEY;
+  if (!secretKey) {
+    throw new Error("XENDIT_SECRET_KEY is not set. Cannot create invoice.");
+  }
+
+  const encoded = Buffer.from(secretKey + ":").toString("base64");
+
+  const body: Record<string, unknown> = {
+    external_id: input.externalId,
+    amount: input.amount,
+    payer_email: input.payerEmail,
+    description: input.description || "Donasi SpringHub",
+    currency: "IDR",
+    invoice_duration: 86400, // 24 hours
+    reminder: true,
+    success_redirect_url: `${
+      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    }/donate/success?invoice={invoice_id}`,
+    failure_redirect_url: `${
+      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    }/donate/failed`,
+  };
+
+  if (input.paymentMethods?.length) {
+    body.payment_methods = input.paymentMethods;
+  }
+
+  const res = await fetch(`${XENDIT_API_BASE}/v2/invoices`, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${encoded}`,
+      "Content-Type": "application/json",
+      "X-IDEMPOTENCY-KEY": input.externalId,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Xendit API error (${res.status}): ${errText}`);
+  }
+
+  const data = await res.json();
+
+  return {
+    id: data.id,
+    invoiceUrl: data.invoice_url,
+    externalId: data.external_id,
+    amount: data.amount,
+    status: data.status,
+    expiryDate: data.expiry_date ?? null,
+  };
 }

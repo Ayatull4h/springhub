@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Sparkles, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
@@ -20,10 +20,64 @@ export default function ReportFormPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [honeypot, setHoneypot] = useState("");
+  const [csrfToken, setCsrfToken] = useState("");
   // Catat waktu halaman dimuat — bukan waktu submit — untuk anti-spam time gate
   const [pageLoadTime] = useState(() => Date.now());
 
-  if (!form) {
+  useEffect(() => {
+    fetch("/api/csrf")
+      .then((r) => r.json())
+      .then((data) => { if (data.token) setCsrfToken(data.token); })
+      .catch(() => {});
+  }, []);
+
+  // Dynamic form from DB
+  const [dbForm, setDbForm] = useState<any>(null);
+  const [dbFormLoading, setDbFormLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`/api/forms/${slug}`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (data?.form) {
+          setDbForm({
+            slug: data.form.slug,
+            title: data.form.title,
+            description: data.form.description,
+            pointsOnSubmit: data.form.pointsOnSubmit,
+            contributionType: data.form.contributionType,
+            fields: data.form.fields.map((f: any) => ({
+              id: f.fieldId,
+              label: f.label,
+              type: f.type,
+              required: f.required,
+              placeholder: f.placeholder || "",
+              help: f.helpText || "",
+              options: (() => {
+                try { return JSON.parse(f.options || "[]"); }
+                catch { return []; }
+              })(),
+            })),
+          });
+        }
+      })
+      .catch(() => {})
+      .finally(() => setDbFormLoading(false));
+  }, [slug]);
+
+  const activeForm = dbForm ?? form;
+
+  // Show loading while DB form is being fetched (only when static form not found)
+  if (dbFormLoading && !form) {
+    return (
+      <div className="container-page py-12 text-center">
+        <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-600" />
+        <p className="mt-4 text-ink-muted">Memuat formulir...</p>
+      </div>
+    );
+  }
+
+  if (!activeForm) {
     return (
       <div className="container-page py-12 text-center">
         <h1 className="text-2xl font-bold text-ink">{t("report.formNotFound")}</h1>
@@ -37,20 +91,21 @@ export default function ReportFormPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!form) return;
+    if (!activeForm) return;
     setError("");
     setLoading(true);
 
     const formEl = e.currentTarget;
     const formData = new FormData(formEl);
 
-    formData.set("form_slug", form.slug);
+    formData.set("form_slug", activeForm.slug);
     formData.set("_submit_time", pageLoadTime.toString());
     formData.set("_website", honeypot);
 
     try {
       const res = await fetch("/api/reports", {
         method: "POST",
+        headers: csrfToken ? { "x-csrf-token": csrfToken } : {},
         body: formData,
       });
 
@@ -70,6 +125,32 @@ export default function ReportFormPage() {
               : t("report.error");
         setError(errMsg);
         return;
+      }
+
+      // ── Upload photos after successful report creation ────────────
+      if (data.report?.id) {
+        const photoFieldIds = activeForm.fields
+          .filter((f: FormField) => f.type === "photo")
+          .map((f: FormField) => f.id);
+
+        for (const fieldId of photoFieldIds) {
+          const file = formData.get(fieldId);
+          if (file && file instanceof File && file.size > 0) {
+            try {
+              const photoPayload = new FormData();
+              photoPayload.append("photo", file);
+              photoPayload.append("field_id", fieldId);
+
+              await fetch(`/api/reports/${data.report.id}/photos`, {
+                method: "POST",
+                body: photoPayload,
+              });
+            } catch {
+              // Don't block on photo upload failure — report is already saved
+              console.warn(`Photo upload failed for field "${fieldId}"`);
+            }
+          }
+        }
       }
 
       setSuccess(true);
@@ -111,12 +192,12 @@ export default function ReportFormPage() {
         <ArrowLeft className="h-4 w-4" /> {t("report.backToMap")}
       </Link>
 
-      <h1 className="mt-4 text-3xl font-extrabold tracking-tight">{form.title}</h1>
-      <p className="mt-2 text-ink-muted">{form.description}</p>
+      <h1 className="mt-4 text-3xl font-extrabold tracking-tight">{activeForm.title}</h1>
+      <p className="mt-2 text-ink-muted">{activeForm.description}</p>
 
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
         <span className="chip bg-brand-50 text-brand-700">
-          <Sparkles className="h-3 w-3" />{t("report.pointsOnSubmit", { pts: String(form.pointsOnSubmit) })}
+          <Sparkles className="h-3 w-3" />{t("report.pointsOnSubmit", { pts: String(activeForm.pointsOnSubmit) })}
         </span>
         <span className="chip bg-amber-50 text-amber-700 ring-1 ring-amber-200">
           <ShieldCheck className="h-3 w-3" />
@@ -137,7 +218,7 @@ export default function ReportFormPage() {
         className="card mt-6 space-y-5"
       >
         {/* Honeypot */}
-        <div className="absolute left-[-9999px]" aria-hidden>
+        <div className="hidden" aria-hidden>
           <label htmlFor="_website">{t("form.honeypot")}</label>
           <input
             id="_website"
@@ -150,7 +231,7 @@ export default function ReportFormPage() {
           />
         </div>
 
-        {form.fields.map((field) => (
+        {activeForm.fields.map((field: FormField) => (
           <FieldRenderer key={field.id} field={field} />
         ))}
 

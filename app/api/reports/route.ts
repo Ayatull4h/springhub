@@ -7,15 +7,24 @@ import {
 } from "@/lib/forms";
 import { prisma } from "@/lib/prisma";
 import { snapToProtectionGrid } from "@/lib/geo";
+import { verifyCsrfToken } from "@/lib/csrf";
 
 /**
- * Rate limiter: simple in-memory tracking.
+ * Rate limiter: simple in-memory tracking with periodic cleanup.
  * Note: In production, use Upstash / Vercel KV for distributed rate limiting.
  */
 const rateLimits = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_REQUESTS = 10; // max requests
+const RATE_LIMIT_REQUESTS = 10; // max requests per window
 const RATE_LIMIT_WINDOW_MS = 60_000; // per minute
 const DAILY_FORM_LIMIT = 5; // per user
+
+// Cleanup expired entries every 5 minutes to prevent memory leaks
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateLimits.entries()) {
+    if (now > entry.resetAt) rateLimits.delete(key);
+  }
+}, 5 * 60 * 1000);
 
 function checkRateLimit(key: string): boolean {
   const now = Date.now();
@@ -31,6 +40,12 @@ function checkRateLimit(key: string): boolean {
 
 export async function POST(request: Request) {
   try {
+    // CSRF check
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+
     const session = await getSession();
     const guestId = getGuestId();
     const rateKey = session?.userId ?? guestId;
@@ -57,12 +72,15 @@ export async function POST(request: Request) {
     // If form was submitted too fast (<3 seconds from page load), reject
     const submitTime = formData.get("_submit_time") as string;
     if (submitTime) {
-      const elapsed = Date.now() - parseInt(submitTime, 10);
-      if (elapsed < 3000) {
-        return NextResponse.json(
-          { error: "Terlalu cepat. Silakan isi formulir dengan benar." },
-          { status: 429 }
-        );
+      const parsedTime = parseInt(submitTime, 10);
+      if (!isNaN(parsedTime)) {
+        const elapsed = Date.now() - parsedTime;
+        if (elapsed < 3000) {
+          return NextResponse.json(
+            { error: "Terlalu cepat. Silakan isi formulir dengan benar." },
+            { status: 429 }
+          );
+        }
       }
     }
 
@@ -124,8 +142,35 @@ export async function POST(request: Request) {
       snappedLng = snapped.lng;
     }
 
-    // Validate with Zod
-    if (schema) {
+    // Try dynamic form validation from DB first
+    let dynamicForm: any = null;
+    try {
+      dynamicForm = await (prisma as any).form.findUnique({
+        where: { slug: formSlug },
+        include: { fields: true },
+      });
+    } catch {
+      // Form table may not exist yet — fall back to static schema
+    }
+
+    if (dynamicForm) {
+      const fields = dynamicForm.fields.map((f: any) => ({
+        fieldId: f.fieldId,
+        label: f.label,
+        type: f.type,
+        required: f.required,
+        options: (() => { try { return JSON.parse(f.options); } catch { return []; } })(),
+      }));
+      const { generateZodSchema } = await import("@/lib/dynamic-validation");
+      const dynSchema = generateZodSchema(fields);
+      const dynParsed = dynSchema.safeParse(fieldData);
+      if (!dynParsed.success) {
+        return NextResponse.json(
+          { error: "Validasi gagal", details: dynParsed.error.flatten().fieldErrors },
+          { status: 400 }
+        );
+      }
+    } else if (schema) {
       const parsed = schema.safeParse(fieldData);
       if (!parsed.success) {
         return NextResponse.json(
@@ -216,7 +261,19 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ reports });
+    const total = reports.length;
+    const healthy = reports.filter(
+      (r) => r.formSlug === "spring-monitoring" || r.formSlug === "seedling-stock"
+    ).length;
+    const restoration = reports.filter(
+      (r) =>
+        r.formSlug === "spring-restoration" ||
+        r.formSlug === "trench-development" ||
+        r.formSlug === "tree-planting"
+    ).length;
+    const degraded = total - healthy - restoration;
+
+    return NextResponse.json({ reports, stats: { total, healthy, restoration, degraded } });
   } catch (error) {
     console.error("Reports fetch error:", error);
     return NextResponse.json(

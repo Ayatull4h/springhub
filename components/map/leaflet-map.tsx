@@ -1,70 +1,160 @@
 "use client";
 
-import { useMemo } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Tooltip, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { springs, type SpringStatus } from "@/lib/data";
-import { PROTECTION_RADIUS_KM } from "@/lib/geo";
+import { type SpringStatus } from "@/lib/data";
 
-const colors: Record<SpringStatus, string> = {
+const statusColors: Record<SpringStatus, string> = {
   healthy: "#10b981",
   degraded: "#ef4444",
   restoration: "#f59e0b",
 };
 
+function getStatusFromForm(formSlug: string): SpringStatus {
+  switch (formSlug) {
+    case "spring-monitoring":
+      return "healthy";
+    case "spring-restoration":
+      return "restoration";
+    case "trench-development":
+    case "tree-planting":
+      return "restoration";
+    case "seedling-stock":
+      return "healthy";
+    default:
+      return "degraded";
+  }
+}
+
+function getLabelFromStatus(status: SpringStatus): string {
+  switch (status) {
+    case "healthy": return "Sehat";
+    case "degraded": return "Terdegradasi";
+    case "restoration": return "Restorasi";
+  }
+}
+
+type ReportData = {
+  id: string;
+  formSlug: string;
+  snappedLat: number | null;
+  snappedLng: number | null;
+  createdAt: string;
+  user?: { username: string; region: string };
+};
+
 export function LeafletMap({ filter }: { filter: SpringStatus | "all" }) {
-  const visible = useMemo(
-    () => (filter === "all" ? springs : springs.filter((s) => s.status === filter)),
-    [filter]
-  );
+  const [reports, setReports] = useState<ReportData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/reports")
+      .then((r) => r.json())
+      .then((data) => {
+        setReports(data.reports || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="grid h-full w-full place-items-center text-sm text-ink-subtle">
+        Loading data…
+      </div>
+    );
+  }
 
   return (
-    <MapContainer
-      center={[-7.5, 110]}
-      zoom={6}
-      scrollWheelZoom={true}
-      className="h-full w-full"
-      style={{ minHeight: 360 }}
-      attributionControl={true}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {visible.map((s) => (
-        <CircleMarker
-          key={s.id}
-          center={[s.publicLoc.lat, s.publicLoc.lng]}
-          radius={8}
-          pathOptions={{
-            color: "#fff",
-            weight: 2,
-            fillColor: colors[s.status],
-            fillOpacity: 1,
-          }}
-        >
-          <Tooltip direction="top" offset={[0, -8]}>
-            <div className="text-xs">
-              <div className="font-semibold">{s.name}</div>
-              <div className="text-slate-500">{s.region}</div>
-              <div className="mt-0.5 text-[10px] text-slate-400">
-                Snapped to {PROTECTION_RADIUS_KM} km grid
-              </div>
-            </div>
-          </Tooltip>
-          <Circle
-            center={[s.publicLoc.lat, s.publicLoc.lng]}
-            radius={PROTECTION_RADIUS_KM * 1000}
-            pathOptions={{
-              color: colors[s.status],
-              weight: 1,
-              fillColor: colors[s.status],
-              fillOpacity: 0.08,
-              dashArray: "4 4",
-            }}
-          />
-        </CircleMarker>
-      ))}
-    </MapContainer>
+    <div className="relative h-full w-full">
+      <MapContainer
+        center={[-7.5, 110]}
+        zoom={6}
+        scrollWheelZoom={true}
+        className="h-full w-full"
+        style={{ minHeight: 360 }}
+        attributionControl={true}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {reports
+          .filter(
+            (r) =>
+              filter === "all" || getStatusFromForm(r.formSlug) === filter
+          )
+          .map((r) => {
+            const status = getStatusFromForm(r.formSlug);
+            const color = statusColors[status];
+            if (!r.snappedLat || !r.snappedLng) return null;
+            return (
+              <Fragment key={r.id}>
+                <CircleMarker
+                  center={[r.snappedLat, r.snappedLng]}
+                  radius={8}
+                  pathOptions={{
+                    color,
+                    fillColor: color,
+                    fillOpacity: 0.7,
+                    weight: 2,
+                  }}
+                >
+                  <Tooltip direction="top" offset={[0, -8]}>
+                    <div className="text-xs">
+                      <strong>{getLabelFromStatus(status)}</strong>
+                      <br />
+                      <span className="text-ink-muted">
+                        {r.formSlug.replace(/-/g, " ")}
+                      </span>
+                      {r.user?.username && (
+                        <>
+                          <br />
+                          <span className="text-ink-muted">
+                            oleh {r.user.username}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </Tooltip>
+                </CircleMarker>
+                <Circle
+                  center={[r.snappedLat, r.snappedLng]}
+                  radius={5000}
+                  pathOptions={{
+                    color,
+                    fillColor: color,
+                    fillOpacity: 0.05,
+                    weight: 1,
+                    dashArray: "4 4",
+                  }}
+                />
+              </Fragment>
+            );
+          })}
+      </MapContainer>
+
+      {/* Legend */}
+      <div className="absolute bottom-4 right-4 z-[1000] rounded-lg bg-white/90 p-3 shadow-md text-xs">
+        <p className="mb-1.5 font-semibold text-ink">Status Mata Air</p>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="inline-block h-3 w-3 rounded-full bg-[#10b981]" />
+            <span className="text-ink-muted">Sehat — terpantau baik</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-block h-3 w-3 rounded-full bg-[#f59e0b]" />
+            <span className="text-ink-muted">Restorasi — dalam pemulihan</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-block h-3 w-3 rounded-full bg-[#ef4444]" />
+            <span className="text-ink-muted">
+              Terdegradasi — perlu intervensi
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

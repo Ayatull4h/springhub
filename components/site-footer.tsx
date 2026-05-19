@@ -48,7 +48,7 @@ export function SiteFooter() {
       links: [
         { label: t("footer.helpCenter"), href: "/help" },
         { label: t("footer.contactUs"), href: CONTACTS.whatsapp.waUrl },
-        { label: t("footer.reportIssue"), href: "/help" },
+        { label: t("footer.reportIssue"), href: "/report-issue" },
         { label: t("footer.faq"), href: "/faq" },
       ],
     },
