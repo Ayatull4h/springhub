@@ -16,6 +16,7 @@ import {
   LogOut,
   ChevronDown,
   MessageSquare,
+  Image,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ const sidebar = [
   { label: "Feedback", href: "/admin/feedback", icon: MessageSquare },
   { label: "Review Queue", href: "/admin/review", icon: ShieldCheck },
   { label: "Projects", href: "/admin/projects", icon: FolderKanban },
+  { label: "Content", href: "/admin/content", icon: Image },
 ];
 
 export default function AdminLayout({
