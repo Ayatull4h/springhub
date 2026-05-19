@@ -14,6 +14,7 @@ const nextConfig = {
       "@prisma/client",
       "@prisma/adapter-libsql",
       "@libsql/client",
+      "sharp",
     ],
   },
   async headers() {
