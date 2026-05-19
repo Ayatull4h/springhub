@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -85,7 +86,9 @@ export function LearningHub() {
             const prog = getProgress(c.slug);
             return (
               <article key={c.id} className="card flex flex-col">
-                <div className="aspect-[16/9] rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50" />
+                <div className="aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
+                  <Image src="/images/course.svg" alt={c.title} width={400} height={250} className="h-full w-full object-cover" />
+                </div>
                 <span className="chip mt-4 self-start bg-brand-50 text-brand-700">
                   {c.level}
                 </span>

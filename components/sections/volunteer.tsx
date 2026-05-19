@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -62,7 +63,9 @@ export function VolunteerActivities() {
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>
-                  <div className="mt-3 aspect-[16/9] rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50" />
+                  <div className="mt-3 aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
+                    <Image src="/images/activity.svg" alt="Activity" width={400} height={250} className="h-full w-full object-cover" />
+                  </div>
                   <div className="mt-3 flex items-center gap-2 text-xs text-ink-muted">
                     <MapPin className="h-3.5 w-3.5" />
                     {a.location} · {a.when}
@@ -137,7 +140,7 @@ export function VolunteerActivities() {
               </div>
               <button
                 onClick={() => setShowPoints(true)}
-                className="inline-flex items-center gap-1 text-brand-600 hover:text-brand-700 font-medium"
+                className="inline-flex cursor-pointer items-center gap-1 text-brand-600 hover:text-brand-700 font-medium"
               >
                 <Info className="h-3 w-3" />
                 Cara Dapat Poin

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -64,8 +65,8 @@ export function MediaSection() {
           const external = m.href.startsWith("http");
           return (
             <article key={m.title} className="card flex flex-col">
-              <div className="grid aspect-[16/9] place-items-center rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
-                <Icon className="h-8 w-8 text-brand-600/70" />
+              <div className="aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50">
+                <Image src="/images/media.svg" alt={m.title} width={400} height={250} className="h-full w-full object-cover" />
               </div>
               <span className={`chip mt-4 self-start ${meta.chip}`}>
                 <Icon className="h-3 w-3" />
