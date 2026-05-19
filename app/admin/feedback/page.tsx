@@ -9,6 +9,7 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
+import Image from "next/image";
 import { useI18n } from "@/lib/i18n";
 
 type FeedbackItem = {
@@ -214,7 +215,7 @@ export default function AdminFeedbackPage() {
                   {item.bugScreenshot && (
                     <div>
                       <span className="font-medium text-ink">Screenshot:</span>
-                      <img src={item.bugScreenshot} alt="Bug screenshot" className="mt-1 max-w-full rounded-md border" />
+                      <Image src={item.bugScreenshot} alt="Bug screenshot" width={600} height={400} className="mt-1 max-w-full rounded-md border" style={{ objectFit: "contain" }} />
                     </div>
                   )}
                   <div>

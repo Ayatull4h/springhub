@@ -502,7 +502,7 @@ export default function AdminEditFormPage() {
                       </span>
                       {field.placeholder && (
                         <span className="text-ink-subtle">
-                          placeholder: "{field.placeholder}"
+                          placeholder: &quot;{field.placeholder}&quot;
                         </span>
                       )}
                     </div>

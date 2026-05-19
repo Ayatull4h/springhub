@@ -26,22 +26,22 @@ CREATE POLICY "Publik lihat username region points" ON "Profile"
 
 -- User: bisa update profile sendiri
 CREATE POLICY "User update sendiri" ON "Profile"
-  FOR UPDATE USING (auth.uid()::text = id);
+  FOR UPDATE USING (auth.uid()::text = "id");
 
 -- ─── REPORTS ─────────────────────────────────────────────────
 -- Publik: lihat hanya snapped location, status approved
 CREATE POLICY "Publik lihat approved reports" ON "Report"
-  FOR SELECT USING (status = 'approved');
+  FOR SELECT USING ("status" = 'approved');
 
 -- Volunteer: CRUD laporan sendiri
 CREATE POLICY "Volunteer insert report" ON "Report"
-  FOR INSERT WITH CHECK (auth.uid()::text = userId OR userId IS NULL);
+  FOR INSERT WITH CHECK (auth.uid()::text = "userId" OR "userId" IS NULL);
 
 CREATE POLICY "Volunteer lihat report sendiri" ON "Report"
-  FOR SELECT USING (auth.uid()::text = userId);
+  FOR SELECT USING (auth.uid()::text = "userId");
 
 CREATE POLICY "Volunteer update report sendiri" ON "Report"
-  FOR UPDATE USING (auth.uid()::text = userId);
+  FOR UPDATE USING (auth.uid()::text = "userId");
 
 -- Admin: lihat semua
 CREATE POLICY "Admin semua report" ON "Report"
@@ -50,51 +50,51 @@ CREATE POLICY "Admin semua report" ON "Report"
 -- ─── DONATIONS ───────────────────────────────────────────────
 -- Publik: lihat donor_name, amount, status (hanya paid)
 CREATE POLICY "Publik lihat donasi paid" ON "Donation"
-  FOR SELECT USING (status = 'paid');
+  FOR SELECT USING ("status" = 'paid');
 
 -- User: lihat donasi sendiri
 CREATE POLICY "User lihat donasi sendiri" ON "Donation"
-  FOR SELECT USING (auth.uid()::text = userId);
+  FOR SELECT USING (auth.uid()::text = "userId");
 
 -- ─── PROJECTS ────────────────────────────────────────────────
 -- Publik: lihat approved projects
 CREATE POLICY "Publik lihat approved projects" ON "Project"
-  FOR SELECT USING (status = 'approved');
+  FOR SELECT USING ("status" = 'approved');
 
 -- Volunteer: insert project (if >= 20K pts)
 -- NOTE: points check dilakukan di API, RLS hanya batasi akses
 CREATE POLICY "Volunteer insert project" ON "Project"
-  FOR INSERT WITH CHECK (auth.uid()::text = userId);
+  FOR INSERT WITH CHECK (auth.uid()::text = "userId");
 
 CREATE POLICY "Volunteer lihat project sendiri" ON "Project"
-  FOR SELECT USING (auth.uid()::text = userId);
+  FOR SELECT USING (auth.uid()::text = "userId");
 
 -- ─── POINTS LOG ──────────────────────────────────────────────
 -- User: lihat poin sendiri
 CREATE POLICY "User lihat points log sendiri" ON "PointsLog"
-  FOR SELECT USING (auth.uid()::text = userId);
+  FOR SELECT USING (auth.uid()::text = "userId");
 
 -- ─── COURSES ──────────────────────────────────────────────────
 -- Publik: lihat course active
 CREATE POLICY "Publik lihat course aktif" ON "Course"
-  FOR SELECT USING (isActive = true);
+  FOR SELECT USING ("isActive" = true);
 
 CREATE POLICY "Publik lihat module" ON "CourseModule"
   FOR SELECT USING (true);
 
 CREATE POLICY "User manage progress" ON "CoursesProgress"
-  FOR ALL USING (auth.uid()::text = userId);
+  FOR ALL USING (auth.uid()::text = "userId");
 
 -- ─── FORMS ────────────────────────────────────────────────────
 CREATE POLICY "Publik lihat form aktif" ON "Form"
-  FOR SELECT USING (isActive = true);
+  FOR SELECT USING ("isActive" = true);
 
 CREATE POLICY "Publik lihat field" ON "FormField"
   FOR SELECT USING (true);
 
 -- ─── POINT RULES ──────────────────────────────────────────────
 CREATE POLICY "Publik lihat point rules aktif" ON "PointRule"
-  FOR SELECT USING (isActive = true);
+  FOR SELECT USING ("isActive" = true);
 
 -- ─── FEEDBACK ─────────────────────────────────────────────────
 CREATE POLICY "User insert feedback" ON "Feedback"
