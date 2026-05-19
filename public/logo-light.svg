@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 80" fill="none">
   <circle cx="52" cy="40" r="32" stroke="#34d399" stroke-width="4"/>
   <circle cx="52" cy="40" r="16" fill="#34d399"/>
-  <text x="52" y="47" font-family="system-ui, sans-serif" font-size="22" font-weight="800" fill="#0f172a" text-anchor="middle">S</text>
+   <text x="52" y="47" font-family="system-ui, sans-serif" font-size="22" font-weight="800" fill="white" text-anchor="middle">S</text>
   <text x="100" y="38" font-family="system-ui, sans-serif" font-size="28" font-weight="800" fill="white" letter-spacing="-0.5">SpringHub</text>
   <text x="100" y="60" font-family="system-ui, sans-serif" font-size="12" font-weight="500" fill="#cbd5e1" letter-spacing="1.5">by JAGA SEMESTA</text>
 </svg>

@@ -242,13 +242,17 @@ export async function POST(request: Request) {
   }
 }
 
-/** GET /api/reports — list public reports (snapped location only). */
-export async function GET() {
+/** GET /api/reports — list public reports (snapped location only). Supports ?limit=N */
+export async function GET(request?: Request) {
   try {
+    const url = request ? new URL(request.url) : null;
+    const limitParam = url?.searchParams.get("limit");
+    const limit = limitParam ? parseInt(limitParam, 10) : 50;
+
     const reports = await prisma.report.findMany({
       where: { status: "approved" },
       orderBy: { createdAt: "desc" },
-      take: 50,
+      take: limit,
       select: {
         id: true,
         formSlug: true,

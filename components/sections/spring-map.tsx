@@ -95,6 +95,8 @@ export function SpringMap() {
         : reports.filter((r) => getStatusFromForm(r.formSlug) === filter),
     [filter, reports]
   );
+  const visibleMap = visible;
+  const visibleList = visible.slice(0, 10);
 
   return (
     <section id="map" className="container-page py-16">
@@ -157,11 +159,11 @@ export function SpringMap() {
               {t("map.springDetails")}
             </h3>
             <span className="text-xs text-ink-subtle">
-              {t("map.shownCount", { count: String(visible.length) })}
+              {visibleList.length} of {visible.length} shown
             </span>
           </div>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            {visible.map((r) => {
+            {visibleList.map((r) => {
               const status = getStatusFromForm(r.formSlug);
               const styles = statusStyles[status];
               const statusLabel = getLabelFromStatus(status);

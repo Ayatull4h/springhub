@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import { MapContainer, TileLayer, CircleMarker, Tooltip, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Tooltip, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { type SpringStatus } from "@/lib/data";
 
@@ -44,18 +44,35 @@ type ReportData = {
   user?: { username: string; region: string };
 };
 
+function FitBounds({ data }: { data: ReportData[] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (data.length === 0) return;
+    const valid = data.filter((r) => r.snappedLat && r.snappedLng);
+    if (valid.length === 0) return;
+    const bounds = valid.map((r) => [r.snappedLat!, r.snappedLng!] as [number, number]);
+    map.fitBounds(bounds, { padding: [50, 50] });
+  }, [data, map]);
+  return null;
+}
+
 export function LeafletMap({ filter }: { filter: SpringStatus | "all" }) {
   const [reports, setReports] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch("/api/reports")
-      .then((r) => r.json())
-      .then((data) => {
+    fetch("/api/reports?limit=100")
+      .then(async (r) => {
+        if (!r.ok) throw new Error("Failed to fetch");
+        const data = await r.json();
         setReports(data.reports || []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {
@@ -65,6 +82,18 @@ export function LeafletMap({ filter }: { filter: SpringStatus | "all" }) {
       </div>
     );
   }
+
+  if (error) {
+    return (
+      <div className="grid h-full w-full place-items-center bg-red-50 text-sm text-red-600">
+        Map tidak dapat dimuat. Coba refresh halaman.
+      </div>
+    );
+  }
+
+  const filtered = filter === "all"
+    ? reports
+    : reports.filter((r) => getStatusFromForm(r.formSlug) === filter);
 
   return (
     <div className="relative h-full w-full">
@@ -76,16 +105,12 @@ export function LeafletMap({ filter }: { filter: SpringStatus | "all" }) {
         style={{ minHeight: 360 }}
         attributionControl={true}
       >
+        <FitBounds data={filtered} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {reports
-          .filter(
-            (r) =>
-              filter === "all" || getStatusFromForm(r.formSlug) === filter
-          )
-          .map((r) => {
+        {filtered.map((r) => {
             const status = getStatusFromForm(r.formSlug);
             const color = statusColors[status];
             if (!r.snappedLat || !r.snappedLng) return null;
