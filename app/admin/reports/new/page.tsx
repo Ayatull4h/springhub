@@ -3,90 +3,128 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Plus, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, AlertCircle, CheckCircle2, GripVertical } from "lucide-react";
 
-type FormField = {
-  fieldId: string;
-  label: string;
-  type: string;
-  required: boolean;
-  placeholder: string;
-  options: string;
-};
-
-type FormItem = {
+type CustomField = {
   id: string;
-  slug: string;
-  title: string;
-  fields: FormField[];
+  label: string;
+  type: "text" | "longtext" | "number" | "date" | "phone" | "select" | "multiselect" | "photo" | "location" | "link";
+  required: boolean;
+  value: any;
+  file?: File | null;
 };
+
+const FIELD_TYPES = [
+  { value: "text", label: "Teks Pendek", icon: "Aa" },
+  { value: "longtext", label: "Teks Panjang", icon: "¶" },
+  { value: "number", label: "Angka", icon: "#" },
+  { value: "date", label: "Tanggal", icon: "📅" },
+  { value: "phone", label: "Nomor Telepon", icon: "📞" },
+  { value: "select", label: "Pilih Satu", icon: "▼" },
+  { value: "multiselect", label: "Pilih Banyak", icon: "☑" },
+  { value: "photo", label: "Foto", icon: "📷" },
+  { value: "location", label: "Lokasi (Lat/Lng)", icon: "📍" },
+  { value: "link", label: "Link / URL", icon: "🔗" },
+];
 
 export default function AdminNewReportPage() {
   const router = useRouter();
-  const [forms, setForms] = useState<FormItem[]>([]);
-  const [selectedForm, setSelectedForm] = useState<string>("");
-  const [fields, setFields] = useState<FormField[]>([]);
-  const [formData, setFormData] = useState<Record<string, any>>({});
-  const [files, setFiles] = useState<Record<string, File>>({});
-  const [loading, setLoading] = useState(true);
+  const [fields, setFields] = useState<CustomField[]>([]);
+  const [selectedForm, setSelectedForm] = useState("");
+  const [forms, setForms] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [lat, setLat] = useState("");
-  const [lng, setLng] = useState("");
+  const [formSlug, setFormSlug] = useState("custom");
 
   useEffect(() => {
     fetch("/api/admin/forms")
       .then(r => r.json())
       .then(data => setForms(data.forms || []))
-      .catch(() => setError("Gagal memuat form"))
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, []);
 
-  function handleFormSelect(slug: string) {
+  function addField(type: CustomField["type"]) {
+    const newField: CustomField = {
+      id: `field_${Date.now()}_${Math.random().toString(36).slice(2, 5)}`,
+      label: "",
+      type,
+      required: false,
+      value: type === "multiselect" ? [] : type === "number" ? "" : "",
+    };
+    setFields(prev => [...prev, newField]);
+  }
+
+  function removeField(id: string) {
+    setFields(prev => prev.filter(f => f.id !== id));
+  }
+
+  function updateField(id: string, updates: Partial<CustomField>) {
+    setFields(prev => prev.map(f => f.id === id ? { ...f, ...updates } : f));
+  }
+
+  function loadFormTemplate(slug: string) {
+    setFormSlug(slug || "custom");
     setSelectedForm(slug);
+    if (!slug) { setFields([]); return; }
+    
     const form = forms.find(f => f.slug === slug);
-    setFields(form?.fields || []);
-    setFormData({});
-    setFiles({});
-    setLat("");
-    setLng("");
-  }
-
-  function updateField(fieldId: string, value: any) {
-    setFormData(prev => ({ ...prev, [fieldId]: value }));
-  }
-
-  function handleFile(fieldId: string, file: File | null) {
-    if (file) {
-      setFiles(prev => ({ ...prev, [fieldId]: file }));
-    }
+    if (!form?.fields) return;
+    
+    const loaded: CustomField[] = form.fields.map((ff: any) => ({
+      id: `field_${Date.now()}_${Math.random().toString(36).slice(2, 5)}`,
+      label: ff.label,
+      type: ff.type,
+      required: ff.required,
+      value: ff.type === "multiselect" ? [] : "",
+    }));
+    setFields(loaded);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedForm) return;
     setError("");
-    setSubmitting(true);
 
+    // Validate required fields
+    for (const f of fields) {
+      if (f.required && !f.label.trim()) {
+        setError("Semua field wajib harus diberi label");
+        return;
+      }
+      if (f.required && f.type !== "photo" && f.type !== "location" && (f.value === "" || f.value === null || f.value === undefined)) {
+        setError(`Field "${f.label || '(tanpa label)'}" wajib diisi`);
+        return;
+      }
+    }
+
+    setSubmitting(true);
     try {
       const fd = new FormData();
-      fd.append("form_slug", selectedForm);
+      fd.append("form_slug", formSlug || "admin-custom");
       fd.append("_submit_time", Date.now().toString());
       fd.append("_website", "");
 
-      Object.entries(formData).forEach(([key, val]) => {
-        if (val !== undefined && val !== null) {
-          fd.append(key, String(val));
+      let locationLat = "";
+      let locationLng = "";
+
+      for (const field of fields) {
+        if (field.type === "location") {
+          const parts = String(field.value || "").split(",");
+          if (parts.length >= 2) {
+            locationLat = parts[0].trim();
+            locationLng = parts[1].trim();
+            fd.append("location_lat", locationLat);
+            fd.append("location_lng", locationLng);
+          }
+          fd.append(field.id, String(field.value || ""));
+        } else if (field.type === "photo" && field.file) {
+          fd.append(field.id, field.file);
+        } else if (field.type === "multiselect" && Array.isArray(field.value)) {
+          field.value.forEach((v: string) => fd.append(field.id + "[]", v));
+        } else {
+          fd.append(field.id, String(field.value || ""));
         }
-      });
-
-      if (lat) fd.append("location_lat", lat);
-      if (lng) fd.append("location_lng", lng);
-
-      Object.entries(files).forEach(([fieldId, file]) => {
-        fd.append(fieldId, file);
-      });
+      }
 
       const csrfRes = await fetch("/api/csrf");
       const csrfData = await csrfRes.json();
@@ -103,15 +141,11 @@ export default function AdminNewReportPage() {
       } else {
         setError(data.error || data.details || "Gagal submit");
       }
-    } catch (err) {
+    } catch {
       setError("Kesalahan jaringan");
     } finally {
       setSubmitting(false);
     }
-  }
-
-  if (loading) {
-    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-brand-600" /></div>;
   }
 
   if (success) {
@@ -119,10 +153,10 @@ export default function AdminNewReportPage() {
       <div className="container-page max-w-lg py-20 text-center">
         <CheckCircle2 className="mx-auto h-16 w-16 text-emerald-500" />
         <h1 className="mt-4 text-2xl font-extrabold text-ink">Laporan Berhasil Dibuat!</h1>
-        <p className="mt-2 text-ink-muted">Laporan admin telah dikirim dan masuk ke review.</p>
+        <p className="mt-2 text-ink-muted">Laporan admin telah dikirim.</p>
         <div className="mt-6 flex justify-center gap-3">
           <Link href="/admin/reports" className="btn-primary">Lihat Laporan</Link>
-          <button onClick={() => { setSuccess(false); setSelectedForm(""); }} className="btn-secondary">Buat Lagi</button>
+          <button onClick={() => { setSuccess(false); setFields([]); setSelectedForm(""); }} className="btn-secondary">Buat Lagi</button>
         </div>
       </div>
     );
@@ -142,96 +176,95 @@ export default function AdminNewReportPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Pilih form */}
+        {/* Pilih template form */}
         <div className="card space-y-3">
-          <label className="text-sm font-semibold text-ink">Pilih Jenis Laporan</label>
-          <select
-            value={selectedForm}
-            onChange={(e) => handleFormSelect(e.target.value)}
-            className="w-full rounded-md border border-ink-line px-3 py-2 text-sm"
-            required
-          >
-            <option value="">-- Pilih Form --</option>
-            {forms.map(f => (
-              <option key={f.slug} value={f.slug}>{f.title}</option>
-            ))}
+          <label className="text-sm font-semibold text-ink">Template Form (opsional)</label>
+          <select value={selectedForm} onChange={e => loadFormTemplate(e.target.value)} className="w-full rounded-md border border-ink-line px-3 py-2 text-sm">
+            <option value="">-- Custom (isi sendiri) --</option>
+            {forms.map(f => <option key={f.slug} value={f.slug}>{f.title}</option>)}
           </select>
+          <p className="text-xs text-ink-subtle">Pilih template untuk otomatis mengisi field, atau buat dari kosong.</p>
         </div>
 
-        {/* Fields dinamis */}
-        {fields.length > 0 && (
-          <div className="card space-y-4">
-            <h3 className="text-sm font-semibold text-ink">Form {forms.find(f => f.slug === selectedForm)?.title}</h3>
-            {fields.map(field => (
-              <div key={field.fieldId}>
-                <label className="text-xs font-medium text-ink-muted">
-                  {field.label} {field.required && <span className="text-red-500">*</span>}
-                </label>
-
-                {field.type === "text" && (
-                  <input type="text" value={formData[field.fieldId] || ""} onChange={e => updateField(field.fieldId, e.target.value)} placeholder={field.placeholder} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
-                )}
-
-                {field.type === "longtext" && (
-                  <textarea value={formData[field.fieldId] || ""} onChange={e => updateField(field.fieldId, e.target.value)} rows={3} placeholder={field.placeholder} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
-                )}
-
-                {field.type === "number" && (
-                  <input type="number" value={formData[field.fieldId] || ""} onChange={e => updateField(field.fieldId, e.target.value)} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
-                )}
-
-                {field.type === "date" && (
-                  <input type="date" value={formData[field.fieldId] || ""} onChange={e => updateField(field.fieldId, e.target.value)} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
-                )}
-
-                {field.type === "phone" && (
-                  <input type="tel" value={formData[field.fieldId] || ""} onChange={e => updateField(field.fieldId, e.target.value)} placeholder="08xxx" className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
-                )}
-
-                {field.type === "select" && (
-                  <select value={formData[field.fieldId] || ""} onChange={e => updateField(field.fieldId, e.target.value)} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm">
-                    <option value="">-- Pilih --</option>
-                    {(() => { try { return JSON.parse(field.options); } catch { return []; } })().map((opt: string, i: number) => (
-                      <option key={i} value={opt}>{opt}</option>
-                    ))}
-                  </select>
-                )}
-
-                {field.type === "multiselect" && (
-                  <div className="mt-1 space-y-1">
-                    {(() => { try { return JSON.parse(field.options); } catch { return []; } })().map((opt: string, i: number) => (
-                      <label key={i} className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={(formData[field.fieldId] || []).includes(opt)} onChange={e => {
-                          const current = formData[field.fieldId] || [];
-                          const next = e.target.checked ? [...current, opt] : current.filter((v: string) => v !== opt);
-                          updateField(field.fieldId, next);
-                        }} className="h-4 w-4 rounded border-ink-line" />
-                        {opt}
-                      </label>
-                    ))}
-                  </div>
-                )}
-
-                {field.type === "link" && (
-                  <input type="url" value={formData[field.fieldId] || ""} onChange={e => updateField(field.fieldId, e.target.value)} placeholder="https://..." className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
-                )}
-
-                {field.type === "photo" && (
-                  <input type="file" accept="image/*" onChange={e => handleFile(field.fieldId, e.target.files?.[0] || null)} className="mt-1 text-sm" />
-                )}
-
-                {field.type === "location" && (
-                  <div className="mt-1 grid grid-cols-2 gap-2">
-                    <input type="text" value={lat} onChange={e => setLat(e.target.value)} placeholder="Latitude" className="rounded-md border border-ink-line px-3 py-2 text-sm" />
-                    <input type="text" value={lng} onChange={e => setLng(e.target.value)} placeholder="Longitude" className="rounded-md border border-ink-line px-3 py-2 text-sm" />
-                  </div>
-                )}
-              </div>
-            ))}
+        {/* Dynamic fields */}
+        <div className="card space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-ink">Fields ({fields.length})</h3>
+            <div className="flex flex-wrap gap-1">
+              {FIELD_TYPES.map(ft => (
+                <button key={ft.value} type="button" onClick={() => addField(ft.value as CustomField["type"])}
+                  className="rounded-md border border-ink-line px-2 py-1 text-[11px] font-medium text-ink-muted hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 transition"
+                  title={`Tambah ${ft.label}`}
+                >
+                  {ft.icon} {ft.label}
+                </button>
+              ))}
+            </div>
           </div>
-        )}
 
-        {selectedForm && (
+          {fields.length === 0 ? (
+            <div className="py-8 text-center text-sm text-ink-muted">
+              Belum ada field. Klik tombol di atas untuk menambahkan.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {fields.map((field, idx) => (
+                <div key={field.id} className="rounded-lg border border-ink-line bg-slate-50 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-ink-subtle">Field {idx + 1}</span>
+                    <div className="flex items-center gap-2">
+                      <label className="flex items-center gap-1 text-xs text-ink-muted">
+                        <input type="checkbox" checked={field.required} onChange={e => updateField(field.id, { required: e.target.checked })} className="h-3 w-3" />
+                        Wajib
+                      </label>
+                      <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">{field.type}</span>
+                      <button type="button" onClick={() => removeField(field.id)} className="rounded-md p-1 text-ink-muted hover:bg-red-50 hover:text-red-600">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-2 grid gap-2">
+                    <input type="text" value={field.label} onChange={e => updateField(field.id, { label: e.target.value })} placeholder="Label field" className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
+
+                    {field.type === "text" && (
+                      <input type="text" value={field.value || ""} onChange={e => updateField(field.id, { value: e.target.value })} placeholder="Isi teks..." className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
+                    )}
+                    {field.type === "longtext" && (
+                      <textarea value={field.value || ""} onChange={e => updateField(field.id, { value: e.target.value })} rows={2} placeholder="Isi teks panjang..." className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
+                    )}
+                    {field.type === "number" && (
+                      <input type="number" value={field.value || ""} onChange={e => updateField(field.id, { value: e.target.value })} placeholder="0" className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
+                    )}
+                    {field.type === "date" && (
+                      <input type="date" value={field.value || ""} onChange={e => updateField(field.id, { value: e.target.value })} className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
+                    )}
+                    {field.type === "phone" && (
+                      <input type="tel" value={field.value || ""} onChange={e => updateField(field.id, { value: e.target.value })} placeholder="08xxx" className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
+                    )}
+                    {field.type === "link" && (
+                      <input type="url" value={field.value || ""} onChange={e => updateField(field.id, { value: e.target.value })} placeholder="https://..." className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
+                    )}
+                    {field.type === "location" && (
+                      <input type="text" value={field.value || ""} onChange={e => updateField(field.id, { value: e.target.value })} placeholder="-7.5, 110.0 (lintang, bujur)" className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm font-mono" />
+                    )}
+                    {field.type === "photo" && (
+                      <input type="file" accept="image/*" onChange={e => updateField(field.id, { file: e.target.files?.[0] || null })} className="text-sm" />
+                    )}
+                    {field.type === "select" && (
+                      <input type="text" value={field.value || ""} onChange={e => updateField(field.id, { value: e.target.value })} placeholder="Pilihan..." className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
+                    )}
+                    {field.type === "multiselect" && (
+                      <div className="text-sm text-ink-muted">Gunakan field Teks Pendek untuk setiap pilihan</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {fields.length > 0 && (
           <div className="flex justify-end">
             <button type="submit" disabled={submitting} className="btn-primary inline-flex items-center gap-2">
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
