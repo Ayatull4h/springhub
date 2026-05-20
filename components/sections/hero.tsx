@@ -44,6 +44,11 @@ export function Hero() {
           allowFullScreen
         />
       </div>
+
+      {/* Mobile fallback — YouTube link */}
+      <a href="https://www.youtube.com/watch?v=oUDA1loE8BE" target="_blank" className="mt-2 inline-flex items-center gap-1 text-xs text-ink-muted hover:text-brand-600 md:hidden">
+        ▶️ Tonton di YouTube
+      </a>
     </section>
   );
 }

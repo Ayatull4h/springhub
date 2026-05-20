@@ -586,29 +586,24 @@ export default function AdminEditFormPage() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-ink-muted">
-                  Tipe Field
-                </label>
-                <select
-                  value={newField.type}
-                  onChange={(e) =>
-                    setNewField((prev) => ({
-                      ...prev,
-                      type: e.target.value,
-                    }))
-                  }
-                  className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-                >
-                  {FIELD_TYPES.map((ft) => (
-                    <option key={ft.value} value={ft.value}>
-                      {ft.label}
-                    </option>
-                  ))}
-                </select>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-ink-muted">
+                Tipe Field
+              </label>
+              <div className="flex flex-wrap gap-1">
+                {FIELD_TYPES.map(ft => (
+                  <button key={ft.value} type="button"
+                    onClick={() => setNewField((prev) => ({ ...prev, type: ft.value }))}
+                    className={`rounded-md border px-2 py-1 text-[11px] font-medium transition ${
+                      newField.type === ft.value
+                        ? "border-brand-500 bg-brand-50 text-brand-700"
+                        : "border-ink-line text-ink-muted hover:bg-brand-50 hover:text-brand-700"
+                    }`}>
+                    {ft.label}
+                  </button>
+                ))}
               </div>
-              <div className="flex items-end">
+              <div className="mt-2 flex items-center gap-2">
                 <label className="flex cursor-pointer items-center gap-2 rounded-md border border-ink-line px-3 py-2 text-sm text-ink-muted hover:bg-slate-100">
                   <input
                     type="checkbox"

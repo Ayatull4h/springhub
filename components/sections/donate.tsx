@@ -312,7 +312,9 @@ export function DonateSection() {
             const typeMeta = PROJECT_TYPES.find((t) => t.id === p.typeId);
             return (
               <article key={p.title} className="card flex gap-4">
-                <div className="aspect-square w-28 flex-none rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50 dark:from-emerald-900/30 dark:to-sky-900/30" />
+                <div className="flex aspect-square w-28 flex-none items-center justify-center rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50 dark:from-emerald-900/30 dark:to-sky-900/30">
+                  <TypeIcon className="h-10 w-10 text-brand-600/60" />
+                </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="chip bg-brand-50 text-brand-700">
