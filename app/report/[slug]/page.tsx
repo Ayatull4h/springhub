@@ -354,6 +354,36 @@ function FieldRenderer({ field }: { field: FormField }) {
           </select>
         </div>
       );
+    case "province":
+      const PROVINSI = [
+        "Aceh", "Sumatera Utara", "Sumatera Barat", "Riau", "Jambi",
+        "Sumatera Selatan", "Bengkulu", "Lampung", "Kepulauan Bangka Belitung",
+        "Kepulauan Riau", "DKI Jakarta", "Jawa Barat", "Jawa Tengah",
+        "DI Yogyakarta", "Jawa Timur", "Banten", "Bali",
+        "Nusa Tenggara Barat", "Nusa Tenggara Timur", "Kalimantan Barat",
+        "Kalimantan Tengah", "Kalimantan Selatan", "Kalimantan Timur",
+        "Kalimantan Utara", "Sulawesi Utara", "Sulawesi Tengah",
+        "Sulawesi Selatan", "Sulawesi Tenggara", "Gorontalo",
+        "Sulawesi Barat", "Maluku", "Maluku Utara", "Papua",
+        "Papua Barat", "Papua Selatan", "Papua Tengah", "Papua Pegunungan",
+        "Papua Barat Daya",
+      ];
+      return (
+        <div>
+          {labelEl}
+          <select
+            id={field.id}
+            name={field.id}
+            required={field.required}
+            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+          >
+            <option value="">{t("form.select.placeholder")}</option>
+            {PROVINSI.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </div>
+      );
     case "multiselect":
       return (
         <fieldset>

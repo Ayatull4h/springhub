@@ -24,7 +24,6 @@ const sidebar = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Reports", href: "/admin/reports", icon: FileText },
-  { label: "New Report", href: "/admin/reports/new", icon: FileText },
   { label: "Forms", href: "/admin/forms", icon: ClipboardList },
   { label: "Donations", href: "/admin/donations", icon: Heart },
   { label: "Points", href: "/admin/points", icon: Award },

@@ -36,6 +36,7 @@ const FIELD_TYPES = [
   { value: "photo", label: "Foto" },
   { value: "location", label: "Lokasi" },
   { value: "link", label: "Link / URL" },
+  { value: "province", label: "Provinsi" },
 ];
 
 type FormField = {

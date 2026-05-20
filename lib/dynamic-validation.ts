@@ -40,6 +40,7 @@ export function generateZodSchema(fields: DynamicFieldDef[]) {
         break;
 
       case "select":
+      case "province":
         shape[field.fieldId] = field.required
           ? z.string().min(1, `${field.label} wajib dipilih`)
           : z.string().optional().default("");

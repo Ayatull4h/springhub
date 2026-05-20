@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MapPin, CheckCircle2, Clock, XCircle, Eye, EyeOff, Download } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
@@ -25,6 +25,22 @@ export default function AdminReportsPage() {
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showPrecise, setShowPrecise] = useState(false);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
+  const filteredReports = useMemo(() => {
+    let result = reports;
+    if (dateFrom) {
+      const from = new Date(dateFrom);
+      result = result.filter(r => new Date(r.createdAt) >= from);
+    }
+    if (dateTo) {
+      const to = new Date(dateTo);
+      to.setHours(23, 59, 59);
+      result = result.filter(r => new Date(r.createdAt) <= to);
+    }
+    return result;
+  }, [reports, dateFrom, dateTo]);
 
   useEffect(() => {
     fetch("/api/admin/reports")
@@ -65,7 +81,15 @@ export default function AdminReportsPage() {
             {t("admin.reports.count", { count: String(reports.length) })}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="rounded-md border border-ink-line px-2 py-1.5 text-xs" />
+            <span className="text-xs text-ink-muted">s/d</span>
+            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="rounded-md border border-ink-line px-2 py-1.5 text-xs" />
+            {(dateFrom || dateTo) && (
+              <button onClick={() => { setDateFrom(""); setDateTo(""); }} className="text-xs text-brand-600 hover:underline">Reset</button>
+            )}
+          </div>
           <button
             onClick={() => window.open("/api/admin/export?entity=reports&format=csv", "_blank")}
             className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100"
@@ -98,7 +122,7 @@ export default function AdminReportsPage() {
             </tr>
           </thead>
           <tbody>
-            {reports.map((r) => {
+            {filteredReports.map((r) => {
               const status = statusConfig[r.status] ?? statusConfig.pending;
               const StatusIcon = status.icon;
               return (

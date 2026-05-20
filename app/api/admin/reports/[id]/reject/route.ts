@@ -39,6 +39,16 @@ export async function POST(
 
     if (report.userId) {
       await updateTrustScore(report.userId, false);
+
+      await prisma.pointsLog.create({
+        data: {
+          userId: report.userId,
+          reportId: params.id,
+          amount: 0,
+          reason: `Laporan ${report.formSlug} ditolak`,
+          metadata: JSON.stringify({ status: "rejected" }),
+        },
+      });
     }
 
     return NextResponse.json({ success: true, status: "rejected" });
