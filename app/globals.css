@@ -71,3 +71,13 @@
   border-color: #475569;
   color: #e2e8f0;
 }
+
+/* Cursor pointer for all buttons */
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+/* Fix floating points button */
+.dark .fixed.bottom-6 button {
+  cursor: pointer !important;
+}

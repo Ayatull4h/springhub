@@ -96,7 +96,7 @@ export function SpringMap() {
     [filter, reports]
   );
   const visibleMap = visible;
-  const visibleList = visible.slice(0, 10);
+  const visibleList = visible.slice(0, 6);
 
   return (
     <section id="map" className="container-page py-16">
