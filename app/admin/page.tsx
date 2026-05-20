@@ -7,7 +7,6 @@ import {
   FileText,
   Heart,
   HardHat,
-  Award,
   CheckCircle2,
   Clock,
   XCircle,
@@ -28,7 +27,7 @@ type ReportItem = {
 
 export default function AdminDashboard() {
   const { t } = useI18n();
-  const [stats, setStats] = useState({ users: 0, reports: 0, donations: 0, projects: 0, points: 0 });
+  const [stats, setStats] = useState({ users: 0, reports: 0, donations: 0, projects: 0 });
   const [recentReports, setRecentReports] = useState<ReportItem[]>([]);
   const [recentUsers, setRecentUsers] = useState<{ id: string; username: string; role: string; createdAt: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,9 +38,8 @@ export default function AdminDashboard() {
       fetch("/api/admin/reports").then((r) => r.json()),
       fetch("/api/admin/donations").then((r) => r.json()),
       fetch("/api/admin/projects").then((r) => r.json()),
-      fetch("/api/admin/points").then((r) => r.json()),
     ])
-      .then(([usersData, reportsData, donationsData, projectsData, pointsData]) => {
+      .then(([usersData, reportsData, donationsData, projectsData]) => {
         const allUsers = usersData.users ?? [];
         const sorted = [...allUsers].sort(
           (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -51,7 +49,6 @@ export default function AdminDashboard() {
           reports: reportsData.reports?.length ?? 0,
           donations: donationsData.donations?.length ?? 0,
           projects: projectsData.projects?.length ?? 0,
-          points: pointsData.total ?? 0,
         });
         setRecentReports((reportsData.reports ?? []).slice(0, 10));
         setRecentUsers(sorted.slice(0, 5));
@@ -69,7 +66,6 @@ export default function AdminDashboard() {
   const statCards = [
     { label: t("admin.totalUsers"), value: stats.users.toString(), change: "Registered", icon: Users, color: "text-blue-600" },
     { label: t("admin.totalReports"), value: stats.reports.toString(), change: "All time", icon: FileText, color: "text-emerald-600" },
-    { label: t("admin.totalPoints"), value: stats.points.toLocaleString("id-ID"), change: "Awarded", icon: Award, color: "text-purple-600" },
     { label: t("admin.donations"), value: stats.donations.toString(), change: "Total transactions", icon: Heart, color: "text-rose-600" },
     { label: t("admin.activeProjects"), value: stats.projects.toString(), change: "All time", icon: HardHat, color: "text-amber-600" },
   ];
