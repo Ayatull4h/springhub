@@ -72,6 +72,7 @@ type ReportItem = {
 export function SpringMap() {
   const { t } = useI18n();
   const [filter, setFilter] = useState<SpringStatus | "all">("all");
+  const [page, setPage] = useState(1);
   const [reports, setReports] = useState<ReportItem[]>([]);
 
   const fetchReports = () => {
@@ -101,8 +102,10 @@ export function SpringMap() {
         : reports.filter((r) => getStatusFromForm(r.formSlug) === filter),
     [filter, reports]
   );
-  const visibleMap = visible;
-  const visibleList = visible.slice(0, 6);
+  const itemsPerPage = 6;
+  const totalPages = Math.max(1, Math.ceil(visible.length / itemsPerPage));
+  const currentPage = Math.min(page, totalPages);
+  const visibleList = visible.slice(0, currentPage * itemsPerPage);
 
   return (
     <section id="map" className="container-page py-16">
@@ -165,7 +168,7 @@ export function SpringMap() {
               {t("map.springDetails")}
             </h3>
             <span className="text-xs text-ink-subtle">
-              {visibleList.length} of {visible.length} shown
+              {Math.min(currentPage * itemsPerPage, visible.length)} dari {visible.length}
             </span>
           </div>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -212,6 +215,27 @@ export function SpringMap() {
               );
             })}
           </ul>
+          {visible.length > itemsPerPage && (
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <button
+                onClick={() => { setPage(p => Math.max(1, p - 1)); }}
+                disabled={page === 1}
+                className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
+              >
+                ← Sebelumnya
+              </button>
+              <span className="text-xs text-ink-muted">
+                {Math.min(currentPage * itemsPerPage, visible.length)} dari {visible.length}
+              </span>
+              <button
+                onClick={() => { setPage(p => p + 1); }}
+                disabled={currentPage * itemsPerPage >= visible.length}
+                className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
+              >
+                Selanjutnya →
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="card bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 lg:col-span-6">
