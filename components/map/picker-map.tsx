@@ -54,7 +54,7 @@ export function PickerMap({ initialLat, initialLng, onPick }: PickerMapProps) {
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{scale}.png"
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
       />
       <ClickHandler onPick={handleClick} />
       <Marker position={marker} icon={icon} />

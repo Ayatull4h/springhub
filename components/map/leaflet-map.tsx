@@ -74,7 +74,7 @@ export function LeafletMap({ filter, reports }: { filter: SpringStatus | "all"; 
         <FitBounds data={filtered} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{scale}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
         />
         {filtered.map((r) => {
             const status = getStatusFromForm(r.formSlug);
