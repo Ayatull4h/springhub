@@ -232,7 +232,7 @@ export function SpringMap() {
               <Link
                 key={f.slug}
                 href={`/report/${f.slug}`}
-                className="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300 dark:border-slate-700 dark:bg-slate-800"
+                className="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300 cursor-pointer dark:border-slate-700 dark:bg-slate-800"
               >
                 <span className="min-w-0">
                   <span className="block truncate font-medium text-ink">

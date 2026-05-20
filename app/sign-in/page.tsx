@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { ArrowLeft, LogIn, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { useI18n } from "@/lib/i18n";
 
@@ -52,12 +52,18 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
+    <div className="relative flex min-h-[80vh] items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <div className="mb-4 flex justify-center">
             <Logo />
           </div>
+          <Link
+            href="/"
+            className="absolute left-4 top-4 md:left-8 md:top-8 inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
+          >
+            <ArrowLeft className="h-4 w-4" /> Kembali
+          </Link>
           <h1 className="text-2xl font-extrabold tracking-tight text-ink">
             {t("auth.signIn.title")}
           </h1>
