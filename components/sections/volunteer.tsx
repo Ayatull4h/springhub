@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -12,6 +11,11 @@ import {
   Lock,
   ShieldCheck,
   Info,
+  Eye,
+  Wrench,
+  Layers,
+  TreePine,
+  Sprout,
 } from "lucide-react";
 import {
   PROJECT_PROPOSAL_THRESHOLD,
@@ -23,11 +27,7 @@ import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 
-const activityImages = [
-  "https://images.unsplash.com/photo-1588279103569-1ce0b0fc9d2a?w=400&h=250&fit=crop",
-  "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=250&fit=crop",
-  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=250&fit=crop",
-];
+
 
 export function VolunteerActivities() {
   const { t } = useI18n();
@@ -69,8 +69,12 @@ export function VolunteerActivities() {
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>
-                  <div className="mt-3 aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50 dark:from-emerald-900/30 dark:to-sky-900/30">
-                    <Image src={activityImages[i % activityImages.length]} alt="Activity" width={400} height={250} className="h-full w-full object-cover" />
+                  <div className="mt-3 flex h-32 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100">
+                    {a.formSlug?.includes("monitoring") && <Eye className="h-10 w-10 text-emerald-500" />}
+                    {a.formSlug?.includes("restoration") && <Wrench className="h-10 w-10 text-amber-500" />}
+                    {a.formSlug?.includes("trench") && <Layers className="h-10 w-10 text-blue-500" />}
+                    {a.formSlug?.includes("tree") && <TreePine className="h-10 w-10 text-green-500" />}
+                    {a.formSlug?.includes("seedling") && <Sprout className="h-10 w-10 text-emerald-600" />}
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-xs text-ink-muted">
                     <MapPin className="h-3.5 w-3.5" />

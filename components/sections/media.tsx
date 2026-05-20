@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 type MediaItem = {
@@ -86,13 +86,12 @@ export function MediaSection() {
                 rel={external ? "noreferrer" : undefined}
                 className="card group transition hover:-translate-y-1"
               >
-                {item.imageUrl ? (
-                  <div className="-mx-4 -mt-4 mb-3 overflow-hidden rounded-t-xl">
-                    <img src={item.imageUrl} alt={item.title} className="h-40 w-full object-cover transition group-hover:scale-105" />
-                  </div>
-                ) : (
-                  <div className="-mx-4 -mt-4 mb-3 h-40 rounded-t-xl bg-gradient-to-br from-brand-100 to-brand-50 dark:from-brand-900/30 dark:to-brand-800/30" />
-                )}
+                <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100">
+                  {item.type === "video" && <Video className="h-12 w-12 text-rose-500" />}
+                  {item.type === "event" && <CalendarDays className="h-12 w-12 text-amber-500" />}
+                  {item.type === "publication" && <FileText className="h-12 w-12 text-blue-500" />}
+                  {item.type === "press" && <Newspaper className="h-12 w-12 text-purple-500" />}
+                </div>
                 <span className={`chip text-xs ${typeColors[item.type] || "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"}`}>
                   {item.type}
                 </span>

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import Link from "next/link";
 import {
   AlertCircle,
@@ -10,6 +9,7 @@ import {
   ShieldCheck,
   ClipboardList,
   Sparkles,
+  Droplets,
 } from "lucide-react";
 import { type SpringStatus } from "@/lib/data";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
@@ -183,14 +183,8 @@ export function SpringMap() {
                   key={r.id}
                   className="flex items-start gap-3 rounded-lg border border-ink-line/60 p-3 dark:border-slate-700"
                 >
-                  <span className="h-10 w-10 flex-none overflow-hidden rounded-md">
-                    <Image
-                      src="https://images.unsplash.com/photo-1588279103569-1ce0b0fc9d2a?w=80&h=80&fit=crop"
-                      alt="Spring"
-                      width={40}
-                      height={40}
-                      className="h-full w-full object-cover"
-                    />
+                  <span className="flex h-10 w-10 flex-none items-center justify-center rounded-md bg-gradient-to-br from-brand-50 to-brand-100">
+                    <Droplets className="h-5 w-5 text-brand-500" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">

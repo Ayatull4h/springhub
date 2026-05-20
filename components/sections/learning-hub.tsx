@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -24,11 +23,7 @@ type ProgressItem = {
   completed: boolean;
 };
 
-const courseImages = [
-  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=250&fit=crop",
-  "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=250&fit=crop",
-  "https://images.unsplash.com/photo-1518173946687-a36f968f7fcc?w=400&h=250&fit=crop",
-];
+
 
 export function LearningHub() {
   const { t } = useI18n();
@@ -92,8 +87,8 @@ export function LearningHub() {
             const prog = getProgress(c.slug);
             return (
               <article key={c.id} className="card flex flex-col">
-                <div className="aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-sky-50 dark:from-emerald-900/30 dark:to-sky-900/30">
-                  <Image src={courseImages[courses.indexOf(c) % courseImages.length]} alt={c.title} width={400} height={250} className="h-full w-full object-cover" />
+                <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-xl bg-gradient-to-br from-indigo-50 to-indigo-100">
+                  <BookOpen className="h-12 w-12 text-indigo-500" />
                 </div>
                 <span className="chip mt-4 self-start bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                   {c.level}
