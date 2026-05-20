@@ -97,7 +97,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40"
       onClick={onClose}
     >
       <div
