@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { MapContainer, TileLayer, CircleMarker, Tooltip, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { type SpringStatus } from "@/lib/data";
@@ -56,41 +56,7 @@ function FitBounds({ data }: { data: ReportData[] }) {
   return null;
 }
 
-export function LeafletMap({ filter }: { filter: SpringStatus | "all" }) {
-  const [reports, setReports] = useState<ReportData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/reports?limit=100")
-      .then(async (r) => {
-        if (!r.ok) throw new Error("Failed to fetch");
-        const data = await r.json();
-        setReports(data.reports || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(true);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="grid h-full w-full place-items-center text-sm text-ink-subtle">
-        Loading data…
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="grid h-full w-full place-items-center bg-red-50 text-sm text-red-600">
-        Map tidak dapat dimuat. Coba refresh halaman.
-      </div>
-    );
-  }
-
+export function LeafletMap({ filter, reports }: { filter: SpringStatus | "all"; reports: ReportData[] }) {
   const filtered = filter === "all"
     ? reports
     : reports.filter((r) => getStatusFromForm(r.formSlug) === filter);

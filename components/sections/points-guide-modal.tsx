@@ -14,6 +14,25 @@ type PointRule = {
   sortOrder: number;
 };
 
+const FALLBACK_RULES: PointRule[] = [
+  { id: "basic-1", name: "Spring Monitoring", description: "Laporan pemantauan mata air", points: 25, category: "basic", icon: "Eye", sortOrder: 1 },
+  { id: "basic-2", name: "Spring Restoration", description: "Laporan restorasi mata air", points: 100, category: "basic", icon: "Wrench", sortOrder: 2 },
+  { id: "basic-3", name: "Trench Development", description: "Pembangunan rorak/resapan", points: 50, category: "basic", icon: "TreePine", sortOrder: 3 },
+  { id: "basic-4", name: "Tree Planting", description: "Penanaman pohon endemik", points: 50, category: "basic", icon: "Sprout", sortOrder: 4 },
+  { id: "basic-5", name: "Seedling Stock", description: "Penyediaan bibit", points: 15, category: "basic", icon: "Sprout", sortOrder: 5 },
+  { id: "bonus-1", name: "Streak Harian", description: "Lapor 3 hari berturut-turut", points: 5, category: "bonus", icon: "Flame", sortOrder: 6 },
+  { id: "bonus-2", name: "Streak Mingguan", description: "Lapor tiap hari seminggu", points: 50, category: "bonus", icon: "CalendarCheck", sortOrder: 7 },
+  { id: "bonus-3", name: "Laporan Lengkap", description: "Semua field + foto + notes", points: 10, category: "bonus", icon: "ClipboardCheck", sortOrder: 8 },
+  { id: "bonus-4", name: "Foto Before/After", description: "Minimal 2 foto", points: 15, category: "bonus", icon: "Camera", sortOrder: 9 },
+  { id: "bonus-5", name: "Penemu (Discovery)", description: "Mata air baru belum ada di map", points: 50, category: "bonus", icon: "Compass", sortOrder: 10 },
+  { id: "bonus-6", name: "Verifikator", description: "Verifikasi laporan volunteer lain", points: 10, category: "bonus", icon: "Award", sortOrder: 11 },
+  { id: "bonus-7", name: "Course Selesai", description: "Learning Hub course completed", points: 25, category: "bonus", icon: "BookOpen", sortOrder: 12 },
+  { id: "milestone-1", name: "10 Laporan", description: "Milestone 10 laporan", points: 50, category: "milestone", icon: "Trophy", sortOrder: 13 },
+  { id: "milestone-2", name: "50 Laporan", description: "Milestone 50 laporan", points: 250, category: "milestone", icon: "Crown", sortOrder: 14 },
+  { id: "milestone-3", name: "100 Laporan", description: "Milestone 100 laporan", points: 500, category: "milestone", icon: "Gem", sortOrder: 15 },
+  { id: "milestone-4", name: "Threshold 20K Poin", description: "Sekali seumur hidup", points: 1000, category: "milestone", icon: "Sparkles", sortOrder: 16 },
+];
+
 const iconMap: Record<string, LucideIcon> = {
   Star,
   Eye,
@@ -49,10 +68,14 @@ export function PointsGuideModal({ open, onClose }: Props) {
     fetch("/api/point-rules")
       .then((r) => r.json())
       .then((data) => {
-        setRules(data.rules || []);
+        const fetched = data.rules || [];
+        setRules(fetched.length > 0 ? fetched : FALLBACK_RULES);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setRules(FALLBACK_RULES);
+        setLoading(false);
+      });
 
     fetch("/api/user/profile")
       .then((r) => r.json())
@@ -78,7 +101,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="relative max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl"
+        className="relative max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 pb-10 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button

@@ -74,11 +74,17 @@ export function SpringMap() {
   const [filter, setFilter] = useState<SpringStatus | "all">("all");
   const [reports, setReports] = useState<ReportItem[]>([]);
 
-  useEffect(() => {
-    fetch("/api/reports")
+  const fetchReports = () => {
+    fetch("/api/reports?limit=50")
       .then((r) => r.json())
       .then((data) => setReports(data.reports || []))
       .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchReports();
+    const interval = setInterval(fetchReports, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const filters: { id: SpringStatus | "all"; label: string }[] = [
@@ -147,7 +153,7 @@ export function SpringMap() {
           </span>
         </div>
         <div className="aspect-[21/9] w-full md:aspect-[21/8]">
-          <LeafletMap filter={filter} />
+          <LeafletMap filter={filter} reports={reports} />
         </div>
       </div>
 
