@@ -62,11 +62,25 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const formSlug = formData.get("form_slug") as string;
 
-    if (!formSlug || !getForm(formSlug)) {
+    if (!formSlug) {
       return NextResponse.json(
         { error: "Form tidak dikenal" },
         { status: 400 }
       );
+    }
+
+    // Try dynamic form from DB first
+    const dbForm = await prisma.form.findUnique({ where: { slug: formSlug } }).catch(() => null);
+    const staticForm = getForm(formSlug);
+
+    if (!dbForm && !staticForm) {
+      // Allow admin-custom slugs
+      if (!formSlug.startsWith("admin-")) {
+        return NextResponse.json(
+          { error: "Form tidak dikenal" },
+          { status: 400 }
+        );
+      }
     }
 
     // --- Anti-spam: Time Gate ---
