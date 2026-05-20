@@ -35,6 +35,7 @@ const FIELD_TYPES = [
   { value: "multiselect", label: "Pilih Banyak" },
   { value: "photo", label: "Foto" },
   { value: "location", label: "Lokasi" },
+  { value: "link", label: "Link / URL" },
 ];
 
 type FormField = {

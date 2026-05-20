@@ -60,6 +60,12 @@ export function generateZodSchema(fields: DynamicFieldDef[]) {
         shape[`${field.fieldId}_lng`] = z.string().optional();
         break;
 
+      case "link":
+        shape[field.fieldId] = field.required
+          ? z.string().url(`${field.label} harus berupa URL valid`)
+          : z.string().url(`${field.label} harus berupa URL valid`).optional().or(z.literal(""));
+        break;
+
       case "photo":
         shape[field.fieldId] = z.any().optional();
         break;

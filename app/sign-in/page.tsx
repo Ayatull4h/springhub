@@ -42,8 +42,7 @@ export default function SignInPage() {
       // Redirect to home or the page they came from
       const params = new URLSearchParams(window.location.search);
       const redirect = params.get("redirect") || "/";
-      router.push(redirect);
-      router.refresh();
+      window.location.href = redirect;
     } catch {
       setError(t("auth.signIn.networkError"));
     } finally {

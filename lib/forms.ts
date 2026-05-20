@@ -19,7 +19,8 @@ export type FormFieldType =
   | "select"
   | "multiselect"
   | "photo"
-  | "location";
+  | "location"
+  | "link";
 
 export type FormField = {
   id: string;
