@@ -186,7 +186,7 @@ export const mediaItems: MediaItem[] = [
     date: "Apr 2026",
     summary:
       "Tonton perjalanan komunitas kami merestorasi mata air dari Bali sampai Madura.",
-    href: "https://youtu.be/oUDA1loE8BE",
+    href: "https://www.youtube.com/watch?v=oUDA1loE8BE",
     cta: "Watch on YouTube",
   },
   {

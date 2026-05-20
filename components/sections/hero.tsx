@@ -23,7 +23,7 @@ export function Hero() {
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="https://jagasemesta.id"
+            href="https://jagasemesta.org/"
             className="btn-secondary px-5 py-3 text-base"
           >
             {t("hero.cta.back")}
