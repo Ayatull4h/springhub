@@ -17,6 +17,7 @@ import { FORMS } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { StatusInfo } from "@/components/sections/status-info";
+import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 
 const LeafletMap = dynamic(
   () => import("@/components/map/leaflet-map").then((m) => m.LeafletMap),
@@ -74,6 +75,7 @@ export function SpringMap() {
   const [filter, setFilter] = useState<SpringStatus | "all">("all");
   const [page, setPage] = useState(1);
   const [reports, setReports] = useState<ReportItem[]>([]);
+  const [showGuide, setShowGuide] = useState(false);
 
   const fetchReports = () => {
     fetch("/api/reports?limit=50")
@@ -244,9 +246,13 @@ export function SpringMap() {
               <ClipboardList className="h-4 w-4 text-brand-600" />
               {t("map.reportYourContribution")}
             </h3>
-            <span className="chip bg-brand-50 text-brand-700">
+            <button
+              type="button"
+              onClick={() => setShowGuide(true)}
+              className="chip bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer transition"
+            >
               <Sparkles className="h-3 w-3" /> {t("map.earnPoints")}
-            </span>
+            </button>
           </div>
           <p className="mt-1 text-sm text-ink-muted">
             {t("map.reportDescription")}
@@ -280,6 +286,7 @@ export function SpringMap() {
           </div>
         </div>
       </div>
+      <PointsGuideModal open={showGuide} onClose={() => setShowGuide(false)} />
     </section>
   );
 }
