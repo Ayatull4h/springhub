@@ -186,10 +186,10 @@ export default function ReportFormPage() {
   return (
     <div className="container-page max-w-3xl py-12">
       <Link
-        href="/#map"
-        className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
+        href="/"
+        className="inline-flex items-center gap-1.5 rounded-lg border border-ink-line bg-white px-4 py-2 text-sm font-medium text-ink shadow-sm transition hover:bg-slate-50 hover:text-brand-600"
       >
-        <ArrowLeft className="h-4 w-4" /> {t("report.backToMap")}
+        <ArrowLeft className="h-4 w-4" /> Kembali ke Beranda
       </Link>
 
       <h1 className="mt-4 text-3xl font-extrabold tracking-tight">{activeForm.title}</h1>
