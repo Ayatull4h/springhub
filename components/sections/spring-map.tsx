@@ -107,7 +107,8 @@ export function SpringMap() {
   const itemsPerPage = 6;
   const totalPages = Math.max(1, Math.ceil(visible.length / itemsPerPage));
   const currentPage = Math.min(page, totalPages);
-  const visibleList = visible.slice(0, currentPage * itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const visibleList = visible.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <section id="map" className="container-page py-16">
