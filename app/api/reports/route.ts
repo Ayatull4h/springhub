@@ -243,10 +243,10 @@ export async function POST(request: Request) {
 }
 
 /** GET /api/reports — list public reports (snapped location only). Supports ?limit=N */
-export async function GET(request?: Request) {
+export async function GET(request: Request) {
   try {
-    const url = request ? new URL(request.url) : null;
-    const limitParam = url?.searchParams.get("limit");
+    const url = new URL(request.url);
+    const limitParam = url.searchParams.get("limit");
     const limit = limitParam ? parseInt(limitParam, 10) : 50;
 
     const reports = await prisma.report.findMany({
