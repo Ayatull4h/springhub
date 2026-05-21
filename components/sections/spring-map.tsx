@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { type SpringStatus } from "@/lib/data";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
-import { FORMS } from "@/lib/forms";
+import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { StatusInfo } from "@/components/sections/status-info";
@@ -75,6 +75,7 @@ export function SpringMap() {
   const [filter, setFilter] = useState<SpringStatus | "all">("all");
   const [page, setPage] = useState(1);
   const [reports, setReports] = useState<ReportItem[]>([]);
+  const [dynamicForms, setDynamicForms] = useState<any[]>([]);
   const [showGuide, setShowGuide] = useState(false);
 
   const fetchReports = () => {
@@ -88,6 +89,13 @@ export function SpringMap() {
     fetchReports();
     const interval = setInterval(fetchReports, 30000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/forms")
+      .then(r => r.json())
+      .then(data => setDynamicForms(data.forms || []))
+      .catch(() => {});
   }, []);
 
   const filters: { id: SpringStatus | "all"; label: string }[] = [
@@ -104,6 +112,25 @@ export function SpringMap() {
         : reports.filter((r) => getStatusFromForm(r.formSlug) === filter),
     [filter, reports]
   );
+  const allForms = useMemo(() => {
+    const staticForms = FORMS.map(f => ({
+      slug: f.slug,
+      title: f.title,
+      pointsOnSubmit: f.pointsOnSubmit,
+    }));
+    const dbForms = dynamicForms.map((f: any) => ({
+      slug: f.slug,
+      title: f.title,
+      pointsOnSubmit: f.pointsOnSubmit,
+    }));
+    const seen = new Set<string>();
+    return [...staticForms, ...dbForms].filter(f => {
+      if (seen.has(f.slug)) return false;
+      seen.add(f.slug);
+      return true;
+    });
+  }, [dynamicForms]);
+
   const itemsPerPage = 6;
   const totalPages = Math.max(1, Math.ceil(visible.length / itemsPerPage));
   const currentPage = Math.min(page, totalPages);
@@ -253,7 +280,7 @@ export function SpringMap() {
             {t("map.reportDescription")}
           </p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            {FORMS.map((f) => (
+            {allForms.map((f) => (
               <Link
                 key={f.slug}
                 href={`/report/${f.slug}`}
