@@ -1,18 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { Heart, ArrowRight, CheckCircle2, Loader2, Sprout, Layers, Droplets, Telescope } from "lucide-react";
 import { DONATION_TIERS } from "@/lib/xendit";
 import { useI18n } from "@/lib/i18n";
 import Link from "next/link";
 
-const icons: Record<string, string> = {
-  seedling: "🌱", trench: "🛠️", sediment: "🗑️", monitoring: "📊",
+const tierIcons: Record<string, React.ReactNode> = {
+  seedling: <Sprout className="h-4 w-4 text-emerald-600" />,
+  trench: <Layers className="h-4 w-4 text-amber-600" />,
+  sediment: <Droplets className="h-4 w-4 text-blue-600" />,
+  monitoring: <Telescope className="h-4 w-4 text-purple-600" />,
 };
 
 export function DonateSection() {
   const { t } = useI18n();
   const [tierId, setTierId] = useState("");
+  const [customAmount, setCustomAmount] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,11 +24,12 @@ export function DonateSection() {
   const [done, setDone] = useState(false);
 
   const tier = DONATION_TIERS.find(t => t.id === tierId);
-  const amount = tier?.amountIdr ?? 0;
+  const effectiveAmount = customAmount ? parseInt(customAmount) : (tier?.amountIdr || 0);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !tier) return;
+    if (!name) return;
+    if (effectiveAmount < 1000) { setError(t("donate.errorMinAmount")); return; }
     setLoading(true); setError("");
 
     try {
@@ -32,7 +37,7 @@ export function DonateSection() {
       const res = await fetch("/api/donations/invoice", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...(token ? { "x-csrf-token": token } : {}) },
-        body: JSON.stringify({ amountIdr: amount, donorName: name, donorEmail: email, tierId }),
+        body: JSON.stringify({ amountIdr: effectiveAmount, donorName: name, donorEmail: email, tierId }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -74,7 +79,7 @@ export function DonateSection() {
               <option value="">— {t("donate.chooseImpact")} —</option>
               {DONATION_TIERS.map(t => (
                 <option key={t.id} value={t.id}>
-                  {icons[t.id] || "•"} {t.impact} — {t.label}
+                  {tierIcons[t.id]} {t.impact} — {t.label}
                 </option>
               ))}
             </select>
@@ -83,11 +88,24 @@ export function DonateSection() {
           {/* Selected impact summary */}
           {tier && (
             <div className="rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-800">
-              {icons[tier.id]} {t("donate.supporting")} <strong>{tier.impact}</strong>
+              {tierIcons[tier.id]} {t("donate.supporting")} <strong>{tier.impact}</strong>
               <br />
               {t("donate.forAmount")} <strong>{tier.label}</strong>
             </div>
           )}
+
+          {/* Custom amount */}
+          <div>
+            <label className="text-xs font-medium text-ink-muted">{t("donate.customAmount")}</label>
+            <input
+              type="number"
+              value={customAmount}
+              onChange={e => setCustomAmount(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm"
+              placeholder={t("donate.customAmountPlaceholder")}
+              min={1000}
+            />
+          </div>
 
           {/* Name + Email */}
           <div className="grid gap-4 sm:grid-cols-2">
@@ -123,13 +141,13 @@ export function DonateSection() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading || !name || !tier}
+            disabled={loading || !name || (!tier && !customAmount)}
             className="btn-primary w-full justify-center gap-2 py-3 text-base"
           >
             {loading ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
-              <><Heart className="h-5 w-5" /> {t("donate.continue")} {amount > 0 ? `Rp ${amount.toLocaleString("id-ID")}` : ""}</>
+              <><Heart className="h-5 w-5" /> {t("donate.continue")} {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : ""}</>
             )}
           </button>
 
