@@ -47,17 +47,17 @@ export function DonateSection() {
   };
 
   if (done) return (
-    <section id="donate" className="container-page py-16">
+    <div id="donate">
       <div className="mx-auto max-w-md text-center">
         <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500" />
         <h3 className="mt-4 text-xl font-bold">Permintaan Donasi Terkirim</h3>
         <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Xendit yang terbuka.</p>
       </div>
-    </section>
+    </div>
   );
 
   return (
-    <section id="donate" className="container-page py-16">
+    <div id="donate">
       <div className="mx-auto max-w-lg">
         <h2 className="text-center text-3xl font-extrabold md:text-4xl">
           {t("donate.title")} <span className="text-brand-600">{t("donate.titleAccent")}</span>
@@ -156,6 +156,6 @@ export function DonateSection() {
           </p>
         </form>
       </div>
-    </section>
+    </div>
   );
 }

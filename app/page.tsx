@@ -15,8 +15,12 @@ export default function HomePage() {
       <ImpactDashboard />
       <SpringMap />
       <VolunteerActivities />
-      <DonateSection />
-      <FeaturedProjects />
+      <section className="container-page py-16">
+        <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+          <DonateSection />
+          <FeaturedProjects />
+        </div>
+      </section>
       <PartnerSection />
       <LearningHub />
       <MediaSection />

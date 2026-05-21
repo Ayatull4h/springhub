@@ -24,7 +24,7 @@ export function FeaturedProjects() {
   const pct = Math.min(100, Math.round((project.raised / project.goal) * 100));
 
   return (
-    <section className="container-page py-16">
+    <div>
       <div className="mx-auto max-w-lg">
         <h2 className="text-center text-2xl font-extrabold md:text-3xl">
           {t("donate.featuredProjects")}
@@ -96,6 +96,6 @@ export function FeaturedProjects() {
           )}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
