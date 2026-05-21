@@ -134,26 +134,6 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
           })}
       </MapContainer>
 
-      {/* Legend */}
-      <div className="absolute bottom-4 right-4 z-[1000] rounded-lg bg-white/90 p-3 shadow-md text-xs">
-        <p className="mb-1.5 font-semibold text-ink">Status Mata Air</p>
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="inline-block h-3 w-3 rounded-full bg-[#10b981]" />
-            <span className="text-ink-muted">Sehat — terpantau baik</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block h-3 w-3 rounded-full bg-[#f59e0b]" />
-            <span className="text-ink-muted">Restorasi — dalam pemulihan</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block h-3 w-3 rounded-full bg-[#ef4444]" />
-            <span className="text-ink-muted">
-              Terdegradasi — perlu intervensi
-            </span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

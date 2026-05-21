@@ -16,7 +16,6 @@ import { PROTECTION_RADIUS_KM } from "@/lib/geo";
 import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
-import { StatusInfo } from "@/components/sections/status-info";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 
 const LeafletMap = dynamic(
@@ -178,9 +177,7 @@ export function SpringMap() {
               <span className="h-2 w-2 rounded-full bg-sky-500" /> Stok Bibit
             </span>
           </label>
-          <span className="ml-auto text-xs text-ink-subtle">
-            <StatusInfo />
-          </span>
+
         </div>
         <div className="aspect-[21/9] w-full md:aspect-[21/8]">
           <LeafletMap reports={visible} />
