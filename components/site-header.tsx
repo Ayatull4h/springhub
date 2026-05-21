@@ -51,12 +51,12 @@ export function SiteHeader() {
   }
 
   const nav = [
-    { label: t("nav.map"), href: "#map" },
-    { label: t("nav.dashboard"), href: "#dashboard" },
-    { label: t("nav.community"), href: "#community" },
-    { label: t("nav.learn"), href: "#learn" },
-    { label: t("nav.media"), href: "#media" },
-    { label: t("nav.donate"), href: "#donate" },
+    { label: t("nav.map"), href: "/#map" },
+    { label: t("nav.dashboard"), href: "/#dashboard" },
+    { label: t("nav.community"), href: "/#community" },
+    { label: t("nav.learn"), href: "/#learn" },
+    { label: t("nav.media"), href: "/#media" },
+    { label: t("nav.donate"), href: "/#donate" },
   ];
 
   return (
@@ -99,9 +99,8 @@ export function SiteHeader() {
           </button>
 
           {user && (
-            <button
-              type="button"
-              onClick={() => {}}
+            <Link
+              href="/profile"
               className="relative rounded-md p-2 text-ink-muted hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
               aria-label="Notifications"
             >
@@ -111,7 +110,7 @@ export function SiteHeader() {
                   {notifCount > 9 ? "9+" : notifCount}
                 </span>
               )}
-            </button>
+            </Link>
           )}
 
           {loading ? (

@@ -7,9 +7,9 @@ export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
       <Image
         src={src}
         alt="SpringHub"
-        width={130}
-        height={32}
-        className="h-8 w-auto transition-opacity duration-300 hover:opacity-80"
+        width={120}
+        height={28}
+        className="h-7 w-auto object-contain transition-opacity duration-300 hover:opacity-80"
         priority
       />
     </div>

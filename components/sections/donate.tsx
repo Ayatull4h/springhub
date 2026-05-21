@@ -397,13 +397,13 @@ export function DonateSection() {
           </ul>
         </div>
         <div className="flex flex-col items-stretch gap-2">
-          <button className="btn-primary justify-center">
+          <a href="mailto:info@jagasemesta.id" className="btn-primary justify-center">
             {t("donate.becomePartnerCta")}
             <ArrowRight className="h-4 w-4" />
-          </button>
-          <button className="btn-secondary justify-center">
+          </a>
+          <a href="/help" className="btn-secondary justify-center">
             {t("donate.downloadDeck")}
-          </button>
+          </a>
         </div>
       </div>
     </section>

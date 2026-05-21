@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowRight,
   MessageSquare,
@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import {
   PROJECT_PROPOSAL_THRESHOLD,
-  currentUser,
   recentActivities,
 } from "@/lib/data";
 import { getForm } from "@/lib/forms";
@@ -31,11 +30,22 @@ import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 
 export function VolunteerActivities() {
   const { t } = useI18n();
+  const [userPoints, setUserPoints] = useState(0);
   const [showPoints, setShowPoints] = useState(false);
-  const eligible = currentUser.points >= PROJECT_PROPOSAL_THRESHOLD;
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then(r => r.json())
+      .then(data => {
+        if (data.user) setUserPoints(data.user.points || 0);
+      })
+      .catch(() => {});
+  }, []);
+
+  const eligible = userPoints >= PROJECT_PROPOSAL_THRESHOLD;
   const pct = Math.min(
     100,
-    Math.round((currentUser.points / PROJECT_PROPOSAL_THRESHOLD) * 100)
+    Math.round((userPoints / PROJECT_PROPOSAL_THRESHOLD) * 100)
   );
 
   return (
@@ -133,7 +143,7 @@ export function VolunteerActivities() {
                 {t("volunteer.yourPoints")}
               </span>
               <span className="text-ink-muted">
-                {formatNumber(currentUser.points)} /{" "}
+                {formatNumber(userPoints)} /{" "}
                 {formatNumber(PROJECT_PROPOSAL_THRESHOLD)}
               </span>
             </div>
@@ -172,7 +182,7 @@ export function VolunteerActivities() {
                 <Lock className="h-4 w-4" />
                 {t("volunteer.earnMore", {
                   points: formatNumber(
-                    PROJECT_PROPOSAL_THRESHOLD - currentUser.points
+                    PROJECT_PROPOSAL_THRESHOLD - userPoints
                   ),
                 })}
               </button>
