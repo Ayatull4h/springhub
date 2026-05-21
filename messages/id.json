@@ -51,6 +51,10 @@
   "map.earnPoints": "Dapatkan poin",
   "map.reportDescription": "Formulir ringan dan ramah seluler dari SpringHub. Tidak perlu instal aplikasi — cukup browser Anda.",
   "map.pointsOnSubmit": "+{pts} poin per submit",
+  "map.checkMonitoring": "Mata Air",
+  "map.checkTree": "Tanam Pohon",
+  "map.checkSeedling": "Stok Bibit",
+  "map.checkRestoration": "Restorasi",
   "map.discoveryPrompt": "Melihat mata air yang belum ada di peta? <a href=\"/report/spring-monitoring\" class=\"font-semibold text-brand-700 hover:underline\">Tambahkan via Spring Monitoring</a>.",
 
   "form.title.monitoring": "Pemantauan Mata Air",

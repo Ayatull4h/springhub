@@ -17,6 +17,7 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
+import { StatusInfo } from "@/components/sections/status-info";
 
 const LeafletMap = dynamic(
   () => import("@/components/map/leaflet-map").then((m) => m.LeafletMap),
@@ -74,6 +75,7 @@ export function SpringMap() {
   const [showMonitoring, setShowMonitoring] = useState(true);
   const [showTreePlanting, setShowTreePlanting] = useState(true);
   const [showSeedling, setShowSeedling] = useState(true);
+  const [showRestoration, setShowRestoration] = useState(true);
   const [page, setPage] = useState(1);
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [dynamicForms, setDynamicForms] = useState<any[]>([]);
@@ -105,9 +107,10 @@ export function SpringMap() {
       if (slug.includes("monitoring") && !showMonitoring) return false;
       if ((slug.includes("tree") || slug.includes("trench")) && !showTreePlanting) return false;
       if (slug.includes("seedling") && !showSeedling) return false;
+      if (slug.includes("restoration") && !showRestoration) return false;
       return true;
     }),
-    [reports, showMonitoring, showTreePlanting, showSeedling]
+    [reports, showMonitoring, showTreePlanting, showSeedling, showRestoration]
   );
   const allForms = useMemo(() => {
     const staticForms = FORMS.map(f => ({
@@ -162,22 +165,28 @@ export function SpringMap() {
           <label className="flex items-center gap-1.5 text-xs cursor-pointer">
             <input type="checkbox" checked={showMonitoring} onChange={e => setShowMonitoring(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
             <span className="inline-flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" /> Mata Air
+              <span className="h-2 w-2 rounded-full bg-emerald-500" /> {t("map.checkMonitoring")}
             </span>
           </label>
           <label className="flex items-center gap-1.5 text-xs cursor-pointer">
             <input type="checkbox" checked={showTreePlanting} onChange={e => setShowTreePlanting(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
             <span className="inline-flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-green-500" /> Tanam Pohon
+              <span className="h-2 w-2 rounded-full bg-green-500" /> {t("map.checkTree")}
             </span>
           </label>
           <label className="flex items-center gap-1.5 text-xs cursor-pointer">
             <input type="checkbox" checked={showSeedling} onChange={e => setShowSeedling(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
             <span className="inline-flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-sky-500" /> Stok Bibit
+              <span className="h-2 w-2 rounded-full bg-sky-500" /> {t("map.checkSeedling")}
             </span>
           </label>
-
+          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+            <input type="checkbox" checked={showRestoration} onChange={e => setShowRestoration(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+            <span className="inline-flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-amber-500" /> {t("map.checkRestoration")}
+            </span>
+          </label>
+          <StatusInfo />
         </div>
         <div className="aspect-[21/9] w-full md:aspect-[21/8]">
           <LeafletMap reports={visible} />

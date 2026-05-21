@@ -51,6 +51,10 @@
   "map.earnPoints": "Earn points",
   "map.reportDescription": "Lightweight, mobile-friendly forms hosted by SpringHub. No app install needed — they work in your browser.",
   "map.pointsOnSubmit": "+{pts} pts on submit",
+  "map.checkMonitoring": "Springs",
+  "map.checkTree": "Tree Planting",
+  "map.checkSeedling": "Seedling Stock",
+  "map.checkRestoration": "Restoration",
   "map.discoveryPrompt": "Spotted a spring not on the map? <a href=\"/report/spring-monitoring\" class=\"font-semibold text-brand-700 hover:underline\">Add it via Spring Monitoring</a>.",
 
   "form.title.monitoring": "Spring Monitoring",
