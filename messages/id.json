@@ -446,6 +446,25 @@
   "projects.new.submitting": "Mengirim...",
   "projects.new.submitProject": "Kirim Proposal Proyek",
 
+  "status.what": "Apa arti warna ini?",
+  "status.title": "Status Mata Air",
+  "status.healthy": "Sehat",
+  "status.healthyDesc": "Terpantau baik",
+  "status.restoration": "Restorasi",
+  "status.restorationDesc": "Dalam pemulihan",
+  "status.degraded": "Terdegradasi",
+  "status.degradedDesc": "Perlu intervensi",
+
+  "projects.type.spring_restoration": "Restorasi Mata Air",
+  "projects.type.tree_planting": "Penanaman Pohon",
+  "projects.type.trench_development": "Pengembangan Rorak",
+  "projects.type.monitoring_expedition": "Ekspedisi Pemantauan",
+  "projects.verified": "Terverifikasi",
+  "projects.underReview": "Dalam Review",
+
+  "donate.customOption": "Custom — IDR",
+  "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Kartu • Virtual Account",
+
   "locale.en": "EN",
   "locale.id": "ID"
 }

@@ -36,12 +36,12 @@ export function FeaturedProjects() {
         <div className="card mt-6">
           <div className="mb-3 flex items-center gap-2">
             <span className="rounded-md bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
-              {PROJECT_ICONS[project.typeId] || "\uD83D\uDCCB"} {project.typeId.replace(/_/g, " ")}
+              {PROJECT_ICONS[project.typeId] || "\uD83D\uDCCB"} {t("projects.type." + project.typeId)}
             </span>
             <span className={`ml-auto text-xs font-medium ${
               project.status === "approved" ? "text-emerald-600" : "text-amber-600"
             }`}>
-              {project.status === "approved" ? "\u2705 Terverifikasi" : "\u23F3 Dalam Review"}
+              {project.status === "approved" ? `\u2705 ${t("projects.verified")}` : `\u23F3 ${t("projects.underReview")}`}
             </span>
           </div>
 

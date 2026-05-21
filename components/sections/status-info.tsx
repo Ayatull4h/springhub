@@ -1,9 +1,11 @@
 "use client";
 import { Info, Circle } from "lucide-react";
 import { useState } from "react";
+import { useI18n } from "@/lib/i18n";
 
 export function StatusInfo() {
   const [open, setOpen] = useState(false);
+  const { t } = useI18n();
 
   return (
     <>
@@ -12,7 +14,7 @@ export function StatusInfo() {
         className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-ink"
       >
         <Info className="h-3 w-3" />
-        Apa arti warna ini?
+        {t("status.what")}
       </button>
 
       {open && (
@@ -24,38 +26,32 @@ export function StatusInfo() {
             className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-bold text-ink">Status Mata Air</h3>
+            <h3 className="text-lg font-bold text-ink">{t("status.title")}</h3>
             <div className="mt-4 space-y-4">
               <div className="flex gap-3">
                 <Circle className="mt-0.5 h-5 w-5 fill-emerald-500 text-emerald-500" />
                 <div>
-                  <p className="font-semibold text-ink">Sehat</p>
+                  <p className="font-semibold text-ink">{t("status.healthy")}</p>
                   <p className="text-sm text-ink-muted">
-                    Mata air dalam kondisi baik — debit air normal, kualitas air
-                    jernih, lingkungan sekitar terjaga. Cukup dipantau secara
-                    berkala.
+                    {t("status.healthyDesc")}
                   </p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <Circle className="mt-0.5 h-5 w-5 fill-amber-500 text-amber-500" />
                 <div>
-                  <p className="font-semibold text-ink">Restorasi</p>
+                  <p className="font-semibold text-ink">{t("status.restoration")}</p>
                   <p className="text-sm text-ink-muted">
-                    Sedang dalam proses pemulihan — ada kegiatan restorasi
-                    seperti penanaman pohon, pembuatan rorak, atau pembersihan
-                    sedimen. Perlu dukungan berkelanjutan.
+                    {t("status.restorationDesc")}
                   </p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <Circle className="mt-0.5 h-5 w-5 fill-red-500 text-red-500" />
                 <div>
-                  <p className="font-semibold text-ink">Terdegradasi</p>
+                  <p className="font-semibold text-ink">{t("status.degraded")}</p>
                   <p className="text-sm text-ink-muted">
-                    Mata air dalam kondisi kritis — debit menurun, air keruh,
-                    banyak sampah, atau bahkan sudah tidak mengalir. Membutuhkan
-                    intervensi segera.
+                    {t("status.degradedDesc")}
                   </p>
                 </div>
               </div>

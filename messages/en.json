@@ -446,6 +446,25 @@
   "projects.new.submitting": "Submitting...",
   "projects.new.submitProject": "Submit Project Proposal",
 
+  "status.what": "What do these colors mean?",
+  "status.title": "Spring Status",
+  "status.healthy": "Healthy",
+  "status.healthyDesc": "Monitored and in good condition",
+  "status.restoration": "Restoration",
+  "status.restorationDesc": "Undergoing restoration work",
+  "status.degraded": "Degraded",
+  "status.degradedDesc": "Needs intervention",
+
+  "projects.type.spring_restoration": "Spring Restoration",
+  "projects.type.tree_planting": "Tree Planting",
+  "projects.type.trench_development": "Trench Development",
+  "projects.type.monitoring_expedition": "Monitoring Expedition",
+  "projects.verified": "Verified",
+  "projects.underReview": "Under Review",
+
+  "donate.customOption": "Custom — IDR",
+  "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Card • Virtual Account",
+
   "locale.en": "EN",
   "locale.id": "ID"
 }

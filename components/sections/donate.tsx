@@ -85,7 +85,7 @@ export function DonateSection() {
                   {tierIcons[t.id]} {t.impact} — {t.label}
                 </option>
               ))}
-              <option value="custom">💰 Custom — IDR</option>
+              <option value="custom">{t("donate.customOption")}</option>
             </select>
           </div>
 
@@ -159,7 +159,7 @@ export function DonateSection() {
           </button>
 
           <p className="text-center text-xs text-ink-subtle">
-            OVO • GoPay • DANA • QRIS • Kartu • Virtual Account
+            {t("donate.paymentMethods")}
           </p>
         </form>
       </div>
