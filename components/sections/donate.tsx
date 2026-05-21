@@ -24,12 +24,15 @@ export function DonateSection() {
   const [done, setDone] = useState(false);
 
   const tier = DONATION_TIERS.find(t => t.id === tierId);
-  const effectiveAmount = customAmount ? parseInt(customAmount) : (tier?.amountIdr || 0);
+  const effectiveAmount = tierId === "custom" ? (parseInt(customAmount) || 0) : (tier?.amountIdr ?? 0);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name) return;
-    if (effectiveAmount < 1000) { setError(t("donate.errorMinAmount")); return; }
+    if (tierId === "custom" && (!customAmount || parseInt(customAmount) < 1000)) {
+      setError("Minimum donasi Rp 1.000");
+      return;
+    }
     setLoading(true); setError("");
 
     try {
@@ -82,6 +85,7 @@ export function DonateSection() {
                   {tierIcons[t.id]} {t.impact} — {t.label}
                 </option>
               ))}
+              <option value="custom">💰 Custom — IDR</option>
             </select>
           </div>
 
@@ -94,18 +98,21 @@ export function DonateSection() {
             </div>
           )}
 
-          {/* Custom amount */}
-          <div>
-            <label className="text-xs font-medium text-ink-muted">{t("donate.customAmount")}</label>
-            <input
-              type="number"
-              value={customAmount}
-              onChange={e => setCustomAmount(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm"
-              placeholder={t("donate.customAmountPlaceholder")}
-              min={1000}
-            />
-          </div>
+          {/* Custom amount input */}
+          {tierId === "custom" && (
+            <div>
+              <label className="text-xs font-medium text-ink-muted">{t("donate.customAmount")}</label>
+              <input
+                type="number"
+                value={customAmount}
+                onChange={e => setCustomAmount(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm"
+                placeholder={t("donate.customAmountPlaceholder")}
+                min={1000}
+                required
+              />
+            </div>
+          )}
 
           {/* Name + Email */}
           <div className="grid gap-4 sm:grid-cols-2">
@@ -141,13 +148,13 @@ export function DonateSection() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading || !name || (!tier && !customAmount)}
+            disabled={loading || !name || (tierId !== "custom" && !tier) || (tierId === "custom" && !customAmount)}
             className="btn-primary w-full justify-center gap-2 py-3 text-base"
           >
             {loading ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
-              <><Heart className="h-5 w-5" /> {t("donate.continue")} {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : ""}</>
+              <><Heart className="h-5 w-5" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>
             )}
           </button>
 
