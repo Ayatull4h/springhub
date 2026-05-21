@@ -20,6 +20,19 @@ const iconMap: Record<string, typeof Droplets> = {
 export function ImpactDashboard() {
   const { t } = useI18n();
 
+  const IconToStatKey: Record<string, string> = {
+    droplet: "dashboard.stat.monitored",
+    sparkles: "dashboard.stat.restored",
+    tree: "dashboard.stat.trees",
+    layers: "dashboard.stat.trenches",
+  };
+
+  const monthlyKeys = [
+    "dashboard.monthly.springs",
+    "dashboard.monthly.trees",
+    "dashboard.monthly.volunteers",
+  ];
+
   return (
     <section id="dashboard" className="container-page py-16">
       <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
@@ -44,7 +57,9 @@ export function ImpactDashboard() {
               <div className="mt-4 text-3xl font-bold tracking-tight">
                 {s.display ?? formatNumber(s.value)}
               </div>
-              <div className="mt-1 text-sm text-ink-muted">{s.label}</div>
+              <div className="mt-1 text-sm text-ink-muted">
+                {t(IconToStatKey[s.icon])}
+              </div>
             </div>
           );
         })}
@@ -57,13 +72,13 @@ export function ImpactDashboard() {
             {t("dashboard.monthly")}
           </h3>
           <ul className="mt-4 space-y-4">
-            {monthlyProgress.map((p) => {
+            {monthlyProgress.map((p, idx) => {
               const pct = Math.min(100, Math.round((p.value / p.total) * 100));
               const suffix = p.suffix === "now" ? t("dashboard.monthly.now") : t("dashboard.monthly.joined");
               return (
                 <li key={p.label}>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-ink">{p.label}</span>
+                    <span className="text-ink">{t(monthlyKeys[idx])}</span>
                     <span className="font-medium text-ink">
                       {p.value} {suffix}
                     </span>
