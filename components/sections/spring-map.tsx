@@ -160,33 +160,38 @@ export function SpringMap() {
 
       {/* Full-width map */}
       <div className="card mt-6 overflow-hidden p-0">
-        <div className="flex flex-wrap items-center gap-3 border-b border-ink-line p-4">
-          <span className="text-sm font-semibold text-ink">Tampilkan:</span>
-          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-            <input type="checkbox" checked={showMonitoring} onChange={e => setShowMonitoring(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-            <span className="inline-flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" /> {t("map.checkMonitoring")}
-            </span>
-          </label>
-          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-            <input type="checkbox" checked={showTreePlanting} onChange={e => setShowTreePlanting(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-            <span className="inline-flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-green-500" /> {t("map.checkTree")}
-            </span>
-          </label>
-          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-            <input type="checkbox" checked={showSeedling} onChange={e => setShowSeedling(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-            <span className="inline-flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-sky-500" /> {t("map.checkSeedling")}
-            </span>
-          </label>
-          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-            <input type="checkbox" checked={showRestoration} onChange={e => setShowRestoration(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-            <span className="inline-flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-amber-500" /> {t("map.checkRestoration")}
-            </span>
-          </label>
-          <StatusInfo />
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-semibold text-ink">Tampilkan:</span>
+            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+              <input type="checkbox" checked={showMonitoring} onChange={e => setShowMonitoring(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" /> {t("map.checkMonitoring")}
+              </span>
+            </label>
+            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+              <input type="checkbox" checked={showTreePlanting} onChange={e => setShowTreePlanting(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-green-500" /> {t("map.checkTree")}
+              </span>
+            </label>
+            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+              <input type="checkbox" checked={showSeedling} onChange={e => setShowSeedling(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-sky-500" /> {t("map.checkSeedling")}
+              </span>
+            </label>
+            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+              <input type="checkbox" checked={showRestoration} onChange={e => setShowRestoration(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-amber-500" /> {t("map.checkRestoration")}
+              </span>
+            </label>
+          </div>
+          <div className="flex items-center gap-3">
+            <StatusInfo />
+            <span className="text-[10px] uppercase tracking-wider text-ink-subtle">OpenStreetMap</span>
+          </div>
         </div>
         <div className="aspect-[21/9] w-full md:aspect-[21/8]">
           <LeafletMap reports={visible} />
