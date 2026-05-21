@@ -60,7 +60,7 @@ export function StatusInfo() {
               onClick={() => setOpen(false)}
               className="btn-primary mt-6 w-full"
             >
-              Mengerti
+              {t("status.gotIt")}
             </button>
           </div>
         </div>

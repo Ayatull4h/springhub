@@ -544,7 +544,7 @@ export default function AdminProjectsPage() {
                     </td>
                     <td className="py-3 pr-3">
                       <span className="chip bg-slate-100 text-slate-700 text-xs capitalize">
-                        {typeLabels[p.typeId] || p.typeId.replace(/-/g, " ")}
+                        {typeLabels[p.typeId] || t("projects.type." + p.typeId.replace(/-/g, "_")) || p.typeId.replace(/-/g, " ")}
                       </span>
                     </td>
                     <td className="py-3 pr-3">

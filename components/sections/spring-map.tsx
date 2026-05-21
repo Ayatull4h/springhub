@@ -112,6 +112,14 @@ export function SpringMap() {
     }),
     [reports, showMonitoring, showTreePlanting, showSeedling, showRestoration]
   );
+  const formTitles: Record<string, string> = {
+    "spring-monitoring": "form.title.monitoring",
+    "spring-restoration": "form.title.restoration",
+    "trench-development": "form.title.trench",
+    "tree-planting": "form.title.planting",
+    "seedling-stock": "form.title.seedling",
+  };
+
   const allForms = useMemo(() => {
     const staticForms = FORMS.map(f => ({
       slug: f.slug,
@@ -162,7 +170,7 @@ export function SpringMap() {
       <div className="card mt-6 overflow-hidden p-0">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm font-semibold text-ink">Tampilkan:</span>
+            <span className="text-sm font-semibold text-ink">{t("map.show")}</span>
             <label className="flex items-center gap-1.5 text-xs cursor-pointer">
               <input type="checkbox" checked={showMonitoring} onChange={e => setShowMonitoring(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
               <span className="inline-flex items-center gap-1">
@@ -206,7 +214,7 @@ export function SpringMap() {
               {t("map.springDetails")}
             </h3>
             <span className="text-xs text-ink-subtle">
-              {Math.min(currentPage * itemsPerPage, visible.length)} dari {visible.length}
+              {t("common.pageOf", { current: String(Math.min(currentPage * itemsPerPage, visible.length)), total: String(visible.length) })}
             </span>
           </div>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -225,14 +233,14 @@ export function SpringMap() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <div className="truncate text-sm font-semibold text-ink">
-                        {r.formSlug.replace(/-/g, " ")}
+                        {t(formTitles[r.formSlug] || r.formSlug.replace(/-/g, " "))}
                       </div>
                       <span className={cn("chip", styles.chip)}>
                         {statusLabel}
                       </span>
                     </div>
                     <div className="text-xs text-ink-muted">
-                      {r.user?.region ?? "Lokasi tidak diketahui"}
+                      {r.user?.region ?? t("map.unknownLocation")}
                     </div>
                     <div className="mt-1 text-xs text-ink-subtle">
                       {new Date(r.createdAt).toLocaleDateString("id-ID", {
@@ -254,17 +262,17 @@ export function SpringMap() {
                 disabled={page === 1}
                 className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
               >
-                ← Sebelumnya
+                ← {t("common.previous")}
               </button>
               <span className="text-xs text-ink-muted">
-                {Math.min(currentPage * itemsPerPage, visible.length)} dari {visible.length}
+                {t("common.pageOf", { current: String(Math.min(currentPage * itemsPerPage, visible.length)), total: String(visible.length) })}
               </span>
               <button
                 onClick={() => { setPage(p => p + 1); }}
                 disabled={currentPage * itemsPerPage >= visible.length}
                 className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
               >
-                Selanjutnya →
+                {t("common.next")} →
               </button>
             </div>
           )}
@@ -296,7 +304,7 @@ export function SpringMap() {
               >
                 <span className="min-w-0">
                   <span className="block truncate font-medium text-ink">
-                    {f.title}
+                    {t(formTitles[f.slug] || f.title)}
                   </span>
                   <span className="block truncate text-xs text-ink-muted">
                     {t("map.pointsOnSubmit", { pts: String(f.pointsOnSubmit) })}

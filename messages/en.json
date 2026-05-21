@@ -56,6 +56,8 @@
   "map.checkSeedling": "Seedling Stock",
   "map.checkRestoration": "Restoration",
   "map.discoveryPrompt": "Spotted a spring not on the map? <a href=\"/report/spring-monitoring\" class=\"font-semibold text-brand-700 hover:underline\">Add it via Spring Monitoring</a>.",
+  "map.show": "Show:",
+  "map.unknownLocation": "Unknown Location",
 
   "form.title.monitoring": "Spring Monitoring",
   "form.desc.monitoring": "Log a spring's current condition — flow, water quality, cleanliness, and a geo-tagged photo.",
@@ -390,6 +392,10 @@
 
   "reports.form": "Form",
 
+  "common.of": "of",
+  "common.previous": "Previous",
+  "common.unknownLocation": "Unknown Location",
+  "common.pageOf": "Page {current} of {total}",
   "common.or": "or",
   "common.error": "Error",
   "common.view": "View",
@@ -454,6 +460,7 @@
   "status.restorationDesc": "Undergoing restoration work",
   "status.degraded": "Degraded",
   "status.degradedDesc": "Needs intervention",
+  "status.gotIt": "Got it",
 
   "projects.type.spring_restoration": "Spring Restoration",
   "projects.type.tree_planting": "Tree Planting",
@@ -461,6 +468,8 @@
   "projects.type.monitoring_expedition": "Monitoring Expedition",
   "projects.verified": "Verified",
   "projects.underReview": "Under Review",
+  "projects.collected": "collected",
+  "projects.supporters": "supporters",
 
   "donate.customOption": "Custom — IDR",
   "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Card • Virtual Account",

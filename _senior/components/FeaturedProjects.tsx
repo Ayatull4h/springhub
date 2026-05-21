@@ -57,9 +57,9 @@ export function FeaturedProjects() {
               <div className="h-full rounded-full bg-brand-500" style={{ width: `${pct}%` }} />
             </div>
             <div className="mt-1 flex items-center justify-between text-xs text-ink-muted">
-              <span>{pct}% terkumpul</span>
+              <span>{pct}% {t("projects.collected")}</span>
               <span className="flex items-center gap-1">
-                <Heart className="h-3 w-3 text-rose-500" /> {project.backers} pendukung
+                <Heart className="h-3 w-3 text-rose-500" /> {project.backers} {t("projects.supporters")}
               </span>
             </div>
           </div>

@@ -56,6 +56,8 @@
   "map.checkSeedling": "Stok Bibit",
   "map.checkRestoration": "Restorasi",
   "map.discoveryPrompt": "Melihat mata air yang belum ada di peta? <a href=\"/report/spring-monitoring\" class=\"font-semibold text-brand-700 hover:underline\">Tambahkan via Spring Monitoring</a>.",
+  "map.show": "Tampilkan:",
+  "map.unknownLocation": "Lokasi tidak diketahui",
 
   "form.title.monitoring": "Pemantauan Mata Air",
   "form.desc.monitoring": "Catat kondisi mata air saat ini — debit, kualitas air, kebersihan, dan foto dengan lokasi geografis.",
@@ -390,6 +392,10 @@
 
   "reports.form": "Formulir",
 
+  "common.of": "dari",
+  "common.previous": "Sebelumnya",
+  "common.unknownLocation": "Lokasi tidak diketahui",
+  "common.pageOf": "Halaman {current} dari {total}",
   "common.or": "atau",
   "common.error": "Error",
   "common.view": "Lihat",
@@ -454,6 +460,7 @@
   "status.restorationDesc": "Dalam pemulihan",
   "status.degraded": "Terdegradasi",
   "status.degradedDesc": "Perlu intervensi",
+  "status.gotIt": "Mengerti",
 
   "projects.type.spring_restoration": "Restorasi Mata Air",
   "projects.type.tree_planting": "Penanaman Pohon",
@@ -461,6 +468,8 @@
   "projects.type.monitoring_expedition": "Ekspedisi Pemantauan",
   "projects.verified": "Terverifikasi",
   "projects.underReview": "Dalam Review",
+  "projects.collected": "terkumpul",
+  "projects.supporters": "pendukung",
 
   "donate.customOption": "Custom — IDR",
   "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Kartu • Virtual Account",

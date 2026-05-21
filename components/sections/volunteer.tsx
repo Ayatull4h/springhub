@@ -121,17 +121,17 @@ export function VolunteerActivities() {
                 disabled={actPage === 1}
                 className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
               >
-                ← Sebelumnya
+                ← {t("common.previous")}
               </button>
               <span className="text-xs text-ink-muted">
-                Halaman {actPage} dari {totalActPages}
+                {t("common.pageOf", { current: String(actPage), total: String(totalActPages) })}
               </span>
               <button
                 onClick={() => setActPage(p => p + 1)}
                 disabled={actPage >= totalActPages}
                 className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
               >
-                Selanjutnya →
+                {t("common.next")} →
               </button>
             </div>
           )}
