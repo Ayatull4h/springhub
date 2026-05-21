@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -15,6 +15,38 @@ type MediaItem = {
   linkUrl: string;
   linkLabel: string;
 };
+
+function getYoutubeThumb(url: string): string | null {
+  if (!url) return null;
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : null;
+}
+
+function MediaThumb({ item }: { item: MediaItem }) {
+  const imgSrc = item.imageUrl || getYoutubeThumb(item.linkUrl);
+  const [imgError, setImgError] = useState(false);
+
+  if (imgSrc && !imgError) {
+    return (
+      <img
+        src={imgSrc}
+        alt={item.title}
+        className="h-full w-full object-cover transition group-hover:scale-105"
+        loading="lazy"
+        onError={() => setImgError(true)}
+      />
+    );
+  }
+
+  return (
+    <div className="flex h-full items-center justify-center">
+      {item.type === "video" && <Video className="h-12 w-12 text-rose-500" />}
+      {item.type === "event" && <CalendarDays className="h-12 w-12 text-amber-500" />}
+      {item.type === "publication" && <FileText className="h-12 w-12 text-blue-500" />}
+      {item.type === "press" && <Newspaper className="h-12 w-12 text-purple-500" />}
+    </div>
+  );
+}
 
 export function MediaSection() {
   const { t } = useI18n();
@@ -86,11 +118,8 @@ export function MediaSection() {
                 rel={external ? "noreferrer" : undefined}
                 className="card group transition hover:-translate-y-1"
               >
-                <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100">
-                  {item.type === "video" && <Video className="h-12 w-12 text-rose-500" />}
-                  {item.type === "event" && <CalendarDays className="h-12 w-12 text-amber-500" />}
-                  {item.type === "publication" && <FileText className="h-12 w-12 text-blue-500" />}
-                  {item.type === "press" && <Newspaper className="h-12 w-12 text-purple-500" />}
+                <div className="-mx-4 -mt-4 mb-3 h-36 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100">
+                  <MediaThumb item={item} />
                 </div>
                 <span className={`chip text-xs ${typeColors[item.type] || "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"}`}>
                   {item.type}
