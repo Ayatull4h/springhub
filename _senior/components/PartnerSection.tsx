@@ -45,7 +45,7 @@ export function PartnerSection() {
           </ul>
         </div>
 
-        <div className="flex flex-shrink-0 flex-col gap-2 md:ml-auto">
+        <div className="flex flex-shrink-0 flex-row items-center gap-2 md:ml-auto">
           <a href="mailto:info@jagasemesta.id" className="btn-primary justify-center whitespace-nowrap text-sm px-4 py-2">
             {t("donate.becomePartnerCta")} <ArrowRight className="h-4 w-4" />
           </a>
