@@ -51,9 +51,9 @@ export async function POST(request: Request) {
 
     // --- Request body size check ---
     const contentLength = request.headers.get("content-length");
-    if (contentLength && parseInt(contentLength) > 500_000) { // 500KB max
+    if (contentLength && parseInt(contentLength) > 5_000_000) { // 5MB max
       return NextResponse.json(
-        { error: "Request terlalu besar. Maksimal 500KB." },
+        { error: "Request terlalu besar. Maksimal 5MB." },
         { status: 413 }
       );
     }

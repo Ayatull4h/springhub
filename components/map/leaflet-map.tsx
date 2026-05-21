@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Tooltip, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { type SpringStatus } from "@/lib/data";
@@ -56,10 +56,8 @@ function FitBounds({ data }: { data: ReportData[] }) {
   return null;
 }
 
-export function LeafletMap({ filter, reports }: { filter: SpringStatus | "all"; reports: ReportData[] }) {
-  const filtered = filter === "all"
-    ? reports
-    : reports.filter((r) => getStatusFromForm(r.formSlug) === filter);
+export function LeafletMap({ reports }: { reports: ReportData[] }) {
+  const [tileError, setTileError] = useState(false);
 
   return (
     <div className="relative h-full w-full">
@@ -71,12 +69,22 @@ export function LeafletMap({ filter, reports }: { filter: SpringStatus | "all"; 
         style={{ minHeight: 360 }}
         attributionControl={true}
       >
-        <FitBounds data={filtered} />
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {filtered.map((r) => {
+        <FitBounds data={reports} />
+        {tileError ? (
+          <div className="flex h-full items-center justify-center bg-slate-100 text-sm text-ink-muted">
+            Map tidak dapat dimuat. 
+            <a href="https://www.openstreetmap.org" target="_blank" className="ml-1 text-brand-600">Buka di OpenStreetMap</a>
+          </div>
+        ) : (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            eventHandlers={{
+              tileerror: () => setTileError(true),
+            }}
+          />
+        )}
+        {reports.map((r) => {
             const status = getStatusFromForm(r.formSlug);
             const color = statusColors[status];
             if (!r.snappedLat || !r.snappedLng) return null;

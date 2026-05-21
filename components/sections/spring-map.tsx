@@ -72,7 +72,9 @@ type ReportItem = {
 
 export function SpringMap() {
   const { t } = useI18n();
-  const [filter, setFilter] = useState<SpringStatus | "all">("all");
+  const [showMonitoring, setShowMonitoring] = useState(true);
+  const [showTreePlanting, setShowTreePlanting] = useState(true);
+  const [showSeedling, setShowSeedling] = useState(true);
   const [page, setPage] = useState(1);
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [dynamicForms, setDynamicForms] = useState<any[]>([]);
@@ -98,19 +100,15 @@ export function SpringMap() {
       .catch(() => {});
   }, []);
 
-  const filters: { id: SpringStatus | "all"; label: string }[] = [
-    { id: "all", label: t("map.filterAll") },
-    { id: "healthy", label: t("map.filterHealthy") },
-    { id: "degraded", label: t("map.filterDegraded") },
-    { id: "restoration", label: t("map.filterRestoration") },
-  ];
-
   const visible = useMemo(
-    () =>
-      filter === "all"
-        ? reports
-        : reports.filter((r) => getStatusFromForm(r.formSlug) === filter),
-    [filter, reports]
+    () => reports.filter(r => {
+      const slug = r.formSlug;
+      if (slug.includes("monitoring") && !showMonitoring) return false;
+      if ((slug.includes("tree") || slug.includes("trench")) && !showTreePlanting) return false;
+      if (slug.includes("seedling") && !showSeedling) return false;
+      return true;
+    }),
+    [reports, showMonitoring, showTreePlanting, showSeedling]
   );
   const allForms = useMemo(() => {
     const staticForms = FORMS.map(f => ({
@@ -160,33 +158,32 @@ export function SpringMap() {
 
       {/* Full-width map */}
       <div className="card mt-6 overflow-hidden p-0">
-        <div className="flex flex-wrap items-center gap-2 border-b border-ink-line p-4 dark:border-slate-700">
-          <span className="mr-1 text-sm font-semibold text-ink">
-            {t("map.springLocations")}
-          </span>
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setFilter(f.id)}
-              className={cn(
-                "chip border transition",
-                filter === f.id
-                  ? "border-brand-200 bg-brand-50 text-brand-700 dark:border-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
-                  : "border-ink-line bg-white text-ink-muted hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
-              )}
-            >
-              {f.label}
-            </button>
-          ))}
-          <span className="ml-auto flex items-center gap-2">
-            <StatusInfo />
-            <span className="text-[10px] uppercase tracking-wider text-ink-subtle">
-              OpenStreetMap
+        <div className="flex flex-wrap items-center gap-3 border-b border-ink-line p-4">
+          <span className="text-sm font-semibold text-ink">Tampilkan:</span>
+          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+            <input type="checkbox" checked={showMonitoring} onChange={e => setShowMonitoring(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+            <span className="inline-flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" /> Mata Air
             </span>
+          </label>
+          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+            <input type="checkbox" checked={showTreePlanting} onChange={e => setShowTreePlanting(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+            <span className="inline-flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-green-500" /> Tanam Pohon
+            </span>
+          </label>
+          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+            <input type="checkbox" checked={showSeedling} onChange={e => setShowSeedling(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+            <span className="inline-flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-sky-500" /> Stok Bibit
+            </span>
+          </label>
+          <span className="ml-auto text-xs text-ink-subtle">
+            <StatusInfo />
           </span>
         </div>
         <div className="aspect-[21/9] w-full md:aspect-[21/8]">
-          <LeafletMap filter={filter} reports={reports} />
+          <LeafletMap reports={visible} />
         </div>
       </div>
 

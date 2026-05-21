@@ -300,6 +300,13 @@ export default function AdminNewCoursePage() {
                     rows={3}
                     className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                   />
+                  <div>
+                    <label className="text-xs text-ink-muted">File Materi (PDF opsional)</label>
+                    <input type="file" accept=".pdf" onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (file) updateModule(index, 'content', file.name);
+                    }} className="mt-1 text-xs" />
+                  </div>
                 </div>
               </div>
             ))}

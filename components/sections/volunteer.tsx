@@ -42,6 +42,11 @@ export function VolunteerActivities() {
       .catch(() => {});
   }, []);
 
+  const [actPage, setActPage] = useState(1);
+  const actPerPage = 2;
+  const totalActPages = Math.max(1, Math.ceil(recentActivities.length / actPerPage));
+  const visibleActs = recentActivities.slice(0, actPage * actPerPage);
+
   const eligible = userPoints >= PROJECT_PROPOSAL_THRESHOLD;
   const pct = Math.min(
     100,
@@ -66,7 +71,7 @@ export function VolunteerActivities() {
             {t("volunteer.recentActivities")}
           </h3>
           <ul className="mt-3 grid gap-3 md:grid-cols-2">
-            {recentActivities.map((a, i) => {
+            {visibleActs.map((a, i) => {
               const form = getForm(a.formSlug);
               return (
                 <li key={i} className="card">
@@ -109,6 +114,27 @@ export function VolunteerActivities() {
               );
             })}
           </ul>
+          {recentActivities.length > actPerPage && (
+            <div className="mt-3 flex items-center justify-center gap-2">
+              <button
+                onClick={() => setActPage(p => Math.max(1, p - 1))}
+                disabled={actPage === 1}
+                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
+              >
+                ← Sebelumnya
+              </button>
+              <span className="text-xs text-ink-muted">
+                Halaman {actPage} dari {totalActPages}
+              </span>
+              <button
+                onClick={() => setActPage(p => p + 1)}
+                disabled={actPage >= totalActPages}
+                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
+              >
+                Selanjutnya →
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="card flex flex-col bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 lg:col-span-5">
