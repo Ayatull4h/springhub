@@ -14,6 +14,7 @@ import {
   Award,
   FolderKanban,
   LogOut,
+  Sprout,
   ChevronDown,
   MessageSquare,
   Image,
@@ -32,6 +33,7 @@ const sidebar = [
   { label: "Review Queue", href: "/admin/review", icon: ShieldCheck },
   { label: "Projects", href: "/admin/projects", icon: FolderKanban },
   { label: "Content", href: "/admin/content", icon: Image },
+  { label: "Tree Donations", href: "/admin/tree-donations", icon: Sprout },
 ];
 
 export default function AdminLayout({
