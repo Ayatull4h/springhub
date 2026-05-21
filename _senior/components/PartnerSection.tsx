@@ -16,20 +16,20 @@ export function PartnerSection() {
 
   return (
     <section className="container-page py-16">
-      <div className="card grid gap-6 bg-gradient-to-br from-brand-50 to-white md:grid-cols-3 md:items-center">
+      <div className="card grid gap-4 bg-gradient-to-br from-brand-50 to-white p-4 md:grid-cols-3 md:items-center">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2 text-sm font-semibold text-ink">
             <Handshake className="h-4 w-4 text-brand-600" />
             {t("donate.becomePartner")}
           </div>
-          <h3 className="mt-1 text-2xl font-extrabold tracking-tight text-brand-700">
+          <h3 className="mt-1 text-xl font-extrabold tracking-tight text-brand-700">
             {t("donate.partnerTitle")}
           </h3>
-          <p className="mt-2 max-w-2xl text-sm text-ink-muted">
+          <p className="mt-2 max-w-2xl text-xs text-ink-muted">
             {t("donate.partnerDesc")}
           </p>
 
-          <ul className="mt-4 grid gap-3 text-xs text-ink-muted sm:grid-cols-2">
+          <ul className="mt-4 grid gap-3 text-[11px] text-ink-muted sm:grid-cols-2">
             {projectTypes.map(pt => {
               const Icon = pt.icon;
               return (

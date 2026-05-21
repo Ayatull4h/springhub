@@ -30,7 +30,7 @@ export function FeaturedProjects() {
           {t("donate.featuredProjects")}
         </h2>
         <p className="mt-2 text-center text-sm text-ink-muted">
-          {t("donate.projectTypesAccepted", { count: String(featuredProjects.length) })}
+          "Every donation powers data-driven conservation. Help us bring these vital water sources back to life."
         </p>
 
         <div className="card mt-6">
