@@ -195,43 +195,6 @@ export function DonateSection() {
             </div>
           )}
 
-          <div className="card grid gap-6 bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 md:grid-cols-3 md:items-center">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-                <Handshake className="h-4 w-4 text-brand-600" />
-                {t("donate.becomePartner")}
-              </div>
-              <h3 className="mt-1 text-2xl font-extrabold tracking-tight text-brand-700">
-                {t("donate.partnerTitle")}
-              </h3>
-              <p className="mt-2 max-w-2xl text-sm text-ink-muted">
-                {t("donate.partnerDesc")}
-              </p>
-              <ul className="mt-4 grid gap-2 text-xs text-ink-muted sm:grid-cols-2">
-                {PROJECT_TYPES.map((t) => {
-                  const Icon = projectTypeIcon[t.id];
-                  return (
-                    <li key={t.id} className="flex items-start gap-2">
-                      <Icon className="mt-0.5 h-3.5 w-3.5 flex-none text-brand-600" />
-                      <span>
-                        <span className="font-semibold text-ink">{t.label}</span> ·{" "}
-                        {t.summary}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-            <div className="flex flex-col items-stretch gap-2">
-              <a href="mailto:info@jagasemesta.id" className="btn-primary justify-center">
-                {t("donate.becomePartnerCta")}
-                <ArrowRight className="h-4 w-4" />
-              </a>
-              <a href="/help" className="btn-secondary justify-center">
-                {t("donate.downloadDeck")}
-              </a>
-            </div>
-          </div>
         </div>
 
         <div className="lg:col-span-7 grid gap-4">
@@ -321,6 +284,44 @@ export function DonateSection() {
               <button onClick={() => setProjPage(p => Math.min(projTotal, p + 1))} disabled={projPage >= projTotal} className="text-xs text-ink-muted disabled:opacity-30">→</button>
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="card grid gap-6 bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 md:grid-cols-3 md:items-center mt-8">
+        <div className="md:col-span-2">
+          <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+            <Handshake className="h-4 w-4 text-brand-600" />
+            {t("donate.becomePartner")}
+          </div>
+          <h3 className="mt-1 text-2xl font-extrabold tracking-tight text-brand-700">
+            {t("donate.partnerTitle")}
+          </h3>
+          <p className="mt-2 max-w-2xl text-sm text-ink-muted">
+            {t("donate.partnerDesc")}
+          </p>
+          <ul className="mt-4 grid gap-2 text-xs text-ink-muted sm:grid-cols-2">
+            {PROJECT_TYPES.map((t) => {
+              const Icon = projectTypeIcon[t.id];
+              return (
+                <li key={t.id} className="flex items-start gap-2">
+                  <Icon className="mt-0.5 h-3.5 w-3.5 flex-none text-brand-600" />
+                  <span>
+                    <span className="font-semibold text-ink">{t.label}</span> ·{" "}
+                    {t.summary}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="flex flex-col items-stretch gap-2">
+          <a href="mailto:info@jagasemesta.id" className="btn-primary justify-center">
+            {t("donate.becomePartnerCta")}
+            <ArrowRight className="h-4 w-4" />
+          </a>
+          <a href="/help" className="btn-secondary justify-center">
+            {t("donate.downloadDeck")}
+          </a>
         </div>
       </div>
     </section>
