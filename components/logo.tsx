@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
-  const src = tone === "dark" ? "/logo-dark.svg" : "/logo-light.svg";
+  const src = tone === "dark" ? "/logo-dark.png" : "/logo-light.png";
   return (
     <div className="flex items-center">
       <Image
