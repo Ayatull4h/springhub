@@ -8,7 +8,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "**" },
+      { protocol: "https", hostname: "*.greennetwork.id" },
+      { protocol: "https", hostname: "upload.wikimedia.org" },
+      { protocol: "https", hostname: "img.youtube.com" },
     ],
   },
   experimental: {
@@ -35,7 +37,7 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.openstreetmap.org",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.supabase.co",
+              "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.supabase.co https://images.unsplash.com https://*.greennetwork.id https://upload.wikimedia.org https://img.youtube.com",
               "font-src 'self' data:",
               "connect-src 'self' https://api.xendit.co https://*.supabase.co",
               "media-src 'self' https://*.supabase.co",
