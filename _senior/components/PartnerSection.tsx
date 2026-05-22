@@ -29,7 +29,7 @@ export function PartnerSection() {
             {t("donate.partnerDesc")}
           </p>
 
-          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-muted">
+          <ul className="mt-3 grid gap-x-4 gap-y-2 text-xs text-ink-muted sm:grid-cols-2">
             {projectTypes.map(pt => {
               const Icon = pt.icon;
               return (
