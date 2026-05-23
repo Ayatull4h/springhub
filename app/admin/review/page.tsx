@@ -23,7 +23,8 @@ export default function AdminReviewPage() {
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionMsg, setActionMsg] = useState("");
-  const [note, setNote] = useState("");
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [processing, setProcessing] = useState<Record<string, boolean>>({});
 
   const formLabels: Record<string, string> = {
     "spring-monitoring": t("profile.form.springMonitoring"),
@@ -49,6 +50,7 @@ export default function AdminReviewPage() {
   }, []);
 
   async function handleApprove(id: string) {
+    setProcessing((p) => ({ ...p, [id]: true }));
     try {
       const res = await fetch(`/api/admin/reports/${id}/approve`, { method: "POST" });
       if (res.ok) {
@@ -61,15 +63,17 @@ export default function AdminReviewPage() {
     } catch {
       setActionMsg(t("common.error"));
     }
+    setProcessing((p) => ({ ...p, [id]: false }));
     setTimeout(() => setActionMsg(""), 3000);
   }
 
   async function handleReject(id: string) {
+    setProcessing((p) => ({ ...p, [id]: true }));
     try {
       const res = await fetch(`/api/admin/reports/${id}/reject`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ note }),
+        body: JSON.stringify({ note: notes[id] || "" }),
       });
       if (res.ok) {
         setActionMsg(t("admin.reviews.reject") + "ed");
@@ -81,6 +85,7 @@ export default function AdminReviewPage() {
     } catch {
       setActionMsg(t("common.error"));
     }
+    setProcessing((p) => ({ ...p, [id]: false }));
     setTimeout(() => setActionMsg(""), 3000);
   }
 
@@ -115,7 +120,8 @@ export default function AdminReviewPage() {
       ) : (
         <div className="space-y-3">
           {reports.map((r) => {
-            const fieldData = JSON.parse(r.fieldData || "{}");
+            let fieldData: Record<string, unknown> = {};
+            try { fieldData = JSON.parse(r.fieldData || "{}"); } catch { fieldData = {}; }
             return (
               <div key={r.id} className="card">
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -169,21 +175,33 @@ export default function AdminReviewPage() {
                   <input
                     type="text"
                     placeholder={t("admin.reviews.notePlaceholder")}
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
+                    value={notes[r.id] || ""}
+                    onChange={(e) => setNotes((n) => ({ ...n, [r.id]: e.target.value }))}
                     className="flex-1 min-w-[200px] rounded-md border border-ink-line px-3 py-1.5 text-xs focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                   />
                   <button
                     onClick={() => handleApprove(r.id)}
-                    className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+                    disabled={processing[r.id]}
+                    className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
                   >
-                    <CheckCircle2 className="h-3.5 w-3.5" /> {t("admin.reviews.approve")}
+                    {processing[r.id] ? (
+                      <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-emerald-700 border-t-transparent" />
+                    ) : (
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                    )}
+                    {t("admin.reviews.approve")}
                   </button>
                   <button
                     onClick={() => handleReject(r.id)}
-                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100"
+                    disabled={processing[r.id]}
+                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
                   >
-                    <XCircle className="h-3.5 w-3.5" /> {t("admin.reviews.reject")}
+                    {processing[r.id] ? (
+                      <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-red-700 border-t-transparent" />
+                    ) : (
+                      <XCircle className="h-3.5 w-3.5" />
+                    )}
+                    {t("admin.reviews.reject")}
                   </button>
                 </div>
               </div>

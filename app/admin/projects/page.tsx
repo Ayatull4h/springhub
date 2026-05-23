@@ -45,11 +45,11 @@ type ProjectItem = {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const statusConfig: Record<string, { label: string; icon: any; className: string }> = {
-  pending: { label: "Pending", icon: Clock, className: "text-amber-600 bg-amber-50" },
-  under_review: { label: "Under Review", icon: Eye, className: "text-blue-600 bg-blue-50" },
-  approved: { label: "Approved", icon: CheckCircle2, className: "text-emerald-600 bg-emerald-50" },
-  rejected: { label: "Rejected", icon: XCircle, className: "text-red-600 bg-red-50" },
-  completed: { label: "Completed", icon: CheckCircle2, className: "text-purple-600 bg-purple-50" },
+  pending: { label: "Pending", icon: Clock, className: "text-amber-600 bg-amber-50 dark:bg-amber-900/30" },
+  under_review: { label: "Under Review", icon: Eye, className: "text-blue-600 bg-blue-50 dark:bg-blue-900/30" },
+  approved: { label: "Approved", icon: CheckCircle2, className: "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30" },
+  rejected: { label: "Rejected", icon: XCircle, className: "text-red-600 bg-red-50 dark:bg-red-900/30" },
+  completed: { label: "Completed", icon: CheckCircle2, className: "text-purple-600 bg-purple-50 dark:bg-purple-900/30" },
 };
 
 const statusFilters = ["all", "pending", "under_review", "approved", "rejected", "completed"] as const;
@@ -85,7 +85,7 @@ function ProjectDetailModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl"
+        className="w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -97,7 +97,7 @@ function ProjectDetailModal({
                 <StatusIcon className="h-3 w-3" />
                 {status.label}
               </span>
-              <span className="chip bg-slate-100 text-slate-700 capitalize">{project.typeId}</span>
+              <span className="chip bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 capitalize">{project.typeId}</span>
               {project.region && (
                 <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
                   <MapPin className="h-3 w-3" />
@@ -117,7 +117,7 @@ function ProjectDetailModal({
         )}
 
         {/* Financial Info */}
-        <div className="mt-5 grid grid-cols-2 gap-4 rounded-lg bg-slate-50 p-4">
+        <div className="mt-5 grid grid-cols-2 gap-4 rounded-lg bg-slate-50 dark:bg-slate-900 p-4">
           <div>
             <span className="text-xs font-medium text-ink-subtle">Goal Amount</span>
             <p className="mt-0.5 text-lg font-bold text-ink">
@@ -189,7 +189,7 @@ function ProjectDetailModal({
         <div className="mt-5 flex justify-end">
           <button
             onClick={onClose}
-            className="rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink hover:bg-slate-50"
+            className="rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             Close
           </button>
@@ -237,7 +237,7 @@ function ActionModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+        className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -266,7 +266,7 @@ function ActionModal({
           <button
             onClick={() => handleAction("rejected")}
             disabled={saving}
-            className="inline-flex items-center gap-1.5 rounded-md bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-md bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
             Reject
@@ -274,7 +274,7 @@ function ActionModal({
           <button
             onClick={() => handleAction("under_review")}
             disabled={saving}
-            className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 dark:bg-blue-900/30 px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 disabled:opacity-50"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
             Under Review
@@ -282,7 +282,7 @@ function ActionModal({
           <button
             onClick={() => handleAction("approved")}
             disabled={saving}
-            className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 dark:bg-emerald-900/30 px-4 py-2 text-sm font-medium text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 disabled:opacity-50"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
             Approve
@@ -411,7 +411,7 @@ export default function AdminProjectsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => window.open("/api/admin/export?entity=projects&format=csv", "_blank")}
-            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-ink"
           >
             <Download className="h-4 w-4" />
             Export CSV
@@ -421,19 +421,19 @@ export default function AdminProjectsPage() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-lg border border-ink-line bg-white p-3">
+        <div className="rounded-lg border border-ink-line bg-white dark:bg-slate-800 p-3">
           <span className="text-xs font-medium text-ink-muted">Total (filtered)</span>
           <p className="mt-1 text-lg font-bold text-ink">{filtered.length}</p>
         </div>
-        <div className="rounded-lg border border-ink-line bg-white p-3">
+        <div className="rounded-lg border border-ink-line bg-white dark:bg-slate-800 p-3">
           <span className="text-xs font-medium text-ink-muted">Goal Amount</span>
           <p className="mt-1 text-lg font-bold text-ink">Rp {formatNumber(totalGoal)}</p>
         </div>
-        <div className="rounded-lg border border-ink-line bg-white p-3">
+        <div className="rounded-lg border border-ink-line bg-white dark:bg-slate-800 p-3">
           <span className="text-xs font-medium text-ink-muted">Raised Amount</span>
           <p className="mt-1 text-lg font-bold text-brand-600">Rp {formatNumber(totalRaised)}</p>
         </div>
-        <div className="rounded-lg border border-ink-line bg-white p-3">
+        <div className="rounded-lg border border-ink-line bg-white dark:bg-slate-800 p-3">
           <span className="text-xs font-medium text-ink-muted">Avg Progress</span>
           <p className="mt-1 text-lg font-bold text-ink">
             {totalGoal > 0 ? Math.round((totalRaised / totalGoal) * 100) : 0}%
@@ -452,7 +452,7 @@ export default function AdminProjectsPage() {
                 "rounded-md px-3 py-1.5 text-xs font-medium transition",
                 statusFilter === s
                   ? "bg-brand-600 text-white"
-                  : "bg-slate-100 text-ink-muted hover:bg-slate-200"
+                  : "bg-slate-100 dark:bg-slate-700 text-ink-muted hover:bg-slate-200 dark:hover:bg-slate-600"
               )}
             >
               {s === "all" ? "All" : s.replace("_", " ")}
@@ -479,10 +479,10 @@ export default function AdminProjectsPage() {
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-ink-line bg-white">
+      <div className="overflow-x-auto rounded-lg border border-ink-line bg-white dark:bg-slate-800">
           <table className="w-full min-w-[900px] text-left text-sm whitespace-nowrap">
             <thead>
-            <tr className="border-b border-ink-line bg-slate-50 text-xs font-medium text-ink-subtle">
+            <tr className="border-b border-ink-line bg-slate-50 dark:bg-slate-900 text-xs font-medium text-ink-subtle">
               <th className="pb-3 pl-4 pr-3">
                 <button onClick={() => toggleSort("title")} className="inline-flex items-center hover:text-ink">
                   Title <SortIcon field="title" />
@@ -528,7 +528,7 @@ export default function AdminProjectsPage() {
                 return (
                   <tr
                     key={p.id}
-                    className="border-b border-ink-line last:border-0 hover:bg-slate-50 cursor-pointer"
+                    className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
                     onClick={() => setDetailProject(p)}
                   >
                     <td className="py-3 pl-4 pr-3">
@@ -543,7 +543,7 @@ export default function AdminProjectsPage() {
                       </div>
                     </td>
                     <td className="py-3 pr-3">
-                      <span className="chip bg-slate-100 text-slate-700 text-xs capitalize">
+                      <span className="chip bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs capitalize">
                         {typeLabels[p.typeId] || t("projects.type." + p.typeId.replace(/-/g, "_")) || p.typeId.replace(/-/g, " ")}
                       </span>
                     </td>

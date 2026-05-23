@@ -136,7 +136,9 @@ export default function AdminContentPage() {
 
       {/* Content list */}
       {loading ? (
-        <div className="py-12 text-center text-ink-muted">Loading...</div>
+        <div className="flex items-center justify-center py-12">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
+        </div>
       ) : items.length === 0 ? (
         <div className="card py-12 text-center">
           <p className="text-ink-muted">No {activeSection} items yet.</p>
