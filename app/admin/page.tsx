@@ -150,7 +150,7 @@ export default function AdminDashboard() {
           </Link>
         </div>
         <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full min-w-[400px] text-left text-sm whitespace-nowrap">
             <thead>
               <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
                 <th className="pb-2 pr-4">Username</th>
@@ -192,7 +192,7 @@ export default function AdminDashboard() {
           </Link>
         </div>
         <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full min-w-[600px] text-left text-sm whitespace-nowrap">
             <thead>
               <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
                 <th className="pb-2 pr-4">ID</th>

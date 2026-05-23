@@ -480,8 +480,8 @@ export default function AdminProjectsPage() {
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-ink-line bg-white">
-        <table className="w-full text-left text-sm">
-          <thead>
+          <table className="w-full min-w-[900px] text-left text-sm whitespace-nowrap">
+            <thead>
             <tr className="border-b border-ink-line bg-slate-50 text-xs font-medium text-ink-subtle">
               <th className="pb-3 pl-4 pr-3">
                 <button onClick={() => toggleSort("title")} className="inline-flex items-center hover:text-ink">
