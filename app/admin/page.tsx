@@ -150,7 +150,8 @@ export default function AdminDashboard() {
           </Link>
         </div>
         <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-[400px] text-left text-sm whitespace-nowrap">
+          <div className="min-w-[400px]">
+          <table className="w-full text-left text-sm whitespace-nowrap">
             <thead>
               <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
                 <th className="pb-2 pr-4">Username</th>
@@ -182,6 +183,7 @@ export default function AdminDashboard() {
             </tbody>
           </table>
         </div>
+        </div>
       </div>
 
       <div className="card">
@@ -192,7 +194,8 @@ export default function AdminDashboard() {
           </Link>
         </div>
         <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-[600px] text-left text-sm whitespace-nowrap">
+          <div className="min-w-[600px]">
+          <table className="w-full text-left text-sm whitespace-nowrap">
             <thead>
               <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
                 <th className="pb-2 pr-4">ID</th>
@@ -234,6 +237,7 @@ export default function AdminDashboard() {
               )}
             </tbody>
           </table>
+        </div>
         </div>
       </div>
     </div>

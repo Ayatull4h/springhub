@@ -72,7 +72,8 @@ export default function AdminDonationsPage() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[900px] text-left text-sm whitespace-nowrap">
+        <div className="min-w-[900px]">
+        <table className="w-full text-left text-sm whitespace-nowrap">
           <thead>
             <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
               <th className="pb-3 pr-3">Invoice</th>
@@ -122,6 +123,7 @@ export default function AdminDonationsPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

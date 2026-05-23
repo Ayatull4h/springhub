@@ -93,7 +93,8 @@ export default function AdminFeedbackPage() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px] text-left text-sm whitespace-nowrap">
+        <div className="min-w-[600px]">
+        <table className="w-full text-left text-sm whitespace-nowrap">
           <thead>
             <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
               <th className="pb-2 pr-4">Type</th>
@@ -173,6 +174,7 @@ export default function AdminFeedbackPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Detail Modal */}

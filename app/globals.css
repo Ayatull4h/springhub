@@ -87,13 +87,8 @@ button:not(:disabled) {
   cursor: pointer !important;
 }
 
-/* Prevent horizontal overflow on mobile */
+/* Better touch targets on mobile */
 @media (max-width: 767px) {
-  html, body {
-    overflow-x: hidden;
-    width: 100%;
-  }
-  /* Better touch targets (minimum 44px for thumbs) */
   button:not(.chip):not(nav a):not(.btn-primary):not(.btn-secondary) {
     min-height: 44px;
   }

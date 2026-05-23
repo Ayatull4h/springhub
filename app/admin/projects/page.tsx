@@ -480,7 +480,8 @@ export default function AdminProjectsPage() {
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-ink-line bg-white dark:bg-slate-800">
-          <table className="w-full min-w-[900px] text-left text-sm whitespace-nowrap">
+          <div className="min-w-[900px]">
+          <table className="w-full text-left text-sm whitespace-nowrap">
             <thead>
             <tr className="border-b border-ink-line bg-slate-50 dark:bg-slate-900 text-xs font-medium text-ink-subtle">
               <th className="pb-3 pl-4 pr-3">
@@ -590,6 +591,7 @@ export default function AdminProjectsPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Action button bar for selected project */}
