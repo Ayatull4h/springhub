@@ -52,7 +52,7 @@ export default function AdminDonationsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-bold text-ink">{t("admin.donations.title")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
@@ -64,7 +64,7 @@ export default function AdminDonationsPage() {
         </div>
         <button
           onClick={() => window.open("/api/admin/export?entity=donations&format=csv", "_blank")}
-          className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+          className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
         >
           <Download className="h-4 w-4" />
           Export CSV

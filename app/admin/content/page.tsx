@@ -107,11 +107,11 @@ export default function AdminContentPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-xl font-bold text-ink">Content Manager</h2>
         <button
           onClick={() => { setEditing(null); resetForm(); setShowForm(true); }}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+          className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           <Plus className="h-4 w-4" /> Add {activeSection}
         </button>

@@ -95,7 +95,7 @@ export default function AdminCoursesPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-bold text-ink">Courses</h2>
           <p className="mt-1 text-sm text-ink-muted">
@@ -104,7 +104,7 @@ export default function AdminCoursesPage() {
         </div>
         <Link
           href="/admin/courses/new"
-          className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+          className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           <Plus className="h-4 w-4" />
           New Course

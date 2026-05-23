@@ -222,27 +222,27 @@ export default function ProfilePage() {
       )}
 
       {/* Profile Header */}
-      <div className="mt-6 card flex flex-wrap items-start justify-between gap-4">
+      <div className="mt-6 card flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700">
             {profile.username.charAt(0).toUpperCase()}
           </div>
-          <div>
-            <h1 className="text-2xl font-extrabold text-ink">{profile.username}</h1>
+          <div className="min-w-0">
+            <h1 className="text-xl font-extrabold text-ink sm:text-2xl">{profile.username}</h1>
             <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-ink-muted">
-              <span className="flex items-center gap-1">
-                <Mail className="h-3.5 w-3.5" /> {profile.email}
+              <span className="flex items-center gap-1 truncate">
+                <Mail className="h-3.5 w-3.5 shrink-0" /> {profile.email}
               </span>
               {profile.region && (
                 <span className="flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" /> {profile.region}
+                  <MapPin className="h-3.5 w-3.5 shrink-0" /> {profile.region}
                 </span>
               )}
               <span className="chip bg-brand-50 text-brand-700 capitalize">{profile.role}</span>
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 self-start">
           <button
             onClick={openEdit}
             className="inline-flex items-center gap-1 rounded-md border border-brand-600 px-3 py-1.5 text-sm text-brand-600 hover:bg-brand-50"

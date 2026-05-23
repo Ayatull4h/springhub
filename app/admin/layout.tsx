@@ -17,6 +17,7 @@ import {
   ChevronDown,
   MessageSquare,
   Image,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -150,7 +151,7 @@ export default function AdminLayout({
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
       </div>
 
       {/* Mobile sidebar overlay */}
@@ -160,13 +161,13 @@ export default function AdminLayout({
           onClick={() => setSidebarOpen(false)}
         >
           <aside
-            className="fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-ink-line bg-white"
+            className="fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-ink-line bg-white dark:border-slate-700 dark:bg-slate-800"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex h-16 items-center justify-between border-b border-ink-line px-5">
-              <span className="text-sm font-bold text-ink">SpringHub Admin</span>
-              <button onClick={() => setSidebarOpen(false)} className="text-ink-muted hover:text-ink">
-                ✕
+            <div className="flex h-16 items-center justify-between border-b border-ink-line px-5 dark:border-slate-700">
+              <span className="text-sm font-bold text-ink dark:text-white">SpringHub Admin</span>
+              <button onClick={() => setSidebarOpen(false)} className="rounded-md p-1 text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white">
+                <X className="h-5 w-5" />
               </button>
             </div>
             <nav className="flex-1 space-y-0.5 p-3">
@@ -180,8 +181,8 @@ export default function AdminLayout({
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition",
                       pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href))
-                        ? "bg-brand-50 text-brand-700"
-                        : "text-ink-muted hover:bg-slate-100 hover:text-ink"
+                        ? "bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
+                        : "text-ink-muted hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
                     )}
                   >
                     <Icon className="h-4 w-4" />

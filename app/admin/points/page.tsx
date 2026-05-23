@@ -400,7 +400,7 @@ export default function AdminPointsPage() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-bold text-ink">Point Rules</h2>
           <p className="mt-1 text-sm text-ink-muted">
@@ -413,7 +413,7 @@ export default function AdminPointsPage() {
             setEditingRule(null);
             setFormOpen(true);
           }}
-          className="inline-flex items-center gap-1.5 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+          className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           <Plus className="h-4 w-4" />
           Tambah Aturan

@@ -74,20 +74,20 @@ export default function AdminReportsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-xl font-bold text-ink">{t("admin.reports.title")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
             {t("admin.reports.count", { count: String(reports.length) })}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="rounded-md border border-ink-line px-2 py-1.5 text-xs" />
-            <span className="text-xs text-ink-muted">s/d</span>
-            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="rounded-md border border-ink-line px-2 py-1.5 text-xs" />
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1">
+            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full min-w-0 rounded-md border border-ink-line px-2 py-1.5 text-xs sm:w-auto" />
+            <span className="hidden text-xs text-ink-muted sm:inline">s/d</span>
+            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full min-w-0 rounded-md border border-ink-line px-2 py-1.5 text-xs sm:w-auto" />
             {(dateFrom || dateTo) && (
-              <button onClick={() => { setDateFrom(""); setDateTo(""); }} className="text-xs text-brand-600 hover:underline">Reset</button>
+              <button onClick={() => { setDateFrom(""); setDateTo(""); }} className="whitespace-nowrap text-xs text-brand-600 hover:underline">Reset</button>
             )}
           </div>
           <button
@@ -95,7 +95,7 @@ export default function AdminReportsPage() {
             className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100"
           >
             <Download className="h-4 w-4" />
-            Export CSV
+            Export
           </button>
           <button
             onClick={() => setShowPrecise(!showPrecise)}
