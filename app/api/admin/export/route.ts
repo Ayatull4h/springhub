@@ -34,7 +34,7 @@ export async function GET(request: Request) {
         });
         csv = [
           "ID,Username,Email,Phone,Role,Region,Points,TrustScore,CreatedAt",
-          ...users.map((u) =>
+          ...users.map((u: { id: string; username: string; email: string; phone: string; role: string; region: string; points: number; trustScore: number; createdAt: Date }) =>
             [
               u.id,
               u.username,
@@ -59,7 +59,7 @@ export async function GET(request: Request) {
         });
         csv = [
           "ID,User,FormSlug,Status,PreciseLat,PreciseLng,SnappedLat,SnappedLng,ReviewedBy,CreatedAt",
-          ...reports.map((r) =>
+          ...reports.map((r: { id: string; user: { username: string } | null; formSlug: string; status: string; preciseLat: number | null; preciseLng: number | null; snappedLat: number | null; snappedLng: number | null; reviewedById: string | null; createdAt: Date }) =>
             [
               r.id,
               r.user?.username || "guest",
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
         });
         csv = [
           "ID,User,InvoiceID,Amount(Rp),Tier,DonorName,DonorEmail,Status,PaidAt,CreatedAt",
-          ...donations.map((d) =>
+          ...donations.map((d: { id: string; user: { username: string } | null; invoiceId: string; amountIdr: number; tierId: string; donorName: string; donorEmail: string; status: string; paidAt: Date | null; createdAt: Date }) =>
             [
               d.id,
               d.user?.username || "anon",
@@ -111,7 +111,7 @@ export async function GET(request: Request) {
         });
         csv = [
           "ID,Title,Type,Status,Region,GoalAmount,RaisedAmount,ContactName,ContactEmail,ContactPhone,User,UserEmail,CreatedAt",
-          ...projects.map((p) =>
+          ...projects.map((p: { id: string; title: string; typeId: string; status: string; region: string; goalAmount: number; raisedAmount: number; contactName: string; contactEmail: string; contactPhone: string; user: { username: string; email: string } | null; createdAt: Date }) =>
             [
               p.id,
               `"${p.title.replace(/"/g, '""')}"`,

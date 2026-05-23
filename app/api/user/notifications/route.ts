@@ -27,13 +27,13 @@ export async function GET() {
   });
 
   const notifications = [
-    ...recentPoints.map((p) => ({
+    ...recentPoints.map((p: { amount: number; reason: string; createdAt: Date }) => ({
       type: "points" as const,
       message: `+${p.amount} pts: ${p.reason}`,
       time: p.createdAt.toISOString(),
       icon: "sparkles" as const,
     })),
-    ...recentReports.map((r) => ({
+    ...recentReports.map((r: { formSlug: string; status: string; createdAt: Date }) => ({
       type: (r.status === "approved" ? "success" : "error") as "success" | "error",
       message: `Laporan ${r.formSlug} ${r.status === "approved" ? "disetujui ✅" : "ditolak ❌"}`,
       time: r.createdAt.toISOString(),

@@ -20,7 +20,7 @@ export async function GET() {
     take: 100,
   });
 
-  const totalEarned = logs.reduce((sum, l) => sum + l.amount, 0);
+  const totalEarned = logs.reduce((sum: number, l: { amount: number }) => sum + l.amount, 0);
 
   return NextResponse.json({
     points: profile?.points ?? 0,

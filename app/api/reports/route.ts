@@ -282,10 +282,10 @@ export async function GET(request: Request) {
 
     const total = reports.length;
     const healthy = reports.filter(
-      (r) => r.formSlug === "spring-monitoring" || r.formSlug === "seedling-stock"
+      (r: { formSlug: string }) => r.formSlug === "spring-monitoring" || r.formSlug === "seedling-stock"
     ).length;
     const restoration = reports.filter(
-      (r) =>
+      (r: { formSlug: string }) =>
         r.formSlug === "spring-restoration" ||
         r.formSlug === "trench-development" ||
         r.formSlug === "tree-planting"
