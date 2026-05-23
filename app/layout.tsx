@@ -78,6 +78,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(regs) {
+                  for (var r of regs) { r.unregister(); }
+                });
                 window.addEventListener('load', function() {
                   navigator.serviceWorker.register('/sw.js');
                 });
