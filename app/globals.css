@@ -5,9 +5,14 @@
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
   body {
     @apply bg-white text-ink;
+  }
+  input, select, textarea {
+    font-size: 16px !important;
   }
 }
 
@@ -80,4 +85,16 @@ button:not(:disabled) {
 /* Fix floating points button */
 .dark .fixed.bottom-6 button {
   cursor: pointer !important;
+}
+
+/* Prevent horizontal overflow on mobile */
+@media (max-width: 767px) {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  /* Better touch targets (minimum 44px for thumbs) */
+  button:not(.chip):not(nav a):not(.btn-primary):not(.btn-secondary) {
+    min-height: 44px;
+  }
 }
