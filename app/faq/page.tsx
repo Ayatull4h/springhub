@@ -39,11 +39,11 @@ const faqs = [
 export default function FAQPage() {
   return (
     <div className="container-page py-16">
-      <h1 className="text-3xl font-bold">Frequently Asked Questions</h1>
+      <h1 className="text-3xl font-bold text-ink">Frequently Asked Questions</h1>
       <div className="mt-8 space-y-6">
         {faqs.map((faq) => (
           <section key={faq.q}>
-            <h2 className="text-xl font-semibold">{faq.q}</h2>
+            <h2 className="text-xl font-semibold text-ink">{faq.q}</h2>
             <p className="mt-2 text-ink-muted">{faq.a}</p>
           </section>
         ))}

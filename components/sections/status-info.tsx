@@ -23,7 +23,7 @@ export function StatusInfo() {
           onClick={() => setOpen(false)}
         >
           <div
-            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+            className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-lg font-bold text-ink">{t("status.title")}</h3>

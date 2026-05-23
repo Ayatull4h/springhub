@@ -59,7 +59,7 @@ export default function SignInPage() {
           </div>
           <Link
             href="/"
-            className="absolute left-4 top-4 md:left-8 md:top-8 inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
+            className="relative -ml-1 mb-2 inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
           >
             <ArrowLeft className="h-4 w-4" /> Kembali
           </Link>

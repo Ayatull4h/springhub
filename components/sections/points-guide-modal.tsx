@@ -101,7 +101,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="relative max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 pb-10 shadow-2xl"
+        className="relative max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 pb-10 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -150,7 +150,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
                     return (
                       <div
                         key={rule.id}
-                        className="flex items-center justify-between rounded-lg bg-white/80 px-3 py-2"
+                        className="flex items-center justify-between rounded-lg bg-white/80 dark:bg-slate-800/80 px-3 py-2"
                       >
                         <div className="flex items-center gap-2.5">
                           <Icon className="h-4 w-4 text-brand-600 shrink-0" />

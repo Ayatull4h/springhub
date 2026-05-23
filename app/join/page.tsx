@@ -60,7 +60,7 @@ export default function JoinPage() {
           </div>
           <Link
             href="/"
-            className="absolute left-4 top-4 md:left-8 md:top-8 inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
+            className="relative -ml-1 mb-2 inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
           >
             <ArrowLeft className="h-4 w-4" /> Kembali
           </Link>
@@ -136,7 +136,7 @@ export default function JoinPage() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink"
-                aria-label={showPassword ? t("auth.signIn.hidePassword") : t("auth.signIn.showPassword")}
+                aria-label={showPassword ? t("auth.join.hidePassword") : t("auth.join.showPassword")}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>

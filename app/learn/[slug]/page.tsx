@@ -84,7 +84,7 @@ export default function LearnCoursePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
       </div>
     );
@@ -92,8 +92,8 @@ export default function LearnCoursePage() {
 
   if (error || !course) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50">
-        <BookOpen className="h-12 w-12 text-slate-300" />
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 dark:bg-slate-900">
+        <BookOpen className="h-12 w-12 text-slate-300 dark:text-slate-500" />
         <p className="text-sm text-ink-muted">{error || "Course not found"}</p>
         <Link
           href="/#learn"
@@ -110,9 +110,9 @@ export default function LearnCoursePage() {
   const isCompleted = progress?.completed ?? false;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       {/* Header */}
-      <div className="border-b border-ink-line bg-white">
+      <div className="border-b border-ink-line bg-white dark:bg-slate-800">
         <div className="container-page py-4">
           <Link
             href="/#learn"
@@ -154,7 +154,7 @@ export default function LearnCoursePage() {
           {/* Progress bar */}
           {totalModules > 0 && (
             <div className="mt-4 flex items-center gap-3">
-              <div className="flex h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+              <div className="flex h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                 <div
                   className="rounded-full bg-brand-600 transition-all duration-500"
                   style={{
@@ -177,7 +177,7 @@ export default function LearnCoursePage() {
 
           {course.modules.length === 0 ? (
             <div className="card py-8 text-center">
-              <Layers className="mx-auto h-8 w-8 text-slate-300" />
+              <Layers className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-500" />
               <p className="mt-2 text-sm text-ink-muted">
                 No modules available yet
               </p>
@@ -200,7 +200,7 @@ export default function LearnCoursePage() {
                     {isCompletedModule ? (
                       <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                     ) : (
-                      <Circle className="h-5 w-5 text-slate-300" />
+                      <Circle className="h-5 w-5 text-slate-300 dark:text-slate-500" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
