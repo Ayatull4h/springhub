@@ -18,6 +18,11 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+  if (event.request.url.includes("/api/")) return;
+  if (event.request.url.includes("/_next/")) return;
+  if (event.request.destination !== "document") return;
+
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
