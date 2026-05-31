@@ -330,7 +330,7 @@
   "footer.address": "Alamat",
 
   "admin.dashboard": "Ikhtisar Dashboard",
-  "admin.welcome": "Data real-time dari database SQLite.",
+  "admin.welcome": "Data real-time dari database PostgreSQL.",
   "admin.totalUsers": "Total Pengguna",
   "admin.totalReports": "Total Laporan",
   "admin.donations": "Donasi",
@@ -370,7 +370,7 @@
   "admin.status.paid": "Lunas",
   "admin.status.expired": "Kadaluarsa",
   "admin.status.failed": "Gagal",
-  "admin.lastSync": "Data langsung dari SQLite",
+  "admin.lastSync": "Data langsung dari PostgreSQL",
   "admin.environment": "SpringHub / Lokal",
 
   "notFound.title": "Halaman Tidak Ditemukan",

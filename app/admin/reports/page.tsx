@@ -114,7 +114,7 @@ export default function AdminReportsPage() {
             <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
               <th className="pb-3 pr-3">{t("reports.form")}</th>
               <th className="pb-3 pr-3">User</th>
-              <th className="pb-3 pr-3">{t("admin.users.role")}</th>
+              <th className="pb-3 pr-3">Status</th>
               <th className="pb-3 pr-3">{t("admin.reports.precise")}</th>
               <th className="pb-3 pr-3">Precise Lng</th>
               <th className="pb-3 pr-3">Snapped</th>

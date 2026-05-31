@@ -113,8 +113,8 @@ export default function AdminNewFormPage() {
       for (const field of fields) {
         if (!field.label.trim()) continue;
         const options = (field.type === "select" || field.type === "multiselect")
-          ? field.options
-          : "[]";
+          ? (typeof field.options === "string" ? JSON.parse(field.options) : field.options)
+          : [];
         await fetch(`/api/admin/forms/${data.form.id}/fields`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

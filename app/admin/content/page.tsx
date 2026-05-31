@@ -54,31 +54,53 @@ export default function AdminContentPage() {
 
   useEffect(() => { fetchItems(); }, [activeSection]);
 
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
+    setSaving(true);
+    setSaveError("");
     const url = editing
       ? `/api/admin/content/${editing.id}`
       : "/api/admin/content";
     const method = editing ? "PUT" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, section: activeSection }),
-    });
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, section: activeSection }),
+      });
 
-    if (res.ok) {
-      setShowForm(false);
-      setEditing(null);
-      resetForm();
-      fetchItems();
+      if (res.ok) {
+        setShowForm(false);
+        setEditing(null);
+        resetForm();
+        fetchItems();
+      } else {
+        const data = await res.json();
+        setSaveError(data.error || "Gagal menyimpan");
+      }
+    } catch {
+      setSaveError("Gagal menyimpan");
+    } finally {
+      setSaving(false);
     }
   }
 
   async function handleDelete(id: string) {
     if (!confirm("Hapus item ini?")) return;
-    await fetch(`/api/admin/content/${id}`, { method: "DELETE" });
-    fetchItems();
+    try {
+      const res = await fetch(`/api/admin/content/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        fetchItems();
+      } else {
+        alert("Gagal menghapus");
+      }
+    } catch {
+      alert("Gagal menghapus");
+    }
   }
 
   function editItem(item: ContentItem) {

@@ -11,7 +11,6 @@ import {
   EyeOff,
   Layers,
   AlertCircle,
-  CheckCircle2,
 } from "lucide-react";
 
 type FormField = {
@@ -58,21 +57,27 @@ export default function AdminFormsPage() {
   }, []);
 
   async function handleDelete(id: string, title: string) {
-    if (!confirm(`Delete form "${title}"? This action cannot be undone.`))
-      return;
+    const hasReports = forms.find((f) => f.id === id)?._count?.reports ?? 0;
+    const msg = hasReports > 0
+      ? `Form "${title}" memiliki ${hasReports} laporan. Form akan dinonaktifkan (bukan dihapus). Lanjutkan?`
+      : `Hapus form "${title}"? Tindakan ini tidak bisa dibatalkan.`;
+    if (!confirm(msg)) return;
     setDeleting(id);
     try {
       const res = await fetch(`/api/admin/forms/${id}`, {
         method: "DELETE",
       });
+      const data = await res.json();
       if (res.ok) {
+        if (data.softDelete) {
+          alert(data.message);
+        }
         setForms((prev) => prev.filter((f) => f.id !== id));
       } else {
-        const data = await res.json();
-        alert(data.error || "Failed to delete");
+        alert(data.error || "Gagal menghapus");
       }
     } catch {
-      alert("Failed to delete form");
+      alert("Gagal menghapus form");
     } finally {
       setDeleting(null);
     }

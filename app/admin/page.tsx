@@ -201,7 +201,7 @@ export default function AdminDashboard() {
                 <th className="pb-2 pr-4">ID</th>
                 <th className="pb-2 pr-4">{t("reports.form")}</th>
                 <th className="pb-2 pr-4">User</th>
-                <th className="pb-2 pr-4">{t("admin.users.role")}</th>
+                <th className="pb-2 pr-4">Status</th>
                 <th className="pb-2 pr-4">Date</th>
               </tr>
             </thead>

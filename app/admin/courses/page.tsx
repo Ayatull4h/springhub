@@ -7,13 +7,10 @@ import {
   Plus,
   Pencil,
   Trash2,
-  Users,
-  Eye,
-  EyeOff,
   Layers,
   Clock,
   AlertCircle,
-  CheckCircle2,
+  Users,
 } from "lucide-react";
 
 type CourseModule = {

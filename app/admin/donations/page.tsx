@@ -80,7 +80,7 @@ export default function AdminDonationsPage() {
               <th className="pb-3 pr-3">Donor</th>
               <th className="pb-3 pr-3">{t("donate.email")}</th>
               <th className="pb-3 pr-3">Amount</th>
-              <th className="pb-3 pr-3">{t("admin.users.role")}</th>
+              <th className="pb-3 pr-3">Status</th>
               <th className="pb-3 pr-3">Tier</th>
               <th className="pb-3 pr-3">Project</th>
               <th className="pb-3">Date</th>

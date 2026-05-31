@@ -119,7 +119,7 @@ export async function PUT(
   }
 }
 
-// DELETE /api/admin/forms/[id] — hapus form (cascade hapus fields)
+// DELETE /api/admin/forms/[id] — soft-delete (deactivate) atau hard-delete jika tidak ada reports
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
@@ -129,10 +129,38 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
+    const form = await prisma.form.findUnique({
+      where: { id: params.id },
+      select: { id: true, slug: true, title: true },
+    });
+
+    if (!form) {
+      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+    }
+
+    // Check if any reports reference this form
+    const reportCount = await prisma.report.count({
+      where: { formSlug: form.slug },
+    });
+
+    if (reportCount > 0) {
+      // Soft-delete: deactivate instead of delete
+      await prisma.form.update({
+        where: { id: params.id },
+        data: { isActive: false },
+      });
+      return NextResponse.json({
+        success: true,
+        softDelete: true,
+        message: `Form "${form.title}" dinonaktifkan karena ada ${reportCount} laporan yang merujuk padanya.`,
+      });
+    }
+
+    // Hard-delete: no reports referencing this form
     await prisma.form.delete({
       where: { id: params.id },
     });
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, softDelete: false });
   } catch (error) {
     console.error("Admin form delete error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

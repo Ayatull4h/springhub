@@ -330,7 +330,7 @@
   "footer.address": "Address",
 
   "admin.dashboard": "Dashboard Overview",
-  "admin.welcome": "Real-time data from SQLite database.",
+  "admin.welcome": "Real-time data from PostgreSQL database.",
   "admin.totalUsers": "Total Users",
   "admin.totalReports": "Total Reports",
   "admin.donations": "Donations",
@@ -370,7 +370,7 @@
   "admin.status.paid": "Paid",
   "admin.status.expired": "Expired",
   "admin.status.failed": "Failed",
-  "admin.lastSync": "Live data from SQLite",
+  "admin.lastSync": "Live data from PostgreSQL",
   "admin.environment": "SpringHub / Local",
 
   "notFound.title": "Page Not Found",

@@ -185,7 +185,7 @@ export default function AdminReviewPage() {
                 {/* Photos */}
                 {photos[r.id] && photos[r.id].length > 0 && (
                   <div className="mt-3">
-                    <p className="mb-1 text-xs font-medium text-ink-subtle">{t("common.photos") ?? "Foto:"}</p>
+                    <p className="mb-1 text-xs font-medium text-ink-subtle">{t("common.photos", "Foto")}</p>
                     <div className="flex flex-wrap gap-2">
                       {photos[r.id].map((photo) => (
                         <button
@@ -217,7 +217,7 @@ export default function AdminReviewPage() {
                       ))}
                     </div>
                     <p className="mt-1 text-[10px] text-ink-subtle">
-                      {featured[r.id] ? t("admin.reviews.featured") ?? "Terpilih sebagai thumbnail" : t("admin.reviews.clickFeatured") ?? "Klik foto untuk jadikan thumbnail"}
+                      {featured[r.id] ? t("admin.reviews.featured", "Terpilih sebagai thumbnail") : t("admin.reviews.clickFeatured", "Klik foto untuk jadikan thumbnail")}
                     </p>
                   </div>
                 )}

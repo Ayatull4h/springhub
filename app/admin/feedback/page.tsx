@@ -47,12 +47,20 @@ export default function AdminFeedbackPage() {
   }
 
   async function updateStatus(id: string, newStatus: string) {
-    await fetch(`/api/admin/feedback/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus }),
-    });
-    fetchFeedback();
+    try {
+      const res = await fetch(`/api/admin/feedback/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || "Gagal mengupdate status");
+      }
+      fetchFeedback();
+    } catch {
+      alert("Gagal mengupdate status");
+    }
   }
 
   const typeIcon: Record<string, any> = {
