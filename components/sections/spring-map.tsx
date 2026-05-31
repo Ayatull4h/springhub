@@ -316,11 +316,18 @@ export function SpringMap() {
           </div>
           <div className="mt-3 flex items-start gap-2 rounded-lg border border-ink-line/60 bg-white px-3 py-2 text-xs text-ink-muted dark:border-slate-700 dark:bg-slate-800">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-none text-brand-600" />
-            <span
-              dangerouslySetInnerHTML={{
-                __html: t("map.discoveryPrompt"),
-              }}
-            />
+            <span>
+              {t("map.discoveryPrompt").includes("href=") ? (
+                <span dangerouslySetInnerHTML={{ __html: t("map.discoveryPrompt") }} />
+              ) : (
+                <>
+                  {t("map.discoveryPrompt")}{" "}
+                  <Link href="/report/spring-monitoring" className="font-semibold text-brand-700 hover:underline">
+                    {t("map.discoveryPrompt")}
+                  </Link>
+                </>
+              )}
+            </span>
           </div>
         </div>
       </div>

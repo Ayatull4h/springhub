@@ -67,6 +67,9 @@ model Profile {
   sessions      Session[]
   courses       CoursesProgress[]
   reviewedReports Report[] @relation("reviewedReports")
+
+  @@index([role])
+  @@index([points(sort: Desc)])
 }
 
 model Session {
@@ -77,29 +80,40 @@ model Session {
   createdAt DateTime @default(now())
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([expiresAt])
 }
 
 model Report {
-  id            String       @id @default(uuid())
-  userId        String?
-  guestId       String?
-  formSlug      String
-  status        ReportStatus @default(pending)
-  fieldData     String       // JSON string of form fields
-  preciseLat    Float?
-  preciseLng    Float?
-  snappedLat    Float?
-  snappedLng    Float?
-  reviewedById  String?
-  reviewNote    String       @default("")
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id               String       @id @default(uuid())
+  userId           String?
+  guestId          String?
+  formSlug         String
+  status           ReportStatus @default(pending)
+  fieldData        String       // JSON string of form fields
+  preciseLat       Float?
+  preciseLng       Float?
+  snappedLat       Float?
+  snappedLng       Float?
+  reviewedById     String?
+  reviewNote       String       @default("")
+  featuredPhotoId  String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
-  user       Profile?     @relation(fields: [userId], references: [id])
-  reviewedBy Profile?     @relation("reviewedReports", fields: [reviewedById], references: [id])
-  photos     ReportPhoto[]
-  pointsLogs PointsLog[]
-  form       Form?        @relation(fields: [formSlug], references: [slug])
+  user            Profile?     @relation(fields: [userId], references: [id])
+  reviewedBy      Profile?     @relation("reviewedReports", fields: [reviewedById], references: [id])
+  photos          ReportPhoto[] @relation("ReportPhotos")
+
+  pointsLogs      PointsLog[]
+  form            Form?        @relation(fields: [formSlug], references: [slug])
+
+  @@index([status])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([formSlug])
+  @@index([createdAt])
+  @@index([guestId])
 }
 
 model ReportPhoto {
@@ -112,7 +126,9 @@ model ReportPhoto {
   height      Int      @default(0)
   createdAt   DateTime @default(now())
 
-  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  report Report @relation("ReportPhotos", fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId])
 }
 
 model Project {
@@ -154,6 +170,10 @@ model Donation {
 
   user    Profile? @relation(fields: [userId], references: [id])
   project Project? @relation(fields: [projectId], references: [id])
+
+  @@index([status])
+  @@index([userId])
+  @@index([projectId])
 }
 
 model PointsLog {
@@ -168,6 +188,8 @@ model PointsLog {
 
   user   Profile? @relation(fields: [userId], references: [id])
   report Report?  @relation(fields: [reportId], references: [id])
+
+  @@index([userId])
 }
 
 model CoursesProgress {

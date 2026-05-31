@@ -55,13 +55,32 @@ export async function POST(request: Request) {
   const contentType = request.headers.get("content-type") || "";
   let body: Record<string, unknown> = {};
 
+  const s3 = new S3Client({
+    region: "auto",
+    endpoint: process.env.S3_ENDPOINT || "",
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY || "",
+      secretAccessKey: process.env.S3_SECRET_KEY || "",
+    },
+    forcePathStyle: true,
+  });
+  const bucket = process.env.S3_BUCKOT || "springhub-photos";
+
   if (contentType.includes("multipart/form-data")) {
     const formData = await request.formData();
     for (const [key, value] of formData.entries()) {
       if (key === "proposalFile" && value instanceof File) {
-        // Baca file dan encode sebagai base64 (sementara sampai ada file storage)
         const buffer = Buffer.from(await value.arrayBuffer());
-        body.proposalFile = `data:${value.type};base64,${buffer.toString("base64")}`;
+        const filename = `proposals/${session.userId}-${Date.now()}-${value.name}`;
+        await s3.send(
+          new PutObjectCommand({
+            Bucket: bucket,
+            Key: filename,
+            Body: buffer,
+            ContentType: value.type,
+          })
+        );
+        body.proposalFile = filename;
       } else {
         body[key] = value as string;
       }

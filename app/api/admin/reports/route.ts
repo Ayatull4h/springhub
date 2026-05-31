@@ -15,8 +15,18 @@ export async function GET() {
       user: { select: { id: true, username: true, email: true } },
       reviewedBy: { select: { username: true } },
       pointsLogs: { select: { amount: true } },
+      _count: { select: { photos: true } },
     },
   });
 
-  return NextResponse.json({ reports });
+  const mapped = reports.map((r) => ({
+    ...r,
+    submitter: r.user
+      ? { type: "user", id: r.user.id, name: r.user.username, email: r.user.email }
+      : { type: "guest", id: r.guestId, name: `Guest (${r.guestId?.slice(0, 8)}...)`, email: null },
+    user: undefined,
+    guestId: undefined,
+  }));
+
+  return NextResponse.json({ reports: mapped });
 }

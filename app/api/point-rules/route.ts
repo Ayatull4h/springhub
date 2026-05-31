@@ -1,23 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
+import { getOrSet } from "@/lib/cache";
 
 // Public endpoint — no auth required, only returns active rules
 export async function GET() {
   try {
-    const rules = await prisma.pointRule.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: "asc" },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        points: true,
-        category: true,
-        icon: true,
-        sortOrder: true,
-      },
-    });
+    const rules = await getOrSet("point-rules", "active", () =>
+      prisma.pointRule.findMany({
+        where: { isActive: true },
+        orderBy: { sortOrder: "asc" },
+        select: { id: true, name: true, description: true, points: true, category: true, icon: true, sortOrder: true },
+      }),
+      3600
+    );
 
     return NextResponse.json({ rules });
   } catch (error) {

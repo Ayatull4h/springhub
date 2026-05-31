@@ -1,32 +1,36 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { newsletterLimiter } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json();
+    // CSRF check
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
 
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const limiter = await newsletterLimiter.check(`newsletter:${ip}`);
+    if (!limiter.allowed) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
+    }
+
+    const { email } = await request.json();
     if (!email || typeof email !== "string" || !email.includes("@")) {
       return NextResponse.json({ error: "Email tidak valid" }, { status: 400 });
     }
 
-    // Cek duplicate (case insensitive)
-    const existing = await prisma.profile.findFirst({
-      where: { email: email.toLowerCase() },
-    });
-
-    // Simpan subscriber — kalau belum ada di DB, catat aja
-    // Karena gak ada tabel subscriber, kita simpan di PointsLog dengan reason "newsletter"
-    const existingSub = await prisma.pointsLog.findFirst({
+    const existing = await prisma.pointsLog.findFirst({
       where: { reason: "newsletter", metadata: { contains: email.toLowerCase() } },
     });
 
-    if (existingSub) {
+    if (existing) {
       return NextResponse.json({ success: true, message: "Sudah terdaftar" });
     }
 
-    // Simpan sebagai pointsLog khusus (sebagai temporary subscriber store)
-    // Nanti bisa migrasi ke tabel subscribers sendiri
     await prisma.pointsLog.create({
       data: {
         amount: 0,

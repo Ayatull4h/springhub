@@ -87,6 +87,7 @@ export const FORMS: FormSchema[] = [
       { id: "spring_name", label: "Nama mata air", type: "text", required: true, placeholder: "e.g. Mata Air Cibeureum" },
       { id: "village", label: "Desa", type: "text" },
       { id: "subdistrict", label: "Kecamatan", type: "text" },
+      { id: "province", label: "Provinsi", type: "province", required: true },
       { id: "regency", label: "Kota / Kabupaten", type: "text", required: true },
       { id: "date", label: "Tanggal pemantauan", type: "date", required: true },
       { id: "flow_condition", label: "Kondisi debit / aliran", type: "select", required: true, options: flowOptions },
@@ -107,6 +108,7 @@ export const FORMS: FormSchema[] = [
     contributionType: "restoration",
     fields: [
       { id: "spring_name", label: "Nama mata air", type: "text", required: true },
+      { id: "province", label: "Provinsi", type: "province", required: true },
       { id: "regency", label: "Kota / Kabupaten", type: "text", required: true },
       { id: "date", label: "Tanggal kegiatan", type: "date", required: true },
       { id: "location", label: "Tag lokasi mata air", type: "location", required: true },
@@ -129,6 +131,7 @@ export const FORMS: FormSchema[] = [
     contributionType: "trench",
     fields: [
       { id: "volunteer_name", label: "Nama Anda", type: "text", required: true },
+      { id: "province", label: "Provinsi", type: "province", required: true },
       { id: "regency", label: "Kota / Kabupaten", type: "text", required: true },
       { id: "date", label: "Tanggal kegiatan", type: "date", required: true },
       { id: "trench_count", label: "Jumlah rorak yang dibuat", type: "number", required: true },
@@ -147,6 +150,7 @@ export const FORMS: FormSchema[] = [
     contributionType: "tree_planting",
     fields: [
       { id: "volunteer_name", label: "Nama Anda", type: "text", required: true },
+      { id: "province", label: "Provinsi", type: "province", required: true },
       { id: "regency", label: "Kota / Kabupaten", type: "text", required: true },
       { id: "date", label: "Tanggal kegiatan", type: "date", required: true },
       { id: "tree_count", label: "Jumlah pohon yang ditanam", type: "number", required: true },
@@ -168,6 +172,7 @@ export const FORMS: FormSchema[] = [
       { id: "species", label: "Jenis tanaman", type: "text", required: true },
       { id: "count", label: "Jumlah bibit", type: "number", required: true },
       { id: "photo", label: "Foto bibit", type: "photo", required: true },
+      { id: "province", label: "Provinsi", type: "province", required: true },
       { id: "regency", label: "Kota / Kabupaten lokasi", type: "text", required: true },
       { id: "contact_name", label: "Nama narahubung", type: "text", required: true },
       { id: "contact_phone", label: "Nomor HP narahubung", type: "phone", required: true },
@@ -188,6 +193,7 @@ const phoneRegex = /^(0[1-9]\d{8,11}|\+62\d{8,13})$/;
 
 export const springMonitoringSchema = z.object({
   spring_name: z.string().min(1, "Nama mata air wajib diisi"),
+  province: z.string().min(1, "Provinsi wajib dipilih"),
   village: z.string().optional(),
   subdistrict: z.string().optional(),
   regency: z.string().min(1, "Kota/Kabupaten wajib diisi"),
@@ -203,6 +209,7 @@ export const springMonitoringSchema = z.object({
 
 export const springRestorationSchema = z.object({
   spring_name: z.string().min(1, "Nama mata air wajib diisi"),
+  province: z.string().min(1, "Provinsi wajib dipilih"),
   regency: z.string().min(1, "Kota/Kabupaten wajib diisi"),
   date: z.string().min(1, "Tanggal kegiatan wajib diisi"),
   location_lat: z.string().optional(),
@@ -218,6 +225,7 @@ export const springRestorationSchema = z.object({
 
 export const trenchDevelopmentSchema = z.object({
   volunteer_name: z.string().min(1, "Nama Anda wajib diisi"),
+  province: z.string().min(1, "Provinsi wajib dipilih"),
   regency: z.string().min(1, "Kota/Kabupaten wajib diisi"),
   date: z.string().min(1, "Tanggal kegiatan wajib diisi"),
   trench_count: z.coerce.number().min(1, "Jumlah rorak wajib diisi"),
@@ -229,6 +237,7 @@ export const trenchDevelopmentSchema = z.object({
 
 export const treePlantingSchema = z.object({
   volunteer_name: z.string().min(1, "Nama Anda wajib diisi"),
+  province: z.string().min(1, "Provinsi wajib dipilih"),
   regency: z.string().min(1, "Kota/Kabupaten wajib diisi"),
   date: z.string().min(1, "Tanggal kegiatan wajib diisi"),
   tree_count: z.coerce.number().min(1, "Jumlah pohon wajib diisi"),
@@ -243,6 +252,7 @@ export const seedlingStockSchema = z.object({
   species: z.string().min(1, "Jenis tanaman wajib diisi"),
   count: z.coerce.number().min(1, "Jumlah bibit wajib diisi"),
   photo: z.any().optional(),
+  province: z.string().min(1, "Provinsi wajib dipilih"),
   regency: z.string().min(1, "Kota/Kabupaten wajib diisi"),
   contact_name: z.string().min(1, "Nama narahubung wajib diisi"),
   contact_phone: z.string().regex(phoneRegex, "Format nomor HP tidak valid"),

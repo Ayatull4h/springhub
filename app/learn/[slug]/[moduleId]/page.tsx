@@ -14,6 +14,7 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 type Module = {
   id: string;
@@ -211,7 +212,7 @@ export default function LearnModulePage() {
             {module.content ? (
               <div
                 className="prose prose-sm max-w-none text-ink"
-                dangerouslySetInnerHTML={{ __html: module.content }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(module.content) }}
               />
             ) : (
               <div className="flex flex-col items-center py-8 text-center">

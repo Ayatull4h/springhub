@@ -5,6 +5,7 @@ describe("springMonitoringSchema", () => {
   it("should validate valid input", () => {
     const result = springMonitoringSchema.safeParse({
       spring_name: "Mata Air Cibeureum",
+      province: "Jawa Barat",
       regency: "Bandung",
       date: "2024-01-15",
       flow_condition: "Mengalir deras",

@@ -1,9 +1,8 @@
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
+import { getJwtSecret } from "./jwt";
 
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? "springhub-dev-secret-key-change-in-production"
-);
+const SECRET = getJwtSecret();
 
 const CSRF_COOKIE = "csrf_token";
 const CSRF_HEADER = "x-csrf-token";

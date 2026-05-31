@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { createInvoice } from "@/lib/xendit";
 import { getSession } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";
+import { donationLimiter } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
@@ -14,8 +15,17 @@ export async function POST(request: Request) {
     }
 
     const session = await getSession();
+    const rateKey = session?.userId ?? (request.headers.get("x-forwarded-for") || "unknown");
+    const limiter = await donationLimiter.check(`donation:${rateKey}`);
+    if (!limiter.allowed) {
+      return NextResponse.json(
+        { error: "Terlalu banyak permintaan donasi. Silakan coba lagi nanti." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
-    const { amountIdr, donorName, donorEmail, tierId } = body;
+    const { amountIdr, donorName, donorEmail, tierId, projectId } = body;
 
     // ── Server-side amount validation ──
     // NEVER trust the amount from client — validate here on the server.
@@ -34,6 +44,20 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validate projectId if specified
+    if (projectId) {
+      const project = await prisma.project.findUnique({
+        where: { id: projectId },
+        select: { id: true, status: true },
+      });
+      if (!project || project.status !== "approved") {
+        return NextResponse.json(
+          { error: "Proyek tidak ditemukan atau belum disetujui" },
+          { status: 400 }
+        );
+      }
+    }
+
     // Generate unique external ID
     const externalId = `DON-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
@@ -42,7 +66,11 @@ export async function POST(request: Request) {
       externalId,
       amount,
       payerEmail: donorEmail || undefined,
-      description: tierId ? `Donasi ${tierId} — SpringHub` : "Donasi SpringHub",
+      description: projectId
+        ? `Donasi untuk proyek — SpringHub`
+        : tierId
+          ? `Donasi ${tierId} — SpringHub`
+          : "Donasi SpringHub",
       paymentMethods: ["OVO", "GOPAY", "DANA", "SHOPEEPAY", "QRIS"],
     });
 
@@ -50,6 +78,7 @@ export async function POST(request: Request) {
     const donation = await prisma.donation.create({
       data: {
         userId: session?.userId ?? null,
+        projectId: projectId || null,
         invoiceId: invoice.id,
         externalId,
         amountIdr: amount,

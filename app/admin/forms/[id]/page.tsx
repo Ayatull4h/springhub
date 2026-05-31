@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ClipboardList,
@@ -74,7 +74,6 @@ type NewField = {
 };
 
 export default function AdminEditFormPage() {
-  const router = useRouter();
   const params = useParams();
   const formId = params.id as string;
   const [activeTab, setActiveTab] = useState<"metadata" | "fields">("metadata");
@@ -282,6 +281,100 @@ export default function AdminEditFormPage() {
     }
   }
 
+  // ── Inline edit field form ──
+  function EditFieldForm({ field, formId, onClose, onSaved, onError }: {
+    field: FormField;
+    formId: string;
+    onClose: () => void;
+    onSaved: () => void;
+    onError: (msg: string) => void;
+  }) {
+    const [label, setLabel] = useState(field.label);
+    const [type, setType] = useState(field.type);
+    const [placeholder, setPlaceholder] = useState(field.placeholder || "");
+    const [helpText, setHelpText] = useState(field.helpText || "");
+    const [optionsText, setOptionsText] = useState(() => {
+      try {
+        const parsed = JSON.parse(field.options || "[]");
+        return Array.isArray(parsed) ? parsed.join("\n") : "";
+      } catch { return field.options || ""; }
+    });
+    const [saving, setSaving] = useState(false);
+
+    async function handleSave() {
+      onError("");
+      if (!label.trim()) { onError("Label wajib diisi"); return; }
+      setSaving(true);
+      try {
+        const body: Record<string, unknown> = {
+          label: label.trim(),
+          type,
+          placeholder: placeholder.trim(),
+          helpText: helpText.trim(),
+        };
+        if (type === "select" || type === "multiselect") {
+          body.options = optionsText.split("\n").filter((o) => o.trim()).map((o) => o.trim());
+        }
+        const res = await fetch(`/api/admin/forms/${formId}/fields/${field.fieldId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (res.ok) onSaved();
+        else { const d = await res.json(); onError(d.error || "Gagal menyimpan"); }
+      } catch { onError("Kesalahan jaringan"); }
+      finally { setSaving(false); }
+    }
+
+    return (
+      <div className="border-t border-ink-line bg-slate-50 px-6 py-4 dark:bg-slate-800/50">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-semibold text-ink">Edit Field: {field.fieldId}</span>
+          <button onClick={onClose} className="rounded p-1 text-ink-muted hover:bg-slate-200"><X className="h-3.5 w-3.5" /></button>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1">
+            <label className="text-[10px] font-medium text-ink-muted">Label</label>
+            <input type="text" value={label} onChange={e => setLabel(e.target.value)}
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-medium text-ink-muted">Tipe</label>
+            <select value={type} onChange={e => setType(e.target.value)}
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none">
+              {FIELD_TYPES.map(ft => <option key={ft.value} value={ft.value}>{ft.label}</option>)}
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-medium text-ink-muted">Placeholder</label>
+            <input type="text" value={placeholder} onChange={e => setPlaceholder(e.target.value)}
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-medium text-ink-muted">Teks Bantuan</label>
+            <input type="text" value={helpText} onChange={e => setHelpText(e.target.value)}
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
+          </div>
+        </div>
+        {(type === "select" || type === "multiselect") && (
+          <div className="mt-3 space-y-1">
+            <label className="text-[10px] font-medium text-ink-muted">Opsi (satu per baris)</label>
+            <textarea value={optionsText} onChange={e => setOptionsText(e.target.value)} rows={3}
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
+          </div>
+        )}
+        <div className="mt-3 flex justify-end gap-2">
+          <button onClick={onClose} className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100">Batal</button>
+          <button onClick={handleSave} disabled={saving}
+            className="inline-flex items-center gap-1 rounded-md bg-brand-600 px-3 py-1 text-xs font-medium text-white hover:bg-brand-700 disabled:opacity-50">
+            {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+            Simpan
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -465,82 +558,90 @@ export default function AdminEditFormPage() {
                 </h3>
               </div>
               {fields.map((field) => (
-                <div
-                  key={field.id}
-                  className="flex items-center gap-3 px-4 py-3"
-                >
-                  {/* Move buttons */}
-                  <div className="flex flex-col gap-0.5">
-                    <button
-                      onClick={() => handleMoveField(field, "up")}
-                      className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 hover:text-ink"
-                      title="Naik"
-                    >
-                      <ArrowUp className="h-3 w-3" />
-                    </button>
-                    <button
-                      onClick={() => handleMoveField(field, "down")}
-                      className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 hover:text-ink"
-                      title="Turun"
-                    >
-                      <ArrowDown className="h-3 w-3" />
-                    </button>
-                  </div>
-
-                  {/* Field info */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-ink">
-                        {field.label}
-                      </span>
-                      {field.required && (
-                        <span className="text-xs text-red-500">*</span>
-                      )}
+                <React.Fragment key={field.id}>
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    {/* Move buttons */}
+                    <div className="flex flex-col gap-0.5">
+                      <button
+                        onClick={() => handleMoveField(field, "up")}
+                        className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 hover:text-ink"
+                        title="Naik"
+                      >
+                        <ArrowUp className="h-3 w-3" />
+                      </button>
+                      <button
+                        onClick={() => handleMoveField(field, "down")}
+                        className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 hover:text-ink"
+                        title="Turun"
+                      >
+                        <ArrowDown className="h-3 w-3" />
+                      </button>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-ink-muted">
-                      <span className="font-mono">{field.fieldId}</span>
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 capitalize text-slate-600">
-                        {field.type}
-                      </span>
-                      {field.placeholder && (
-                        <span className="text-ink-subtle">
-                          placeholder: &quot;{field.placeholder}&quot;
+
+                    {/* Field info */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-ink">
+                          {field.label}
                         </span>
-                      )}
+                        {field.required && (
+                          <span className="text-xs text-red-500">*</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-ink-muted">
+                        <span className="font-mono">{field.fieldId}</span>
+                        <span className="rounded bg-slate-100 px-1.5 py-0.5 capitalize text-slate-600">
+                          {field.type}
+                        </span>
+                        {field.placeholder && (
+                          <span className="text-ink-subtle">
+                            placeholder: &quot;{field.placeholder}&quot;
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1">
+                      <label className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-xs text-ink-muted hover:bg-slate-100">
+                        <input
+                          type="checkbox"
+                          checked={field.required}
+                          onChange={() => handleToggleRequired(field)}
+                          className="h-3.5 w-3.5 rounded border-ink-line text-brand-600 focus:ring-brand-500"
+                        />
+                        Required
+                      </label>
+                      <button
+                        onClick={() =>
+                          setEditingField(
+                            editingField === field.fieldId ? null : field.fieldId
+                          )
+                        }
+                        className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 hover:text-brand-600"
+                        title="Edit"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteField(field.fieldId, field.label)}
+                        className="rounded-md p-1.5 text-ink-muted hover:bg-red-50 hover:text-red-600"
+                        title="Hapus"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                   </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-1">
-                    <label className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-xs text-ink-muted hover:bg-slate-100">
-                      <input
-                        type="checkbox"
-                        checked={field.required}
-                        onChange={() => handleToggleRequired(field)}
-                        className="h-3.5 w-3.5 rounded border-ink-line text-brand-600 focus:ring-brand-500"
-                      />
-                      Required
-                    </label>
-                    <button
-                      onClick={() =>
-                        setEditingField(
-                          editingField === field.fieldId ? null : field.fieldId
-                        )
-                      }
-                      className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 hover:text-brand-600"
-                      title="Edit"
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteField(field.fieldId, field.label)}
-                      className="rounded-md p-1.5 text-ink-muted hover:bg-red-50 hover:text-red-600"
-                      title="Hapus"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
+                  {editingField === field.fieldId && (
+                    <EditFieldForm
+                      field={field}
+                      formId={formId}
+                      onClose={() => setEditingField(null)}
+                      onSaved={() => { setEditingField(null); fetchForm(); }}
+                      onError={(msg) => setError(msg)}
+                    />
+                  )}
+                </React.Fragment>
               ))}
             </div>
           )}

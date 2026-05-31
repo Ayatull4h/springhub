@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { verifyPassword, createSession, getSession } from "@/lib/auth";
 import { getExistingGuestId } from "@/lib/guest";
+import { authLimiter } from "@/lib/rate-limit";
+import { auditLog } from "@/lib/audit";
 
 const loginSchema = z.object({
   email: z.string().email("Email tidak valid"),
@@ -12,6 +14,15 @@ const loginSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const ipLimiter = await authLimiter.check(`login:${ip}`);
+    if (!ipLimiter.allowed) {
+      return NextResponse.json(
+        { error: "Terlalu banyak percobaan login. Silakan coba lagi nanti." },
+        { status: 429 }
+      );
+    }
+
     const session = await getSession();
     if (session) {
       return NextResponse.json(
@@ -54,7 +65,6 @@ export async function POST(request: Request) {
       username: profile.username,
     });
 
-    // Claim guest reports if any
     const guestId = getExistingGuestId();
     if (guestId) {
       await prisma.report.updateMany({
@@ -66,6 +76,8 @@ export async function POST(request: Request) {
         data: { userId: profile.id, guestId: null },
       });
     }
+
+    auditLog("login", `User ${profile.id} logged in`);
 
     return NextResponse.json({
       success: true,

@@ -82,6 +82,12 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const baseUrl = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || "";
+    const bucket = process.env.S3_BUCKET || "springhub-photos";
+    const prefix = baseUrl
+      ? `${baseUrl}/`
+      : `${process.env.S3_ENDPOINT}/${bucket}/`;
+
     const photos = await prisma.reportPhoto.findMany({
       where: { reportId: params.id },
       orderBy: { createdAt: "asc" },
@@ -96,7 +102,12 @@ export async function GET(
       },
     });
 
-    return NextResponse.json({ photos });
+    const photosWithUrls = photos.map((photo) => ({
+      ...photo,
+      url: `${prefix}${photo.storagePath}`,
+    }));
+
+    return NextResponse.json({ photos: photosWithUrls });
   } catch (error) {
     console.error("Photo fetch error:", error);
     return NextResponse.json(

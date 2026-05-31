@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, XCircle, Clock, MapPin, Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
+type ReportPhoto = {
+  id: string;
+  url: string;
+  fieldId: string;
+};
+
 type ReportItem = {
   id: string;
   formSlug: string;
@@ -16,6 +22,7 @@ type ReportItem = {
   createdAt: string;
   user: { username: string } | null;
   guestId: string | null;
+  _photos?: ReportPhoto[];
 };
 
 export default function AdminReviewPage() {
@@ -25,6 +32,8 @@ export default function AdminReviewPage() {
   const [actionMsg, setActionMsg] = useState("");
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState<Record<string, boolean>>({});
+  const [featured, setFeatured] = useState<Record<string, string>>({}); // reportId → photoId
+  const [photos, setPhotos] = useState<Record<string, ReportPhoto[]>>({});
 
   const formLabels: Record<string, string> = {
     "spring-monitoring": t("profile.form.springMonitoring"),
@@ -38,8 +47,21 @@ export default function AdminReviewPage() {
     setLoading(true);
     fetch("/api/admin/reports")
       .then((r) => r.json())
-      .then((data) => {
-        setReports((data.reports ?? []).filter((r: ReportItem) => r.status === "pending"));
+      .then(async (data) => {
+        const pending = (data.reports ?? []).filter((r: ReportItem) => r.status === "pending");
+        setReports(pending);
+        // Fetch photos for each pending report
+        const photoMap: Record<string, ReportPhoto[]> = {};
+        await Promise.all(pending.map(async (r: ReportItem) => {
+          try {
+            const res = await fetch(`/api/reports/${r.id}/photos`);
+            if (res.ok) {
+              const json = await res.json();
+              photoMap[r.id] = json.photos || [];
+            }
+          } catch {}
+        }));
+        setPhotos(photoMap);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -52,7 +74,11 @@ export default function AdminReviewPage() {
   async function handleApprove(id: string) {
     setProcessing((p) => ({ ...p, [id]: true }));
     try {
-      const res = await fetch(`/api/admin/reports/${id}/approve`, { method: "POST" });
+      const res = await fetch(`/api/admin/reports/${id}/approve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ featuredPhotoId: featured[id] || null }),
+      });
       if (res.ok) {
         setActionMsg(t("admin.reviews.approve") + "!");
         fetchPending();
@@ -155,6 +181,46 @@ export default function AdminReviewPage() {
                     </div>
                   ))}
                 </div>
+
+                {/* Photos */}
+                {photos[r.id] && photos[r.id].length > 0 && (
+                  <div className="mt-3">
+                    <p className="mb-1 text-xs font-medium text-ink-subtle">{t("common.photos") ?? "Foto:"}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {photos[r.id].map((photo) => (
+                        <button
+                          key={photo.id}
+                          type="button"
+                          onClick={() =>
+                            setFeatured((f) => ({
+                              ...f,
+                              [r.id]: f[r.id] === photo.id ? "" : photo.id,
+                            }))
+                          }
+                          className={`relative h-16 w-16 overflow-hidden rounded-lg border-2 transition-all ${
+                            featured[r.id] === photo.id
+                              ? "border-brand-500 ring-2 ring-brand-500/30"
+                              : "border-ink-line hover:border-brand-300"
+                          }`}
+                        >
+                          <img
+                            src={photo.url}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                          {featured[r.id] === photo.id && (
+                            <span className="absolute inset-0 flex items-center justify-center bg-brand-500/40 text-white">
+                              <Sparkles className="h-4 w-4" />
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="mt-1 text-[10px] text-ink-subtle">
+                      {featured[r.id] ? t("admin.reviews.featured") ?? "Terpilih sebagai thumbnail" : t("admin.reviews.clickFeatured") ?? "Klik foto untuk jadikan thumbnail"}
+                    </p>
+                  </div>
+                )}
 
                 {/* Location */}
                 {(r.preciseLat || r.snappedLat) && (

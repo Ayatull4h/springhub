@@ -303,3 +303,50 @@ ALTER TABLE "CourseModule" ADD CONSTRAINT "CourseModule_courseId_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "FormField" ADD CONSTRAINT "FormField_formId_fkey" FOREIGN KEY ("formId") REFERENCES "Form"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- ─── PERFORMANCE INDEXES ─────────────────────────────────────────────────────
+
+-- 1. Report query: admin review queue (WHERE status = 'pending')
+CREATE INDEX IF NOT EXISTS idx_report_status ON "Report"("status");
+
+-- 2. Report query: user history (WHERE userId = ? ORDER BY createdAt DESC)
+CREATE INDEX IF NOT EXISTS idx_report_userId_createdAt ON "Report"("userId", "createdAt" DESC);
+
+-- 3. Report query: filter by form type
+CREATE INDEX IF NOT EXISTS idx_report_formSlug ON "Report"("formSlug");
+
+-- 4. Report query: date range filtering
+CREATE INDEX IF NOT EXISTS idx_report_createdAt ON "Report"("createdAt");
+
+-- 5. Session cleanup (WHERE expiresAt < NOW())
+CREATE INDEX IF NOT EXISTS idx_session_expiresAt ON "Session"("expiresAt");
+
+-- 6. Session lookup by profile (JOIN)
+CREATE INDEX IF NOT EXISTS idx_session_profileId ON "Session"("profileId");
+
+-- 7. Donation query: admin filter by status
+CREATE INDEX IF NOT EXISTS idx_donation_status ON "Donation"("status");
+
+-- 8. Donation query: user history
+CREATE INDEX IF NOT EXISTS idx_donation_userId ON "Donation"("userId");
+
+-- 9. Leaderboard (ORDER BY points DESC LIMIT 20)
+CREATE INDEX IF NOT EXISTS idx_profile_points ON "Profile"("points" DESC);
+
+-- 10. Points log history
+CREATE INDEX IF NOT EXISTS idx_pointsLog_userId ON "PointsLog"("userId");
+
+-- 11. Course progress by user
+CREATE INDEX IF NOT EXISTS idx_coursesProgress_userId ON "CoursesProgress"("userId");
+
+-- 12. Report guestId lookup (for guest merge + cleanup)
+CREATE INDEX IF NOT EXISTS idx_report_guestId ON "Report"("guestId");
+
+-- 13. ReportPhoto reportId (for JOIN)
+CREATE INDEX IF NOT EXISTS idx_reportPhoto_reportId ON "ReportPhoto"("reportId");
+
+-- 14. Profile role (for admin filtering)
+CREATE INDEX IF NOT EXISTS idx_profile_role ON "Profile"("role");
+
+-- 15. Donation projectId (for project reporting)
+CREATE INDEX IF NOT EXISTS idx_donation_projectId ON "Donation"("projectId");

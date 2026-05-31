@@ -16,9 +16,14 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: [
       "@prisma/client",
-      "@prisma/adapter-libsql",
-      "@libsql/client",
+      "@prisma/adapter-pg",
       "sharp",
+      "@aws-sdk/client-s3",
+      "@aws-sdk/lib-storage",
+      "ioredis",
+      "bullmq",
+      "nodemailer",
+      "pino",
     ],
   },
   async headers() {
@@ -31,16 +36,17 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-XSS-Protection", value: "1; mode=block" },
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          { key: "Permissions-Policy", value: "camera=(), geolocation=(self), microphone=()" },
           {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.openstreetmap.org",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.supabase.co https://images.unsplash.com https://*.greennetwork.id https://upload.wikimedia.org https://img.youtube.com",
+              "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.supabase.co https://*.r2.dev https://images.unsplash.com https://*.greennetwork.id https://upload.wikimedia.org https://img.youtube.com",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.xendit.co https://*.supabase.co",
-              "media-src 'self' https://*.supabase.co",
+              "connect-src 'self' https://api.xendit.co https://*.supabase.co https://*.r2.dev",
+              "media-src 'self' https://*.supabase.co https://*.r2.dev",
               "frame-src https://www.youtube.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",

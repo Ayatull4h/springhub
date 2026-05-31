@@ -5,7 +5,7 @@ import { getSession } from "@/lib/auth";
 import { awardReportPoints, checkDailyStreak, updateTrustScore } from "@/lib/points";
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -26,11 +26,34 @@ export async function POST(
       return NextResponse.json({ error: "Report already reviewed" }, { status: 400 });
     }
 
+    // Parse optional featuredPhotoId from request body
+    let featuredPhotoId: string | null = null;
+    try {
+      const body = await request.json();
+      featuredPhotoId = body.featuredPhotoId || null;
+    } catch {
+      // No body — that's fine, just approve without featured photo
+    }
+
+    // Validate featuredPhotoId belongs to this report
+    if (featuredPhotoId) {
+      const photo = await prisma.reportPhoto.findFirst({
+        where: { id: featuredPhotoId, reportId: params.id },
+      });
+      if (!photo) {
+        return NextResponse.json(
+          { error: "Featured photo not found in this report" },
+          { status: 400 }
+        );
+      }
+    }
+
     await prisma.report.update({
       where: { id: params.id },
       data: {
         status: "approved",
         reviewedById: session.userId,
+        featuredPhotoId,
       },
     });
 

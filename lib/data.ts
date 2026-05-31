@@ -111,6 +111,8 @@ export const recentActivities = [
     location: "Mata Air Cibeureum, Bogor",
     when: "2h ago",
     points: 25,
+    likes: 24,
+    comments: 6,
     formSlug: "spring-monitoring" as const,
   },
   {
@@ -119,7 +121,29 @@ export const recentActivities = [
     location: "Bedugul, Bali",
     when: "6h ago",
     points: 60,
+    likes: 18,
+    comments: 3,
     formSlug: "tree-planting" as const,
+  },
+  {
+    user: "Agus W.",
+    action: "completed Spring Conservation Basics course",
+    location: "Yogyakarta",
+    when: "1d ago",
+    points: 25,
+    likes: 8,
+    comments: 1,
+    formSlug: "spring-monitoring" as const,
+  },
+  {
+    user: "Dewi S.",
+    action: "logged seedling stock (200 bibit bambu)",
+    location: "Klungkung, Bali",
+    when: "2d ago",
+    points: 15,
+    likes: 12,
+    comments: 2,
+    formSlug: "seedling-stock" as const,
   },
 ];
 

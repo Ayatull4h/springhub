@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { SignJWT, type JWTPayload } from "jose";
 import { prisma } from "@/lib/prisma";
+import { getJwtSecret } from "@/lib/jwt";
+import { sendEmail, buildResetPasswordEmail } from "@/lib/email";
+import { authLimiter } from "@/lib/rate-limit";
+import { auditLog } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? "springhub-dev-secret-key-change-in-production"
-);
+const SECRET = getJwtSecret();
 
 export async function POST(request: Request) {
   try {
@@ -15,9 +17,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email wajib diisi" }, { status: 400 });
     }
 
+    // Always return the same message to prevent email enumeration
+    const genericMessage = "Jika email terdaftar, link reset telah dikirim.";
+
     const profile = await prisma.profile.findUnique({ where: { email } });
     if (!profile) {
-      return NextResponse.json({ error: "Email tidak ditemukan" }, { status: 404 });
+      return NextResponse.json({ success: true, message: genericMessage });
+    }
+
+    // Rate limit per email
+    const limiter = await authLimiter.check(`forgot-pw:${email}`);
+    if (!limiter.allowed) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti." }, { status: 429 });
     }
 
     const token = await new SignJWT({ email, userId: profile.id } as unknown as JWTPayload)
@@ -25,11 +36,21 @@ export async function POST(request: Request) {
       .setExpirationTime("1h")
       .sign(SECRET);
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const resetUrl = `${baseUrl}/reset-password?token=${token}`;
+
+    auditLog("forgot-password", `Reset requested for ${email}`);
+
+    // Send email (or log in dev mode)
+    const emailContent = buildResetPasswordEmail(resetUrl);
+    await sendEmail({
+      to: email,
+      ...emailContent,
+    });
+
     return NextResponse.json({
       success: true,
-      message: "Link reset password telah dikirim ke email Anda.",
-      _devToken: process.env.NODE_ENV === "development" ? token : undefined,
-      _devUrl: process.env.NODE_ENV === "development" ? `/reset-password?token=${token}` : undefined,
+      message: genericMessage,
     });
   } catch (error) {
     console.error("Forgot password error:", error);

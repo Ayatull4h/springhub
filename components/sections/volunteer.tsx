@@ -32,6 +32,8 @@ export function VolunteerActivities() {
   const { t } = useI18n();
   const [userPoints, setUserPoints] = useState(0);
   const [showPoints, setShowPoints] = useState(false);
+  const [liked, setLiked] = useState(-1);
+  const [commented, setCommented] = useState(-1);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -71,7 +73,7 @@ export function VolunteerActivities() {
             {t("volunteer.recentActivities")}
           </h3>
           <ul className="mt-3 grid gap-3 md:grid-cols-2">
-            {visibleActs.map((a, i) => {
+            {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
               return (
                 <li key={i} className="card">
@@ -97,11 +99,19 @@ export function VolunteerActivities() {
                   </div>
                   <div className="mt-3 flex items-center justify-between gap-2 border-t border-ink-line pt-3 text-xs text-ink-muted dark:border-slate-700">
                     <div className="flex items-center gap-3">
-                      <button className="inline-flex items-center gap-1 hover:text-ink dark:hover:text-white">
-                        <ThumbsUp className="h-3.5 w-3.5" /> 24
+                      <button
+                        onClick={() => setLiked(i === liked ? -1 : i)}
+                        className={`inline-flex items-center gap-1 transition ${
+                          liked === i ? "text-brand-600" : "hover:text-ink dark:hover:text-white"
+                        }`}
+                      >
+                        <ThumbsUp className={`h-3.5 w-3.5 ${liked === i ? "fill-current" : ""}`} /> {liked === i ? (a.likes ?? 24) + 1 : (a.likes ?? 24)}
                       </button>
-                      <button className="inline-flex items-center gap-1 hover:text-ink dark:hover:text-white">
-                        <MessageSquare className="h-3.5 w-3.5" /> 6
+                      <button
+                        onClick={() => setCommented(i === commented ? -1 : i)}
+                        className="inline-flex items-center gap-1 hover:text-ink dark:hover:text-white"
+                      >
+                        <MessageSquare className="h-3.5 w-3.5" /> {commented === i ? (a.comments ?? 6) + 1 : (a.comments ?? 6)}
                       </button>
                     </div>
                     {form && (

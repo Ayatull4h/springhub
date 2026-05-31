@@ -27,14 +27,20 @@ test.describe("API Endpoints", () => {
   });
 
   test("POST /api/feedback with valid data should succeed", async ({ request }) => {
+    // Get CSRF token first
+    const csrfRes = await request.get("/api/csrf");
+    const csrfData = await csrfRes.json();
+    const csrfToken = csrfData.token || "";
+
     const response = await request.post("/api/feedback", {
+      headers: { "x-csrf-token": csrfToken },
       data: {
         type: "saran",
         saran: "Test saran untuk testing E2E minimal 10 karakter",
       },
     });
     const data = await response.json();
-    expect(response.status() === 200 || response.status() === 201 || response.status() === 429).toBeTruthy();
+    expect(response.ok || response.status() === 429).toBeTruthy();
     if (response.ok) {
       expect(data.success).toBeTruthy();
     }

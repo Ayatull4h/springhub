@@ -1,8 +1,8 @@
 import { Page, expect } from "@playwright/test";
 
 export const TEST_USERS = {
-  volunteer: { email: "volunteer@test.com", password: "test123" },
-  admin: { email: "admin@test.com", password: "test123" },
+  volunteer: { email: "volunteer@test.com", password: "vol12345" },
+  admin: { email: "admin@test.com", password: "admin123" },
 };
 
 export const ALL_ROUTES = [

@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, UserPlus, Mail, Lock, User, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { useI18n } from "@/lib/i18n";
 
 export default function JoinPage() {
-  const router = useRouter();
   const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,8 +40,7 @@ export default function JoinPage() {
         return;
       }
 
-      router.push("/");
-      router.refresh();
+      window.location.href = "/";
     } catch {
       setError(t("auth.join.networkError"));
     } finally {

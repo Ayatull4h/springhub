@@ -1,404 +1,400 @@
-import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding database...");
+  console.log("🌱 Seeding SpringHub database...");
 
-  const hash = await bcrypt.hash("test123", 12);
+  // ── 1. Create test users ───────────────────────────────────────────────
+  const adminPw = await bcrypt.hash("admin123", 12);
+  const volunteerPw = await bcrypt.hash("vol12345", 12);
 
-  // Create volunteer
-  const volunteer = await prisma.profile.upsert({
-    where: { email: "volunteer@test.com" },
-    update: {},
-    create: {
-      email: "volunteer@test.com",
-      passwordHash: hash,
-      username: "Maya Putri",
-      role: "volunteer",
-      region: "Yogyakarta",
-      points: 1250,
-      trustScore: 50,
-    },
-  });
-
-  // Create admin
   const admin = await prisma.profile.upsert({
     where: { email: "admin@test.com" },
     update: {},
     create: {
       email: "admin@test.com",
-      passwordHash: hash,
-      username: "Admin SpringHub",
+      passwordHash: adminPw,
+      username: "Admin",
       role: "admin",
-      region: "Jakarta",
-      points: 0,
+      points: 99999,
       trustScore: 100,
     },
   });
 
-  console.log(`✓ Users created: volunteer@test.com, admin@test.com`);
+  const volunteer = await prisma.profile.upsert({
+    where: { email: "volunteer@test.com" },
+    update: {},
+    create: {
+      email: "volunteer@test.com",
+      passwordHash: volunteerPw,
+      username: "Volunteer",
+      role: "volunteer",
+      points: 24168,
+      trustScore: 75,
+      region: "Yogyakarta",
+    },
+  });
 
-  // ─── Form & FormField seed data (must be created before reports due to FK) ──
-  const formsData = [
+  console.log(`   ✅ Users: admin@test.com, volunteer@test.com`);
+
+  // ── 2. Create courses with educational content ─────────────────────────
+  const courses = [
     {
-      slug: "spring-monitoring",
-      title: "Spring Monitoring",
-      description: "Log a spring's current condition — flow, water quality, cleanliness, and a geo-tagged photo.",
-      pointsOnSubmit: 25,
-      contributionType: "monitoring",
+      slug: "pengenalan-mata-air",
+      title: "Pengenalan Mata Air",
+      description: "Pelajari dasar-dasar ekosistem mata air, jenis-jenisnya, dan mengapa mata air penting bagi kehidupan dan lingkungan di Indonesia.",
+      level: "Beginner",
+      duration: "30 menit",
+      icon: "Droplets",
       sortOrder: 1,
-      fields: [
-        { fieldId: "spring_name", label: "Nama mata air", type: "text", required: true, placeholder: "e.g. Mata Air Cibeureum", helpText: "", options: "[]" },
-        { fieldId: "village", label: "Desa", type: "text", required: false, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "subdistrict", label: "Kecamatan", type: "text", required: false, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "regency", label: "Kota / Kabupaten", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "date", label: "Tanggal pemantauan", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "flow_condition", label: "Kondisi debit / aliran", type: "select", required: true, placeholder: "", helpText: "", options: JSON.stringify(["Mengalir deras", "Mengalir kecil", "Mengalir kecil sekali", "Tidak mengalir / mati"]) },
-        { fieldId: "water_quality", label: "Kondisi kualitas air", type: "select", required: true, placeholder: "", helpText: "", options: JSON.stringify(["Air jernih", "Air agak keruh", "Air keruh"]) },
-        { fieldId: "cleanliness", label: "Kondisi kebersihan", type: "select", required: true, placeholder: "", helpText: "", options: JSON.stringify(["Bebas dari sampah plastik", "Ada sampah plastik sedikit", "Banyak sampah plastik"]) },
-        { fieldId: "photo", label: "Foto mata air", type: "photo", required: true, placeholder: "", helpText: "Rekam tampilan utama mata air saat ini.", options: "[]" },
-        { fieldId: "location", label: "Lokasi mata air", type: "location", required: true, placeholder: "", helpText: "Akan di-snap ke grid 5 km sebelum dipublikasikan.", options: "[]" },
-        { fieldId: "notes", label: "Catatan pengamatan", type: "longtext", required: false, placeholder: "Sejarah mata air, kondisi sekitar, kebutuhan masyarakat…", helpText: "", options: "[]" },
+      modules: [
+        {
+          title: "Apa Itu Mata Air?",
+          content: `<h2>Apa Itu Mata Air?</h2>
+<p>Mata air adalah titik di permukaan bumi di mana air tanah mengalir secara alami keluar dari akuifer. Mata air terbentuk ketika permukaan tanah memotong muka air tanah (water table).</p>
+<h3>Jenis-jenis Mata Air</h3>
+<ul>
+<li><strong>Mata air gravitasi</strong>: air mengalir karena gravitasi dari lapisan yang lebih tinggi</li>
+<li><strong>Mata air artesis</strong>: air muncul karena tekanan dari akuifer tertekan</li>
+<li><strong>Mata air celah</strong>: air keluar dari retakan batuan</li>
+<li><strong>Mata air depresi</strong>: air muncul di cekungan yang memotong muka air tanah</li>
+</ul>
+<h3>Mengapa Mata Air Penting?</h3>
+<p>Indonesia memiliki ribuan mata air yang menjadi sumber air bersih bagi jutaan masyarakat, terutama di daerah pedesaan. Mata air juga mendukung ekosistem sungai, sawah, dan keanekaragaman hayati.</p>`,
+          sortOrder: 1,
+        },
+        {
+          title: "Ekosistem Mata Air",
+          content: `<h2>Ekosistem Mata Air</h2>
+<p>Ekosistem mata air memiliki karakteristik unik yang membedakannya dari perairan lainnya:</p>
+<ul>
+<li>Suhu air relatif konstan sepanjang tahun</li>
+<li>Kandungan oksigen tinggi</li>
+<li>Habitat bagi spesies endemik yang hanya hidup di mata air</li>
+<li>Menjadi sumber kehidupan bagi komunitas tumbuhan dan hewan di sekitarnya</li>
+</ul>
+<h3>Vegetasi di Sekitar Mata Air</h3>
+<p>Pohon-pohon besar seperti beringin, bambu, dan berbagai jenis pohon riparian tumbuh subur di sekitar mata air. Akar pohon membantu menyaring air dan menjaga kestabilan tanah.</p>`,
+          sortOrder: 2,
+        },
+        {
+          title: "Ancaman terhadap Mata Air",
+          content: `<h2>Ancaman terhadap Mata Air</h2>
+<p>Mata air di Indonesia menghadapi berbagai ancaman serius:</p>
+<ul>
+<li><strong>Alih fungsi lahan</strong>: pembangunan dan konversi hutan menjadi perkebunan</li>
+<li><strong>Pencemaran</strong>: limbah domestik, pertanian, dan industri</li>
+<li><strong>Eksploitasi berlebihan</strong>: pengambilan air melebihi kapasitas recharge</li>
+<li><strong>Perubahan iklim</strong>: perubahan pola curah hujan mempengaruhi recharge air tanah</li>
+<li><strong>Penambangan</strong>: tambang di sekitar kawasan resapan merusak akuifer</li>
+</ul>
+<h3>Studi Kasus</h3>
+<p>Di Jawa Barat, lebih dari 30% mata air mengalami penurunan debit dalam 10 tahun terakhir akibat alih fungsi lahan di kawasan resapan.</p>`,
+          sortOrder: 3,
+        },
+        {
+          title: "Cara Melindungi Mata Air",
+          content: `<h2>Cara Melindungi Mata Air</h2>
+<p>Setiap orang bisa berkontribusi dalam perlindungan mata air:</p>
+<ol>
+<li><strong>Jaga kebersihan</strong>: jangan buang sampah di sekitar mata air</li>
+<li><strong>Tanam pohon</strong>: tanam pohon endemik di area resapan</li>
+<li><strong>Hindari pupuk kimia</strong>: gunakan pupuk organik di lahan pertanian dekat mata air</li>
+<li><strong>Laporkan kerusakan</strong>: gunakan aplikasi SpringHub untuk melaporkan kondisi mata air</li>
+<li><strong>Edukasi masyarakat</strong>: sebarkan pengetahuan tentang pentingnya mata air</li>
+</ol>
+<p>Dengan menggunakan SpringHub, Anda bisa memonitor kondisi mata air, melaporkan perubahan, dan mendapatkan poin untuk setiap kontribusi!</p>`,
+          sortOrder: 4,
+        },
       ],
     },
     {
-      slug: "spring-restoration",
-      title: "Spring Restoration",
-      description: "Report a restoration activity — what was done, before/after photos, volunteer turnout, and any measurements taken.",
-      pointsOnSubmit: 100,
-      contributionType: "restoration",
+      slug: "panduan-menanam-pohon-endemik",
+      title: "Panduan Menanam Pohon Endemik",
+      description: "Panduan lengkap memilih lokasi, menanam, dan merawat pohon endemik Indonesia di area resapan mata air untuk restorasi lingkungan.",
+      level: "Intermediate",
+      duration: "45 menit",
+      icon: "Tree",
       sortOrder: 2,
-      fields: [
-        { fieldId: "spring_name", label: "Nama mata air", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "regency", label: "Kota / Kabupaten", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "date", label: "Tanggal kegiatan", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "location", label: "Tag lokasi mata air", type: "location", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "activity_types", label: "Jenis kegiatan yang dilakukan", type: "multiselect", required: true, placeholder: "", helpText: "", options: JSON.stringify(["Edukasi kepada Masyarakat", "Pembersihan Sedimen / Lumpur", "Pembuatan Rorak / Parit Buntu", "Menanam Pohon"]) },
-        { fieldId: "photo_before", label: "Foto mata air sebelum kegiatan", type: "photo", required: false, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "photo_after", label: "Foto mata air sesudah kegiatan", type: "photo", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "volunteer_count", label: "Berapa orang relawan ikut serta?", type: "number", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "measurement", label: "Jika bisa mengukur (m³ sedimen, debit, dst)", type: "number", required: false, placeholder: "", helpText: "Opsional. Volume sedimen yang diangkat, atau debit setelah restorasi.", options: "[]" },
-        { fieldId: "notes", label: "Catatan kondisi & perubahan", type: "longtext", required: false, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "coordinator_phone", label: "Nomor HP koordinator", type: "phone", required: false, placeholder: "", helpText: "", options: "[]" },
+      modules: [
+        {
+          title: "Mengapa Pohon Endemik?",
+          content: `<h2>Mengapa Pohon Endemik?</h2>
+<p>Pohon endemik adalah spesies asli yang secara alami tumbuh di suatu daerah. Keunggulan menanam pohon endemik:</p>
+<ul>
+<li><strong>Adaptasi tinggi</strong>: sudah terbiasa dengan iklim dan tanah setempat</li>
+<li><strong>Ekosistem seimbang</strong>: mendukung satwa liar lokal (burung, serangga, mamalia)</li>
+<li><strong>Perawatan minimal</strong>: tidak perlu pupuk dan pestisida intensif</li>
+<li><strong>Akar kuat</strong>: sistem akar dalam membantu recharge air tanah</li>
+</ul>
+<h3>Contoh Pohon Endemik Indonesia</h3>
+<ul>
+<li>Beringin (Ficus benjamina) — akar kuat, baik untuk tepi mata air</li>
+<li>Kaliandra (Calliandra calothyrsus) — cepat tumbuh, pengikat nitrogen</li>
+<li>Sengon (Paraserianthes falcataria) — cepat, kayu ringan, serbaguna</li>
+<li>Bambu (berbagai spesies) — akar rapat, cegah erosi, serap air</li>
+</ul>`,
+          sortOrder: 1,
+        },
+        {
+          title: "Pemilihan Lokasi Tanam",
+          content: `<h2>Pemilihan Lokasi Tanam</h2>
+<p>Lokasi tanam yang tepat menentukan keberhasilan restorasi:</p>
+<h3>Kriteria Lokasi Ideal</h3>
+<ul>
+<li>Jarak 10-50 meter dari titik mata air</li>
+<li>Kemiringan tanah tidak terlalu curam (maks 30 derajat)</li>
+<li>Tidak tergenang air</li>
+<li>Akses untuk perawatan rutin</li>
+<li>Bukan area konflik dengan masyarakat</li>
+</ul>
+<h3>Area Prioritas</h3>
+<ol>
+<li>Kawasan resapan di hulu mata air</li>
+<li>Tepian sungak yang memasok mata air</li>
+<li>Lahan kritis di sekitar mata air</li>
+<li>Koridor ekologis antar mata air</li>
+</ol>
+<p>Gunakan fitur GPS di aplikasi SpringHub untuk menandai lokasi tanam!</p>`,
+          sortOrder: 2,
+        },
+        {
+          title: "Teknik Penanaman",
+          content: `<h2>Teknik Penanaman</h2>
+<h3>Langkah-langkah Penanaman</h3>
+<ol>
+<li><strong>Buat lubang</strong>: 30x30x30 cm untuk bibit kecil, 50x50x50 cm untuk bibit besar</li>
+<li><strong>Campur tanah</strong>: campur tanah galian dengan kompos (2:1)</li>
+<li><strong>Buka polybag</strong>: hati-hati jangan merusak akar</li>
+<li><strong>Tanam</strong>: posisikan bibit tegak lurus, timbun dengan campuran tanah</li>
+<li><strong>Padatkan</strong>: tekan ringan tanah di sekitar pangkal batang</li>
+<li><strong>Siram</strong>: siram secukupnya (2-5 liter per bibit)</li>
+<li><strong>Mulsa</strong>: tutup permukaan tanah dengan jerami/daun kering</li>
+</ol>
+<h3>Waktu Tanam Terbaik</h3>
+<p>Awal musim hujan (Oktober-Desember) adalah waktu ideal karena bibit akan mendapat air cukup untuk beradaptasi.</p>`,
+          sortOrder: 3,
+        },
+        {
+          title: "Perawatan dan Monitoring",
+          content: `<h2>Perawatan dan Monitoring</h2>
+<h3>Jadwal Perawatan</h3>
+<table>
+<tr><th>Periode</th><th>Kegiatan</th></tr>
+<tr><td>1-3 bulan</td><td>Siram setiap 2 hari (musim kemarau), periksa hama</td></tr>
+<tr><td>4-6 bulan</td><td>Siram seminggu sekali, beri pupuk organik</td></tr>
+<tr><td>7-12 bulan</td><td>Siram saat kering, pangkas cabang rusak</td></tr>
+<tr><td>2 tahun+</td><td>Monitoring pertumbuhan, ganti pohon mati</td></tr>
+</table>
+<h3>Indikator Sukses</h3>
+<ul>
+<li>Tingkat hidup bibit > 80% setelah 1 tahun</li>
+<li>Tinggi pohon bertambah minimal 50 cm/tahun</li>
+<li>Munculnya vegetasi sekunder di sekitar area tanam</li>
+<li>Kembalinya satwa liar (burung, kupu-kupu)</li>
+</ul>
+<p>Catat perkembangan di SpringHub dan dapatkan poin untuk setiap laporan monitoring!</p>`,
+          sortOrder: 4,
+        },
       ],
     },
     {
-      slug: "trench-development",
-      title: "Trench Development",
-      description: "Log infiltration trenches you've dug. These help groundwater recharge in the spring's catchment area.",
-      pointsOnSubmit: 50,
-      contributionType: "trench",
+      slug: "panduan-form-laporan",
+      title: "Panduan Form Laporan SpringHub",
+      description: "Pelajari cara menggunakan kelima form SpringHub — monitoring, restorasi, bibit, parit (rorak), dan pohon — serta cara mendapatkan poin maksimal.",
+      level: "Beginner",
+      duration: "20 menit",
+      icon: "FileText",
       sortOrder: 3,
-      fields: [
-        { fieldId: "volunteer_name", label: "Nama Anda", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "regency", label: "Kota / Kabupaten", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "date", label: "Tanggal kegiatan", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "trench_count", label: "Jumlah rorak yang dibuat", type: "number", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "location", label: "Lokasi pembuatan rorak", type: "location", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "photo", label: "Foto rorak", type: "photo", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "dimensions", label: "Catatan dimensi rorak (P × L × D)", type: "longtext", required: false, placeholder: "e.g. 100 × 50 × 50 cm", helpText: "", options: "[]" },
-      ],
-    },
-    {
-      slug: "tree-planting",
-      title: "Tree Planting",
-      description: "Log endemic / native trees you've planted around a spring or its recharge area.",
-      pointsOnSubmit: 50,
-      contributionType: "tree_planting",
-      sortOrder: 4,
-      fields: [
-        { fieldId: "volunteer_name", label: "Nama Anda", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "regency", label: "Kota / Kabupaten", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "date", label: "Tanggal kegiatan", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "tree_count", label: "Jumlah pohon yang ditanam", type: "number", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "tree_species", label: "Jenis tanaman", type: "text", required: false, placeholder: "e.g. Bambu petung, Beringin, Ficus", helpText: "", options: "[]" },
-        { fieldId: "location", label: "Lokasi penanaman", type: "location", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "photo", label: "Foto pohon yang ditanam", type: "photo", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "notes", label: "Catatan tambahan", type: "longtext", required: false, placeholder: "", helpText: "", options: "[]" },
-      ],
-    },
-    {
-      slug: "seedling-stock",
-      title: "Tree Seedling Stock",
-      description: "Update SpringHub on the seedlings available at your nursery, so we can match them with planting projects.",
-      pointsOnSubmit: 15,
-      contributionType: "seedling_stock",
-      sortOrder: 5,
-      fields: [
-        { fieldId: "species", label: "Jenis tanaman", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "count", label: "Jumlah bibit", type: "number", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "photo", label: "Foto bibit", type: "photo", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "regency", label: "Kota / Kabupaten lokasi", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "contact_name", label: "Nama narahubung", type: "text", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "contact_phone", label: "Nomor HP narahubung", type: "phone", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "location", label: "Lokasi bibit", type: "location", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "date", label: "Tanggal update", type: "date", required: true, placeholder: "", helpText: "", options: "[]" },
-        { fieldId: "notes", label: "Keterangan tambahan", type: "longtext", required: false, placeholder: "", helpText: "", options: "[]" },
+      modules: [
+        {
+          title: "Mengenal Form SpringHub",
+          content: `<h2>Mengenal Form SpringHub</h2>
+<p>SpringHub memiliki 5 form laporan yang bisa Anda gunakan:</p>
+<ul>
+<li><strong>Spring Monitoring (+25 pts)</strong>: pantau kondisi mata air secara berkala</li>
+<li><strong>Spring Restoration (+100 pts)</strong>: laporkan kegiatan restorasi yang dilakukan</li>
+<li><strong>Trench Development (+50 pts)</strong>: catat pembangunan parit resapan (rorak)</li>
+<li><strong>Tree Planting (+50 pts)</strong>: laporkan penanaman pohon</li>
+<li><strong>Seedling Stock (+15 pts)</strong>: catat ketersediaan bibit di persemaian</li>
+</ul>
+<p>Setiap laporan yang di-approve akan memberikan poin sesuai tabel di atas. Kumpulkan poin untuk naik level dan buka akses fitur baru!</p>`,
+          sortOrder: 1,
+        },
+        {
+          title: "Tips Laporan Berkualitas",
+          content: `<h2>Tips Laporan Berkualitas</h2>
+<p>Agar laporan Anda cepat di-approve, ikuti tips berikut:</p>
+<ul>
+<li><strong>Foto jelas</strong>: ambil foto dengan pencahayaan cukup, sertakan marker/bendera sebagai referensi skala</li>
+<li><strong>Lokasi akurat</strong>: aktifkan GPS dan tunggu hingga sinyal stabil sebelum mengambil koordinat</li>
+<li><strong>Deskripsi detail</strong>: jelaskan kondisi mata air, vegetasi sekitar, dan aktivitas yang dilakukan</li>
+<li><strong>Laporan rutin</strong>: buat laporan mingguan untuk membangun streak poin</li>
+<li><strong>Foto before-after</strong>: untuk laporan restorasi, lampirkan foto sebelum dan sesudah</li>
+</ul>
+<h3>Bonus Poin</h3>
+<ul>
+<li>Streak 3 hari berturut-turut: +5 pts</li>
+<li>Streak 7 hari (seminggu penuh): +50 pts</li>
+<li>Foto before-after: +15 pts</li>
+<li>Penemuan mata air baru: +50 pts + badge</li>
+<li>Milestone 10 laporan: +50 pts</li>
+</ul>`,
+          sortOrder: 2,
+        },
       ],
     },
   ];
 
-  for (const formData of formsData) {
-    const { fields, ...formMeta } = formData;
-    const form = await prisma.form.upsert({
-      where: { slug: formData.slug },
-      update: {
-        title: formData.title,
-        description: formData.description,
-        pointsOnSubmit: formData.pointsOnSubmit,
-        contributionType: formData.contributionType,
-        sortOrder: formData.sortOrder,
+  for (const courseData of courses) {
+    const course = await prisma.course.upsert({
+      where: { slug: courseData.slug },
+      update: { title: courseData.title },
+      create: {
+        slug: courseData.slug,
+        title: courseData.title,
+        description: courseData.description,
+        level: courseData.level,
+        duration: courseData.duration,
+        icon: courseData.icon,
+        sortOrder: courseData.sortOrder,
+        isActive: true,
       },
-      create: formMeta,
     });
 
-    // Delete any fields that no longer exist in the definition
-    const currentFieldIds = fields.map((f) => f.fieldId);
-    await prisma.formField.deleteMany({
-      where: { formId: form.id, fieldId: { notIn: currentFieldIds } },
-    });
+    // Delete existing modules and recreate
+    await prisma.courseModule.deleteMany({ where: { courseId: course.id } });
 
-    // Upsert each field
-    for (let i = 0; i < fields.length; i++) {
-      const field = fields[i];
-      await prisma.formField.upsert({
-        where: { formId_fieldId: { formId: form.id, fieldId: field.fieldId } },
-        update: {
-          label: field.label,
-          type: field.type,
-          required: field.required,
-          placeholder: field.placeholder,
-          helpText: field.helpText,
-          options: field.options,
-          sortOrder: i,
-        },
-        create: {
-          formId: form.id,
-          fieldId: field.fieldId,
-          label: field.label,
-          type: field.type,
-          required: field.required,
-          placeholder: field.placeholder,
-          helpText: field.helpText,
-          options: field.options,
-          sortOrder: i,
+    for (const mod of courseData.modules) {
+      await prisma.courseModule.create({
+        data: {
+          courseId: course.id,
+          title: mod.title,
+          content: mod.content,
+          sortOrder: mod.sortOrder,
         },
       });
     }
+
+    console.log(`   ✅ Course: ${courseData.title} (${courseData.modules.length} modules)`);
   }
-  console.log(`✓ ${formsData.length} default forms created with all fields`);
 
-  // Create seed reports
-  const report1 = await prisma.report.create({
-    data: {
-      userId: volunteer.id,
-      formSlug: "spring-monitoring",
-      status: "approved",
-      fieldData: JSON.stringify({
-        spring_name: "Mata Air Cibeureum",
-        regency: "Bogor",
-        date: "2026-05-10",
-        flow_condition: "Mengalir deras",
-        water_quality: "Air jernih",
-        cleanliness: "Bebas dari sampah plastik",
-        notes: "Kondisi mata air masih baik, debit air melimpah.",
-      }),
-      preciseLat: -6.6447,
-      preciseLng: 106.7892,
-      snappedLat: -6.615,
-      snappedLng: 106.785,
-      reviewedById: admin.id,
-    },
-  });
-
-  const report2 = await prisma.report.create({
-    data: {
-      userId: volunteer.id,
-      formSlug: "spring-restoration",
-      status: "pending",
-      fieldData: JSON.stringify({
-        spring_name: "Mata Air Sebatu",
-        regency: "Gianyar, Bali",
-        date: "2026-05-12",
-        activity_types: ["Pembersihan Sedimen / Lumpur", "Menanam Pohon"],
-        volunteer_count: "15",
-        notes: "Kegiatan restorasi bersama komunitas desa.",
-      }),
-      preciseLat: -8.4231,
-      preciseLng: 115.2779,
-      snappedLat: -8.415,
-      snappedLng: 115.275,
-    },
-  });
-
-  const report3 = await prisma.report.create({
-    data: {
-      userId: volunteer.id,
-      formSlug: "tree-planting",
-      status: "approved",
-      fieldData: JSON.stringify({
-        volunteer_name: "Maya Putri",
-        regency: "Bedugul, Bali",
-        date: "2026-05-08",
-        tree_count: "25",
-        tree_species: "Bambu petung, Beringin",
-        notes: "Penanaman di area catchment mata air.",
-      }),
-      preciseLat: -8.2750,
-      preciseLng: 115.1670,
-      snappedLat: -8.28,
-      snappedLng: 115.17,
-      reviewedById: admin.id,
-    },
-  });
-
-  // Award points for approved reports
-  await prisma.pointsLog.create({
-    data: {
-      userId: volunteer.id,
-      reportId: report1.id,
-      amount: 25,
-      reason: "Laporan disetujui: spring-monitoring",
-      metadata: JSON.stringify({ formSlug: "spring-monitoring", approved: true }),
-    },
-  });
-
-  await prisma.pointsLog.create({
-    data: {
-      userId: volunteer.id,
-      reportId: report3.id,
-      amount: 50,
-      reason: "Laporan disetujui: tree-planting",
-      metadata: JSON.stringify({ formSlug: "tree-planting", approved: true }),
-    },
-  });
-
-  // Create a project
-  await prisma.project.create({
-    data: {
-      userId: volunteer.id,
-      title: "Restorasi Mata Air Ciburuy",
-      summary:
-        "Pembersihan sedimen dan penanaman kembali riparian di sekitar mata air yang melayani 200+ keluarga.",
-      region: "Bogor, Jawa Barat",
-      typeId: "spring_restoration",
-      status: "approved",
-      goalAmount: 50000000,
-      raisedAmount: 12000000,
-    },
-  });
-
-  // Create dummy donations
-  await prisma.donation.create({
-    data: {
-      userId: volunteer.id,
-      invoiceId: "INV-DEMO-001",
-      externalId: "springhub-INV-DEMO-001",
-      amountIdr: 150000,
-      tierId: "sediment",
-      donorName: "Maya Putri",
-      donorEmail: "volunteer@test.com",
-      status: "paid",
-      paidAt: new Date("2026-05-01"),
-    },
-  });
-
-  await prisma.donation.create({
-    data: {
-      amountIdr: 75000,
-      tierId: "trench",
-      donorName: "Guest Donor",
-      donorEmail: "guest@example.com",
-      status: "pending",
-      expiresAt: new Date(Date.now() + 86400000),
-    },
-  });
-
-  // ─── PointRule seed data ──────────────────────────────────────────────
-  // Uses deterministic slug IDs to prevent duplicate inserts on re-seed
-  const pointRules = [
-    { name: "Spring Monitoring", description: "Melaporkan kondisi mata air", points: 25, category: "basic", icon: "Eye", sortOrder: 1 },
-    { name: "Spring Restoration", description: "Melaporkan kegiatan restorasi", points: 100, category: "basic", icon: "Wrench", sortOrder: 2 },
-    { name: "Trench Development", description: "Membuat rorak/parit resapan", points: 50, category: "basic", icon: "TreePine", sortOrder: 3 },
-    { name: "Tree Planting", description: "Menanam pohon", points: 50, category: "basic", icon: "Sprout", sortOrder: 4 },
-    { name: "Seedling Stock", description: "Melaporkan stok bibit", points: 15, category: "basic", icon: "Sprout", sortOrder: 5 },
-    { name: "Streak Harian", description: "Lapor 3 hari berturut-turut", points: 5, category: "bonus", icon: "Flame", sortOrder: 6 },
-    { name: "Streak Mingguan", description: "Lapor setiap hari dalam seminggu", points: 50, category: "bonus", icon: "CalendarCheck", sortOrder: 7 },
-    { name: "Laporan Lengkap", description: "Mengisi semua field + foto + notes", points: 10, category: "bonus", icon: "ClipboardCheck", sortOrder: 8 },
-    { name: "Foto Before/After", description: "Mengirim minimal 2 foto", points: 15, category: "bonus", icon: "Camera", sortOrder: 9 },
-    { name: "Penemu (Discovery)", description: "Melaporkan mata air baru", points: 50, category: "bonus", icon: "Compass", sortOrder: 10 },
-    { name: "Milestone 10 Laporan", description: "Mencapai 10 laporan", points: 50, category: "milestone", icon: "Award", sortOrder: 11 },
-    { name: "Milestone 50 Laporan", description: "Mencapai 50 laporan", points: 250, category: "milestone", icon: "Trophy", sortOrder: 12 },
-    { name: "Milestone 100 Laporan", description: "Mencapai 100 laporan", points: 500, category: "milestone", icon: "Crown", sortOrder: 13 },
-    { name: "Course Selesai", description: "Menyelesaikan course di Learning Hub", points: 25, category: "bonus", icon: "BookOpen", sortOrder: 14 },
-    { name: "Threshold 20.000 Poin", description: "Mencapai 20.000 poin", points: 1000, category: "milestone", icon: "Gem", sortOrder: 15 },
-  ];
-
-  for (const rule of pointRules) {
-    const id = rule.name.toLowerCase().replace(/\s+/g, "-");
-    await prisma.pointRule.upsert({
-      where: { id },
-      update: { isActive: true },
-      create: { id, ...rule, isActive: true },
-    });
-  }
-  console.log(`✓ ${pointRules.length} point rules created`);
-
-  // ─── Course seed data ──────────────────────────────────────────────────
-  const courses = [
+  // ── 3. Create media content blocks ────────────────────────────────────
+  const mediaItems = [
     {
-      slug: "spring-conservation-basics",
-      title: "Spring Conservation Basics",
-      description: "Learn the fundamentals of spring ecosystems and conservation techniques used across Indonesia.",
-      level: "Beginner",
-      duration: "45 min",
-      icon: "Droplets",
+      section: "media",
+      type: "video",
+      title: "Jaga Semesta — Restorasi Mata Air",
+      subtitle: "Apr 2026",
+      description: "Tonton perjalanan komunitas kami merestorasi mata air dari Bali sampai Madura.",
+      imageUrl: "",
+      linkUrl: "https://www.youtube.com/watch?v=oUDA1loE8BE",
+      linkLabel: "Watch on YouTube",
       sortOrder: 1,
     },
     {
-      slug: "endemic-tree-planting",
-      title: "Endemic Tree Planting Guide",
-      description: "Master site-selection, planting, and care for Indonesia's native tree species in watershed areas.",
-      level: "Intermediate",
-      duration: "60 min",
-      icon: "TreePine",
+      section: "media",
+      type: "event",
+      title: "Restorasi Mata Air Sumber Sabrangan, Mojokerto",
+      subtitle: "9 Feb 2025 · 200 relawan · 5.000 bibit bambu",
+      description: "Kegiatan kolektif membersihkan sedimen, memasang flowmeter, dan menanam 5.000 bambu di catchment Sumber Sabrangan.",
+      imageUrl: "",
+      linkUrl: "/help",
+      linkLabel: "Read recap",
       sortOrder: 2,
     },
     {
-      slug: "field-reporting-forms",
-      title: "Field Reporting with SpringHub Forms",
-      description: "Walk through the five SpringHub forms — monitoring, restoration, trench, tree planting, and seedling stock.",
-      level: "Beginner",
-      duration: "30 min",
-      icon: "ClipboardList",
+      section: "media",
+      type: "publication",
+      title: "Laporan Dampak 2025: 200+ Mata Air Terlindungi",
+      subtitle: "Jan 2026 · PDF, 36 hal.",
+      description: "Ringkasan capaian tahunan: pemantauan, restorasi, penanaman, dan kemitraan strategis di tujuh provinsi.",
+      imageUrl: "",
+      linkUrl: "/help",
+      linkLabel: "Download report",
       sortOrder: 3,
+    },
+    {
+      section: "media",
+      type: "press",
+      title: "Kompas: Sumber Air di Kebumen Diselamatkan Warga",
+      subtitle: "Jan 2026",
+      description: "Liputan media tentang gerakan warga Kebumen menolak tambang dan menjaga 28 titik mata air karst.",
+      imageUrl: "",
+      linkUrl: "/help",
+      linkLabel: "Read article",
+      sortOrder: 4,
     },
   ];
 
-  for (const course of courses) {
-    await prisma.course.upsert({
-      where: { slug: course.slug },
-      update: {},
-      create: course,
+  // Clear existing media content and reseed
+  await prisma.contentBlock.deleteMany({ where: { section: "media" } });
+
+  for (const item of mediaItems) {
+    await prisma.contentBlock.create({
+      data: item,
     });
   }
-  console.log(`✓ ${courses.length} courses created`);
 
-  console.log("✓ 3 reports, 1 project, 2 donations created");
-  console.log("✓ Seeding complete!");
-  console.log("\nTest accounts:");
-  console.log("  Volunteer: volunteer@test.com / test123 (1,250 pts)");
-  console.log("  Admin:     admin@test.com / test123");
+  console.log(`   ✅ Media: ${mediaItems.length} content blocks`);
+
+  // ── 4. Create static form definitions ────────────────────────────────
+  const forms = [
+    { slug: "spring-monitoring", title: "Spring Monitoring", pointsOnSubmit: 25, contributionType: "monitoring", sortOrder: 1 },
+    { slug: "spring-restoration", title: "Spring Restoration", pointsOnSubmit: 100, contributionType: "restoration", sortOrder: 2 },
+    { slug: "trench-development", title: "Trench Development", pointsOnSubmit: 50, contributionType: "restoration", sortOrder: 3 },
+    { slug: "tree-planting", title: "Tree Planting", pointsOnSubmit: 50, contributionType: "restoration", sortOrder: 4 },
+    { slug: "seedling-stock", title: "Seedling Stock", pointsOnSubmit: 15, contributionType: "monitoring", sortOrder: 5 },
+  ];
+
+  for (const form of forms) {
+    await prisma.form.upsert({
+      where: { slug: form.slug },
+      update: { title: form.title },
+      create: form,
+    });
+  }
+
+  console.log(`   ✅ Forms: ${forms.length} form definitions`);
+
+  // ── 5. Create point rules ─────────────────────────────────────────---
+  const pointRules = [
+    { name: "Spring Monitoring", description: "Laporan monitoring mata air", points: 25, category: "basic", sortOrder: 1 },
+    { name: "Spring Restoration", description: "Laporan restorasi mata air", points: 100, category: "basic", sortOrder: 2 },
+    { name: "Trench Development", description: "Pengembangan parit resapan (rorak)", points: 50, category: "basic", sortOrder: 3 },
+    { name: "Tree Planting", description: "Laporan penanaman pohon", points: 50, category: "basic", sortOrder: 4 },
+    { name: "Seedling Stock", description: "Laporan stok bibit", points: 15, category: "basic", sortOrder: 5 },
+    { name: "Streak 3 Hari", description: "Lapor 3 hari berturut-turut", points: 5, category: "bonus", sortOrder: 6 },
+    { name: "Streak Mingguan", description: "Lapor tiap hari seminggu penuh", points: 50, category: "bonus", sortOrder: 7 },
+    { name: "Laporan Lengkap", description: "Semua field + foto + notes", points: 10, category: "bonus", sortOrder: 8 },
+    { name: "Foto Before/After", description: "Minimal 2 foto", points: 15, category: "bonus", sortOrder: 9 },
+    { name: "Penemu (Discovery)", description: "Mata air baru belum ada di map", points: 50, category: "bonus", sortOrder: 10 },
+    { name: "Milestone 10 Laporan", description: "10 laporan di-approve", points: 50, category: "milestone", sortOrder: 11 },
+    { name: "Milestone 50 Laporan", description: "50 laporan di-approve", points: 250, category: "milestone", sortOrder: 12 },
+    { name: "Milestone 100 Laporan", description: "100 laporan di-approve", points: 500, category: "milestone", sortOrder: 13 },
+    { name: "Course Selesai", description: "Menyelesaikan course di Learning Hub", points: 25, category: "bonus", sortOrder: 14 },
+  ];
+
+  for (const rule of pointRules) {
+    await prisma.pointRule.upsert({
+      where: { id: rule.name }, // use name as unique lookup
+      update: { points: rule.points },
+      create: rule,
+    });
+  }
+
+  console.log(`   ✅ PointRules: ${pointRules.length} rules`);
+
+  console.log("\n✅ Seeding complete!");
+  console.log(`   Admin: admin@test.com / admin123`);
+  console.log(`   Volunteer: volunteer@test.com / vol12345`);
 }
 
 main()
   .catch((e) => {
-    console.error("Seed error:", e);
+    console.error("Seeding failed:", e);
     process.exit(1);
   })
   .finally(async () => {

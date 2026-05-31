@@ -10,34 +10,8 @@ export const dynamic = "force-dynamic";
 import { snapToProtectionGrid } from "@/lib/geo";
 import { verifyCsrfToken } from "@/lib/csrf";
 
-/**
- * Rate limiter: simple in-memory tracking with periodic cleanup.
- * Note: In production, use Upstash / Vercel KV for distributed rate limiting.
- */
-const rateLimits = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_REQUESTS = 10; // max requests per window
-const RATE_LIMIT_WINDOW_MS = 60_000; // per minute
+import { apiLimiter } from "@/lib/rate-limit";
 const DAILY_FORM_LIMIT = 5; // per user
-
-// Cleanup expired entries every 5 minutes to prevent memory leaks
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateLimits.entries()) {
-    if (now > entry.resetAt) rateLimits.delete(key);
-  }
-}, 5 * 60 * 1000);
-
-function checkRateLimit(key: string): boolean {
-  const now = Date.now();
-  const entry = rateLimits.get(key);
-  if (!entry || now > entry.resetAt) {
-    rateLimits.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT_REQUESTS) return false;
-  entry.count++;
-  return true;
-}
 
 export async function POST(request: Request) {
   try {
@@ -52,7 +26,8 @@ export async function POST(request: Request) {
     const rateKey = session?.userId ?? guestId;
 
     // Rate limit check
-    if (!checkRateLimit(rateKey)) {
+    const limitResult = await apiLimiter.check(`report:${rateKey}`);
+    if (!limitResult.allowed) {
       return NextResponse.json(
         { error: "Terlalu banyak permintaan. Silakan coba lagi nanti." },
         { status: 429 }
@@ -74,13 +49,10 @@ export async function POST(request: Request) {
     const staticForm = getForm(formSlug);
 
     if (!dbForm && !staticForm) {
-      // Allow admin-custom slugs
-      if (!formSlug.startsWith("admin-")) {
-        return NextResponse.json(
-          { error: "Form tidak dikenal" },
-          { status: 400 }
-        );
-      }
+      return NextResponse.json(
+        { error: "Form tidak dikenal" },
+        { status: 400 }
+      );
     }
 
     // --- Anti-spam: Time Gate ---
@@ -198,20 +170,33 @@ export async function POST(request: Request) {
       }
     }
 
-    // Check daily limit for authenticated users
-    if (session?.userId) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
+    // Check daily limit for authenticated users and guests
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
+    if (session?.userId) {
       const todayCount = await prisma.report.count({
         where: {
           userId: session.userId,
           createdAt: { gte: today, lt: tomorrow },
         },
       });
-
+      if (todayCount >= DAILY_FORM_LIMIT) {
+        return NextResponse.json(
+          { error: "Batas laporan harian (5) tercapai. Coba lagi besok." },
+          { status: 429 }
+        );
+      }
+    } else if (guestId) {
+      const todayCount = await prisma.report.count({
+        where: {
+          guestId: guestId,
+          userId: null,
+          createdAt: { gte: today, lt: tomorrow },
+        },
+      });
       if (todayCount >= DAILY_FORM_LIMIT) {
         return NextResponse.json(
           { error: "Batas laporan harian (5) tercapai. Coba lagi besok." },

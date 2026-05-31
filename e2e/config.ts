@@ -2,8 +2,8 @@
 export const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
 
 export const TEST_USERS = {
-  volunteer: { email: "volunteer@test.com", password: "test123" },
-  admin: { email: "admin@test.com", password: "test123" },
+  volunteer: { email: "volunteer@test.com", password: "vol12345" },
+  admin: { email: "admin@test.com", password: "admin123" },
 };
 
 export const FORM_SLUGS = [
@@ -34,6 +34,10 @@ export const PUBLIC_ROUTES = [
   { path: "/privacy", name: "Privacy Policy" },
   { path: "/terms", name: "Terms of Service" },
   { path: "/not-found-test", name: "404 Test" },
+  { path: "/forgot-password", name: "Forgot Password" },
+  { path: "/report-issue", name: "Report Issue" },
+  { path: "/learn/pengenalan-mata-air", name: "Course Detail" },
+  { path: "/learn/pengenalan-mata-air/modul-1", name: "Course Module" },
 ] as const;
 
 export const REPORT_ROUTES = FORM_SLUGS.map((s) => ({
