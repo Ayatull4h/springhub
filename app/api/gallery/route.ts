@@ -3,8 +3,8 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-const PUBLIC_URL = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || "";
-const BUCKET = process.env.S3_BUCKET || "springhub-photos";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const S3_PUBLIC = process.env.S3_PUBLIC_URL || "";
 
 /**
  * GET /api/gallery?formSlug=spring_monitoring&limit=20
@@ -40,15 +40,14 @@ export async function GET(request: Request) {
         featuredPhotoId: true,
         user: { select: { username: true, region: true } },
         photos: {
-          where: { id: { not: undefined } },
           select: { id: true, storagePath: true, width: true, height: true },
         },
       },
     });
 
-    const prefix = PUBLIC_URL
-      ? `${PUBLIC_URL}/`
-      : `${process.env.S3_ENDPOINT}/${BUCKET}/`;
+    const prefix = SUPABASE_URL
+      ? `${SUPABASE_URL}/storage/v1/object/public/photos/`
+      : `${S3_PUBLIC}/`;
 
     const gallery = reports.map((r) => {
       const featured = r.photos.find((p) => p.id === r.featuredPhotoId);
