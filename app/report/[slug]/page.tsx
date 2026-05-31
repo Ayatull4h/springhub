@@ -187,7 +187,7 @@ export default function ReportFormPage() {
     <div className="container-page max-w-3xl py-12">
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 rounded-lg border border-ink-line bg-white px-4 py-2 text-sm font-medium text-ink shadow-sm transition hover:bg-slate-50 hover:text-brand-600"
+        className="inline-flex items-center gap-1.5 rounded-lg border border-ink-line bg-white px-4 py-2 text-sm font-medium text-ink shadow-sm transition hover:bg-slate-50 hover:text-brand-600 dark:bg-slate-800 dark:hover:bg-slate-700"
       >
         <ArrowLeft className="h-4 w-4" /> Kembali ke Beranda
       </Link>
@@ -196,17 +196,17 @@ export default function ReportFormPage() {
       <p className="mt-2 text-ink-muted">{activeForm.description}</p>
 
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-        <span className="chip bg-brand-50 text-brand-700">
+        <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
           <Sparkles className="h-3 w-3" />{t("report.pointsOnSubmit", { pts: String(activeForm.pointsOnSubmit) })}
         </span>
-        <span className="chip bg-amber-50 text-amber-700 ring-1 ring-amber-200">
+        <span className="chip bg-amber-50 text-amber-700 ring-1 ring-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:ring-amber-700">
           <ShieldCheck className="h-3 w-3" />
           {t("report.locationSnapped", { radius: String(PROTECTION_RADIUS_KM) })}
         </span>
       </div>
 
       {error && (
-        <div className="mt-4 flex items-start gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
+        <div className="mt-4 flex items-start gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
           <AlertCircle className="mt-0.5 h-4 w-4 flex-none" />
           <span>{error}</span>
         </div>

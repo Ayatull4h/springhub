@@ -249,7 +249,11 @@ export async function GET(request: Request) {
     const limit = limitParam ? parseInt(limitParam, 10) : 50;
 
     const reports = await prisma.report.findMany({
-      where: { status: "approved" },
+      where: {
+        status: "approved",
+        isActive: true,
+        form: { isActive: true },
+      },
       orderBy: { createdAt: "desc" },
       take: limit,
       select: {

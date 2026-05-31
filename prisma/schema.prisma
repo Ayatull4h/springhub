@@ -91,6 +91,7 @@ model Report {
   guestId          String?
   formSlug         String
   status           ReportStatus @default(pending)
+  isActive         Boolean      @default(true)
   fieldData        String       // JSON string of form fields
   preciseLat       Float?
   preciseLng       Float?

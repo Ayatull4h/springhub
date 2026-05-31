@@ -152,7 +152,7 @@ export default function AdminReviewPage() {
               <div key={r.id} className="card">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <span className="chip bg-brand-50 text-brand-700">
+                    <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                       {formLabels[r.formSlug] ?? r.formSlug}
                     </span>
                     <span className="ml-2 text-sm text-ink-muted">

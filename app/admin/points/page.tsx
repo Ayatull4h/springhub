@@ -69,9 +69,9 @@ const iconLookup: Record<string, LucideIcon> = Object.fromEntries(
 );
 
 const categoryConfig: Record<string, { label: string; className: string }> = {
-  basic: { label: "Dasar", className: "bg-emerald-100 text-emerald-700" },
-  bonus: { label: "Bonus", className: "bg-amber-100 text-amber-700" },
-  milestone: { label: "Milestone", className: "bg-purple-100 text-purple-700" },
+  basic: { label: "Dasar", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  bonus: { label: "Bonus", className: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300" },
+  milestone: { label: "Milestone", className: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300" },
 };
 
 // ─── Modal Component ─────────────────────────────────────────────────────────

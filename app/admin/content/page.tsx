@@ -178,7 +178,7 @@ export default function AdminContentPage() {
                   </div>
                 )}
                 <div className="flex items-start justify-between">
-                  <span className="chip bg-brand-50 text-brand-700 flex items-center gap-1">
+                  <span className="chip bg-brand-50 text-brand-700 flex items-center gap-1 dark:bg-brand-900/30 dark:text-brand-300">
                     <Icon className="h-3 w-3" /> {item.type}
                   </span>
                   <div className="flex gap-1">

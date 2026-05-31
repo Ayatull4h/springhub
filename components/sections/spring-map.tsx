@@ -32,9 +32,9 @@ const LeafletMap = dynamic(
 );
 
 const statusStyles: Record<SpringStatus, { dot: string; chip: string }> = {
-  healthy: { dot: "bg-emerald-500", chip: "bg-emerald-50 text-emerald-700" },
-  degraded: { dot: "bg-red-500", chip: "bg-red-50 text-red-700" },
-  restoration: { dot: "bg-amber-500", chip: "bg-amber-50 text-amber-700" },
+  healthy: { dot: "bg-emerald-500", chip: "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  degraded: { dot: "bg-red-500", chip: "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
+  restoration: { dot: "bg-amber-500", chip: "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300" },
 };
 
 function getStatusFromForm(formSlug: string): SpringStatus {
@@ -287,7 +287,7 @@ export function SpringMap() {
             <button
               type="button"
               onClick={() => setShowGuide(true)}
-              className="chip bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer transition"
+              className="chip bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer transition dark:bg-brand-900/30 dark:text-brand-300 dark:hover:bg-brand-800/50"
             >
               <Sparkles className="h-3 w-3" /> {t("map.earnPoints")}
             </button>

@@ -70,7 +70,7 @@ export default function AdminUsersPage() {
         </div>
         <button
           onClick={() => window.open("/api/admin/export?entity=users&format=csv", "_blank")}
-          className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink self-start sm:self-auto dark:hover:bg-slate-700"
         >
           <Download className="h-4 w-4" />
           Export CSV
@@ -132,7 +132,7 @@ export default function AdminUsersPage() {
                   ) : (
                     <button
                       onClick={() => setEditingRole(u.id)}
-                      className="chip capitalize bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer"
+                      className="chip capitalize bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer dark:bg-brand-900/30 dark:text-brand-300 dark:hover:bg-brand-800/50"
                     >
                       {u.role}
                     </button>

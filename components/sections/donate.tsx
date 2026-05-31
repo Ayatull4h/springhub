@@ -76,7 +76,7 @@ export function DonateSection() {
             <select
               value={tierId}
               onChange={e => { setTierId(e.target.value); setError(""); }}
-              className="mt-1.5 w-full rounded-lg border border-ink-line bg-white px-4 py-3 text-sm transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+              className="mt-1.5 w-full rounded-lg border border-ink-line bg-white px-4 py-3 text-sm transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:bg-slate-800"
               required
             >
               <option value="">— {t("donate.chooseImpact")} —</option>
@@ -91,7 +91,7 @@ export function DonateSection() {
 
           {/* Selected impact summary */}
           {tier && (
-            <div className="rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-800">
+            <div className="rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-800 dark:bg-brand-900/30 dark:text-brand-300">
               {tierIcons[tier.id]} {t("donate.supporting")} <strong>{tier.impact}</strong>
               <br />
               {t("donate.forAmount")} <strong>{tier.label}</strong>
@@ -106,7 +106,7 @@ export function DonateSection() {
                 type="number"
                 value={customAmount}
                 onChange={e => setCustomAmount(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm"
+                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm dark:bg-slate-800"
                 placeholder={t("donate.customAmountPlaceholder")}
                 min={1000}
                 required
@@ -122,7 +122,7 @@ export function DonateSection() {
                 required
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:bg-slate-800"
                 placeholder={t("donate.fullNamePlaceholder")}
               />
             </div>
@@ -132,7 +132,7 @@ export function DonateSection() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:bg-slate-800"
                 placeholder={t("donate.emailPlaceholder")}
               />
             </div>
@@ -140,7 +140,7 @@ export function DonateSection() {
 
           {/* Error */}
           {error && (
-            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
               {error}
             </div>
           )}

@@ -58,9 +58,9 @@ export default function AdminDashboard() {
   }, []);
 
   const statusConfig: Record<string, { label: string; icon: any; className: string }> = {
-    approved: { label: t("admin.status.approved"), icon: CheckCircle2, className: "text-emerald-600 bg-emerald-50" },
-    pending: { label: t("admin.status.pending"), icon: Clock, className: "text-amber-600 bg-amber-50" },
-    rejected: { label: t("admin.status.rejected"), icon: XCircle, className: "text-red-600 bg-red-50" },
+    approved: { label: t("admin.status.approved"), icon: CheckCircle2, className: "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-300" },
+    pending: { label: t("admin.status.pending"), icon: Clock, className: "text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-300" },
+    rejected: { label: t("admin.status.rejected"), icon: XCircle, className: "text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300" },
   };
 
   const statCards = [
@@ -112,28 +112,28 @@ export default function AdminDashboard() {
         <div className="mt-4 flex flex-wrap gap-2">
           <button
             onClick={() => window.open("/api/admin/export?entity=users&format=csv", "_blank")}
-            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700"
           >
             <Download className="h-4 w-4" />
             Export Users CSV
           </button>
           <button
             onClick={() => window.open("/api/admin/export?entity=reports&format=csv", "_blank")}
-            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700"
           >
             <Download className="h-4 w-4" />
             Export Reports CSV
           </button>
           <button
             onClick={() => window.open("/api/admin/export?entity=donations&format=csv", "_blank")}
-            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700"
           >
             <Download className="h-4 w-4" />
             Export Donations CSV
           </button>
           <button
             onClick={() => window.open("/api/admin/export?entity=projects&format=csv", "_blank")}
-            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700"
           >
             <Download className="h-4 w-4" />
             Export Projects CSV
@@ -164,7 +164,7 @@ export default function AdminDashboard() {
                 <tr key={u.id} className="border-b border-ink-line last:border-0">
                   <td className="py-3 pr-4 text-ink">{u.username}</td>
                   <td className="py-3 pr-4">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                       {u.role}
                     </span>
                   </td>

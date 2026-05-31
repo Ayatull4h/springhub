@@ -71,16 +71,16 @@ export default function AdminFeedbackPage() {
   };
 
   const typeColor: Record<string, string> = {
-    bug: "text-red-600 bg-red-50",
-    kritik: "text-amber-600 bg-amber-50",
-    saran: "text-blue-600 bg-blue-50",
-    both: "text-purple-600 bg-purple-50",
+    bug: "text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300",
+    kritik: "text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-300",
+    saran: "text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300",
+    both: "text-purple-600 bg-purple-50 dark:bg-purple-900/30 dark:text-purple-300",
   };
 
   const statusConfig: Record<string, { label: string; icon: any; className: string }> = {
-    open: { label: "Open", icon: Clock, className: "text-amber-600 bg-amber-50" },
-    read: { label: "Read", icon: Eye, className: "text-blue-600 bg-blue-50" },
-    resolved: { label: "Resolved", icon: CheckCircle2, className: "text-emerald-600 bg-emerald-50" },
+    open: { label: "Open", icon: Clock, className: "text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-300" },
+    read: { label: "Read", icon: Eye, className: "text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300" },
+    resolved: { label: "Resolved", icon: CheckCircle2, className: "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-300" },
   };
 
   if (loading) {
@@ -132,7 +132,7 @@ export default function AdminFeedbackPage() {
                 return (
                   <tr key={item.id} className="border-b border-ink-line last:border-0">
                     <td className="py-3 pr-4">
-                      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${typeColor[item.type] ?? "text-slate-600 bg-slate-50"}`}>
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${typeColor[item.type] ?? "text-slate-600 bg-slate-50 dark:text-slate-300 dark:bg-slate-800"}`}>
                         <Icon className="h-3 w-3" />
                         {item.type}
                       </span>

@@ -32,10 +32,10 @@ export default function AdminDonationsPage() {
   }, []);
 
   const statusConfig: Record<string, { label: string; icon: any; className: string }> = {
-    paid: { label: t("admin.status.paid"), icon: CheckCircle2, className: "text-emerald-600 bg-emerald-50" },
-    pending: { label: t("admin.status.pending"), icon: Clock, className: "text-amber-600 bg-amber-50" },
-    expired: { label: t("admin.status.expired"), icon: XCircle, className: "text-red-600 bg-red-50" },
-    failed: { label: t("admin.status.failed"), icon: AlertTriangle, className: "text-red-600 bg-red-50" },
+    paid: { label: t("admin.status.paid"), icon: CheckCircle2, className: "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-300" },
+    pending: { label: t("admin.status.pending"), icon: Clock, className: "text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-300" },
+    expired: { label: t("admin.status.expired"), icon: XCircle, className: "text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300" },
+    failed: { label: t("admin.status.failed"), icon: AlertTriangle, className: "text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300" },
   };
 
   const totalAmount = donations

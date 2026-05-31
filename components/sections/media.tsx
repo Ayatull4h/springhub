@@ -62,10 +62,10 @@ export function MediaSection() {
   }, []);
 
   const typeColors: Record<string, string> = {
-    video: "bg-rose-100 text-rose-700",
-    event: "bg-amber-100 text-amber-700",
-    publication: "bg-blue-100 text-blue-700",
-    press: "bg-purple-100 text-purple-700",
+    video: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
+    event: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+    publication: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+    press: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
   };
 
   return (
