@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { I18nProvider } from "@/lib/i18n";
 import { DarkModeProvider } from "@/lib/darkmode";
+import Watermark from "@/components/layout/watermark";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -70,6 +71,7 @@ export default function RootLayout({
             <SiteHeader />
             <main>{children}</main>
             <SiteFooter />
+            <Watermark />
           </I18nProvider>
         </DarkModeProvider>
         <Script
