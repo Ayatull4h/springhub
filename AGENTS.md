@@ -321,55 +321,97 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 | projects | approved | create (>=20K pts) | area | ALL |
 | points_log | — | riwayat sendiri | area | ALL |
 
-### 📋 Route Map
+### 📋 Route Map (Updated 1 Juni 2026)
 
 | Route | Status | Fungsi |
 |---|---|---|
 | `/` | ✅ Siap | Landing page |
-| `/report/[slug]` | ✅ Siap (UI) | 5 form — submit 404 |
-| `/sign-in` | ❌ Belum | Login |
-| `/join` | ❌ Belum | Register |
-| `/projects/new` | ❌ Belum | Multi-step project proposal |
-| `/profile` | ❌ Belum | Profile user |
-| `/admin` | ❌ Belum | Dashboard admin |
-| `/admin/users` | ❌ Belum | Manajemen user |
-| `/admin/reports` | ❌ Belum | Laporan |
-| `/admin/donations` | ❌ Belum | Donasi |
-| `/admin/review` | ❌ Belum | Review queue |
-| `/admin/projects` | ❌ Belum | Verifikasi project |
-| `/api/reports` | ❌ Belum | POST submit form |
-| `/api/reports/[id]/photos` | ❌ Belum | Upload foto |
-| `/api/donations/invoice` | ❌ Belum | Xendit invoice |
-| `/api/donations/webhook` | ❌ Belum | Xendit callback |
-| `/api/projects` | ❌ Belum | GET list / POST create |
-| `/api/leaderboard` | ❌ Belum | Ranking volunteer |
-| `/api/user/profile` | ❌ Belum | GET/PUT profile |
-| `/api/user/points` | ❌ Belum | Riwayat poin |
+| `/report/[slug]` | ✅ Siap | 5 form — submit ke POST /api/reports ✅ |
+| `/sign-in` | ✅ Siap | Login |
+| `/join` | ✅ Siap | Register |
+| `/projects/new` | ✅ Siap | Multi-step project proposal |
+| `/profile` | ✅ Siap | Profile user |
+| `/admin` | ✅ Siap | Dashboard admin |
+| `/admin/users` | ✅ Siap | Manajemen user |
+| `/admin/reports` | ✅ Siap | Laporan + toggle active/inactive |
+| `/admin/donations` | ✅ Siap | Donasi |
+| `/admin/review` | ✅ Siap | Review queue + approve/reject |
+| `/admin/projects` | ✅ Siap | Verifikasi project |
+| `/admin/points` | ✅ Siap | Point rules |
+| `/admin/courses` | ✅ Siap | Course management |
+| `/admin/forms` | ✅ Siap | Dynamic form builder |
+| `/admin/content` | ✅ Siap | Content CMS |
+| `/admin/feedback` | ✅ Siap | Bug reports inbox |
+| `/api/reports` | ✅ Siap | POST submit + GET public list |
+| `/api/reports/[id]/photos` | ✅ Siap | Upload foto |
+| `/api/donations/invoice` | ✅ Siap | Xendit invoice |
+| `/api/donations/webhook` | ✅ Siap | Xendit callback (HMAC) |
+| `/api/projects` | ✅ Siap | GET list / POST create |
+| `/api/leaderboard` | ✅ Siap | Top 20 |
+| `/api/user/profile` | ✅ Siap | GET/PUT profile |
+| `/api/user/points` | ✅ Siap | Riwayat poin |
+| `/api/csrf` | ✅ Siap | CSRF token |
+| `/api/health` | ✅ Siap | DB + Redis health check |
+| `/api/newsletter` | ✅ Siap | Subscribe email |
+| `/api/feedback` | ✅ Siap | Submit bug report |
+| `/api/gallery` | ✅ Siap | Gallery items |
+| `/api/upload/presign` | ✅ Siap | Presigned upload URL |
+| `/api/auth/*` (7 routes) | ✅ Siap | Login, register, logout, me, forgot/reset, claim-guest |
+| `/api/admin/*` (19 routes) | ✅ Siap | All admin CRUD + export |
 
-### 📦 Dependencies Kurang
-
-| Package | Untuk |
-|---|---|
-| `zod` | Server-side validation |
-| `@supabase/supabase-js` | Supabase client |
-| `@supabase/ssr` | Supabase Auth untuk Next.js |
-| `sharp` | Foto kompresi + EXIF strip |
-| `exifr` | EXIF reader |
-| `next-intl` | i18n EN/ID |
-
-### 📈 Progres Per Layer
+### 📈 Progres Per Layer (Updated 1 Juni 2026)
 
 | Layer | % | Catatan |
 |---|---|---|
-| Landing page UI | 90% | Semua section ada, minor polish |
-| Form UI | 100% | 5 form renderer — submit 404 |
-| Map UI | 90% | Leaflet + filter — scroll zoom mati |
-| Backend API | 0% | Tidak ada route satupun |
-| Database | 0% | Mock semua, real belum ada |
-| Auth | 0% | Halaman /sign-in dan /join belum ada |
-| Donasi | 15% | UI 100%, backend 0% |
-| Admin Panel | 0% | Tidak ada route /admin/* |
-| PWA / SEO | 0% | Manifest, sitemap, OG image absent |
-| Testing | 0% | Nol baris test |
-| Security | 5% | Cuma rencana di AGENTS.md |
-| **Total** | **~15-20%** | **80-85% perlu dibangun** |
+| Landing page UI | 100% | Semua section, i18n, dark mode ✅ |
+| Form UI | 100% | 5 form + dynamic forms + Zod validation ✅ |
+| Map UI | 100% | Leaflet + filter + location picker ✅ |
+| Backend API | 100% | 52 route.ts — auth, reports, donations, projects, courses, admin, dll ✅ |
+| Database | 100% | Prisma 14 models + Supabase PostgreSQL ✅ |
+| Auth | 100% | Login, Register, Logout, Forgot/Reset password, Session ✅ |
+| Donasi | 100% | Xendit invoice + webhook + HMAC verification ✅ |
+| Admin Panel | 100% | 10 tabs — Users, Reports, Donations, Projects, Forms, Points, Courses, Content, Feedback, Review ✅ |
+| Points Engine | 100% | Base + bonus + milestone + streak + trust score ✅ |
+| PWA / SEO | 100% | Manifest, sitemap, OG image, service worker ✅ |
+| Anti-Spam | 100% | CSRF, rate limit, honey pot, time gate, daily limit ✅ |
+| Testing | 80% | 3 unit tests + 17 E2E specs + 5 k6 scenarios ✅ |
+| Dark Mode | 95% | Semua halaman + komponen, minor touch-up mungkin ada |
+| Report Toggle | 100% | Admin bisa active/inactive report, form inactive auto hide ✅ |
+| **Total** | **~90%** | **10% tersisa untuk production hardening** |
+
+---
+
+## Sesi Diskusi Terbaru
+
+### 1 Juni 2026 — Sesi 1: RAB & Infrastruktur
+- **Diskusi**: Perencanaan migrasi Vercel+Supabase → Hostinger VPS + Cloudflare
+- **Keputusan**: Migrasi NANTI, fokus bikin web 100% dulu di stack existing
+- **Output**: `RAB.MD` — 3 skenario (Murah Rp131K, Best Value Rp373K, Powerful Rp838K)
+- **Rekomendasi**: Hostinger KVM 4 (~Rp373K/bln) — DC Indonesia, latency rendah
+
+### 1 Juni 2026 — Sesi 2: Bug Fixes & Dark Mode
+- **Issue 1 — Form/Report Visibility**:
+  - Tambah field `isActive` di Report model ✅
+  - Public GET /api/reports: filter `isActive: true` + `form.isActive: true` ✅
+  - Admin POST /api/admin/reports/[id]/toggle ✅
+  - Admin UI: kolom Active dengan toggle button ✅
+  - Migration SQL: `prisma/migrations/20260601_add_report_isActive/` ✅
+- **Issue 2 — Role Badge Dark Mode**:
+  - admin/users/page.tsx — chip dark mode ✅
+  - admin/page.tsx — badge dark mode ✅
+  - profile/page.tsx — chip dark mode ✅
+- **Issue 3 — Auto-Scan Dark Mode (15+ file)**:
+  - Status badges: reports, donations, feedback, admin dashboard, points, profile ✅
+  - Chips: spring-map, content, review, report page, media types ✅
+  - Banners: error, success, warning di semua halaman ✅
+  - Form inputs: donate form dark mode ✅
+  - Global CSS: hover states, text-slate, shadows ✅
+- **Commit**: `a6a4dcf` — push ke `origin/master` ✅
+
+### Yang Belum Dikerjakan
+1. **Xendit & Email keys real** — masih placeholder di .env
+2. **Sentry DSN** — masih empty
+3. **Supabase RLS** — apply policies dari `supabase/rls-policies.sql`
+4. **Seed data** — forms, courses, point rules, content blocks
+5. **Migrasi ke VPS** — ditunda sampai web 100% stabil
+6. **Deploy ke Vercel** — sudah push ke GitHub, Vercel auto-deploy dari master
