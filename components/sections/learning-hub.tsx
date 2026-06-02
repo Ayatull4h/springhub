@@ -87,8 +87,8 @@ export function LearningHub() {
             const prog = getProgress(c.slug);
             return (
               <article key={c.id} className="card flex flex-col">
-                <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-xl bg-gradient-to-br from-indigo-50 to-indigo-100">
-                  <BookOpen className="h-12 w-12 text-indigo-500" />
+                <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-xl bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/30 dark:to-indigo-900/50">
+                  <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
                 <span className="chip mt-4 self-start bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                   {c.level}

@@ -1,0 +1,354 @@
+/**
+ * IndexedDB wrapper untuk Offline Survey Mode.
+ *
+ * Stores:
+ * - pending-reports   → form submissions saved while offline
+ * - tracking-points   → GPS trail points (saved every ~10m)
+ * - photo-blobs       → captured photos (blobs, uploaded on exit)
+ * - form-definitions  → cached form schema from admin panel
+ * - tile-manifest     → record of which OSM tiles are cached
+ *
+ * Semua data dihapus setelah berhasil sync keluar.
+ */
+
+const DB_NAME = "springhub-offline";
+const DB_VERSION = 1;
+
+type DBSchema = {
+  "pending-reports": {
+    key: string;
+    value: PendingReport;
+    indexes: { "by-created": number };
+  };
+  "tracking-points": {
+    key: string;
+    value: OfflineTrackingPoint;
+    indexes: { "by-recorded": number; "by-marker": boolean };
+  };
+  "photo-blobs": {
+    key: string;
+    value: PhotoBlob;
+    indexes: { "by-report": string };
+  };
+  "form-definitions": {
+    key: string;
+    value: FormDefinition;
+    indexes: { "by-slug": string };
+  };
+  "tile-manifest": {
+    key: string;
+    value: TileRecord;
+    indexes: { "by-url": string };
+  };
+};
+
+export type OfflineTrackingPoint = {
+  id: string;
+  lat: number;
+  lng: number;
+  accuracy: number | null;
+  isSpringMarker: boolean;
+  springName: string | null;
+  recordedAt: number; // Date.now()
+};
+
+export type PendingReport = {
+  id: string;
+  formSlug: string;
+  fieldData: Record<string, unknown>;
+  photoFieldIds: string[]; // field IDs that have photos
+  csrfToken: string;
+  guestId: string | null;
+  createdAt: number;
+};
+
+export type PhotoBlob = {
+  id: string;
+  reportId: string;
+  fieldId: string;
+  blob: Blob;
+  fileName: string;
+  mimeType: string;
+};
+
+export type FormDefinition = {
+  slug: string;
+  title: string;
+  description: string;
+  pointsOnSubmit: number;
+  contributionType: string;
+  fields: Array<{
+    id: string;
+    label: string;
+    type: string;
+    required: boolean;
+    placeholder: string;
+    help: string;
+    options: string[];
+  }>;
+  cachedAt: number;
+};
+
+export type TileRecord = {
+  url: string;
+  z: number;
+  x: number;
+  y: number;
+  cachedAt: number;
+};
+
+type StoreNames = keyof DBSchema;
+
+function openDB(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+
+    req.onupgradeneeded = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+
+      // pending-reports
+      if (!db.objectStoreNames.contains("pending-reports")) {
+        const store = db.createObjectStore("pending-reports", { keyPath: "id" });
+        store.createIndex("by-created", "createdAt", { unique: false });
+      }
+
+      // tracking-points
+      if (!db.objectStoreNames.contains("tracking-points")) {
+        const store = db.createObjectStore("tracking-points", { keyPath: "id" });
+        store.createIndex("by-recorded", "recordedAt", { unique: false });
+        store.createIndex("by-marker", "isSpringMarker", { unique: false });
+      }
+
+      // photo-blobs
+      if (!db.objectStoreNames.contains("photo-blobs")) {
+        const store = db.createObjectStore("photo-blobs", { keyPath: "id" });
+        store.createIndex("by-report", "reportId", { unique: false });
+      }
+
+      // form-definitions
+      if (!db.objectStoreNames.contains("form-definitions")) {
+        const store = db.createObjectStore("form-definitions", { keyPath: "slug" });
+        store.createIndex("by-slug", "slug", { unique: true });
+      }
+
+      // tile-manifest
+      if (!db.objectStoreNames.contains("tile-manifest")) {
+        const store = db.createObjectStore("tile-manifest", { keyPath: "url" });
+      }
+    };
+
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function getStore<Store extends StoreNames>(
+  db: IDBDatabase,
+  name: Store,
+  mode: IDBTransactionMode = "readonly"
+): IDBObjectStore {
+  const tx = db.transaction(name, mode);
+  return tx.objectStore(name);
+}
+
+// ─── GENERIC CRUD ──────────────────────────────────────────────────────────
+
+async function addItem<Store extends StoreNames>(
+  storeName: Store,
+  item: DBSchema[Store]["value"]
+): Promise<void> {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const store = getStore(db, storeName, "readwrite");
+    const req = store.put(item);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+    db.close();
+  });
+}
+
+async function getAllItems<Store extends StoreNames>(
+  storeName: Store
+): Promise<DBSchema[Store]["value"][]> {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const store = getStore(db, storeName);
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+    db.close();
+  });
+}
+
+async function getItem<Store extends StoreNames>(
+  storeName: Store,
+  key: string
+): Promise<DBSchema[Store]["value"] | undefined> {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const store = getStore(db, storeName);
+    const req = store.get(key);
+    req.onsuccess = () => resolve(req.result ?? undefined);
+    req.onerror = () => reject(req.error);
+    db.close();
+  });
+}
+
+async function deleteItem<Store extends StoreNames>(
+  storeName: Store,
+  key: string
+): Promise<void> {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const store = getStore(db, storeName, "readwrite");
+    const req = store.delete(key);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+    db.close();
+  });
+}
+
+async function clearStore(storeName: StoreNames): Promise<void> {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const store = getStore(db, storeName, "readwrite");
+    const req = store.clear();
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+    db.close();
+  });
+}
+
+async function countItems(storeName: StoreNames): Promise<number> {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const store = getStore(db, storeName);
+    const req = store.count();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+    db.close();
+  });
+}
+
+// ─── PUBLIC API ─────────────────────────────────────────────────────────────
+
+export const offlineDB = {
+  // ── Pending Reports ────────────────────────────────────────────────────
+  saveReport(report: PendingReport) {
+    return addItem("pending-reports", report);
+  },
+
+  getAllReports(): Promise<PendingReport[]> {
+    return getAllItems("pending-reports");
+  },
+
+  getReport(id: string): Promise<PendingReport | undefined> {
+    return getItem("pending-reports", id);
+  },
+
+  deleteReport(id: string) {
+    return deleteItem("pending-reports", id);
+  },
+
+  reportCount(): Promise<number> {
+    return countItems("pending-reports");
+  },
+
+  // ── Tracking Points ────────────────────────────────────────────────────
+  saveTrackingPoint(point: OfflineTrackingPoint) {
+    return addItem("tracking-points", point);
+  },
+
+  saveTrackingPoints(points: OfflineTrackingPoint[]) {
+    return Promise.all(points.map((p) => addItem("tracking-points", p)));
+  },
+
+  getAllTrackingPoints(): Promise<OfflineTrackingPoint[]> {
+    return getAllItems("tracking-points");
+  },
+
+  trackingPointCount(): Promise<number> {
+    return countItems("tracking-points");
+  },
+
+  // ── Photo Blobs ────────────────────────────────────────────────────────
+  savePhoto(photo: PhotoBlob) {
+    return addItem("photo-blobs", photo);
+  },
+
+  getAllPhotos(): Promise<PhotoBlob[]> {
+    return getAllItems("photo-blobs");
+  },
+
+  getPhotosByReport(reportId: string): Promise<PhotoBlob[]> {
+    return getAllItems("photo-blobs").then((photos) =>
+      photos.filter((p) => p.reportId === reportId)
+    );
+  },
+
+  deletePhoto(id: string) {
+    return deleteItem("photo-blobs", id);
+  },
+
+  photoCount(): Promise<number> {
+    return countItems("photo-blobs");
+  },
+
+  // ── Form Definitions ───────────────────────────────────────────────────
+  saveForm(form: FormDefinition) {
+    return addItem("form-definitions", form);
+  },
+
+  saveForms(forms: FormDefinition[]) {
+    return Promise.all(forms.map((f) => addItem("form-definitions", f)));
+  },
+
+  getForm(slug: string): Promise<FormDefinition | undefined> {
+    return getItem("form-definitions", slug);
+  },
+
+  getAllForms(): Promise<FormDefinition[]> {
+    return getAllItems("form-definitions");
+  },
+
+  clearForms() {
+    return clearStore("form-definitions");
+  },
+
+  // ── Tile Manifest ──────────────────────────────────────────────────────
+  saveTileRecord(tile: TileRecord) {
+    return addItem("tile-manifest", tile);
+  },
+
+  saveTileRecords(tiles: TileRecord[]) {
+    return Promise.all(tiles.map((t) => addItem("tile-manifest", t)));
+  },
+
+  getAllTileRecords(): Promise<TileRecord[]> {
+    return getAllItems("tile-manifest");
+  },
+
+  clearTileManifest() {
+    return clearStore("tile-manifest");
+  },
+
+  // ── Bulk Clear ─────────────────────────────────────────────────────────
+  async clearAll() {
+    await clearStore("pending-reports");
+    await clearStore("tracking-points");
+    await clearStore("photo-blobs");
+    await clearStore("form-definitions");
+    await clearStore("tile-manifest");
+  },
+
+  async getStats() {
+    const [reports, tracks, photos, forms, tiles] = await Promise.all([
+      countItems("pending-reports"),
+      countItems("tracking-points"),
+      countItems("photo-blobs"),
+      countItems("form-definitions"),
+      countItems("tile-manifest"),
+    ]);
+    return { reports, tracks, photos, forms, tiles };
+  },
+};

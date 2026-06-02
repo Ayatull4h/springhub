@@ -121,7 +121,7 @@ export default function NewProjectPage() {
   if (!eligible) {
     return (
       <div className="container-page max-w-lg py-12 text-center">
-        <HardHat className="mx-auto h-16 w-16 text-slate-300" />
+        <HardHat className="mx-auto h-16 w-16 text-slate-300 dark:text-slate-500" />
         <h1 className="mt-4 text-2xl font-extrabold text-ink">
           {t("projects.new.notEligible")}
         </h1>
@@ -174,7 +174,7 @@ export default function NewProjectPage() {
     <div className="container-page max-w-3xl py-12">
       <Link
         href="/#community"
-        className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
+        className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink dark:hover:text-white"
       >
         <ArrowLeft className="h-4 w-4" /> {t("projects.new.back")}
       </Link>
@@ -187,7 +187,7 @@ export default function NewProjectPage() {
       </p>
 
       {/* Eligibility badge */}
-      <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-700 ring-1 ring-emerald-200">
+      <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:ring-emerald-700">
         <Sparkles className="h-4 w-4 flex-none" />
         {t("projects.new.eligibleBadge", {
           points: formatNumber(userPoints),
@@ -222,7 +222,7 @@ export default function NewProjectPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder={t("projects.new.titlePlaceholder")}
-                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
               />
             </div>
 
@@ -238,7 +238,7 @@ export default function NewProjectPage() {
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 placeholder={t("projects.new.summaryPlaceholder")}
-                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
               />
             </div>
 
@@ -256,7 +256,7 @@ export default function NewProjectPage() {
                     value={region}
                     onChange={(e) => setRegion(e.target.value)}
                     placeholder={t("projects.new.regionPlaceholder")}
-                    className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                    className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
                   />
                 </div>
               </div>
@@ -270,7 +270,7 @@ export default function NewProjectPage() {
                   required
                   value={typeId}
                   onChange={(e) => setTypeId(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
                 >
                   <option value="">{t("projects.new.selectType")}</option>
                   {PROJECT_TYPES.map((pt) => (
@@ -296,7 +296,7 @@ export default function NewProjectPage() {
                   value={goalAmount}
                   onChange={(e) => setGoalAmount(e.target.value)}
                   placeholder="e.g. 25000000"
-                  className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
                 />
               </div>
               <p className="mt-1 text-xs text-ink-subtle">
@@ -329,7 +329,7 @@ export default function NewProjectPage() {
                     required
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
-                    className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                    className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
                   />
                 </div>
               </div>
@@ -346,7 +346,7 @@ export default function NewProjectPage() {
                     required
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                    className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
                   />
                 </div>
               </div>
@@ -367,7 +367,7 @@ export default function NewProjectPage() {
                   placeholder="e.g. 08123456789"
                   pattern="^(0[1-9]\d{8,11}|\+62\d{8,13})$"
                   title="Format: 08xx atau +62xx"
-                  className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
                 />
               </div>
             </div>
@@ -386,7 +386,7 @@ export default function NewProjectPage() {
           <div className="mt-3">
             <label
               htmlFor="proposalFile"
-              className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-ink-line p-4 text-sm text-ink-muted transition hover:border-brand-300 hover:bg-brand-50/30"
+              className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-ink-line p-4 text-sm text-ink-muted transition hover:border-brand-300 hover:bg-brand-50/30 dark:hover:bg-brand-900/20"
             >
               <Upload className="h-6 w-6 flex-none text-brand-500" />
               <div className="flex-1">

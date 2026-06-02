@@ -60,13 +60,14 @@ model Profile {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  reports       Report[]
-  donations     Donation[]
-  projects      Project[]
-  pointsLogs    PointsLog[]
-  sessions      Session[]
-  courses       CoursesProgress[]
-  reviewedReports Report[] @relation("reviewedReports")
+  reports         Report[]
+  donations       Donation[]
+  projects        Project[]
+  pointsLogs      PointsLog[]
+  sessions        Session[]
+  courses         CoursesProgress[]
+  reviewedReports Report[]          @relation("reviewedReports")
+  offlineSessions OfflineSession[]
 
   @@index([role])
   @@index([points(sort: Desc)])
@@ -86,29 +87,29 @@ model Session {
 }
 
 model Report {
-  id               String       @id @default(uuid())
-  userId           String?
-  guestId          String?
-  formSlug         String
-  status           ReportStatus @default(pending)
-  isActive         Boolean      @default(true)
-  fieldData        String       // JSON string of form fields
-  preciseLat       Float?
-  preciseLng       Float?
-  snappedLat       Float?
-  snappedLng       Float?
-  reviewedById     String?
-  reviewNote       String       @default("")
-  featuredPhotoId  String?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  id              String       @id @default(uuid())
+  userId          String?
+  guestId         String?
+  formSlug        String
+  status          ReportStatus @default(pending)
+  isActive        Boolean      @default(true)
+  fieldData       String // JSON string of form fields
+  preciseLat      Float?
+  preciseLng      Float?
+  snappedLat      Float?
+  snappedLng      Float?
+  reviewedById    String?
+  reviewNote      String       @default("")
+  featuredPhotoId String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
-  user            Profile?     @relation(fields: [userId], references: [id])
-  reviewedBy      Profile?     @relation("reviewedReports", fields: [reviewedById], references: [id])
-  photos          ReportPhoto[] @relation("ReportPhotos")
+  user       Profile?      @relation(fields: [userId], references: [id])
+  reviewedBy Profile?      @relation("reviewedReports", fields: [reviewedById], references: [id])
+  photos     ReportPhoto[] @relation("ReportPhotos")
 
-  pointsLogs      PointsLog[]
-  form            Form?        @relation(fields: [formSlug], references: [slug])
+  pointsLogs PointsLog[]
+  form       Form?       @relation(fields: [formSlug], references: [slug])
 
   @@index([status])
   @@index([userId, createdAt(sort: Desc)])
@@ -133,21 +134,21 @@ model ReportPhoto {
 }
 
 model Project {
-  id            String        @id @default(uuid())
-  userId        String?
-  title         String
-  summary       String        @default("")
-  region        String        @default("")
-  typeId        String
-  status        ProjectStatus @default(pending)
-  goalAmount    Int           @default(0)
-  raisedAmount  Int           @default(0)
-  contactName   String        @default("")
-  contactEmail  String        @default("")
-  contactPhone  String        @default("")
-  proposalFile  String        @default("")
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id           String        @id @default(uuid())
+  userId       String?
+  title        String
+  summary      String        @default("")
+  region       String        @default("")
+  typeId       String
+  status       ProjectStatus @default(pending)
+  goalAmount   Int           @default(0)
+  raisedAmount Int           @default(0)
+  contactName  String        @default("")
+  contactEmail String        @default("")
+  contactPhone String        @default("")
+  proposalFile String        @default("")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   user      Profile?   @relation(fields: [userId], references: [id])
   donations Donation[]
@@ -194,18 +195,18 @@ model PointsLog {
 }
 
 model CoursesProgress {
-  id              String   @id @default(uuid())
-  userId          String
-  courseId        String   @default("")
-  courseSlug      String
-  completedModules Int     @default(0)
-  totalModules    Int      @default(1)
-  completed       Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id               String   @id @default(uuid())
+  userId           String
+  courseId         String   @default("")
+  courseSlug       String
+  completedModules Int      @default(0)
+  totalModules     Int      @default(1)
+  completed        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   user   Profile @relation(fields: [userId], references: [id])
-  course Course?  @relation(fields: [courseId], references: [id])
+  course Course? @relation(fields: [courseId], references: [id])
 
   @@unique([userId, courseSlug])
 }
@@ -215,7 +216,7 @@ model PointRule {
   name        String
   description String   @default("")
   points      Int
-  category    String   // "basic", "bonus", "milestone"
+  category    String // "basic", "bonus", "milestone"
   icon        String   @default("Star")
   isActive    Boolean  @default(true)
   sortOrder   Int      @default(0)
@@ -241,13 +242,13 @@ model Course {
 }
 
 model CourseModule {
-  id          String   @id @default(uuid())
-  courseId    String
-  title       String
-  content     String   @default("") // Markdown atau HTML content
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  courseId  String
+  title     String
+  content   String   @default("") // Markdown atau HTML content
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
@@ -286,6 +287,38 @@ model FormField {
   @@unique([formId, fieldId])
 }
 
+model OfflineSession {
+  id            String    @id @default(uuid())
+  userId        String
+  isActive      Boolean   @default(true)
+  selectedForms String    @default("[]") // JSON array of form slugs
+  totalDistance Float? // meters
+  startedAt     DateTime  @default(now())
+  endedAt       DateTime?
+
+  user           Profile         @relation(fields: [userId], references: [id])
+  trackingPoints TrackingPoint[]
+
+  @@index([userId])
+  @@index([isActive])
+}
+
+model TrackingPoint {
+  id             String   @id @default(uuid())
+  sessionId      String
+  lat            Float
+  lng            Float
+  accuracy       Float?
+  isSpringMarker Boolean  @default(false)
+  springName     String? // nama mata air jika marker
+  recordedAt     DateTime @default(now())
+
+  session OfflineSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([recordedAt])
+}
+
 model Feedback {
   id             String   @id @default(uuid())
   type           String   @default("bug") // "bug", "kritik", "saran", "both"
@@ -294,14 +327,14 @@ model Feedback {
   bugDescription String   @default("")
   bugScreenshot  String   @default("") // storage path
   status         String   @default("open") // "open", "read", "resolved"
-  userId         String?  // null if guest
+  userId         String? // null if guest
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
 
 model ContentBlock {
   id          String   @id @default(uuid())
-  section     String   // "media", "projects", "stats", "testimonials"
+  section     String // "media", "projects", "stats", "testimonials"
   type        String   @default("") // "video", "event", "publication", "press", "project", "stat"
   title       String
   subtitle    String   @default("")

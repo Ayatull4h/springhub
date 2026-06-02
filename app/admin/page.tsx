@@ -95,7 +95,7 @@ export default function AdminDashboard() {
                 <Icon className={`h-4 w-4 ${s.color}`} />
               </div>
               <div className="mt-2 text-2xl font-bold text-ink">{s.value}</div>
-              <div className="mt-1 flex items-center gap-1 text-xs text-slate-400">
+              <div className="mt-1 flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
                 <ArrowUpRight className="h-3 w-3" />
                 {s.change}
               </div>

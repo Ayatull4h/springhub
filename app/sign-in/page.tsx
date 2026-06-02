@@ -59,7 +59,7 @@ export default function SignInPage() {
           </div>
           <Link
             href="/"
-            className="relative -ml-1 mb-2 inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
+            className="relative -ml-1 mb-2 inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink dark:hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" /> Kembali
           </Link>
@@ -73,7 +73,7 @@ export default function SignInPage() {
 
         <form onSubmit={handleSubmit} className="card space-y-4">
           {error && (
-            <div className="flex items-start gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
+            <div className="flex items-start gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
               <AlertCircle className="mt-0.5 h-4 w-4 flex-none" />
               <span>{error}</span>
             </div>
@@ -92,7 +92,7 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("auth.signIn.emailPlaceholder")}
-                className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
               />
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function SignInPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t("auth.signIn.passwordPlaceholder")}
-                className="w-full rounded-md border border-ink-line pl-9 pr-9 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="w-full rounded-md border border-ink-line pl-9 pr-9 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
               />
               <button
                 type="button"
@@ -153,7 +153,7 @@ export default function SignInPage() {
           </Link>
         </p>
 
-        <div className="mt-4 rounded-lg border border-ink-line/60 bg-slate-50 p-3 text-xs text-ink-muted">
+        <div className="mt-4 rounded-lg border border-ink-line/60 bg-slate-50 p-3 text-xs text-ink-muted dark:bg-slate-800">
           <p className="font-medium text-ink">{t("auth.signIn.testAccounts")}</p>
           <p>{t("auth.signIn.testVolunteer")}</p>
           <p>{t("auth.signIn.testAdmin")}</p>

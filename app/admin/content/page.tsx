@@ -148,7 +148,7 @@ export default function AdminContentPage() {
             className={`rounded-md px-4 py-2 text-sm font-medium transition ${
               activeSection === s.id
                 ? "bg-brand-600 text-white"
-                : "bg-slate-100 text-ink-muted hover:bg-slate-200"
+                : "bg-slate-100 text-ink-muted hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
             }`}
           >
             {s.label}
@@ -214,7 +214,7 @@ export default function AdminContentPage() {
             <form onSubmit={handleSave} className="mt-4 space-y-3">
               <div>
                 <label className="text-xs font-medium text-ink-muted">Type</label>
-                <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm">
+                <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white">
                   {sections.find(s => s.id === activeSection)?.types.map(t => (
                     <option key={t} value={t}>{t}</option>
                   ))}
@@ -251,7 +251,7 @@ export default function AdminContentPage() {
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} className="rounded-md border border-ink-line px-4 py-2 text-sm text-ink hover:bg-slate-50">Cancel</button>
+                <button type="button" onClick={() => setShowForm(false)} className="rounded-md border border-ink-line px-4 py-2 text-sm text-ink hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
                 <button type="submit" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">Save</button>
               </div>
             </form>

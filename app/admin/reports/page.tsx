@@ -98,23 +98,23 @@ export default function AdminReportsPage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1">
-            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full min-w-0 rounded-md border border-ink-line px-2 py-1.5 text-xs sm:w-auto" />
+            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full min-w-0 rounded-md border border-ink-line px-2 py-1.5 text-xs sm:w-auto dark:bg-slate-800 dark:text-white" />
             <span className="hidden text-xs text-ink-muted sm:inline">s/d</span>
-            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full min-w-0 rounded-md border border-ink-line px-2 py-1.5 text-xs sm:w-auto" />
+            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full min-w-0 rounded-md border border-ink-line px-2 py-1.5 text-xs sm:w-auto dark:bg-slate-800 dark:text-white" />
             {(dateFrom || dateTo) && (
               <button onClick={() => { setDateFrom(""); setDateTo(""); }} className="whitespace-nowrap text-xs text-brand-600 hover:underline">Reset</button>
             )}
           </div>
           <button
             onClick={() => window.open("/api/admin/export?entity=reports&format=csv", "_blank")}
-            className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100"
+            className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"
           >
             <Download className="h-4 w-4" />
             Export
           </button>
           <button
             onClick={() => setShowPrecise(!showPrecise)}
-            className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100"
+            className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"
           >
             {showPrecise ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             {showPrecise ? t("admin.reports.hideCoords") : t("admin.reports.showCoords")}

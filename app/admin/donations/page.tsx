@@ -64,7 +64,7 @@ export default function AdminDonationsPage() {
         </div>
         <button
           onClick={() => window.open("/api/admin/export?entity=donations&format=csv", "_blank")}
-          className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink"
+          className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-md border border-ink-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white"
         >
           <Download className="h-4 w-4" />
           Export CSV

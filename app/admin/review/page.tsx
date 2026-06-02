@@ -133,7 +133,7 @@ export default function AdminReviewPage() {
       </div>
 
       {actionMsg && (
-        <div className="rounded-md bg-brand-50 p-3 text-sm text-brand-700">
+        <div className="rounded-md bg-brand-50 dark:bg-brand-900/30 p-3 text-sm text-brand-700 dark:text-brand-300">
           {actionMsg}
         </div>
       )}
@@ -243,12 +243,12 @@ export default function AdminReviewPage() {
                     placeholder={t("admin.reviews.notePlaceholder")}
                     value={notes[r.id] || ""}
                     onChange={(e) => setNotes((n) => ({ ...n, [r.id]: e.target.value }))}
-                    className="flex-1 min-w-[200px] rounded-md border border-ink-line px-3 py-1.5 text-xs focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                    className="flex-1 min-w-[200px] rounded-md border border-ink-line px-3 py-1.5 text-xs focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
                   />
                   <button
                     onClick={() => handleApprove(r.id)}
                     disabled={processing[r.id]}
-                    className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-md bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 disabled:opacity-50"
                   >
                     {processing[r.id] ? (
                       <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-emerald-700 border-t-transparent" />
@@ -260,7 +260,7 @@ export default function AdminReviewPage() {
                   <button
                     onClick={() => handleReject(r.id)}
                     disabled={processing[r.id]}
-                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-md bg-red-50 dark:bg-red-900/30 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-300 hover:bg-red-100 disabled:opacity-50"
                   >
                     {processing[r.id] ? (
                       <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-red-700 border-t-transparent" />

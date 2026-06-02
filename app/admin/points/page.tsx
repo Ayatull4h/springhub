@@ -128,7 +128,7 @@ function RuleFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-ink">
             {mode === "create" ? "Tambah Aturan" : "Edit Aturan"}
@@ -146,7 +146,7 @@ function RuleFormModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
               placeholder="Spring Monitoring"
             />
           </div>
@@ -157,7 +157,7 @@ function RuleFormModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
-              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
               placeholder="Melaporkan kondisi mata air"
             />
           </div>
@@ -171,7 +171,7 @@ function RuleFormModal({
                 onChange={(e) => setPoints(Number(e.target.value))}
                 min={1}
                 required
-                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
               />
             </div>
             <div>
@@ -181,7 +181,7 @@ function RuleFormModal({
                 value={sortOrder}
                 onChange={(e) => setSortOrder(Number(e.target.value))}
                 min={0}
-                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
               />
             </div>
           </div>
@@ -192,7 +192,7 @@ function RuleFormModal({
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
               >
                 <option value="basic">Dasar</option>
                 <option value="bonus">Bonus</option>
@@ -213,7 +213,7 @@ function RuleFormModal({
                         "flex h-8 w-8 items-center justify-center rounded-md border text-sm transition",
                         icon === opt.name
                           ? "border-brand-500 bg-brand-50 text-brand-600"
-                          : "border-ink-line text-ink-muted hover:border-ink"
+                          : "border-ink-line text-ink-muted hover:border-ink dark:border-slate-600"
                       )}
                       title={opt.name}
                     >
@@ -232,7 +232,7 @@ function RuleFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink hover:bg-slate-50"
+              className="rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               Batal
             </button>
@@ -276,7 +276,7 @@ function DeleteConfirmModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg font-bold text-ink">Hapus Aturan</h3>
         <p className="mt-2 text-sm text-ink-muted">
           Apakah kamu yakin ingin menghapus <strong>{ruleName}</strong>? Tindakan ini tidak bisa dibatalkan.
@@ -422,16 +422,16 @@ export default function AdminPointsPage() {
 
       {/* Action message */}
       {actionMsg && (
-        <div className="rounded-md bg-brand-50 p-3 text-sm text-brand-700">
+        <div className="rounded-md bg-brand-50 dark:bg-brand-900/30 p-3 text-sm text-brand-700 dark:text-brand-300">
           {actionMsg}
         </div>
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-ink-line bg-white">
+      <div className="overflow-x-auto rounded-lg border border-ink-line bg-white dark:bg-slate-800">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-ink-line bg-slate-50 text-xs font-medium text-ink-subtle">
+            <tr className="border-b border-ink-line bg-slate-50 dark:bg-slate-900 text-xs font-medium text-ink-subtle">
               <th className="w-10 pb-3 pl-4 pr-2">No</th>
               <th className="pb-3 pr-3">Ikon</th>
               <th className="pb-3 pr-3">Nama</th>
@@ -456,7 +456,7 @@ export default function AdminPointsPage() {
                 return (
                   <tr
                     key={rule.id}
-                    className="border-b border-ink-line last:border-0 hover:bg-slate-50"
+                    className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800"
                   >
                     <td className="py-3 pl-4 pr-2 text-xs text-ink-muted">
                       {rule.sortOrder}
@@ -481,7 +481,7 @@ export default function AdminPointsPage() {
                         onClick={() => handleToggleActive(rule)}
                         className={cn(
                           "relative inline-flex h-5 w-9 items-center rounded-full transition",
-                          rule.isActive ? "bg-brand-600" : "bg-slate-300"
+                          rule.isActive ? "bg-brand-600" : "bg-slate-300 dark:bg-slate-600"
                         )}
                         title={rule.isActive ? "Nonaktifkan" : "Aktifkan"}
                       >

@@ -153,7 +153,7 @@ export default function AdminFeedbackPage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => setSelectedId(selectedId === item.id ? null : item.id)}
-                          className="rounded-md p-1 hover:bg-slate-100"
+                          className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-800"
                           title="View detail"
                         >
                           <Eye className="h-4 w-4 text-ink-subtle" />
@@ -161,7 +161,7 @@ export default function AdminFeedbackPage() {
                         {item.status !== "read" && (
                           <button
                             onClick={() => updateStatus(item.id, "read")}
-                            className="rounded-md px-2 py-0.5 text-xs font-medium text-blue-600 hover:bg-blue-50"
+                            className="rounded-md px-2 py-0.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                           >
                             Mark Read
                           </button>
@@ -169,7 +169,7 @@ export default function AdminFeedbackPage() {
                         {item.status !== "resolved" && (
                           <button
                             onClick={() => updateStatus(item.id, "resolved")}
-                            className="rounded-md px-2 py-0.5 text-xs font-medium text-emerald-600 hover:bg-emerald-50"
+                            className="rounded-md px-2 py-0.5 text-xs font-medium text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
                           >
                             Resolve
                           </button>
@@ -225,7 +225,7 @@ export default function AdminFeedbackPage() {
                   {item.bugScreenshot && (
                     <div>
                       <span className="font-medium text-ink">Screenshot:</span>
-                      <Image src={item.bugScreenshot} alt="Bug screenshot" width={600} height={400} className="mt-1 max-w-full rounded-md border" style={{ objectFit: "contain" }} />
+                      <Image src={item.bugScreenshot} alt="Bug screenshot" width={600} height={400} className="mt-1 max-w-full rounded-md border dark:border-slate-700" style={{ objectFit: "contain" }} />
                     </div>
                   )}
                   <div>

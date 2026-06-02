@@ -227,7 +227,7 @@ export function SpringMap() {
                   key={r.id}
                   className="flex items-start gap-3 rounded-lg border border-ink-line/60 p-3 dark:border-slate-700"
                 >
-                  <span className="flex h-10 w-10 flex-none items-center justify-center rounded-md bg-gradient-to-br from-brand-50 to-brand-100">
+                  <span className="flex h-10 w-10 flex-none items-center justify-center rounded-md bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
                     <Droplets className="h-5 w-5 text-brand-500" />
                   </span>
                   <div className="min-w-0 flex-1">
@@ -260,7 +260,7 @@ export function SpringMap() {
               <button
                 onClick={() => { setPage(p => Math.max(1, p - 1)); }}
                 disabled={page === 1}
-                className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
+                className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
               >
                 ← {t("common.previous")}
               </button>
@@ -270,7 +270,7 @@ export function SpringMap() {
               <button
                 onClick={() => { setPage(p => p + 1); }}
                 disabled={currentPage * itemsPerPage >= visible.length}
-                className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
+                className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
               >
                 {t("common.next")} →
               </button>

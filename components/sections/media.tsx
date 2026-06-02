@@ -118,7 +118,7 @@ export function MediaSection() {
                 rel={external ? "noreferrer" : undefined}
                 className="card group transition hover:-translate-y-1"
               >
-                <div className="-mx-4 -mt-4 mb-3 h-36 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100">
+                <div className="-mx-4 -mt-4 mb-3 h-36 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
                   <MediaThumb item={item} />
                 </div>
                 <span className={`chip text-xs ${typeColors[item.type] || "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"}`}>

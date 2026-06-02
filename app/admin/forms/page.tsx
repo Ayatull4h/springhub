@@ -150,7 +150,7 @@ export default function AdminFormsPage() {
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
               filter === f
                 ? "bg-brand-600 text-white"
-                : "bg-slate-100 text-ink-muted hover:bg-slate-200"
+                : "bg-slate-100 text-ink-muted hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
             }`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}

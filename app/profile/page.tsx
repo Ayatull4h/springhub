@@ -200,22 +200,22 @@ export default function ProfilePage() {
 
       {/* Claim Guest Reports Banner */}
       {claimTried && claimResult && claimResult.claimed > 0 && (
-        <div className="mt-6 rounded-md bg-emerald-50 p-4 text-sm text-emerald-700 ring-1 ring-emerald-200">
+        <div className="mt-6 rounded-md bg-emerald-50 p-4 text-sm text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:ring-emerald-700">
           ✅ {t("profile.claimSuccess", { count: String(claimResult.claimed) })}
         </div>
       )}
       {claimTried && claimError && (
-        <div className="mt-6 rounded-md bg-red-50 p-4 text-sm text-red-700 ring-1 ring-red-200">
+        <div className="mt-6 rounded-md bg-red-50 p-4 text-sm text-red-700 ring-1 ring-red-200 dark:bg-red-900/30 dark:text-red-300 dark:ring-red-700">
           {claimError}
         </div>
       )}
       {claimTried && claimResult && claimResult.claimed === 0 && (
-        <div className="mt-6 rounded-md bg-amber-50 p-4 text-sm text-amber-700 ring-1 ring-amber-200">
+        <div className="mt-6 rounded-md bg-amber-50 p-4 text-sm text-amber-700 ring-1 ring-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:ring-amber-700">
           {t("profile.claimNone")}
         </div>
       )}
       {!claimTried && claiming && (
-        <div className="mt-6 flex items-center gap-2 rounded-md bg-brand-50 p-4 text-sm text-brand-700 ring-1 ring-brand-200">
+        <div className="mt-6 flex items-center gap-2 rounded-md bg-brand-50 p-4 text-sm text-brand-700 ring-1 ring-brand-200 dark:ring-brand-700">
           <div className="h-4 w-4 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
           {t("profile.claiming")}
         </div>
@@ -410,7 +410,7 @@ export default function ProfilePage() {
         ) : (
           <div className="mt-3 space-y-1">
             {pointsLogs.map((p) => (
-              <div key={p.id} className="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-slate-50">
+              <div key={p.id} className="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">
                 <div>
                   <span className="text-ink">{p.reason}</span>
                   <span className="ml-2 text-xs text-ink-subtle">
@@ -460,7 +460,7 @@ export default function ProfilePage() {
                 {top.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.id} className="flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-slate-50">
+                    <div key={item.id} className="flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">
                       <Icon className={`h-4 w-4 shrink-0 ${item.color}`} />
                       <div className="flex-1">
                         <span className="text-ink">{item.message}</span>

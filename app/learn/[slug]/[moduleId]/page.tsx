@@ -191,7 +191,7 @@ export default function LearnModulePage() {
                 Module {currentIndex + 1} of {course.modules.length}
               </span>
               {isCompletedModule && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
                   <CheckCircle2 className="h-3 w-3" />
                   Completed
                 </span>
@@ -211,7 +211,7 @@ export default function LearnModulePage() {
           <div className="card">
             {module.content ? (
               <div
-                className="prose prose-sm max-w-none text-ink"
+                className="prose prose-sm max-w-none text-ink dark:prose-invert"
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(module.content) }}
               />
             ) : (
@@ -226,7 +226,7 @@ export default function LearnModulePage() {
 
           {/* Points earned notification */}
           {pointsEarned > 0 && (
-            <div className="mt-4 flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
               <Sparkles className="h-4 w-4" />
               You earned {pointsEarned} points for completing this course!
             </div>

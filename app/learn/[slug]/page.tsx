@@ -142,7 +142,7 @@ export default function LearnCoursePage() {
             </div>
 
             {isCompleted && (
-              <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-4 py-2">
+              <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-4 py-2 dark:bg-emerald-900/30 dark:text-emerald-300">
                 <Award className="h-5 w-5 text-emerald-600" />
                 <span className="text-sm font-medium text-emerald-700">
                   Completed!
@@ -192,9 +192,9 @@ export default function LearnCoursePage() {
                   href={`/learn/${slug}/${mod.id}`}
                   className={`card flex items-center gap-4 transition ${
                     isCurrentModule && !isCompleted
-                      ? "border-brand-300 ring-1 ring-brand-200"
+                      ? "border-brand-300 ring-1 ring-brand-200 dark:ring-brand-700"
                       : ""
-                  } ${isCompletedModule ? "bg-emerald-50/50" : ""}`}
+                  } ${isCompletedModule ? "bg-emerald-50/50 dark:bg-emerald-900/20" : ""}`}
                 >
                   <div className="flex-shrink-0">
                     {isCompletedModule ? (

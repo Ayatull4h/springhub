@@ -21,7 +21,7 @@ const PickerMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="grid h-full min-h-[240px] w-full place-items-center bg-slate-50 text-xs text-ink-subtle">
+      <div className="grid h-full min-h-[240px] w-full place-items-center bg-slate-50 text-xs text-ink-subtle dark:bg-slate-800">
         Loading map picker…
       </div>
     ),
@@ -128,8 +128,8 @@ export function LocationPicker({ name, required }: LocationPickerProps) {
             status === "success"
               ? "border-emerald-200 bg-emerald-50 text-emerald-700"
               : status === "detecting"
-                ? "border-slate-200 bg-slate-50 text-slate-500"
-                : "border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100"
+                ? "border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                : "border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100 dark:hover:bg-brand-800/50"
           )}
         >
           {status === "detecting" ? (
@@ -173,7 +173,7 @@ export function LocationPicker({ name, required }: LocationPickerProps) {
             onChange={handleLatChange}
             required={required}
             placeholder={status === "success" ? lat : "-6.644700"}
-            className="mt-0.5 w-full rounded-md border border-ink-line px-2.5 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="mt-0.5 w-full rounded-md border border-ink-line px-2.5 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
         <div>
@@ -188,7 +188,7 @@ export function LocationPicker({ name, required }: LocationPickerProps) {
             onChange={handleLngChange}
             required={required}
             placeholder={status === "success" ? lng : "106.789200"}
-            className="mt-0.5 w-full rounded-md border border-ink-line px-2.5 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="mt-0.5 w-full rounded-md border border-ink-line px-2.5 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
       </div>
@@ -232,7 +232,7 @@ export function LocationPicker({ name, required }: LocationPickerProps) {
               onPick={handleMapPicked}
             />
           </div>
-          <div className="border-t border-ink-line bg-slate-50 px-3 py-1.5 text-[11px] text-ink-muted">
+          <div className="border-t border-ink-line bg-slate-50 px-3 py-1.5 text-[11px] text-ink-muted dark:bg-slate-800">
             {t("form.location.mapPickHint")}
           </div>
         </div>

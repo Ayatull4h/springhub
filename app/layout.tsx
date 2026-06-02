@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { I18nProvider } from "@/lib/i18n";
 import { DarkModeProvider } from "@/lib/darkmode";
 import Watermark from "@/components/layout/watermark";
+import { NetworkWatcher } from "@/components/offline/offline-network-watcher";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -72,6 +73,7 @@ export default function RootLayout({
             <main>{children}</main>
             <SiteFooter />
             <Watermark />
+          <NetworkWatcher />
           </I18nProvider>
         </DarkModeProvider>
         <Script
@@ -80,11 +82,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(regs) {
-                  for (var r of regs) { r.unregister(); }
-                });
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js');
+                  navigator.serviceWorker.register('/sw.js').catch(function() {
+                    // SW registration failed — app works without it
+                  });
                 });
               }
             `,

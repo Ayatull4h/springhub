@@ -237,8 +237,8 @@
   "auth.signIn.noAccount": "Don't have an account?",
   "auth.signIn.joinNow": "Join Now",
   "auth.signIn.testAccounts": "Test Accounts:",
-  "auth.signIn.testVolunteer": "Volunteer: volunteer@test.com / test123",
-  "auth.signIn.testAdmin": "Admin: admin@test.com / test123",
+  "auth.signIn.testVolunteer": "Volunteer: volunteer@springhub.id / vol123",
+  "auth.signIn.testAdmin": "Admin: admin@springhub.id / admin123",
   "auth.signIn.error": "Login failed. Please try again.",
   "auth.signIn.networkError": "Network error. Please try again.",
 
@@ -475,5 +475,54 @@
   "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Card • Virtual Account",
 
   "locale.en": "EN",
-  "locale.id": "ID"
+  "locale.id": "ID",
+
+  "offline.title": "Offline Survey Mode",
+  "offline.checkLogin": "You must be logged in to use offline mode",
+  "offline.checkPwa": "Install the app from your browser first",
+  "offline.entryButton": "Enable Offline Mode",
+  "offline.loginAs": "Logged in as {username}",
+  "offline.notLogin": "Not logged in",
+  "offline.appInstalled": "App installed",
+  "offline.installApp": "Install app first",
+
+  "offline.tutorial.cacheTitle": "Data Cache",
+  "offline.tutorial.cacheDesc": "Forms, field definitions, and map tiles will be stored on your device.",
+  "offline.tutorial.gpsTitle": "Location & GPS",
+  "offline.tutorial.gpsDesc": "GPS tracks your movement every 10 meters. Locations are snapped to a 5 km grid.",
+  "offline.tutorial.photoTitle": "Photos",
+  "offline.tutorial.photoDesc": "Photos are saved as blobs. MUST be uploaded when exiting offline mode.",
+  "offline.tutorial.syncTitle": "Sync",
+  "offline.tutorial.syncDesc": "Data is uploaded when you exit. Local data is deleted after successful sync.",
+  "offline.tutorial.agree": "I agree to the cache & local storage terms",
+
+  "offline.selectForm": "Select Survey Forms",
+  "offline.selectFormDesc": "Choose which forms to fill during the survey",
+  "offline.selectArea": "Select Survey Area",
+  "offline.selectAreaDesc": "Choose the area to pre-cache map tiles",
+
+  "offline.survey.distance": "{km} km",
+  "offline.survey.markers": "{count} records",
+  "offline.survey.markSpring": "Mark Spring",
+  "offline.survey.fillForm": "Fill Form",
+  "offline.survey.exit": "Exit",
+  "offline.survey.gpsStart": "Start GPS Tracking",
+  "offline.survey.gpsActive": "Tracking Active",
+
+  "offline.sync.confirm": "Exit Offline Mode",
+  "offline.sync.confirmDesc": "Data will be uploaded to the server. Ensure stable connection.",
+  "offline.sync.photos": "{count} photos — Required to upload",
+  "offline.sync.reports": "{count} reports",
+  "offline.sync.tracks": "GPS tracking data",
+  "offline.sync.clear": "Local data will be deleted",
+  "offline.sync.start": "Start Sync",
+  "offline.sync.uploading": "Uploading...",
+  "offline.sync.photoFailed": "Failed to upload photo {name}. Check your connection and try again.",
+  "offline.sync.done": "Done!",
+  "offline.sync.retry": "Retry",
+  "offline.sync.back": "Back to Offline Mode",
+
+  "offline.installPrompt": "Install SpringHub for offline mode",
+  "offline.installDesc": "The app needs to be installed to store local data.",
+  "offline.install": "Install App"
 }

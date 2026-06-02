@@ -90,9 +90,9 @@ export function PointsGuideModal({ open, onClose }: Props) {
   if (!open) return null;
 
   const categories = [
-    { key: "basic", label: "📋 Laporan Dasar", bg: "bg-emerald-50" },
-    { key: "bonus", label: "⭐ Bonus", bg: "bg-amber-50" },
-    { key: "milestone", label: "🏆 Milestone", bg: "bg-purple-50" },
+    { key: "basic", label: "📋 Laporan Dasar", bg: "bg-emerald-50 dark:bg-emerald-900/30" },
+    { key: "bonus", label: "⭐ Bonus", bg: "bg-amber-50 dark:bg-amber-900/30" },
+    { key: "milestone", label: "🏆 Milestone", bg: "bg-purple-50 dark:bg-purple-900/30" },
   ];
 
   return (
@@ -176,7 +176,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
         )}
 
         {!loading && rules.length === 0 && (
-          <div className="mt-6 rounded-xl bg-slate-50 p-6 text-center text-sm text-ink-muted">
+          <div className="mt-6 rounded-xl bg-slate-50 p-6 text-center text-sm text-ink-muted dark:bg-slate-800">
             Belum ada aturan poin yang tersedia.
           </div>
         )}

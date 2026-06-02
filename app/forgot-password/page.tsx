@@ -56,12 +56,12 @@ export default function ForgotPasswordPage() {
 
         {success ? (
           <div className="card space-y-4">
-            <div className="flex items-start gap-2 rounded-md bg-emerald-50 p-3 text-sm text-emerald-700">
+            <div className="flex items-start gap-2 rounded-md bg-emerald-50 p-3 text-sm text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
               <CheckCircle2 className="mt-0.5 h-4 w-4 flex-none" />
               <span>{success.message}</span>
             </div>
             {success.devUrl && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-200">
                 <p className="font-medium mb-1">🔧 Mode Development:</p>
                 <a href={success.devUrl} className="text-brand-600 hover:underline break-all">
                   {success.devUrl}
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} className="card space-y-4">
             {error && (
-              <div className="flex items-start gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
+              <div className="flex items-start gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
                 <AlertCircle className="mt-0.5 h-4 w-4 flex-none" />
                 <span>{error}</span>
               </div>
@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="contoh@email.com"
-                  className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
                 />
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
               )}
             </button>
 
-            <Link href="/sign-in" className="flex items-center justify-center gap-1 text-sm text-ink-muted hover:text-ink">
+            <Link href="/sign-in" className="flex items-center justify-center gap-1 text-sm text-ink-muted hover:text-ink dark:hover:text-white">
               <ArrowLeft className="h-3 w-3" />
               Kembali ke login
             </Link>

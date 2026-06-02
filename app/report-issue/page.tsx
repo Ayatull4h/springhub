@@ -121,7 +121,7 @@ export default function ReportIssuePage() {
       </p>
 
       {error && (
-        <div className="mt-4 flex items-start gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
+        <div className="mt-4 flex items-start gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
           <AlertCircle className="mt-0.5 h-4 w-4 flex-none" />
           <span>{error}</span>
         </div>
@@ -152,7 +152,7 @@ export default function ReportIssuePage() {
           <div>
             <label
               htmlFor="screenshot"
-              className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-ink-line bg-white px-4 py-2.5 text-sm font-medium text-ink-muted transition hover:bg-slate-50 hover:text-ink"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-ink-line bg-white px-4 py-2.5 text-sm font-medium text-ink-muted transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:hover:bg-slate-700"
             >
               <Image className="h-4 w-4" />
               {screenshot
@@ -192,7 +192,7 @@ export default function ReportIssuePage() {
               value={kritik}
               onChange={(e) => setKritik(e.target.value)}
               placeholder={t("reportIssue.kritikPlaceholder", "Apa yang perlu diperbaiki?")}
-              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
             />
           </div>
 
@@ -209,7 +209,7 @@ export default function ReportIssuePage() {
               value={saran}
               onChange={(e) => setSaran(e.target.value)}
               placeholder={t("reportIssue.saranPlaceholder", "Apa saran Anda?")}
-              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
             />
           </div>
 

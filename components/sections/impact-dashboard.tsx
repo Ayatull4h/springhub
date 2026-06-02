@@ -9,6 +9,7 @@ import {
 } from "@/lib/data";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { OfflineEntryButton } from "@/components/offline/offline-entry-button";
 
 const iconMap: Record<string, typeof Droplets> = {
   droplet: Droplets,
@@ -140,6 +141,11 @@ export function ImpactDashboard() {
             ))}
           </ol>
         </div>
+      </div>
+
+      {/* Offline Entry Button */}
+      <div className="mt-6 flex justify-end">
+        <OfflineEntryButton />
       </div>
     </section>
   );

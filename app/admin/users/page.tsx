@@ -94,7 +94,7 @@ export default function AdminUsersPage() {
           </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u.id} className="border-b border-ink-line last:border-0 hover:bg-slate-50">
+              <tr key={u.id} className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <td className="py-3 pr-4 font-medium text-ink">{u.username || "—"}</td>
                 <td className="py-3 pr-4 text-ink-muted">
                   <span className="inline-flex items-center gap-1">
@@ -115,7 +115,7 @@ export default function AdminUsersPage() {
                           handleRoleSave(u.id, e.target.value);
                         }}
                         disabled={savingRole}
-                        className="rounded-md border border-ink-line px-2 py-1 text-xs"
+                        className="rounded-md border border-ink-line px-2 py-1 text-xs dark:bg-slate-800 dark:text-white"
                       >
                         <option value="user">User</option>
                         <option value="volunteer">Volunteer</option>
@@ -124,7 +124,7 @@ export default function AdminUsersPage() {
                       </select>
                       <button
                         onClick={() => setEditingRole(null)}
-                        className="text-xs text-ink-muted hover:text-ink"
+                        className="text-xs text-ink-muted hover:text-ink dark:hover:text-white"
                       >
                         Cancel
                       </button>

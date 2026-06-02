@@ -237,8 +237,8 @@
   "auth.signIn.noAccount": "Belum punya akun?",
   "auth.signIn.joinNow": "Daftar Sekarang",
   "auth.signIn.testAccounts": "Akun Test:",
-  "auth.signIn.testVolunteer": "Relawan: volunteer@test.com / test123",
-  "auth.signIn.testAdmin": "Admin: admin@test.com / test123",
+  "auth.signIn.testVolunteer": "Relawan: volunteer@springhub.id / vol123",
+  "auth.signIn.testAdmin": "Admin: admin@springhub.id / admin123",
   "auth.signIn.error": "Login gagal. Silakan coba lagi.",
   "auth.signIn.networkError": "Kesalahan jaringan. Silakan coba lagi.",
 
@@ -475,5 +475,54 @@
   "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Kartu • Virtual Account",
 
   "locale.en": "EN",
-  "locale.id": "ID"
+  "locale.id": "ID",
+
+  "offline.title": "Mode Offline Survei",
+  "offline.checkLogin": "Kamu harus login untuk menggunakan mode offline",
+  "offline.checkPwa": "Install aplikasi dari browser dulu",
+  "offline.entryButton": "Aktifkan Mode Offline",
+  "offline.loginAs": "Login sebagai {username}",
+  "offline.notLogin": "Belum login",
+  "offline.appInstalled": "Aplikasi terinstall",
+  "offline.installApp": "Install aplikasi dulu",
+
+  "offline.tutorial.cacheTitle": "Cache Data",
+  "offline.tutorial.cacheDesc": "Form, definisi field, dan tile peta akan disimpan ke penyimpanan lokal perangkat.",
+  "offline.tutorial.gpsTitle": "Lokasi & GPS",
+  "offline.tutorial.gpsDesc": "GPS merekam jejak pergerakan setiap 10 meter. Lokasi di-snap ke grid 5 km.",
+  "offline.tutorial.photoTitle": "Foto",
+  "offline.tutorial.photoDesc": "Foto disimpan sebagai blob. WAJIB diupload saat keluar mode offline.",
+  "offline.tutorial.syncTitle": "Sinkronisasi",
+  "offline.tutorial.syncDesc": "Data dikirim ke server saat keluar. Data lokal dihapus setelah berhasil.",
+  "offline.tutorial.agree": "Saya setuju dengan ketentuan penggunaan cache & penyimpanan lokal",
+
+  "offline.selectForm": "Pilih Form Survei",
+  "offline.selectFormDesc": "Pilih form yang mau diisi selama survei",
+  "offline.selectArea": "Pilih Area Survei",
+  "offline.selectAreaDesc": "Tentukan area untuk pre-cache tile peta",
+
+  "offline.survey.distance": "{km} km",
+  "offline.survey.markers": "{count} catatan",
+  "offline.survey.markSpring": "Catat Mata Air",
+  "offline.survey.fillForm": "Isi Form",
+  "offline.survey.exit": "Exit",
+  "offline.survey.gpsStart": "Mulai Tracking GPS",
+  "offline.survey.gpsActive": "Tracking Aktif",
+
+  "offline.sync.confirm": "Keluar Mode Offline",
+  "offline.sync.confirmDesc": "Data akan dikirim ke server. Pastikan koneksi stabil.",
+  "offline.sync.photos": "{count} foto — Wajib diupload",
+  "offline.sync.reports": "{count} laporan",
+  "offline.sync.tracks": "Jejak GPS & tracking",
+  "offline.sync.clear": "Data lokal dihapus",
+  "offline.sync.start": "Mulai Sync",
+  "offline.sync.uploading": "Mengupload...",
+  "offline.sync.photoFailed": "Gagal upload foto {name}. Cek koneksi dan coba lagi.",
+  "offline.sync.done": "Selesai!",
+  "offline.sync.retry": "Coba Lagi",
+  "offline.sync.back": "Kembali ke Mode Offline",
+
+  "offline.installPrompt": "Install SpringHub untuk mode offline",
+  "offline.installDesc": "Aplikasi perlu diinstall agar bisa menyimpan data lokal.",
+  "offline.install": "Install Aplikasi"
 }

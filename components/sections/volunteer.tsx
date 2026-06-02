@@ -86,7 +86,7 @@ export function VolunteerActivities() {
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>
-                  <div className="mt-3 flex h-32 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100">
+                  <div className="mt-3 flex h-32 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-900/50">
                     {a.formSlug?.includes("monitoring") && <Eye className="h-10 w-10 text-emerald-500" />}
                     {a.formSlug?.includes("restoration") && <Wrench className="h-10 w-10 text-amber-500" />}
                     {a.formSlug?.includes("trench") && <Layers className="h-10 w-10 text-blue-500" />}
@@ -129,7 +129,7 @@ export function VolunteerActivities() {
               <button
                 onClick={() => setActPage(p => Math.max(1, p - 1))}
                 disabled={actPage === 1}
-                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
+                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
               >
                 ← {t("common.previous")}
               </button>
@@ -139,7 +139,7 @@ export function VolunteerActivities() {
               <button
                 onClick={() => setActPage(p => p + 1)}
                 disabled={actPage >= totalActPages}
-                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30"
+                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
               >
                 {t("common.next")} →
               </button>

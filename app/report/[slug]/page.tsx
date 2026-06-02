@@ -291,7 +291,7 @@ function FieldRenderer({ field }: { field: FormField }) {
             placeholder={field.placeholder}
             pattern={field.type === "phone" ? "^(0[1-9]\\d{8,11}|\\+62\\d{8,13})$" : undefined}
             title={t("form.phone.tip")}
-            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
       );
@@ -304,7 +304,7 @@ function FieldRenderer({ field }: { field: FormField }) {
             name={field.id}
             rows={4}
             required={field.required}
-            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
       );
@@ -318,7 +318,7 @@ function FieldRenderer({ field }: { field: FormField }) {
             type="number"
             min={0}
             required={field.required}
-            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
       );
@@ -331,7 +331,7 @@ function FieldRenderer({ field }: { field: FormField }) {
             name={field.id}
             type="date"
             required={field.required}
-            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
       );
@@ -343,7 +343,7 @@ function FieldRenderer({ field }: { field: FormField }) {
             id={field.id}
             name={field.id}
             required={field.required}
-            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           >
             <option value="">{t("form.select.placeholder")}</option>
             {field.options?.map((opt) => (
@@ -375,7 +375,7 @@ function FieldRenderer({ field }: { field: FormField }) {
             id={field.id}
             name={field.id}
             required={field.required}
-            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           >
             <option value="">{t("form.select.placeholder")}</option>
             {PROVINSI.map((p) => (
@@ -417,7 +417,7 @@ function FieldRenderer({ field }: { field: FormField }) {
             accept="image/*"
             capture="environment"
             required={field.required}
-            className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100"
+            className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30"
           />
         </div>
       );
