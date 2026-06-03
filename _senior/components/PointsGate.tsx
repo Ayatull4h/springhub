@@ -11,10 +11,10 @@ export function PointsGate({ points }: { points: number }) {
   const pct = Math.min(100, Math.round((points / PROJECT_PROPOSAL_THRESHOLD) * 100));
 
   return (
-    <div className="card flex flex-col bg-gradient-to-br from-brand-50 to-white lg:col-span-5">
+    <div className="card flex flex-col bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 lg:col-span-5">
       <div className="flex items-center justify-between">
         <h3 className="text-base font-semibold">Ajukan Project</h3>
-        <span className={`chip ${eligible ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
+        <span className={`chip ${eligible ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300" : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"}`}>
           {eligible ? "✅ Eligible" : "🔒 Terkunci"}
         </span>
       </div>
@@ -36,7 +36,7 @@ export function PointsGate({ points }: { points: number }) {
       {eligible ? (
         <Link href="/projects/new" className="btn-primary mt-5 w-full">Ajukan Project <span>→</span></Link>
       ) : (
-        <button disabled className="mt-5 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-md bg-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-500">
+        <button disabled className="mt-5 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-md bg-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
           <Lock className="h-4 w-4" /> Butuh {PROJECT_PROPOSAL_THRESHOLD.toLocaleString()} poin
         </button>
       )}

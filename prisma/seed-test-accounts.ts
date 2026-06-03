@@ -39,7 +39,7 @@ async function main() {
       passwordHash: volPw,
       username: "Volunteer",
       role: "volunteer",
-      points: 25000,
+      points: 10000,
       trustScore: 75,
       region: "Yogyakarta",
     },

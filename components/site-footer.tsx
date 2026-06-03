@@ -171,6 +171,7 @@ export function SiteFooter() {
                   <li key={l.label}>
                     <Link
                       href={l.href}
+                      prefetch={false}
                       className="text-slate-400 hover:text-white"
                     >
                       {l.label}

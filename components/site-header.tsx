@@ -154,11 +154,12 @@ export function SiteHeader() {
             <>
               <Link
                 href="/sign-in"
+                prefetch={false}
                 className="hidden text-sm font-medium text-ink-muted hover:text-ink dark:text-slate-400 dark:hover:text-white sm:inline"
               >
                 {t("nav.signIn")}
               </Link>
-              <Link href="/join" className="btn-primary">
+              <Link href="/join" prefetch={false} className="btn-primary">
                 {t("nav.join")}
               </Link>
             </>

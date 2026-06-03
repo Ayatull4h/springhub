@@ -14,6 +14,8 @@ const nextConfig = {
     ],
   },
   experimental: {
+    clientRouterFilter: true,
+    clientRouterFilterRedirects: true,
     serverComponentsExternalPackages: [
       "@prisma/client",
       "@prisma/adapter-pg",

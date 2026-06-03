@@ -16,7 +16,7 @@ export function PartnerSection() {
 
   return (
     <section className="container-page py-16">
-      <div className="card flex flex-col items-start gap-4 bg-gradient-to-br from-brand-50 to-white px-6 py-5 md:flex-row md:items-center md:justify-between">
+      <div className="card flex flex-col items-start gap-4 bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 px-6 py-5 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-sm font-semibold text-ink">
             <Handshake className="h-4 w-4 text-brand-600" />

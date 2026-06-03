@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { LiteYouTubeEmbed } from "@/components/lite-youtube-embed";
 
 export function Hero() {
   const { t } = useI18n();
@@ -34,15 +35,7 @@ export function Hero() {
       </div>
 
       <div className="relative aspect-video overflow-hidden rounded-2xl border border-ink-line bg-slate-900 shadow-card dark:border-slate-700">
-        <iframe
-          className="absolute inset-0 h-full w-full"
-          src="https://www.youtube.com/embed/oUDA1loE8BE?rel=0&modestbranding=1"
-          title="Jaga Semesta · SpringHub"
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allowFullScreen
-        />
+        <LiteYouTubeEmbed videoId="oUDA1loE8BE" title="Jaga Semesta · SpringHub" />
       </div>
 
       {/* Mobile fallback — YouTube link */}
