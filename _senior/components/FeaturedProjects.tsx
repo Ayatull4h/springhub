@@ -18,6 +18,9 @@ export function FeaturedProjects() {
   const { t } = useI18n();
   const [page, setPage] = useState(1);
   const [likedProjects, setLikedProjects] = useState<Record<number, boolean>>({});
+  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [currentComments, setCurrentComments] = useState(featuredProjects.map(p => p.comments));
 
   if (!featuredProjects.length) return null;
 
@@ -107,11 +110,48 @@ export function FeaturedProjects() {
               <ThumbsUp className={`h-4 w-4 ${likedProjects[page] ? "fill-current" : ""}`} />
               {likedProjects[page] ? project.likes + 1 : project.likes}
             </button>
-            <button className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink dark:hover:text-white">
+            <button
+              onClick={() => setShowCommentInput(!showCommentInput)}
+              className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink dark:hover:text-white"
+            >
               <MessageSquare className="h-4 w-4" />
-              {project.comments}
+              {currentComments[page - 1]}
             </button>
           </div>
+
+          {showCommentInput && (
+            <div className="mt-3 border-t border-ink-line pt-3 dark:border-slate-700">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!commentText.trim()) return;
+                  setCurrentComments(prev => {
+                    const next = [...prev];
+                    next[page - 1] = (next[page - 1] || 0) + 1;
+                    return next;
+                  });
+                  setCommentText("");
+                  setShowCommentInput(false);
+                }}
+                className="flex gap-2"
+              >
+                <input
+                  type="text"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Tulis komentar..."
+                  className="flex-1 rounded-lg border border-ink-line px-3 py-1.5 text-xs focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/30 dark:bg-slate-700"
+                />
+                <button
+                  type="submit"
+                  disabled={!commentText.trim()}
+                  className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+                >
+                  Kirim
+                </button>
+              </form>
+            </div>
+          )}
 
           <Link href={`mailto:info@jagasemesta.id?subject=Dukung ${encodeURIComponent(project.title)}`}
             className="btn-primary mt-4 w-full justify-center gap-2">

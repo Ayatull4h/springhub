@@ -71,9 +71,11 @@ export const monthlyProgress = [
 ];
 
 export const topRegions = [
-  { rank: 1, name: "Jawa Barat", detail: "43 springs · 234 trees" },
-  { rank: 2, name: "Bali", detail: "28 springs · 198 trees" },
-  { rank: 3, name: "Jawa Tengah", detail: "21 springs · 165 trees" },
+  { rank: 1, name: "Jawa Barat", detail: "43 springs · 234 trees · 12 rorak" },
+  { rank: 2, name: "Bali", detail: "28 springs · 198 trees · 8 rorak" },
+  { rank: 3, name: "Jawa Tengah", detail: "21 springs · 165 trees · 15 rorak" },
+  { rank: 4, name: "Jawa Timur", detail: "15 springs · 89 trees · 5 rorak" },
+  { rank: 5, name: "Sumatera Barat", detail: "12 springs · 67 trees · 3 rorak" },
 ];
 
 // Some volunteers cleared the proposal threshold (>20K), others haven't —
@@ -82,6 +84,8 @@ export const topVolunteers = [
   { rank: 1, name: "Maya Putri", region: "Yogyakarta", points: 24168 },
   { rank: 2, name: "Budi Santoso", region: "Jawa Tengah", points: 21858 },
   { rank: 3, name: "Sari Dewi", region: "Bali", points: 12580 },
+  { rank: 4, name: "Ahmad Fauzi", region: "Jawa Barat", points: 9870 },
+  { rank: 5, name: "Putu Wira", region: "Bali", points: 7540 },
 ];
 
 export type SpringStatus = "healthy" | "degraded" | "restoration";
