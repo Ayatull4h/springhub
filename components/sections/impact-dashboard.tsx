@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Droplets, Sprout, Sparkles, Layers, TrendingUp } from "lucide-react";
 import {
   impactStats,
@@ -20,6 +21,13 @@ const iconMap: Record<string, typeof Droplets> = {
 
 export function ImpactDashboard() {
   const { t } = useI18n();
+  const [monthlyPage, setMonthlyPage] = useState(0);
+  const monthlyPerPage = 2;
+  const totalMonthlyPages = Math.ceil(monthlyProgress.length / monthlyPerPage);
+  const visibleMonthly = monthlyProgress.slice(
+    monthlyPage * monthlyPerPage,
+    monthlyPage * monthlyPerPage + monthlyPerPage
+  );
 
   const IconToStatKey: Record<string, string> = {
     droplet: "dashboard.stat.monitored",
@@ -29,9 +37,10 @@ export function ImpactDashboard() {
   };
 
   const monthlyKeys = [
-    "dashboard.monthly.springs",
-    "dashboard.monthly.trees",
-    "dashboard.monthly.volunteers",
+    "dashboard.monthly.donations",
+    "dashboard.monthly.restored",
+    "dashboard.monthly.trenches",
+    "dashboard.monthly.projects",
   ];
 
   return (
@@ -73,15 +82,16 @@ export function ImpactDashboard() {
             {t("dashboard.monthly")}
           </h3>
           <ul className="mt-4 space-y-4">
-            {monthlyProgress.map((p, idx) => {
+            {visibleMonthly.map((p, idx) => {
+              const globalIdx = monthlyPage * monthlyPerPage + idx;
               const pct = Math.min(100, Math.round((p.value / p.total) * 100));
               const suffix = p.suffix === "now" ? t("dashboard.monthly.now") : t("dashboard.monthly.joined");
               return (
                 <li key={p.label}>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-ink">{t(monthlyKeys[idx])}</span>
+                    <span className="text-ink">{t(monthlyKeys[globalIdx])}</span>
                     <span className="font-medium text-ink">
-                      {p.value} {suffix}
+                      {formatNumber(p.value)} {suffix}
                     </span>
                   </div>
                   <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
@@ -94,6 +104,27 @@ export function ImpactDashboard() {
               );
             })}
           </ul>
+          {totalMonthlyPages > 1 && (
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <button
+                onClick={() => setMonthlyPage(p => Math.max(0, p - 1))}
+                disabled={monthlyPage === 0}
+                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+              >
+                ← {t("common.previous")}
+              </button>
+              <span className="text-xs text-ink-muted">
+                {monthlyPage + 1}/{totalMonthlyPages}
+              </span>
+              <button
+                onClick={() => setMonthlyPage(p => Math.min(totalMonthlyPages - 1, p + 1))}
+                disabled={monthlyPage >= totalMonthlyPages - 1}
+                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+              >
+                {t("common.next")} →
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="card">

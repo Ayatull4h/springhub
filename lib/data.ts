@@ -56,9 +56,10 @@ export const impactStats: Array<{
 ];
 
 export const monthlyProgress = [
-  { label: "Springs Monitored", value: 12, total: 20, suffix: "now" },
-  { label: "Trees Planted", value: 89, total: 120, suffix: "now" },
-  { label: "New Volunteers", value: 45, total: 60, suffix: "joined" },
+  { label: "Donasi Terkumpul", value: 18250000, total: 50000000, suffix: "now" },
+  { label: "Mata Air Direstorasi", value: 12, total: 30, suffix: "now" },
+  { label: "Rorak Dibangun", value: 45, total: 100, suffix: "now" },
+  { label: "Projek Berjalan", value: 3, total: 10, suffix: "now" },
 ];
 
 export const topRegions = [
@@ -111,8 +112,6 @@ export const recentActivities = [
     location: "Mata Air Cibeureum, Bogor",
     when: "2h ago",
     points: 25,
-    likes: 24,
-    comments: 6,
     formSlug: "spring-monitoring" as const,
   },
   {
@@ -121,8 +120,6 @@ export const recentActivities = [
     location: "Bedugul, Bali",
     when: "6h ago",
     points: 60,
-    likes: 18,
-    comments: 3,
     formSlug: "tree-planting" as const,
   },
   {
@@ -131,8 +128,6 @@ export const recentActivities = [
     location: "Yogyakarta",
     when: "1d ago",
     points: 25,
-    likes: 8,
-    comments: 1,
     formSlug: "spring-monitoring" as const,
   },
   {
@@ -141,9 +136,55 @@ export const recentActivities = [
     location: "Klungkung, Bali",
     when: "2d ago",
     points: 15,
-    likes: 12,
-    comments: 2,
     formSlug: "seedling-stock" as const,
+  },
+  {
+    user: "Hendra K.",
+    action: "reported trench development (5 rorak)",
+    location: "Kebumen, Jawa Tengah",
+    when: "3d ago",
+    points: 50,
+    formSlug: "trench-development" as const,
+  },
+  {
+    user: "Sari W.",
+    action: "completed Field Reporting course",
+    location: "Bandung, Jawa Barat",
+    when: "4d ago",
+    points: 25,
+    formSlug: "spring-monitoring" as const,
+  },
+  {
+    user: "Bambang S.",
+    action: "filed a Spring Restoration report",
+    location: "Mata Air Sebatu, Gianyar",
+    when: "5d ago",
+    points: 100,
+    formSlug: "spring-restoration" as const,
+  },
+  {
+    user: "Fitri A.",
+    action: "logged tree planting (25 endemic trees)",
+    location: "Tabanan, Bali",
+    when: "6d ago",
+    points: 60,
+    formSlug: "tree-planting" as const,
+  },
+  {
+    user: "Doni P.",
+    action: "reported seedling stock (500 bibit)",
+    location: "Malang, Jawa Timur",
+    when: "1w ago",
+    points: 15,
+    formSlug: "seedling-stock" as const,
+  },
+  {
+    user: "Mega R.",
+    action: "filed a Pemantauan Mata Air report",
+    location: "Mata Air Senjoyo, Semarang",
+    when: "1w ago",
+    points: 25,
+    formSlug: "spring-monitoring" as const,
   },
 ];
 
@@ -158,6 +199,8 @@ export const featuredProjects: Array<{
   backers: number;
   typeId: ProjectTypeId;
   status: ProjectStatus;
+  likes: number;
+  comments: number;
 }> = [
   {
     title: "Restore Cibeureum Spring",
@@ -169,6 +212,8 @@ export const featuredProjects: Array<{
     backers: 142,
     typeId: "spring_restoration",
     status: "approved",
+    likes: 142,
+    comments: 23,
   },
   {
     title: "Endemic Tree Planting · Tabanan",
@@ -180,6 +225,8 @@ export const featuredProjects: Array<{
     backers: 87,
     typeId: "tree_planting",
     status: "approved",
+    likes: 98,
+    comments: 15,
   },
   {
     title: "Senjoyo Trench Network",
@@ -191,6 +238,8 @@ export const featuredProjects: Array<{
     backers: 0,
     typeId: "trench_development",
     status: "under_review",
+    likes: 54,
+    comments: 8,
   },
 ];
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, HardHat, Heart } from "lucide-react";
+import { ArrowRight, HardHat, Heart, ThumbsUp, MessageSquare } from "lucide-react";
 import { featuredProjects } from "@/lib/data";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
@@ -17,6 +17,7 @@ const PROJECT_ICONS: Record<string, string> = {
 export function FeaturedProjects() {
   const { t } = useI18n();
   const [page, setPage] = useState(1);
+  const [likedProjects, setLikedProjects] = useState<Record<number, boolean>>({});
 
   if (!featuredProjects.length) return null;
 
@@ -82,6 +83,29 @@ export function FeaturedProjects() {
                 </button>
               </>
             )}
+          </div>
+
+          <div className="mt-4 flex items-center justify-between border-t border-ink-line pt-3 dark:border-slate-700">
+            <button
+              onClick={() =>
+                setLikedProjects(prev => ({
+                  ...prev,
+                  [page]: !prev[page],
+                }))
+              }
+              className={`inline-flex items-center gap-1.5 text-xs transition ${
+                likedProjects[page]
+                  ? "text-brand-600"
+                  : "text-ink-muted hover:text-ink dark:hover:text-white"
+              }`}
+            >
+              <ThumbsUp className={`h-4 w-4 ${likedProjects[page] ? "fill-current" : ""}`} />
+              {likedProjects[page] ? project.likes + 1 : project.likes}
+            </button>
+            <button className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink dark:hover:text-white">
+              <MessageSquare className="h-4 w-4" />
+              {project.comments}
+            </button>
           </div>
 
           <Link href={`mailto:info@jagasemesta.id?subject=Dukung ${encodeURIComponent(project.title)}`}

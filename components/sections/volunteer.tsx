@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
   ArrowRight,
-  MessageSquare,
-  ThumbsUp,
   MapPin,
   Sparkles,
   Lock,
@@ -32,8 +30,6 @@ export function VolunteerActivities() {
   const { t } = useI18n();
   const [userPoints, setUserPoints] = useState(0);
   const [showPoints, setShowPoints] = useState(false);
-  const [liked, setLiked] = useState(-1);
-  const [commented, setCommented] = useState(-1);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -47,7 +43,10 @@ export function VolunteerActivities() {
   const [actPage, setActPage] = useState(1);
   const actPerPage = 2;
   const totalActPages = Math.max(1, Math.ceil(recentActivities.length / actPerPage));
-  const visibleActs = recentActivities.slice(0, actPage * actPerPage);
+  const visibleActs = recentActivities.slice(
+    (actPage - 1) * actPerPage,
+    actPage * actPerPage
+  );
 
   const eligible = userPoints >= PROJECT_PROPOSAL_THRESHOLD;
   const pct = Math.min(
@@ -93,26 +92,10 @@ export function VolunteerActivities() {
                     {a.formSlug?.includes("tree") && <TreePine className="h-10 w-10 text-green-500" />}
                     {a.formSlug?.includes("seedling") && <Sprout className="h-10 w-10 text-emerald-600" />}
                   </div>
-                  <div className="mt-3 flex items-center gap-2 text-xs text-ink-muted">
-                    <MapPin className="h-3.5 w-3.5" />
-                    {a.location} · {a.when}
-                  </div>
                   <div className="mt-3 flex items-center justify-between gap-2 border-t border-ink-line pt-3 text-xs text-ink-muted dark:border-slate-700">
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setLiked(i === liked ? -1 : i)}
-                        className={`inline-flex items-center gap-1 transition ${
-                          liked === i ? "text-brand-600" : "hover:text-ink dark:hover:text-white"
-                        }`}
-                      >
-                        <ThumbsUp className={`h-3.5 w-3.5 ${liked === i ? "fill-current" : ""}`} /> {liked === i ? (a.likes ?? 24) + 1 : (a.likes ?? 24)}
-                      </button>
-                      <button
-                        onClick={() => setCommented(i === commented ? -1 : i)}
-                        className="inline-flex items-center gap-1 hover:text-ink dark:hover:text-white"
-                      >
-                        <MessageSquare className="h-3.5 w-3.5" /> {commented === i ? (a.comments ?? 6) + 1 : (a.comments ?? 6)}
-                      </button>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {a.location} · {a.when}
                     </div>
                     {form && (
                       <span className="chip bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
@@ -124,24 +107,36 @@ export function VolunteerActivities() {
               );
             })}
           </ul>
-          {recentActivities.length > actPerPage && (
-            <div className="mt-3 flex items-center justify-center gap-2">
+          {totalActPages > 1 && (
+            <div className="mt-3 flex items-center justify-center gap-1">
               <button
                 onClick={() => setActPage(p => Math.max(1, p - 1))}
                 disabled={actPage === 1}
-                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+                className="rounded-md border border-ink-line px-2 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+                aria-label="Previous page"
               >
-                ← {t("common.previous")}
+                ←
               </button>
-              <span className="text-xs text-ink-muted">
-                {t("common.pageOf", { current: String(actPage), total: String(totalActPages) })}
-              </span>
+              {Array.from({ length: totalActPages }, (_, i) => i + 1).map(num => (
+                <button
+                  key={num}
+                  onClick={() => setActPage(num)}
+                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
+                    actPage === num
+                      ? "bg-brand-600 text-white"
+                      : "text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
               <button
                 onClick={() => setActPage(p => p + 1)}
                 disabled={actPage >= totalActPages}
-                className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+                className="rounded-md border border-ink-line px-2 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+                aria-label="Next page"
               >
-                {t("common.next")} →
+                →
               </button>
             </div>
           )}

@@ -108,10 +108,11 @@ export function SiteHeader() {
           </button>
 
           {user && (
-            <Link
-              href="/profile"
+            <button
+              type="button"
               className="relative rounded-md p-2 text-ink-muted hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
               aria-label="Notifications"
+              title="Notifications — coming soon"
             >
               <Bell className="h-4 w-4" />
               {notifCount > 0 && (
@@ -119,7 +120,7 @@ export function SiteHeader() {
                   {notifCount > 9 ? "9+" : notifCount}
                 </span>
               )}
-            </Link>
+            </button>
           )}
 
           {loading ? (
