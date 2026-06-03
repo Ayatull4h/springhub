@@ -69,6 +69,7 @@ model Profile {
   reviewedReports Report[]          @relation("reviewedReports")
   offlineSessions OfflineSession[]
   notifications  Notification[]
+  userComments   Comment[]
 
   @@index([role])
   @@index([points(sort: Desc)])
@@ -154,7 +155,8 @@ model Project {
   updatedAt    DateTime      @updatedAt
 
   user      Profile?   @relation(fields: [userId], references: [id])
-  donations Donation[]
+  donations     Donation[]
+  commentList   Comment[]  @relation("ProjectComments")
 }
 
 model Donation {
@@ -349,6 +351,19 @@ model Notification {
 
   @@index([userId, isRead])
   @@index([userId, createdAt])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  projectId String
+  userId    String
+  text      String
+  createdAt DateTime @default(now())
+
+  project   Project  @relation("ProjectComments", fields: [projectId], references: [id], onDelete: Cascade)
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
 }
 
 model ContentBlock {

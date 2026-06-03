@@ -25,6 +25,7 @@ import {
 import dynamic from "next/dynamic";
 import { offlineDB, type FormDefinition, type OfflineConfig } from "@/lib/offline-db";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -146,6 +147,7 @@ function getRadiusMultiplier(radius: number): number {
 // ─── Component ─────────────────────────────────────────────────────────────
 
 export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
+  const { t } = useI18n();
   const [step, setStep] = useState<SetupStep>("tutorial");
   const [agreed, setAgreed] = useState(false);
 
@@ -448,11 +450,11 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Loader2 className="h-10 w-10 animate-spin text-brand-600 dark:text-brand-400" />
-        <p className="mt-4 text-lg font-semibold text-ink">Menyiapkan mode offline...</p>
+        <p className="mt-4 text-lg font-semibold text-ink">{t("offline.setup")}...</p>
         {downloadProgress.total > 1 && (
           <div className="mt-4 w-full max-w-xs">
             <div className="flex items-center justify-between text-xs text-ink-muted">
-              <span>Mengunduh tile peta...</span>
+              <span>{t("offline.download")}...</span>
               <span>{pct}%</span>
             </div>
             <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
@@ -479,17 +481,17 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
           <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
         </div>
-        <h2 className="mt-4 text-xl font-bold text-ink">Siap! Mode Offline Aktif</h2>
+        <h2 className="mt-4 text-xl font-bold text-ink">{t("offline.ready") || "Siap! Mode Offline Aktif"}</h2>
         <p className="mt-2 max-w-sm text-center text-sm text-ink-muted">
           {mode === "full"
-            ? "Map, GPS tracking, dan form sudah siap. Kamu bisa survey tanpa sinyal."
-            : "Form sudah siap. Laporan akan tersimpan lokal dan dikirim saat online."}
+            ? t("offline.readyFull") || "Map, GPS tracking, dan form sudah siap. Kamu bisa survey tanpa sinyal."
+            : t("offline.readySave") || "Form sudah siap. Laporan akan tersimpan lokal dan dikirim saat online."}
         </p>
 
         <div className="mt-6 flex items-center gap-3 text-xs text-ink-muted">
           <span className="inline-flex items-center gap-1">
             <Layers className="h-3.5 w-3.5" />
-            {selectedForms.size} form
+            {selectedForms.size} {t("offline.selectForm")}
           </span>
           <span className="inline-flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5" />
@@ -498,7 +500,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           {mode === "full" && (
             <span className="inline-flex items-center gap-1">
               <Grid3X3 className="h-3.5 w-3.5" />
-              Area dipilih
+              {t("offline.areaSelected") || "Area dipilih"}
             </span>
           )}
         </div>
@@ -508,7 +510,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           className="btn-primary mt-8 inline-flex items-center gap-2"
         >
           <MapPin className="h-4 w-4" />
-          Mulai Survey
+          {t("offline.startSurvey")}
         </button>
       </div>
     );
@@ -523,8 +525,8 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             <WifiOff className="h-5 w-5 text-brand-700 dark:text-brand-300" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-ink">Mode Offline Survey</h2>
-            <p className="text-xs text-ink-muted">Survei lingkungan tanpa sinyal</p>
+            <h2 className="text-lg font-bold text-ink">{t("offline.title")}</h2>
+            <p className="text-xs text-ink-muted">{t("offline.setup")}</p>
           </div>
         </div>
 
@@ -533,29 +535,25 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           <div className="flex items-start gap-2.5 rounded-lg bg-brand-50 px-3.5 py-2.5 dark:bg-brand-900/15">
             <Download className="mt-0.5 h-4 w-4 flex-none text-brand-600 dark:text-brand-300" />
             <p className="text-xs text-ink-muted">
-              <strong className="text-ink">Cache data:</strong> Form, definisi field, dan tile peta
-              akan disimpan ke penyimpanan lokal perangkat.
+              <strong className="text-ink">{t("offline.tutorial.cacheTitle")}:</strong> {t("offline.tutorial.cacheDesc")}
             </p>
           </div>
           <div className="flex items-start gap-2.5 rounded-lg bg-amber-50 px-3.5 py-2.5 dark:bg-amber-900/15">
             <MapPin className="mt-0.5 h-4 w-4 flex-none text-amber-600 dark:text-amber-300" />
             <p className="text-xs text-ink-muted">
-              <strong className="text-ink">GPS tracking:</strong> Rekam jejak pergerakan setiap 5
-              meter. Lokasi marker di-snap ke grid 5 km.
+              <strong className="text-ink">{t("offline.tutorial.gpsTitle")}:</strong> {t("offline.tutorial.gpsDesc")}
             </p>
           </div>
           <div className="flex items-start gap-2.5 rounded-lg bg-purple-50 px-3.5 py-2.5 dark:bg-purple-900/15">
             <Camera className="mt-0.5 h-4 w-4 flex-none text-purple-600 dark:text-purple-300" />
             <p className="text-xs text-ink-muted">
-              <strong className="text-ink">Foto:</strong> Kompresi otomatis 720p. Foto wajib
-              diupload saat keluar mode offline.
+              <strong className="text-ink">{t("offline.tutorial.photoTitle")}:</strong> {t("offline.tutorial.photoDesc")}
             </p>
           </div>
           <div className="flex items-start gap-2.5 rounded-lg bg-emerald-50 px-3.5 py-2.5 dark:bg-emerald-900/15">
             <Upload className="mt-0.5 h-4 w-4 flex-none text-emerald-600 dark:text-emerald-300" />
             <p className="text-xs text-ink-muted">
-              <strong className="text-ink">Sinkronisasi:</strong> Data dikirim ke server saat kamu
-              keluar mode offline. Data lokal dihapus setelah berhasil.
+              <strong className="text-ink">{t("offline.tutorial.syncTitle")}:</strong> {t("offline.tutorial.syncDesc")}
             </p>
           </div>
         </div>
@@ -563,7 +561,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
         {/* Accordion: PWA install guides */}
         <div className="mt-6">
           <h3 className="mb-2 text-xs font-semibold uppercase text-ink-subtle">
-            Cara Install Aplikasi
+            {t("offline.installPwa")}
           </h3>
           <div className="space-y-1.5">
             {platformGuides.map((guide) => (
@@ -606,11 +604,10 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           />
           <div>
             <span className="text-sm font-medium text-ink">
-              Saya setuju dengan ketentuan penggunaan cache & penyimpanan lokal
+              {t("offline.tutorial.agree")}
             </span>
             <p className="mt-0.5 text-xs text-ink-muted">
-              Data akan disimpan di perangkat ini dan dihapus setelah sync. Foto wajib diupload
-              saat keluar mode offline.
+              {t("offline.tutorial.agreeDesc") || "Data akan disimpan di perangkat ini dan dihapus setelah sync. Foto wajib diupload saat keluar mode offline."}
             </p>
           </div>
         </label>
@@ -620,7 +617,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           disabled={!agreed}
           className="btn-primary mt-6 w-full"
         >
-          Lanjutkan
+          {t("common.next")}
         </button>
       </div>
     );
@@ -635,9 +632,9 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             <FileCheck className="h-5 w-5 text-brand-700 dark:text-brand-300" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-ink">Pilih Form</h2>
+            <h2 className="text-lg font-bold text-ink">{t("offline.selectForm")}</h2>
             <p className="text-xs text-ink-muted">
-              Pilih form yang mau diisi selama survey (sinkron dengan admin panel)
+              {t("offline.selectFormDesc")}
             </p>
           </div>
         </div>
@@ -646,12 +643,12 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           {loadingForms ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-5 w-5 animate-spin text-brand-600 dark:text-brand-400" />
-              <span className="ml-2 text-sm text-ink-muted">Memuat form...</span>
+              <span className="ml-2 text-sm text-ink-muted">{t("loading")}</span>
             </div>
           ) : forms.length === 0 ? (
             <div className="rounded-xl border border-ink-line bg-white p-6 text-center dark:bg-slate-800">
               <AlertCircle className="mx-auto h-6 w-6 text-ink-muted" />
-              <p className="mt-2 text-sm text-ink-muted">Tidak ada form aktif.</p>
+              <p className="mt-2 text-sm text-ink-muted">{t("offline.noActiveForms") || "Tidak ada form aktif."}</p>
             </div>
           ) : (
             forms.map((form) => (
@@ -687,14 +684,14 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
         <div className="mt-6 flex items-center gap-3">
           <button onClick={() => setStep("tutorial")} className="btn-secondary flex-1">
-            Kembali
+            {t("common.back")}
           </button>
           <button
             onClick={handleNextFromFormSelect}
             disabled={selectedForms.size === 0}
             className="btn-primary flex-1"
           >
-            {mode === "full" ? "Atur Radius & Kualitas" : "Siapkan Offline"}
+            {mode === "full" ? t("offline.radiusQuality") || "Atur Radius & Kualitas" : t("offline.setup")}
           </button>
         </div>
       </div>
@@ -710,18 +707,18 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             <Grid3X3 className="h-5 w-5 text-brand-700 dark:text-brand-300" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-ink">Radius & Kualitas</h2>
+            <h2 className="text-lg font-bold text-ink">{t("offline.radius")} & {t("offline.quality")}</h2>
             <p className="text-xs text-ink-muted">
-              Atur area survei dan kualitas cache tile peta
+              {t("offline.radiusQualityDesc") || "Atur area survei dan kualitas cache tile peta"}
             </p>
           </div>
         </div>
 
         {/* Radius selection */}
         <div className="mt-6">
-          <h3 className="mb-2 text-sm font-semibold text-ink">Radius Survei</h3>
+          <h3 className="mb-2 text-sm font-semibold text-ink">{t("offline.radius")}</h3>
           <p className="mb-3 text-xs text-ink-muted">
-            Semakin besar radius, semakin banyak tile yang di-cache
+            {t("offline.radiusDesc") || "Semakin besar radius, semakin banyak tile yang di-cache"}
           </p>
           <div className="space-y-2">
             {([3, 5, 7, 10] as RadiusKm[]).map((r) => (
@@ -750,10 +747,10 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
                     {r} km
                   </span>
                   <p className="text-xs text-ink-subtle">
-                    {r === 3 && "Mini — sangat kecil, cepat di-cache"}
-                    {r === 5 && "Kecil — cocok untuk area fokus"}
-                    {r === 7 && "Sedang — area survei standar"}
-                    {r === 10 && "Besar — area luas, cache lebih banyak"}
+                    {r === 3 && (t("offline.radiusMini") || "Mini — sangat kecil, cepat di-cache")}
+                    {r === 5 && (t("offline.radiusSmall") || "Kecil — cocok untuk area fokus")}
+                    {r === 7 && (t("offline.radiusMedium") || "Sedang — area survei standar")}
+                    {r === 10 && (t("offline.radiusLarge") || "Besar — area luas, cache lebih banyak")}
                   </p>
                 </div>
               </label>
@@ -763,16 +760,16 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
         {/* Quality selection */}
         <div className="mt-5">
-          <h3 className="mb-2 text-sm font-semibold text-ink">Kualitas Cache</h3>
+          <h3 className="mb-2 text-sm font-semibold text-ink">{t("offline.quality")}</h3>
           <p className="mb-3 text-xs text-ink-muted">
-            Mempengaruhi detail peta saat offline dan ukuran cache
+            {t("offline.qualityDesc") || "Mempengaruhi detail peta saat offline dan ukuran cache"}
           </p>
           <div className="space-y-2">
             {(
               [
-                { value: "ringan" as QualityLevel, label: "Ringan", icon: "🟢", desc: "~5 MB" },
-                { value: "sedang" as QualityLevel, label: "Sedang", icon: "🟡", desc: "~20 MB" },
-                { value: "lengkap" as QualityLevel, label: "Lengkap", icon: "🔴", desc: "~60 MB" },
+                { value: "ringan" as QualityLevel, label: t("offline.qualityLight"), icon: "🟢", desc: "~5 MB" },
+                { value: "sedang" as QualityLevel, label: t("offline.qualityMedium"), icon: "🟡", desc: "~20 MB" },
+                { value: "lengkap" as QualityLevel, label: t("offline.qualityHeavy"), icon: "🔴", desc: "~60 MB" },
               ] as const
             ).map((q) => (
               <label
@@ -805,7 +802,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
         {/* Estimated size */}
         <div className="mt-5 rounded-xl border border-ink-line bg-slate-50 p-3.5 dark:bg-slate-800">
           <div className="flex items-center justify-between text-sm">
-            <span className="font-medium text-ink">Estimasi Cache</span>
+            <span className="font-medium text-ink">{t("offline.cacheEstimate") || "Estimasi Cache"}</span>
             <span className="font-bold text-brand-600 dark:text-brand-400">
               ~{estimatedSizeMB} MB
             </span>
@@ -825,10 +822,10 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
         <div className="mt-6 flex items-center gap-3">
           <button onClick={() => setStep("form-select")} className="btn-secondary flex-1">
-            Kembali
+            {t("common.back")}
           </button>
           <button onClick={handleNextFromRadiusQuality} className="btn-primary flex-1">
-            {mode === "full" ? "Pilih Area Survei" : "Siapkan Offline"}
+            {mode === "full" ? t("offline.selectArea") : t("offline.setup")}
           </button>
         </div>
       </div>
@@ -849,9 +846,9 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
               <Grid3X3 className="h-5 w-5 text-brand-700 dark:text-brand-300" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-ink">Pilih Area Survei</h2>
+              <h2 className="text-lg font-bold text-ink">{t("offline.selectArea")}</h2>
               <p className="text-xs text-ink-muted">
-                Klik peta untuk pindahkan pusat lingkaran. Gunakan tombol radius di bawah.
+                {t("offline.selectAreaDesc")}
               </p>
             </div>
           </div>
@@ -913,7 +910,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-700 dark:bg-emerald-900/20">
               <div className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-300">
                 <CheckCircle2 className="h-4 w-4" />
-                Area dipilih — ~{areaKm2} km²
+                {t("offline.areaSelected") || "Area dipilih"} — ~{areaKm2} km²
               </div>
               <div className="mt-1 flex gap-3 text-xs text-emerald-600 dark:text-emerald-400">
                 <span>~{estimatedTotalTiles.toLocaleString("id-ID")} tile</span>
@@ -923,21 +920,21 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           ) : (
             <div className="rounded-xl border border-ink-line bg-white p-3 dark:bg-slate-800">
               <p className="text-xs text-ink-muted">
-                Klik peta untuk memilih pusat area survei. Lingkaran menunjukkan area yang akan di-cache.
+                {t("offline.clickMap") || "Klik peta untuk memilih pusat area survei. Lingkaran menunjukkan area yang akan di-cache."}
               </p>
             </div>
           )}
 
           <div className="mt-4 flex items-center gap-3">
             <button onClick={() => setStep("radius-quality")} className="btn-secondary flex-1">
-              Kembali
+              {t("common.back")}
             </button>
             <button
               onClick={cacheFormsAndFinish}
               disabled={!selectedArea}
               className="btn-primary flex-1"
             >
-              Download Tile & Siapkan
+              {t("offline.download")} & {t("offline.setup")}
             </button>
           </div>
         </div>

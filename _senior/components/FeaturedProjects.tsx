@@ -92,6 +92,17 @@ const dummyComments: Record<number, Array<{ user: string; text: string; time: st
   ],
 };
 
+function formatTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins} menit lalu`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} jam lalu`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} hari lalu`;
+  return `${Math.floor(days / 30)} bulan lalu`;
+}
+
 export function FeaturedProjects() {
   const { t } = useI18n();
   const [page, setPage] = useState(1);
@@ -101,6 +112,8 @@ export function FeaturedProjects() {
   const [user, setUser] = useState<{ id: string; username: string } | null>(null);
   const [showComments, setShowComments] = useState(false);
   const [localComments, setLocalComments] = useState<Record<number, Array<{ user: string; text: string; time: string }>>>({});
+  const [realComments, setRealComments] = useState<Record<number, Array<{user: string; text: string; time: string}>>>({});
+  const [commentsLoading, setCommentsLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -108,6 +121,27 @@ export function FeaturedProjects() {
       .then(data => setUser(data.user ?? null))
       .catch(() => setUser(null));
   }, []);
+
+  useEffect(() => {
+    if (!showComments) return;
+    setCommentsLoading(true);
+    fetch(`/api/projects/${page}/comments`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.comments) {
+          setRealComments(prev => ({
+            ...prev,
+            [page - 1]: data.comments.map((c: any) => ({
+              user: c.user?.username || "Anonim",
+              text: c.text,
+              time: formatTimeAgo(c.createdAt),
+            })),
+          }));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setCommentsLoading(false));
+  }, [showComments, page]);
 
   if (!featuredProjects.length) return null;
 
@@ -212,16 +246,23 @@ export function FeaturedProjects() {
               
               {/* Comments list — newest first, max 5 shown, scrollable */}
               <div className="space-y-2 max-h-60 overflow-y-auto touch-pan-y overscroll-contain">
-                {[...(localComments[page - 1] || []), ...(dummyComments[page - 1] || [])].slice(0, 5).reverse().map((c, i) => (
-                  <div key={`${c.user}-${i}`} className="rounded-lg bg-slate-50 p-2.5 dark:bg-slate-800">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-ink">{c.user}</span>
-                      <span className="text-[10px] text-ink-subtle">{c.time}</span>
-                    </div>
-                    <p className="mt-0.5 text-xs text-ink-muted">{c.text}</p>
-                  </div>
-                ))}
-                {(dummyComments[page - 1] || []).length === 0 && (localComments[page - 1] || []).length === 0 && (
+                {commentsLoading ? (
+                  <p className="text-xs text-ink-muted text-center py-4">Memuat komentar...</p>
+                ) : (
+                  [...(localComments[page - 1] || []), ...(realComments[page - 1] || []), ...(dummyComments[page - 1] || [])]
+                    .slice(0, 5)
+                    .reverse()
+                    .map((c, i) => (
+                      <div key={`${c.user}-${i}`} className="rounded-lg bg-slate-50 p-2.5 dark:bg-slate-800">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-ink">{c.user}</span>
+                          <span className="text-[10px] text-ink-subtle">{c.time}</span>
+                        </div>
+                        <p className="mt-0.5 text-xs text-ink-muted">{c.text}</p>
+                      </div>
+                    ))
+                )}
+                {(dummyComments[page - 1] || []).length === 0 && (localComments[page - 1] || []).length === 0 && (realComments[page - 1] || []).length === 0 && !commentsLoading && (
                   <p className="text-xs text-ink-muted text-center py-4">Belum ada komentar.</p>
                 )}
               </div>
@@ -229,7 +270,7 @@ export function FeaturedProjects() {
               {/* Comment input — only for logged in users */}
               {user ? (
                 <form
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
                     if (!commentText.trim() || !user) return;
                     const newComment = {
@@ -237,6 +278,7 @@ export function FeaturedProjects() {
                       text: commentText.trim(),
                       time: "Baru saja",
                     };
+                    // Optimistic: show immediately
                     setLocalComments(prev => ({
                       ...prev,
                       [page - 1]: [newComment, ...(prev[page - 1] || [])],
@@ -247,6 +289,20 @@ export function FeaturedProjects() {
                       return next;
                     });
                     setCommentText("");
+                    // Save to API
+                    try {
+                      await fetch(`/api/projects/${page}/comments`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ text: newComment.text }),
+                      });
+                    } catch {
+                      // Revert on failure
+                      setLocalComments(prev => ({
+                        ...prev,
+                        [page - 1]: (prev[page - 1] || []).filter((_, i) => i !== 0),
+                      }));
+                    }
                   }}
                   className="flex gap-2 pt-1"
                 >

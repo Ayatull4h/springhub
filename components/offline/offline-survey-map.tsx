@@ -151,7 +151,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   // ── GPS Tracking ────────────────────────────────────────────────────────
   const startTracking = useCallback(() => {
     if (!navigator.geolocation) {
-      alert("GPS tidak didukung browser ini.");
+      alert(t("offline.gpsNotSupported") || "GPS tidak didukung browser ini.");
       return;
     }
 
@@ -244,14 +244,14 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
       // Max 5 MB
       if (file.size > 5 * 1024 * 1024) {
-        alert("Foto maksimal 5 MB");
+        alert(t("offline.photoMaxSize") || "Foto maksimal 5 MB");
         e.target.value = "";
         return;
       }
 
       // Max 4 photos
       if (markerPhotos.length >= 4) {
-        alert("Maksimal 4 foto per marker");
+        alert(t("offline.photoMaxCount") || "Maksimal 4 foto per marker");
         e.target.value = "";
         return;
       }
@@ -284,7 +284,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const handleMarkerButton = useCallback(
     (type: MarkerType) => {
       if (!currentPos) {
-        alert("Aktifkan GPS dulu untuk menandai lokasi.");
+        alert(t("offline.requireGps") || "Aktifkan GPS dulu untuk menandai lokasi.");
         return;
       }
       setActiveMarkerType(type);
@@ -447,7 +447,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           >
             <Menu className="h-5 w-5" />
           </button>
-          <span className="text-sm font-semibold text-ink">Mode Survei</span>
+          <span className="text-sm font-semibold text-ink">{t("offline.title")}</span>
         </div>
 
         <div className="flex items-center gap-3 text-xs text-ink-muted">
@@ -476,7 +476,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40"
           >
             <X className="h-3.5 w-3.5" />
-            Exit
+            {t("offline.exitSurvey")}
           </button>
         </div>
       </div>
@@ -487,7 +487,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         {sidebarOpen && (
           <div className="absolute left-0 top-0 z-30 flex h-full w-72 flex-col border-r border-ink-line bg-white shadow-lg dark:bg-slate-900">
             <div className="flex items-center justify-between border-b border-ink-line px-4 py-3">
-              <h3 className="text-sm font-bold text-ink">Survey Menu</h3>
+              <h3 className="text-sm font-bold text-ink">{t("offline.surveyMenu") || "Survey Menu"}</h3>
               <button
                 onClick={() => setSidebarOpen(false)}
                 className="rounded-md p-1 text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -508,20 +508,20 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 )}
               >
                 <Navigation className={cn("h-4 w-4", isTracking && "animate-pulse")} />
-                {isTracking ? "Tracking Aktif" : "Mulai Tracking GPS"}
+                {isTracking ? t("offline.survey.gpsActive") : t("offline.survey.gpsStart")}
               </button>
 
               {/* GPS info */}
               {gpsAccuracy !== null && (
                 <div className="mb-3 rounded-lg bg-slate-50 px-3 py-2 text-[10px] text-ink-muted dark:bg-slate-800">
-                  Akurasi GPS: ±{gpsAccuracy.toFixed(0)}m
+                  {t("offline.gpsAccuracy") || "Akurasi GPS"}: ±{gpsAccuracy.toFixed(0)}m
                 </div>
               )}
 
               {/* Forms list */}
               <div className="mb-3">
                 <h4 className="mb-2 text-[10px] font-semibold uppercase text-ink-subtle">
-                  Form Tersedia
+                  {t("offline.availableForms") || "Form Tersedia"}
                 </h4>
                 <div className="space-y-1.5">
                   {cachedForms.map((form) => (
@@ -541,7 +541,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               {markers.length > 0 && (
                 <div>
                   <h4 className="mb-2 text-[10px] font-semibold uppercase text-ink-subtle">
-                    Marker Tercatat ({markers.length})
+                    {t("offline.markers") || "Marker Tercatat"} ({markers.length})
                   </h4>
                   <div className="space-y-1">
                     {markers.map((m) => (
@@ -573,7 +573,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               <div className="border-t border-ink-line px-4 py-3">
                 <div className="flex items-center gap-2 text-xs text-ink-muted">
                   <Save className="h-3.5 w-3.5" />
-                  <span>{pendingReports.length} laporan tersimpan</span>
+                  <span>{pendingReports.length} {t("offline.reportsSaved") || "laporan tersimpan"}</span>
                 </div>
               </div>
             )}
@@ -599,7 +599,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-blue-600 disabled:opacity-50 sm:text-sm"
               >
                 <Flag className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
-                <span className="truncate">Mata Air</span>
+                <span className="truncate">{t("offline.survey.markSpring")}</span>
               </button>
 
               {/* 🌳 Tree marker button */}
@@ -609,7 +609,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-green-600 disabled:opacity-50 sm:text-sm"
               >
                 <Leaf className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
-                <span className="truncate">Tanam Pohon</span>
+                <span className="truncate">{t("offline.trees")}</span>
               </button>
 
               {/* 🕳️ Trench marker button */}
@@ -619,7 +619,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-amber-800 disabled:opacity-50 sm:text-sm"
               >
                 <Mountain className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
-                <span className="truncate">Rorak</span>
+                <span className="truncate">{t("offline.trenches")}</span>
               </button>
 
               {/* 🌰 Seedling marker button */}
@@ -629,7 +629,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-800 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-emerald-900 disabled:opacity-50 sm:text-sm"
               >
                 <Leaf className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
-                <span className="truncate">Seedling</span>
+                <span className="truncate">{t("offline.seedlings")}</span>
               </button>
 
               {/* Fill form button */}
@@ -641,7 +641,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-brand-700 sm:text-sm"
               >
                 <Menu className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
-                <span className="truncate">Isi Form</span>
+                <span className="truncate">{t("offline.survey.fillForm")}</span>
               </button>
             </div>
           </div>
@@ -675,10 +675,10 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                           ? "🕳️"
                           : "🌰"}
                   </span>
-                  Catat: {markerTypeLabel(activeMarkerType)}
+                  {t("offline.addMarker")}: {markerTypeLabel(activeMarkerType)}
                 </h3>
                 <p className="mt-1 text-xs text-ink-muted">
-                  Lokasi akan di-snap ke grid 5 km.
+                  {t("offline.locationSnap") || "Lokasi akan di-snap ke grid 5 km."}
                 </p>
 
                 {/* Name input */}
@@ -686,7 +686,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                   type="text"
                   value={markerNameInput}
                   onChange={(e) => setMarkerNameInput(e.target.value)}
-                  placeholder="Nama (opsional)"
+                  placeholder={t("offline.nameOptional") || "Nama (opsional)"}
                   className="mt-3 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
                   autoFocus
                 />
@@ -695,7 +695,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 <textarea
                   value={markerNoteInput}
                   onChange={(e) => setMarkerNoteInput(e.target.value)}
-                  placeholder="Catatan (opsional)"
+                  placeholder={t("offline.noteOptional") || "Catatan (opsional)"}
                   rows={2}
                   className="mt-2 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
                 />
@@ -703,9 +703,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 {/* Photo capture */}
                 <div className="mt-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-ink">Foto</span>
+                    <span className="text-xs font-medium text-ink">{t("offline.photo") || "Foto"}</span>
                     <span className="text-[10px] text-ink-subtle">
-                      {4 - markerPhotos.length} tersisa
+                      {4 - markerPhotos.length} {t("offline.remaining") || "tersisa"}
                     </span>
                   </div>
 
@@ -747,7 +747,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                       className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600"
                     >
                       <Camera className="h-3.5 w-3.5" />
-                      {markerPhotos.length === 0 ? "Ambil Foto" : "Tambah Foto"}
+                      {markerPhotos.length === 0 ? (t("offline.takePhoto") || "Ambil Foto") : (t("offline.addPhoto") || "Tambah Foto")}
                     </button>
                   )}
 
@@ -764,14 +764,14 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 {/* Action buttons */}
                 <div className="mt-4 flex items-center gap-2">
                   <button onClick={closeMarkerPopup} className="btn-secondary flex-1">
-                    Batal
+                    {t("common.cancel")}
                   </button>
                   <button
                     onClick={confirmMarker}
                     className="btn-primary flex-1 inline-flex items-center justify-center gap-1.5"
                   >
                     <MapPin className="h-4 w-4" />
-                    Simpan
+                    {t("common.save")}
                   </button>
                 </div>
               </div>
@@ -841,7 +841,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                           onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
                           className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
                         >
-                          <option value="">Pilih...</option>
+                          <option value="">{t("common.select") || "Pilih..."}</option>
                           {field.options.map((opt) => (
                             <option key={opt} value={opt}>
                               {opt}
@@ -885,14 +885,14 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
               <div className="mt-6 flex items-center gap-3">
                 <button onClick={() => setView("map")} className="btn-secondary flex-1">
-                  Batal
+                  {t("common.cancel")}
                 </button>
                 <button
                   onClick={handleSubmitForm}
                   className="btn-primary flex-1 inline-flex items-center justify-center gap-2"
                 >
                   <Save className="h-4 w-4" />
-                  Simpan ke Offline
+                  {t("offline.saveForm")}
                 </button>
               </div>
             </div>
