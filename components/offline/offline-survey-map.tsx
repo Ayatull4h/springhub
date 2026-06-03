@@ -325,16 +325,13 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   // ── Marker buttons (show popup) ────────────────────────────────────────
   const handleMarkerButton = useCallback(
     (type: MarkerType) => {
-      if (!currentPos) {
-        alert(t("offline.requireGps") || "Aktifkan GPS dulu untuk menandai lokasi.");
-        return;
-      }
+      // No GPS check — user can place markers using map center as fallback
       setActiveMarkerType(type);
       setMarkerNameInput("");
       setMarkerNoteInput("");
       setMarkerPhotos([]);
     },
-    [currentPos]
+    []
   );
 
   // Close marker popup
@@ -349,9 +346,16 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // Confirm marker
   const confirmMarker = useCallback(async () => {
-    if (!currentPos || !activeMarkerType) return;
+    if (!activeMarkerType) return;
 
-    const snapped = snapToProtectionGrid(currentPos);
+    // Use currentPos if available, otherwise fall back to last tracking point or default center
+    const location = currentPos
+      ? currentPos
+      : trackingPoints.length > 0
+        ? { lat: trackingPoints[trackingPoints.length - 1].lat, lng: trackingPoints[trackingPoints.length - 1].lng }
+        : { lat: -7.5, lng: 110 }; // fallback Java center
+
+    const snapped = snapToProtectionGrid(location);
 
     // Build name from inputs
     const nameParts: string[] = [];
@@ -393,7 +397,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     setMarkerPhotos([]);
     setMarkerNameInput("");
     setMarkerNoteInput("");
-  }, [currentPos, activeMarkerType, gpsAccuracy, markerNameInput, markerNoteInput, markerPhotos]);
+  }, [currentPos, activeMarkerType, gpsAccuracy, markerNameInput, markerNoteInput, markerPhotos, trackingPoints]);
 
   // ── Form handling ──────────────────────────────────────────────────────
   const handleSelectForm = (form: FormDefinition) => {
@@ -764,8 +768,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               <div className="grid grid-cols-4 gap-2">
                 <button
                   onClick={() => handleMarkerButton("spring")}
-                  disabled={!currentPos}
-                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-blue-500 py-2 text-white shadow-lg hover:bg-blue-600 disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-blue-500 py-2 text-white shadow-lg hover:bg-blue-600"
                   title="Mata Air"
                 >
                   <Flag className="h-5 w-5" />
@@ -773,8 +776,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 </button>
                 <button
                   onClick={() => handleMarkerButton("tree")}
-                  disabled={!currentPos}
-                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-green-500 py-2 text-white shadow-lg hover:bg-green-600 disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-green-500 py-2 text-white shadow-lg hover:bg-green-600"
                   title="Tanam Pohon"
                 >
                   <Leaf className="h-5 w-5" />
@@ -782,8 +784,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 </button>
                 <button
                   onClick={() => handleMarkerButton("trench")}
-                  disabled={!currentPos}
-                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-amber-700 py-2 text-white shadow-lg hover:bg-amber-800 disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-amber-700 py-2 text-white shadow-lg hover:bg-amber-800"
                   title="Rorak"
                 >
                   <Mountain className="h-5 w-5" />
@@ -791,8 +792,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 </button>
                 <button
                   onClick={() => handleMarkerButton("seedling")}
-                  disabled={!currentPos}
-                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-emerald-800 py-2 text-white shadow-lg hover:bg-emerald-900 disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-emerald-800 py-2 text-white shadow-lg hover:bg-emerald-900"
                   title="Seedling"
                 >
                   <Leaf className="h-5 w-5" />
@@ -819,32 +819,28 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             <div className="hidden sm:flex items-center gap-2">
               <button
                 onClick={() => handleMarkerButton("spring")}
-                disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-blue-600 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-blue-600"
               >
                 <Flag className="h-4 w-4 flex-none" />
                 <span className="truncate">{t("offline.springs")}</span>
               </button>
               <button
                 onClick={() => handleMarkerButton("tree")}
-                disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-green-600 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-green-600"
               >
                 <Leaf className="h-4 w-4 flex-none" />
                 <span className="truncate">{t("offline.trees")}</span>
               </button>
               <button
                 onClick={() => handleMarkerButton("trench")}
-                disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-amber-800 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-amber-800"
               >
                 <Mountain className="h-4 w-4 flex-none" />
                 <span className="truncate">{t("offline.trenches")}</span>
               </button>
               <button
                 onClick={() => handleMarkerButton("seedling")}
-                disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-800 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-emerald-900 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-800 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-emerald-900"
               >
                 <Leaf className="h-4 w-4 flex-none" />
                 <span className="truncate">{t("offline.seedlings")}</span>
