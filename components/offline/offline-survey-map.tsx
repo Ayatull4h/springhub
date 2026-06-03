@@ -234,6 +234,14 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     };
   }, []);
 
+  // Auto-start tracking on mount
+  useEffect(() => {
+    if (!currentPos) {
+      startTracking();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ── Marker photo capture ───────────────────────────────────────────────
   const handleMarkerPhotoCapture = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -581,7 +589,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         )}
 
         {/* Map */}
-        <div className="relative flex-1 h-full">
+        <div className="relative flex-1" style={{ paddingBottom: "120px" }}>
           <SurveyLeafletMap
             trackingPoints={trackingPoints}
             markers={markers}
