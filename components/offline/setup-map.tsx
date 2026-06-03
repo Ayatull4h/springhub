@@ -59,10 +59,17 @@ function MapCircleController({
     }).addTo(map);
     circleRef.current = circle;
 
-    // Create draggable marker at center
+    // Create draggable custom marker at center (visible on all devices)
+    const markerIcon = L.divIcon({
+      html: '<div style="width:24px;height:24px;background:#059669;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:grab;"></div>',
+      className: "", // remove default Leaflet classes
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+    });
     const marker = L.marker([center.lat, center.lng], {
       draggable: true,
       zIndexOffset: 1000,
+      icon: markerIcon,
     }).addTo(map);
     markerRef.current = marker;
 
@@ -158,6 +165,7 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
         center={[center.lat, center.lng]}
         zoom={10}
         scrollWheelZoom={true}
+        zoomControl={true}
         className="h-full w-full"
         style={{ minHeight: 360 }}
       >
@@ -193,7 +201,7 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
       <button
         onClick={handleLocate}
         disabled={geoLoading}
-        className="absolute left-3 top-16 z-[1000] rounded-md bg-white px-2.5 py-2 text-xs font-medium text-ink-muted shadow-lg transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
+        className="absolute right-3 top-3 z-[1000] rounded-md bg-white px-2.5 py-2 text-xs font-medium text-ink-muted shadow-lg transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
         title="Gunakan lokasi saya"
       >
         <Crosshair className={`h-4 w-4 ${geoLoading ? "animate-spin" : ""}`} />

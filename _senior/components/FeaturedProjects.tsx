@@ -15,26 +15,80 @@ const PROJECT_ICONS: Record<string, string> = {
 };
 
 const dummyComments: Record<number, Array<{ user: string; text: string; time: string }>> = {
-  0: [ // project index 0 = Restore Cibeureum Spring
+  0: [ // project index 0 = Restore Cibeureum Spring — 23 comments
     { user: "Budi Santoso", text: "Semoga cepat terealisasi, warga di sini sangat membutuhkan!", time: "3 hari lalu" },
     { user: "Rina W.", text: "Sudah pernah survei lokasi, potensi mata airnya besar.", time: "5 hari lalu" },
     { user: "Agus P.", text: "Siap bantu gotong royong kalau ada jadwal lapangan.", time: "1 minggu lalu" },
     { user: "Dewi L.", text: "Masyarakat sekitar mohon banget ini direstorasi.", time: "1 minggu lalu" },
     { user: "Fajar N.", text: "Saya donasi untuk proyek ini! Semangat!", time: "2 minggu lalu" },
+    { user: "Sri Haryanti", text: "Cibeureum dulu jernih sekali, sekarang mulai keruh. Semoga cepat pulih.", time: "4 jam lalu" },
+    { user: "Dimas Ardiansyah", text: "Aliran airnya mengecek drastis tiap kemarau, perlu tindakan segera.", time: "8 jam lalu" },
+    { user: "Nurul Hidayah", text: "Warga sekitar setiap hari ambil air di sini, tolong diperbaiki infrastrukturnya.", time: "12 jam lalu" },
+    { user: "Eko Prasetyo", text: "Saya bisa bantu desain teknis sistem pipa distribusi.", time: "1 hari lalu" },
+    { user: "Lina Marlina", text: "Potensi debit air masih bagus kalau dikelola dengan baik.", time: "1 hari lalu" },
+    { user: "Joko Susilo", text: "Sudah ada kelompok sadar lingkungan di sini, tinggal didukung.", time: "2 hari lalu" },
+    { user: "Fitriani", text: "Ayo donasi! Setiap rupiah berarti buat alam.", time: "2 hari lalu" },
+    { user: "Rizki Pratama", text: "Mata air ini sumber kehidupan puluhan KK, jangan sampai mati.", time: "3 hari lalu" },
+    { user: "Wulan Sari", text: "Pohon di sekitar mata air banyak ditebang, perlu reboisasi juga.", time: "4 hari lalu" },
+    { user: "Hendra Gunawan", text: "Semoga Pemda ikut mendukung program restorasi ini.", time: "5 hari lalu" },
+    { user: "Dian Permata", text: "Survey tanah sudah kami lakukan, hasilnya positif buat restorasi.", time: "6 hari lalu" },
+    { user: "Arif Budiman", text: "Siap menjadi volunteer lapangan setiap akhir pekan.", time: "1 minggu lalu" },
+    { user: "Mega Wati", text: "Anak-anak di desa belajar tentang konservasi, semoga ini jadi laboratorium alam.", time: "1 minggu lalu" },
+    { user: "Bayu Aji", text: "Debit air menurun 40% dalam 5 tahun terakhir, data BPDAS.", time: "1 minggu lalu" },
+    { user: "Ratna Kusuma", text: "Kualitas air masih bagus di hulu, perlu dijaga dari pencemaran.", time: "1 minggu lalu" },
+    { user: "Taufik Hidayat", text: "Kami siap bantu pembuatan sumur resapan di sekitar mata air.", time: "2 minggu lalu" },
+    { user: "Siti Nurjanah", text: "Pengalaman restorasi di desa lain berhasil, yakin ini juga bisa!", time: "2 minggu lalu" },
+    { user: "Adi Wibowo", text: "Tanah longsor di hulu bikin sedimentasi, perlu normalisasi segera.", time: "2 minggu lalu" },
   ],
-  1: [ // project index 1 = Endemic Tree Planting Tabanan
+  1: [ // project index 1 = Endemic Tree Planting Tabanan — 23 comments
     { user: "Maya Putri", text: "Pohon endemik sangat penting untuk ekosistem mata air.", time: "2 hari lalu" },
     { user: "Wayan S.", text: "Di Tabanan banyak mata air yang perlu dilindungi.", time: "4 hari lalu" },
     { user: "Komang A.", text: "Siap menyediakan bibit lokal dari desa saya.", time: "6 hari lalu" },
     { user: "Putu W.", text: "Lokasi strategis, semoga cepet terkumpul dananya.", time: "1 minggu lalu" },
     { user: "Made R.", text: "Program bagus! Semoga bisa diperluas ke desa lain.", time: "2 minggu lalu" },
+    { user: "Gede Ariawan", text: "Bibit cempaka wangi sudah saya siapkan 200 batang.", time: "3 jam lalu" },
+    { user: "Nyoman Suastini", text: "Tanaman endemik Bali seperti majegau perlu diperbanyak.", time: "6 jam lalu" },
+    { user: "Ketut Pasek", text: "Areal kritis di hulu Tukad Yeh Ho sudah gundul, butuh penanaman massif.", time: "10 jam lalu" },
+    { user: "Luh Gede", text: "Saya punya lahan 2 hektar, siap ditanami pohon pelindung mata air.", time: "14 jam lalu" },
+    { user: "Wayan Sudarma", text: "Banjir bandang kecil makin sering karena hutan gundul.", time: "1 hari lalu" },
+    { user: "Made Sutama", text: "Kelompok tani siap rawat bibit sampai 3 tahun ke depan.", time: "1 hari lalu" },
+    { user: "Ni Luh Putu", text: "Semoga ada pendampingan teknis untuk jenis pohon yang tepat.", time: "2 hari lalu" },
+    { user: "I Gede Suweta", text: "Subak di hilir sangat bergantung pada ketersediaan air dari hulu.", time: "2 hari lalu" },
+    { user: "Komang Ayu", text: "Pulau Bali perlu lebih banyak pohon endemik, bukan pohon cepat tumbuh.", time: "3 hari lalu" },
+    { user: "Putu Astawa", text: "Saya donasi bibit melalui program ini! Semakin banyak semakin baik.", time: "4 hari lalu" },
+    { user: "Wayan Raka", text: "Penanaman sebaiknya di musim hujan biar bibit cepat tumbuh.", time: "5 hari lalu" },
+    { user: "Nyoman Surya", text: "Dukungan dari masyarakat sekitar sudah sangat positif.", time: "6 hari lalu" },
+    { user: "Ketut Suardana", text: "Kami siap jadi kader lingkungan untuk rawat pohon setiap minggu.", time: "1 minggu lalu" },
+    { user: "Ni Made Wati", text: "Anak-anak sekolah siap ikut kegiatan penanaman, edukasi penting!", time: "1 minggu lalu" },
+    { user: "Putu Agus", text: "Pohon endemik lebih tahan hama, cocok buat jangka panjang.", time: "1 minggu lalu" },
+    { user: "Gede Wiratha", text: "Desa kami sudah buat perarem (perdes) tentang perlindungan mata air.", time: "1 minggu lalu" },
+    { user: "Luh Sri", text: "Saya lihat mata air mulai muncul lagi di daerah yang ditanami bambu.", time: "2 minggu lalu" },
+    { user: "Wayan Artana", text: "Target 5.000 bibit tercapai, mari kita kawal terus!", time: "2 minggu lalu" },
   ],
-  2: [ // project index 2 = Senjoyo Trench Network
+  2: [ // project index 2 = Senjoyo Trench Network — 23 comments
     { user: "Ahmad Fauzi", text: "Rorak di Senjoyo sangat efektif cegah banjir waktu hujan.", time: "1 hari lalu" },
     { user: "Sari Dewi", text: "Saya lihat langsung dampaknya, air tanah naik.", time: "3 hari lalu" },
     { user: "Hendra K.", text: "Desain roraknya sudah cocok dengan kontur tanah.", time: "5 hari lalu" },
     { user: "Tono P.", text: "Monggo didukung, ini proyek nyata untuk warga.", time: "1 minggu lalu" },
     { user: "Rina W.", text: "Semoga segera approved, sudah ditinjau tim teknis.", time: "1 minggu lalu" },
+    { user: "Slamet Riyadi", text: "Saluran resapan di Senjoyo sudah mulai berfungsi, air tidak langsung terbuang.", time: "2 jam lalu" },
+    { user: "Wahyu Utomo", text: "Sebelum ada rorak, jalan desa sering banjir setinggi lutut. Sekarang aman.", time: "5 jam lalu" },
+    { user: "Dwi Astuti", text: "Sumur warga mulai terisi lagi setelah musim kemarau panjang.", time: "9 jam lalu" },
+    { user: "Supardi", text: "Teknik pengerjaannya sederhana tapi dampaknya luar biasa.", time: "12 jam lalu" },
+    { user: "Endang S.", text: "Perlu perawatan rutin supaya rorak tidak tersumbat sampah.", time: "16 jam lalu" },
+    { user: "Sugeng Hartono", text: "Saya siap jadi koordinator perawatan rorak di wilayah RW 3.", time: "20 jam lalu" },
+    { user: "Tri Wahyuni", text: "Pemerintah desa sudah alokasikan dana untuk pemeliharaan.", time: "1 hari lalu" },
+    { user: "Heru Santoso", text: "Dulu setiap hujan kebun saya kebanjiran, sekarang air meresap semua.", time: "1 hari lalu" },
+    { user: "Ika Yunita", text: "Ayo tingkatkan jumlah rorak, target kita 500 unit tahun ini!", time: "2 hari lalu" },
+    { user: "Agung Setiawan", text: "Pemasangan rorak di lahan miring juga mengurangi erosi tanah.", time: "2 hari lalu" },
+    { user: "Rini Sulistyo", text: "Air tanah naik 3 meter setelah musim hujan pertama.", time: "3 hari lalu" },
+    { user: "Prasetyo", text: "Metode ini cocok diterapkan di daerah lain yang rawan banjir.", time: "4 hari lalu" },
+    { user: "Yuli Handayani", text: "Saya buat konten edukasi tentang rorak biar banyak yang tahu manfaatnya.", time: "5 hari lalu" },
+    { user: "Joko Susanto", text: "Hari Sabtu gotong royong gali rorak baru, siapa siap ikut?", time: "6 hari lalu" },
+    { user: "Nina Kurnia", text: "Tanaman di sekitar rorak tumbuh subur, ada air terus.", time: "1 minggu lalu" },
+    { user: "Bambang W.", text: "Kerja sama tim antara masyarakat dan kontraktor berjalan baik.", time: "1 minggu lalu" },
+    { user: "Desi Ratnasari", text: "Senjoyo jadi percontohan desa konservasi air se-Kabupaten.", time: "1 minggu lalu" },
+    { user: "Hariyanto", text: "Jangan lupa juga buat sumur pantau untuk ukur dampak jangka panjang.", time: "2 minggu lalu" },
   ],
 };
 
@@ -157,7 +211,7 @@ export function FeaturedProjects() {
               <h4 className="text-xs font-semibold text-ink">Komentar ({currentComments[page - 1]})</h4>
               
               {/* Comments list — newest first, max 5 shown, scrollable */}
-              <div className="space-y-2 max-h-48 overflow-y-auto">
+              <div className="space-y-2 max-h-60 overflow-y-auto touch-pan-y overscroll-contain">
                 {[...(localComments[page - 1] || []), ...(dummyComments[page - 1] || [])].slice(0, 5).reverse().map((c, i) => (
                   <div key={`${c.user}-${i}`} className="rounded-lg bg-slate-50 p-2.5 dark:bg-slate-800">
                     <div className="flex items-center justify-between">
