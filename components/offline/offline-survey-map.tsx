@@ -336,7 +336,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // ── Marker buttons (show popup) ────────────────────────────────────────
   const handleMarkerButton = (type: MarkerType) => {
-    if (!window.confirm(`Buat marker ${type}?`)) return;
     setActiveMarkerType(type);
     setMarkerNameInput("");
     setMarkerNoteInput("");
@@ -355,57 +354,62 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // Confirm marker
   const confirmMarker = useCallback(async () => {
-    if (!activeMarkerType) return;
+    try {
+      if (!activeMarkerType) return;
 
-    // Use currentPos if available, otherwise fall back to last tracking point or default center
-    const location = currentPos
-      ? currentPos
-      : trackingPoints.length > 0
-        ? { lat: trackingPoints[trackingPoints.length - 1].lat, lng: trackingPoints[trackingPoints.length - 1].lng }
-        : { lat: -7.5, lng: 110 }; // fallback Java center
+      // Use currentPos if available, otherwise fall back to last tracking point or default center
+      const location = currentPos
+        ? currentPos
+        : trackingPoints.length > 0
+          ? { lat: trackingPoints[trackingPoints.length - 1].lat, lng: trackingPoints[trackingPoints.length - 1].lng }
+          : { lat: -7.5, lng: 110 }; // fallback Java center
 
-    const snapped = snapToProtectionGrid(location);
+      const snapped = snapToProtectionGrid(location);
 
-    // Build name from inputs
-    const nameParts: string[] = [];
-    if (markerNameInput.trim()) nameParts.push(markerNameInput.trim());
-    if (markerNoteInput.trim()) nameParts.push(`📝 ${markerNoteInput.trim()}`);
-    const finalName = nameParts.length > 0 ? nameParts.join(" — ") : null;
+      // Build name from inputs
+      const nameParts: string[] = [];
+      if (markerNameInput.trim()) nameParts.push(markerNameInput.trim());
+      if (markerNoteInput.trim()) nameParts.push(`📝 ${markerNoteInput.trim()}`);
+      const finalName = nameParts.length > 0 ? nameParts.join(" — ") : null;
 
-    const marker: OfflineTrackingPoint = {
-      id: crypto.randomUUID(),
-      lat: snapped.lat,
-      lng: snapped.lng,
-      accuracy: gpsAccuracy,
-      markerType: activeMarkerType,
-      name: finalName,
-      recordedAt: Date.now(),
-    };
-
-    // Save photos as blobs associated with this marker
-    for (const photo of markerPhotos) {
-      await offlineDB.savePhoto({
+      const marker: OfflineTrackingPoint = {
         id: crypto.randomUUID(),
-        reportId: marker.id,
-        fieldId: "marker_photo",
-        blob: photo.blob,
-        fileName: `marker_${Date.now()}.jpg`,
-        mimeType: "image/jpeg",
-      });
-    }
+        lat: snapped.lat,
+        lng: snapped.lng,
+        accuracy: gpsAccuracy,
+        markerType: activeMarkerType,
+        name: finalName,
+        recordedAt: Date.now(),
+      };
 
-    setMarkers((prev) => [...prev, marker]);
-    setTrackingPoints((prev) => [...prev, marker]);
-    await offlineDB.saveTrackingPoint(marker);
+      // Save photos as blobs associated with this marker
+      for (const photo of markerPhotos) {
+        await offlineDB.savePhoto({
+          id: crypto.randomUUID(),
+          reportId: marker.id,
+          fieldId: "marker_photo",
+          blob: photo.blob,
+          fileName: `marker_${Date.now()}.jpg`,
+          mimeType: "image/jpeg",
+        });
+      }
 
-    // Cleanup
-    for (const p of markerPhotos) {
-      URL.revokeObjectURL(p.preview);
+      setMarkers((prev) => [...prev, marker]);
+      setTrackingPoints((prev) => [...prev, marker]);
+      await offlineDB.saveTrackingPoint(marker);
+
+      // Cleanup
+      for (const p of markerPhotos) {
+        URL.revokeObjectURL(p.preview);
+      }
+      setActiveMarkerType(null);
+      setMarkerPhotos([]);
+      setMarkerNameInput("");
+      setMarkerNoteInput("");
+    } catch (err) {
+      console.error("[Marker] Save failed:", err);
+      alert("Gagal menyimpan marker. Coba lagi.");
     }
-    setActiveMarkerType(null);
-    setMarkerPhotos([]);
-    setMarkerNameInput("");
-    setMarkerNoteInput("");
   }, [currentPos, activeMarkerType, gpsAccuracy, markerNameInput, markerNoteInput, markerPhotos, trackingPoints]);
 
   // ── Form handling ──────────────────────────────────────────────────────
