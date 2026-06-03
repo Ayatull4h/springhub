@@ -801,7 +801,13 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               </div>
               {/* Row 2: Fill Form full width */}
               <button
-                onClick={() => { setSidebarOpen(true); setView("form-list"); }}
+                onClick={() => {
+                if (cachedForms.length > 0) {
+                  handleSelectForm(cachedForms[0]);
+                } else {
+                  setSidebarOpen(true);
+                }
+              }}
                 className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
               >
                 <Menu className="h-4 w-4" />
@@ -844,7 +850,13 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 <span className="truncate">{t("offline.seedlings")}</span>
               </button>
               <button
-                onClick={() => { setSidebarOpen(true); setView("form-list"); }}
+                onClick={() => {
+                if (cachedForms.length > 0) {
+                  handleSelectForm(cachedForms[0]);
+                } else {
+                  setSidebarOpen(true);
+                }
+              }}
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
               >
                 <Menu className="h-4 w-4 flex-none" />
