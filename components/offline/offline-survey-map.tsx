@@ -647,12 +647,10 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         </div>
       </div>
 
-      {/* Main content */}
+      {/* Main content — map only, no bottom bar inside */}
       <div className="relative flex flex-1 overflow-hidden">
-
-
-        {/* Map */}
-        <div className="relative flex-1 flex flex-col">
+        {/* Map wrapper — just the map, no flex-col (bottom bar moved outside) */}
+        <div className="relative flex-1">
           {/* Map + overlays container */}
           <div className="relative flex-1">
             <ErrorBoundary>
@@ -695,227 +693,223 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 {t("offline.survey.gpsStart") || "Mulai Tracking GPS"}
               </button>
             )}
-
-
           </div>
-
-          {/* Bottom action bar (natural flow) */}
-          <div className="border-t border-ink-line bg-white/95 px-3 py-2 dark:bg-slate-900/95">
-            {/* Mobile: 2 rows */}
-            <div className="flex flex-col gap-2 sm:hidden">
-              {/* Row 1: 4 marker icons */}
-              <div className="grid grid-cols-4 gap-2">
-                <button
-                  onClick={() => handleMarkerButton("spring")}
-                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-blue-500 py-2 text-white shadow-lg hover:bg-blue-600"
-                  title="Mata Air"
-                >
-                  <Flag className="h-5 w-5" />
-                  <span className="text-[10px] font-semibold">{t("offline.springs")}</span>
-                </button>
-                <button
-                  onClick={() => handleMarkerButton("tree")}
-                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-green-500 py-2 text-white shadow-lg hover:bg-green-600"
-                  title="Tanam Pohon"
-                >
-                  <Leaf className="h-5 w-5" />
-                  <span className="text-[10px] font-semibold">{t("offline.trees")}</span>
-                </button>
-                <button
-                  onClick={() => handleMarkerButton("trench")}
-                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-amber-700 py-2 text-white shadow-lg hover:bg-amber-800"
-                  title="Rorak"
-                >
-                  <Mountain className="h-5 w-5" />
-                  <span className="text-[10px] font-semibold">{t("offline.trenches")}</span>
-                </button>
-                <button
-                  onClick={() => handleMarkerButton("seedling")}
-                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-emerald-800 py-2 text-white shadow-lg hover:bg-emerald-900"
-                  title="Seedling"
-                >
-                  <Leaf className="h-5 w-5" />
-                  <span className="text-[10px] font-semibold">{t("offline.seedlings")}</span>
-                </button>
-              </div>
-              {/* Row 2: Fill Form full width */}
-              <button
-                onClick={() => {
-                if (cachedForms.length > 0) {
-                  handleSelectForm(cachedForms[0]);
-                }
-              }}
-                className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
-              >
-                <Menu className="h-4 w-4" />
-                <span>{t("offline.survey.fillForm")}</span>
-              </button>
-            </div>
-
-            {/* Desktop: 5 buttons in 1 row */}
-            <div className="hidden sm:flex items-center gap-2">
-              <button
-                onClick={() => handleMarkerButton("spring")}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-blue-600"
-              >
-                <Flag className="h-4 w-4 flex-none" />
-                <span className="truncate">{t("offline.springs")}</span>
-              </button>
-              <button
-                onClick={() => handleMarkerButton("tree")}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-green-600"
-              >
-                <Leaf className="h-4 w-4 flex-none" />
-                <span className="truncate">{t("offline.trees")}</span>
-              </button>
-              <button
-                onClick={() => handleMarkerButton("trench")}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-amber-800"
-              >
-                <Mountain className="h-4 w-4 flex-none" />
-                <span className="truncate">{t("offline.trenches")}</span>
-              </button>
-              <button
-                onClick={() => handleMarkerButton("seedling")}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-800 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-emerald-900"
-              >
-                <Leaf className="h-4 w-4 flex-none" />
-                <span className="truncate">{t("offline.seedlings")}</span>
-              </button>
-              <button
-                onClick={() => {
-                if (cachedForms.length > 0) {
-                  handleSelectForm(cachedForms[0]);
-                }
-              }}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
-              >
-                <Menu className="h-4 w-4 flex-none" />
-                <span className="truncate">{t("offline.survey.fillForm")}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* ── Marker popup ─────────────────────────────────────────────── */}
-          {activeMarkerType && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-              <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800">
-                {/* Title */}
-                <h3 className="flex items-center gap-2 text-sm font-bold text-ink">
-                  <span>
-                    {activeMarkerType === "spring"
-                      ? "💧"
-                      : activeMarkerType === "tree"
-                        ? "🌱"
-                        : activeMarkerType === "trench"
-                          ? "🕳️"
-                          : "🌰"}
-                  </span>
-                  {t("offline.addMarker")}: {markerTypeLabel(activeMarkerType)}
-                </h3>
-                <p className="mt-1 text-xs text-ink-muted">
-                  {t("offline.locationSnap") || "Lokasi akan di-snap ke grid 5 km."}
-                </p>
-
-                {/* Name input */}
-                <input
-                  type="text"
-                  value={markerNameInput}
-                  onChange={(e) => setMarkerNameInput(e.target.value)}
-                  placeholder={t("offline.nameOptional") || "Nama (opsional)"}
-                  className="mt-3 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-                  autoFocus
-                />
-
-                {/* Note/description */}
-                <textarea
-                  value={markerNoteInput}
-                  onChange={(e) => setMarkerNoteInput(e.target.value)}
-                  placeholder={t("offline.noteOptional") || "Catatan (opsional)"}
-                  rows={2}
-                  className="mt-2 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-                />
-
-                {/* Photo capture */}
-                <div className="mt-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-ink">{t("offline.photo") || "Foto"}</span>
-                    <span className="text-[10px] text-ink-subtle">
-                      {4 - markerPhotos.length} {t("offline.remaining") || "tersisa"}
-                    </span>
-                  </div>
-
-                  {/* Photo preview grid */}
-                  {markerPhotos.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {markerPhotos.map((photo, idx) => (
-                        <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded-lg border border-ink-line">
-                          <img
-                            src={photo.preview}
-                            alt={`Foto ${idx + 1}`}
-                            className="h-full w-full object-cover"
-                          />
-                          <button
-                            onClick={() => removeMarkerPhoto(idx)}
-                            className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition group-hover:opacity-100"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </div>
-                      ))}
-
-                      {/* Add more button */}
-                      {markerPhotos.length < 4 && (
-                        <button
-                          onClick={() => fileInputRef.current?.click()}
-                          className="flex h-16 w-16 items-center justify-center rounded-lg border-2 border-dashed border-ink-line text-xl text-ink-subtle hover:border-brand-400 hover:text-brand-500"
-                        >
-                          +
-                        </button>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Capture button (shown when less than 4 photos) */}
-                  {markerPhotos.length < 4 && (
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600"
-                    >
-                      <Camera className="h-3.5 w-3.5" />
-                      {markerPhotos.length === 0 ? (t("offline.takePhoto") || "Ambil Foto") : (t("offline.addPhoto") || "Tambah Foto")}
-                    </button>
-                  )}
-
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={handleMarkerPhotoCapture}
-                    className="hidden"
-                  />
-                </div>
-
-                {/* Action buttons */}
-                <div className="mt-4 flex items-center gap-2">
-                  <button onClick={closeMarkerPopup} className="btn-secondary flex-1">
-                    {t("common.cancel")}
-                  </button>
-                  <button
-                    onClick={confirmMarker}
-                    className="btn-primary flex-1 inline-flex items-center justify-center gap-1.5"
-                  >
-                    <MapPin className="h-4 w-4" />
-                    {t("common.save")}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
-{/* Form overlay removed — now handled as early return above */}
+        {/* ── Marker popup (inside main content but outside map wrapper) ── */}
+        {activeMarkerType && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800">
+              {/* Title */}
+              <h3 className="flex items-center gap-2 text-sm font-bold text-ink">
+                <span>
+                  {activeMarkerType === "spring"
+                    ? "💧"
+                    : activeMarkerType === "tree"
+                      ? "🌱"
+                      : activeMarkerType === "trench"
+                        ? "🕳️"
+                        : "🌰"}
+                </span>
+                {t("offline.addMarker")}: {markerTypeLabel(activeMarkerType)}
+              </h3>
+              <p className="mt-1 text-xs text-ink-muted">
+                {t("offline.locationSnap") || "Lokasi akan di-snap ke grid 5 km."}
+              </p>
+
+              {/* Name input */}
+              <input
+                type="text"
+                value={markerNameInput}
+                onChange={(e) => setMarkerNameInput(e.target.value)}
+                placeholder={t("offline.nameOptional") || "Nama (opsional)"}
+                className="mt-3 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+                autoFocus
+              />
+
+              {/* Note/description */}
+              <textarea
+                value={markerNoteInput}
+                onChange={(e) => setMarkerNoteInput(e.target.value)}
+                placeholder={t("offline.noteOptional") || "Catatan (opsional)"}
+                rows={2}
+                className="mt-2 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+              />
+
+              {/* Photo capture */}
+              <div className="mt-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-ink">{t("offline.photo") || "Foto"}</span>
+                  <span className="text-[10px] text-ink-subtle">
+                    {4 - markerPhotos.length} {t("offline.remaining") || "tersisa"}
+                  </span>
+                </div>
+
+                {/* Photo preview grid */}
+                {markerPhotos.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {markerPhotos.map((photo, idx) => (
+                      <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded-lg border border-ink-line">
+                        <img
+                          src={photo.preview}
+                          alt={`Foto ${idx + 1}`}
+                          className="h-full w-full object-cover"
+                        />
+                        <button
+                          onClick={() => removeMarkerPhoto(idx)}
+                          className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition group-hover:opacity-100"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+
+                    {/* Add more button */}
+                    {markerPhotos.length < 4 && (
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex h-16 w-16 items-center justify-center rounded-lg border-2 border-dashed border-ink-line text-xl text-ink-subtle hover:border-brand-400 hover:text-brand-500"
+                      >
+                        +
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* Capture button (shown when less than 4 photos) */}
+                {markerPhotos.length < 4 && (
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600"
+                  >
+                    <Camera className="h-3.5 w-3.5" />
+                    {markerPhotos.length === 0 ? (t("offline.takePhoto") || "Ambil Foto") : (t("offline.addPhoto") || "Tambah Foto")}
+                  </button>
+                )}
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleMarkerPhotoCapture}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Action buttons */}
+              <div className="mt-4 flex items-center gap-2">
+                <button onClick={closeMarkerPopup} className="btn-secondary flex-1">
+                  {t("common.cancel")}
+                </button>
+                <button
+                  onClick={confirmMarker}
+                  className="btn-primary flex-1 inline-flex items-center justify-center gap-1.5"
+                >
+                  <MapPin className="h-4 w-4" />
+                  {t("common.save")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom action bar — OUTSIDE map wrapper to avoid Leaflet click interception */}
+      <div className="border-t border-ink-line bg-white/95 px-3 py-2 dark:bg-slate-900/95">
+        {/* Mobile: 2 rows */}
+        <div className="flex flex-col gap-2 sm:hidden">
+          {/* Row 1: 4 marker icons */}
+          <div className="grid grid-cols-4 gap-2">
+            <button
+              onClick={() => handleMarkerButton("spring")}
+              className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-blue-500 py-2 text-white shadow-lg hover:bg-blue-600"
+              title="Mata Air"
+            >
+              <Flag className="h-5 w-5" />
+              <span className="text-[10px] font-semibold">{t("offline.springs")}</span>
+            </button>
+            <button
+              onClick={() => handleMarkerButton("tree")}
+              className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-green-500 py-2 text-white shadow-lg hover:bg-green-600"
+              title="Tanam Pohon"
+            >
+              <Leaf className="h-5 w-5" />
+              <span className="text-[10px] font-semibold">{t("offline.trees")}</span>
+            </button>
+            <button
+              onClick={() => handleMarkerButton("trench")}
+              className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-amber-700 py-2 text-white shadow-lg hover:bg-amber-800"
+              title="Rorak"
+            >
+              <Mountain className="h-5 w-5" />
+              <span className="text-[10px] font-semibold">{t("offline.trenches")}</span>
+            </button>
+            <button
+              onClick={() => handleMarkerButton("seedling")}
+              className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-emerald-800 py-2 text-white shadow-lg hover:bg-emerald-900"
+              title="Seedling"
+            >
+              <Leaf className="h-5 w-5" />
+              <span className="text-[10px] font-semibold">{t("offline.seedlings")}</span>
+            </button>
+          </div>
+          {/* Row 2: Fill Form full width */}
+          <button
+            onClick={() => {
+            if (cachedForms.length > 0) {
+              handleSelectForm(cachedForms[0]);
+            }
+          }}
+            className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
+          >
+            <Menu className="h-4 w-4" />
+            <span>{t("offline.survey.fillForm")}</span>
+          </button>
+        </div>
+
+        {/* Desktop: 5 buttons in 1 row */}
+        <div className="hidden sm:flex items-center gap-2">
+          <button
+            onClick={() => handleMarkerButton("spring")}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-blue-600"
+          >
+            <Flag className="h-4 w-4 flex-none" />
+            <span className="truncate">{t("offline.springs")}</span>
+          </button>
+          <button
+            onClick={() => handleMarkerButton("tree")}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-green-600"
+          >
+            <Leaf className="h-4 w-4 flex-none" />
+            <span className="truncate">{t("offline.trees")}</span>
+          </button>
+          <button
+            onClick={() => handleMarkerButton("trench")}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-amber-800"
+          >
+            <Mountain className="h-4 w-4 flex-none" />
+            <span className="truncate">{t("offline.trenches")}</span>
+          </button>
+          <button
+            onClick={() => handleMarkerButton("seedling")}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-800 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-emerald-900"
+          >
+            <Leaf className="h-4 w-4 flex-none" />
+            <span className="truncate">{t("offline.seedlings")}</span>
+          </button>
+          <button
+            onClick={() => {
+            if (cachedForms.length > 0) {
+              handleSelectForm(cachedForms[0]);
+            }
+          }}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
+          >
+            <Menu className="h-4 w-4 flex-none" />
+            <span className="truncate">{t("offline.survey.fillForm")}</span>
+          </button>
+        </div>
       </div>
     </div>
   );
