@@ -450,7 +450,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           <span className="text-sm font-semibold text-ink">{t("offline.title")}</span>
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-ink-muted">
+        <div className="flex items-center gap-2 text-xs text-ink-muted flex-wrap justify-end">
           <span className="inline-flex items-center gap-1">
             <Footprints className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
             {(totalDistance / 1000).toFixed(2)} km
@@ -590,64 +590,104 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           />
 
           {/* Bottom action bar */}
-          <div className="absolute bottom-0 left-0 right-0 z-20 border-t border-ink-line bg-white/95 px-4 py-3 backdrop-blur dark:bg-slate-900/95">
-            <div className="mx-auto flex max-w-lg items-center justify-center gap-2">
-              {/* 💧 Spring marker button */}
+          <div className="absolute bottom-0 left-0 right-0 z-20 border-t border-ink-line bg-white/95 px-3 py-2 backdrop-blur dark:bg-slate-900/95">
+            {/* Mobile: 2 rows */}
+            <div className="flex flex-col gap-2 sm:hidden">
+              {/* Row 1: 4 marker icons */}
+              <div className="grid grid-cols-4 gap-2">
+                <button
+                  onClick={() => handleMarkerButton("spring")}
+                  disabled={!currentPos}
+                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-blue-500 py-2 text-white shadow-lg hover:bg-blue-600 disabled:opacity-50"
+                  title="Mata Air"
+                >
+                  <Flag className="h-5 w-5" />
+                  <span className="text-[10px] font-semibold">{t("offline.springs")}</span>
+                </button>
+                <button
+                  onClick={() => handleMarkerButton("tree")}
+                  disabled={!currentPos}
+                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-green-500 py-2 text-white shadow-lg hover:bg-green-600 disabled:opacity-50"
+                  title="Tanam Pohon"
+                >
+                  <Leaf className="h-5 w-5" />
+                  <span className="text-[10px] font-semibold">{t("offline.trees")}</span>
+                </button>
+                <button
+                  onClick={() => handleMarkerButton("trench")}
+                  disabled={!currentPos}
+                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-amber-700 py-2 text-white shadow-lg hover:bg-amber-800 disabled:opacity-50"
+                  title="Rorak"
+                >
+                  <Mountain className="h-5 w-5" />
+                  <span className="text-[10px] font-semibold">{t("offline.trenches")}</span>
+                </button>
+                <button
+                  onClick={() => handleMarkerButton("seedling")}
+                  disabled={!currentPos}
+                  className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-emerald-800 py-2 text-white shadow-lg hover:bg-emerald-900 disabled:opacity-50"
+                  title="Seedling"
+                >
+                  <Leaf className="h-5 w-5" />
+                  <span className="text-[10px] font-semibold">{t("offline.seedlings")}</span>
+                </button>
+              </div>
+              {/* Row 2: Fill Form full width */}
+              <button
+                onClick={() => { setSidebarOpen(true); setView("form-list"); }}
+                className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
+              >
+                <Menu className="h-4 w-4" />
+                <span>{t("offline.survey.fillForm")}</span>
+              </button>
+            </div>
+
+            {/* Desktop: 5 buttons in 1 row */}
+            <div className="hidden sm:flex items-center gap-2">
               <button
                 onClick={() => handleMarkerButton("spring")}
                 disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-blue-600 disabled:opacity-50 sm:text-sm"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-blue-600 disabled:opacity-50"
               >
-                <Flag className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
-                <span className="truncate">{t("offline.survey.markSpring")}</span>
+                <Flag className="h-4 w-4 flex-none" />
+                <span className="truncate">{t("offline.springs")}</span>
               </button>
-
-              {/* 🌳 Tree marker button */}
               <button
                 onClick={() => handleMarkerButton("tree")}
                 disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-green-600 disabled:opacity-50 sm:text-sm"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-green-600 disabled:opacity-50"
               >
-                <Leaf className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
+                <Leaf className="h-4 w-4 flex-none" />
                 <span className="truncate">{t("offline.trees")}</span>
               </button>
-
-              {/* 🕳️ Trench marker button */}
               <button
                 onClick={() => handleMarkerButton("trench")}
                 disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-amber-800 disabled:opacity-50 sm:text-sm"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-amber-800 disabled:opacity-50"
               >
-                <Mountain className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
+                <Mountain className="h-4 w-4 flex-none" />
                 <span className="truncate">{t("offline.trenches")}</span>
               </button>
-
-              {/* 🌰 Seedling marker button */}
               <button
                 onClick={() => handleMarkerButton("seedling")}
                 disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-800 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-emerald-900 disabled:opacity-50 sm:text-sm"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-800 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-emerald-900 disabled:opacity-50"
               >
-                <Leaf className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
+                <Leaf className="h-4 w-4 flex-none" />
                 <span className="truncate">{t("offline.seedlings")}</span>
               </button>
-
-              {/* Fill form button */}
               <button
-                onClick={() => {
-                  setSidebarOpen(true);
-                  setView("form-list");
-                }}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-brand-700 sm:text-sm"
+                onClick={() => { setSidebarOpen(true); setView("form-list"); }}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
               >
-                <Menu className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
+                <Menu className="h-4 w-4 flex-none" />
                 <span className="truncate">{t("offline.survey.fillForm")}</span>
               </button>
             </div>
           </div>
 
           {/* Distance overlay */}
-          <div className="absolute left-3 top-3 z-20 rounded-lg bg-white/90 px-3 py-2 text-xs text-ink shadow backdrop-blur dark:bg-slate-900/90">
+          <div className="absolute right-3 top-3 z-20 rounded-lg bg-white/90 px-3 py-2 text-xs text-ink shadow backdrop-blur dark:bg-slate-900/90">
             <div className="flex items-center gap-2">
               <Ruler className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
               <span className="font-semibold">{(totalDistance / 1000).toFixed(2)} km</span>
