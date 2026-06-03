@@ -84,6 +84,13 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
     });
   }, []);
 
+  // ── Skip tutorial for returning users ─────────────────────────────────────
+  useEffect(() => {
+    if (hasSetupBefore && step === "tutorial") {
+      setStep("form-select");
+    }
+  }, [hasSetupBefore]);
+
   // ── Fetch forms from admin API ────────────────────────────────────────────
   useEffect(() => {
     if (step !== "form-select") return;

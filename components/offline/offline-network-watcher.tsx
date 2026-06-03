@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { Wifi, WifiOff, Signal, Loader2 } from "lucide-react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { Wifi, WifiOff, Signal, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { offlineDB } from "@/lib/offline-db";
 
@@ -11,20 +11,10 @@ type OfflineBanner = {
   queueCount: number;
 };
 
-/**
- * NetworkWatcher — dipasang di layout.tsx
- *
- * Monitor koneksi via:
- * 1. navigator.onLine events
- * 2. Heartbeat ping ke /api/health setiap 30 detik
- *
- * Saat sinyal hilang, tampilkan banner untuk:
- * - Aktifkan Mode Survei Lengkap (map + GPS + form)
- * - Simpan Laporan Saja (tanpa map)
- * - Tutup banner
- *
- * Saat online kembali, auto-sync pending reports.
- */
+const HEARTBEAT_INTERVAL = 60_000; // 60 detik
+const HEARTBEAT_FAIL_THRESHOLD = 5; // 5 menit gagal baru muncul banner
+const BANNER_COOLDOWN = 600_000; // 10 menit setelah dismiss
+
 export function NetworkWatcher() {
   const router = useRouter();
   const [banner, setBanner] = useState<OfflineBanner>({
@@ -35,20 +25,24 @@ export function NetworkWatcher() {
   const [isOnline, setIsOnline] = useState(true);
   const [heartbeatFails, setHeartbeatFails] = useState(0);
   const [syncing, setSyncing] = useState(false);
+  const cooldownUntil = useRef(0);
+  const bannerDismissed = useRef(false);
 
   // ── Online/Offline listener ──────────────────────────────────────────────
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
       setHeartbeatFails(0);
+      bannerDismissed.current = false;
       setBanner((prev) => ({ ...prev, visible: false }));
-      // Auto-sync when coming back online
       syncPendingQueue();
     };
 
     const handleOffline = () => {
       setIsOnline(false);
-      showSignalLostBanner();
+      if (!bannerDismissed.current && Date.now() > cooldownUntil.current) {
+        showSignalLostBanner();
+      }
     };
 
     window.addEventListener("online", handleOnline);
@@ -60,10 +54,10 @@ export function NetworkWatcher() {
     };
   }, []);
 
-  // ── Heartbeat ping every 30s ─────────────────────────────────────────────
+  // ── Heartbeat ping every 60s ────────────────────────────────────────────
   useEffect(() => {
     const interval = setInterval(async () => {
-      if (!navigator.onLine) return; // already detected offline
+      if (!navigator.onLine) return;
 
       try {
         const res = await fetch("/api/health", {
@@ -74,6 +68,7 @@ export function NetworkWatcher() {
           setHeartbeatFails(0);
           if (!isOnline) {
             setIsOnline(true);
+            bannerDismissed.current = false;
             setBanner((prev) => ({ ...prev, visible: false }));
             syncPendingQueue();
           }
@@ -83,7 +78,7 @@ export function NetworkWatcher() {
       } catch {
         handleHeartbeatFail();
       }
-    }, 30_000);
+    }, HEARTBEAT_INTERVAL);
 
     return () => clearInterval(interval);
   }, [isOnline]);
@@ -91,10 +86,11 @@ export function NetworkWatcher() {
   const handleHeartbeatFail = useCallback(() => {
     setHeartbeatFails((prev) => {
       const next = prev + 1;
-      if (next >= 2) {
-        // 2 consecutive failures = signal lost
+      if (next >= HEARTBEAT_FAIL_THRESHOLD) {
         setIsOnline(false);
-        showSignalLostBanner();
+        if (!bannerDismissed.current && Date.now() > cooldownUntil.current) {
+          showSignalLostBanner();
+        }
       }
       return next;
     });
@@ -122,7 +118,6 @@ export function NetworkWatcher() {
 
     for (const report of reports) {
       try {
-        // Refresh CSRF token before submitting
         const csrfRes = await fetch("/api/csrf");
         const csrfData = await csrfRes.json();
         const csrfToken = csrfData.token || "";
@@ -130,7 +125,7 @@ export function NetworkWatcher() {
         const formData = new FormData();
         formData.set("form_slug", report.formSlug);
         formData.set("_submit_time", String(Date.now()));
-        formData.set("_website", ""); // honeypot
+        formData.set("_website", "");
 
         for (const [key, value] of Object.entries(report.fieldData)) {
           formData.set(key, String(value ?? ""));
@@ -178,66 +173,52 @@ export function NetworkWatcher() {
   };
 
   const dismissBanner = () => {
+    bannerDismissed.current = true;
+    cooldownUntil.current = Date.now() + BANNER_COOLDOWN;
     setBanner((prev) => ({ ...prev, visible: false }));
   };
 
   if (!banner.visible) return null;
 
   return (
-    <div className="fixed inset-x-0 top-16 z-50 mx-auto max-w-2xl px-4">
+    <div className="fixed inset-x-0 top-16 z-50 mx-auto max-w-sm px-4 animate-slide-down">
       {banner.mode === "signal-lost" && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-lg dark:border-amber-700 dark:bg-amber-900/30">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-800/50">
-              <Signal className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">
-                Sinyal hilang!
-              </p>
-              <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-300">
-                {banner.queueCount > 0
-                  ? `${banner.queueCount} laporan tersimpan lokal.`
-                  : "Data form sudah siap offline."}
+        <div className="rounded-lg border border-amber-200 bg-white p-3 shadow-md dark:border-amber-700 dark:bg-slate-800">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Signal className="h-4 w-4 text-amber-500" />
+              <p className="text-xs font-semibold text-amber-800 dark:text-amber-200">
+                Koneksi terputus
               </p>
             </div>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <button
-              onClick={handleActivateFullMode}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-amber-700"
-            >
-              <WifiOff className="h-3.5 w-3.5" />
-              Mode Survei Lengkap
+            <button onClick={dismissBanner} className="text-amber-400 hover:text-amber-600">
+              <X className="h-3.5 w-3.5" />
             </button>
-            <button
-              onClick={handleActivateSaveOnly}
-              className="rounded-lg border border-amber-300 bg-white px-3.5 py-2 text-xs font-medium text-amber-800 hover:bg-amber-50 dark:border-amber-600 dark:bg-amber-900/50 dark:text-amber-200 dark:hover:bg-amber-900/70"
-            >
+          </div>
+          <div className="mt-2 flex items-center gap-1.5">
+            <button onClick={handleActivateFullMode} className="rounded-md bg-amber-600 px-2.5 py-1.5 text-[11px] font-semibold text-white hover:bg-amber-700">
+              Mode Offline
+            </button>
+            <button onClick={handleActivateSaveOnly} className="rounded-md border border-amber-300 bg-white px-2.5 py-1.5 text-[11px] font-medium text-amber-700 hover:bg-amber-50 dark:border-amber-600 dark:bg-slate-700 dark:text-amber-300">
               Simpan Saja
             </button>
-            <button
-              onClick={dismissBanner}
-              className="text-xs font-medium text-amber-600 underline hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-200"
-            >
-              Nanti
+            <button onClick={dismissBanner} className="text-[11px] text-amber-500 underline hover:text-amber-700">
+              Tutup 10 menit
             </button>
           </div>
         </div>
       )}
 
       {banner.mode === "auto-sync" && (
-        <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 shadow-lg dark:border-brand-700 dark:bg-brand-900/30">
-          <div className="flex items-center gap-3">
+        <div className="rounded-lg border border-brand-200 bg-white p-3 shadow-md dark:border-brand-700 dark:bg-slate-800">
+          <div className="flex items-center gap-2">
             {syncing ? (
-              <Loader2 className="h-5 w-5 animate-spin text-brand-600 dark:text-brand-400" />
+              <Loader2 className="h-4 w-4 animate-spin text-brand-600" />
             ) : (
-              <Wifi className="h-5 w-5 text-brand-600 dark:text-brand-400" />
+              <Wifi className="h-4 w-4 text-brand-600" />
             )}
-            <p className="text-sm font-medium text-brand-800 dark:text-brand-200">
-              {syncing
-                ? "Mengirim laporan tersimpan..."
-                : "Laporan berhasil terkirim!"}
+            <p className="text-xs font-medium text-brand-800 dark:text-brand-200">
+              {syncing ? "Mengirim laporan..." : "Laporan terkirim!"}
             </p>
           </div>
         </div>
