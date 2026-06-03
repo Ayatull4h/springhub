@@ -46,6 +46,7 @@ export function FeaturedProjects() {
   const [currentComments, setCurrentComments] = useState(featuredProjects.map(p => p.comments));
   const [user, setUser] = useState<{ id: string; username: string } | null>(null);
   const [showComments, setShowComments] = useState(false);
+  const [localComments, setLocalComments] = useState<Record<number, Array<{ user: string; text: string; time: string }>>>({});
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -155,10 +156,10 @@ export function FeaturedProjects() {
             <div className="mt-3 border-t border-ink-line pt-3 space-y-3 dark:border-slate-700">
               <h4 className="text-xs font-semibold text-ink">Komentar ({currentComments[page - 1]})</h4>
               
-              {/* Dummy comments list */}
+              {/* Comments list — newest first, max 5 shown, scrollable */}
               <div className="space-y-2 max-h-48 overflow-y-auto">
-                {(dummyComments[page - 1] || []).map((c, i) => (
-                  <div key={i} className="rounded-lg bg-slate-50 p-2.5 dark:bg-slate-800">
+                {[...(localComments[page - 1] || []), ...(dummyComments[page - 1] || [])].slice(0, 5).reverse().map((c, i) => (
+                  <div key={`${c.user}-${i}`} className="rounded-lg bg-slate-50 p-2.5 dark:bg-slate-800">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold text-ink">{c.user}</span>
                       <span className="text-[10px] text-ink-subtle">{c.time}</span>
@@ -166,6 +167,9 @@ export function FeaturedProjects() {
                     <p className="mt-0.5 text-xs text-ink-muted">{c.text}</p>
                   </div>
                 ))}
+                {(dummyComments[page - 1] || []).length === 0 && (localComments[page - 1] || []).length === 0 && (
+                  <p className="text-xs text-ink-muted text-center py-4">Belum ada komentar.</p>
+                )}
               </div>
 
               {/* Comment input — only for logged in users */}
@@ -173,7 +177,16 @@ export function FeaturedProjects() {
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    if (!commentText.trim()) return;
+                    if (!commentText.trim() || !user) return;
+                    const newComment = {
+                      user: user.username,
+                      text: commentText.trim(),
+                      time: "Baru saja",
+                    };
+                    setLocalComments(prev => ({
+                      ...prev,
+                      [page - 1]: [newComment, ...(prev[page - 1] || [])],
+                    }));
                     setCurrentComments(prev => {
                       const next = [...prev];
                       next[page - 1] = (next[page - 1] || 0) + 1;
