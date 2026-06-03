@@ -317,6 +317,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   // ── Marker buttons (show popup) ────────────────────────────────────────
   // Direct marker handler — no useCallback complexity
   const handleMarkerButton = (type: MarkerType) => {
+    const confirmed = window.confirm(`Tap marker: ${type}?`);
+    if (!confirmed) return;
     setActiveMarkerType(type);
     setMarkerNameInput("");
     setMarkerNoteInput("");
