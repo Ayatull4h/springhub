@@ -75,6 +75,7 @@ export function SpringMap() {
   const [showMonitoring, setShowMonitoring] = useState(true);
   const [showTreePlanting, setShowTreePlanting] = useState(true);
   const [showSeedling, setShowSeedling] = useState(true);
+  const [showTrench, setShowTrench] = useState(true);
   const [showRestoration, setShowRestoration] = useState(true);
   const [page, setPage] = useState(1);
   const [reports, setReports] = useState<ReportItem[]>([]);
@@ -105,12 +106,13 @@ export function SpringMap() {
     () => reports.filter(r => {
       const slug = r.formSlug;
       if (slug.includes("monitoring") && !showMonitoring) return false;
-      if ((slug.includes("tree") || slug.includes("trench")) && !showTreePlanting) return false;
+      if (slug.includes("trench") && !showTrench) return false;
+      if (slug.includes("tree") && !showTreePlanting) return false;
       if (slug.includes("seedling") && !showSeedling) return false;
       if (slug.includes("restoration") && !showRestoration) return false;
       return true;
     }),
-    [reports, showMonitoring, showTreePlanting, showSeedling, showRestoration]
+    [reports, showMonitoring, showTrench, showTreePlanting, showSeedling, showRestoration]
   );
   const formTitles: Record<string, string> = {
     "spring-monitoring": "form.title.monitoring",
@@ -181,6 +183,12 @@ export function SpringMap() {
               <input type="checkbox" checked={showTreePlanting} onChange={e => setShowTreePlanting(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
               <span className="inline-flex items-center gap-1">
                 <span className="h-2 w-2 rounded-full bg-green-500" /> {t("map.checkTree")}
+              </span>
+            </label>
+            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+              <input type="checkbox" checked={showTrench} onChange={e => setShowTrench(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-amber-800" />
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-amber-800" /> Rorak
               </span>
             </label>
             <label className="flex items-center gap-1.5 text-xs cursor-pointer">
