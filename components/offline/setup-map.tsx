@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { MapContainer, TileLayer, useMap, useMapEvents, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, useMapEvents, Circle, CircleMarker, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { MapPin, Crosshair, LocateFixed } from "lucide-react";
 import L from "leaflet";
@@ -87,6 +87,7 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
   const [center, setCenter] = useState<{ lat: number; lng: number }>(
     selectedCenter ?? { lat: -7.5, lng: 110 }
   );
+  const [userPosition, setUserPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
 
   const handleCenterChange = useCallback(
@@ -110,6 +111,22 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Auto-locate on first load
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const newCenter = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setCenter(newCenter);
+        setUserPosition(newCenter);
+        onAreaSelected(newCenter, selectedRadius);
+      },
+      () => {}, // silently fail
+      { enableHighAccuracy: true, timeout: 5000 }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleLocate = () => {
     if (!navigator.geolocation) return;
     setGeoLoading(true);
@@ -117,6 +134,7 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
       (pos) => {
         const newCenter = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setCenter(newCenter);
+        setUserPosition(newCenter);
         onAreaSelected(newCenter, selectedRadius);
         setGeoLoading(false);
       },
@@ -145,6 +163,23 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
           radiusKm={selectedRadius}
           onCenterChange={handleCenterChange}
         />
+        {/* User location marker */}
+        {userPosition && (
+          <CircleMarker
+            center={[userPosition.lat, userPosition.lng]}
+            radius={7}
+            pathOptions={{
+              color: "#047857",
+              fillColor: "#34d399",
+              fillOpacity: 1,
+              weight: 3,
+            }}
+          >
+            <Tooltip direction="top" permanent>
+              <span className="text-xs font-bold">📍 Kamu</span>
+            </Tooltip>
+          </CircleMarker>
+        )}
       </MapContainer>
 
       {/* Locate button */}

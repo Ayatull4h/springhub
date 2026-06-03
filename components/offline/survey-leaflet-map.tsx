@@ -227,29 +227,35 @@ export function SurveyLeafletMap({
         </CircleMarker>
       ))}
 
-      {/* Current position indicator */}
+      {/* Current position indicator — visible "You are here" */}
       {currentPosition && (
         <>
+          {/* Outer pulse ring */}
           <Circle
             center={[currentPosition.lat, currentPosition.lng]}
-            radius={5}
+            radius={25}
             pathOptions={{
-              color: "#059669",
+              color: "#10b981",
               fillColor: "#10b981",
+              fillOpacity: 0.1,
+              weight: 1.5,
+            }}
+          />
+          {/* Inner dot with border */}
+          <CircleMarker
+            center={[currentPosition.lat, currentPosition.lng]}
+            radius={7}
+            pathOptions={{
+              color: "#047857",
+              fillColor: "#34d399",
               fillOpacity: 1,
-              weight: 2,
+              weight: 3,
             }}
-          />
-          <Circle
-            center={[currentPosition.lat, currentPosition.lng]}
-            radius={20}
-            pathOptions={{
-              color: "#059669",
-              fillColor: "#10b981",
-              fillOpacity: 0.15,
-              weight: 1,
-            }}
-          />
+          >
+            <Tooltip direction="top" permanent>
+              <span className="text-xs font-bold">📍 Kamu</span>
+            </Tooltip>
+          </CircleMarker>
         </>
       )}
     </MapContainer>
