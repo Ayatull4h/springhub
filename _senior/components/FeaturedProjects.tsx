@@ -103,6 +103,21 @@ function formatTimeAgo(dateStr: string): string {
   return `${Math.floor(days / 30)} bulan lalu`;
 }
 
+const STORAGE_KEY = "springhub-comments";
+
+function loadPersistedComments(): Record<number, Array<{user: string; text: string; time: string}>> {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch { return {}; }
+}
+
+function savePersistedComments(comments: Record<number, Array<{user: string; text: string; time: string}>>) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(comments));
+  } catch {}
+}
+
 export function FeaturedProjects() {
   const { t } = useI18n();
   const [page, setPage] = useState(1);
@@ -111,7 +126,7 @@ export function FeaturedProjects() {
   const [currentComments, setCurrentComments] = useState(featuredProjects.map(p => p.comments));
   const [user, setUser] = useState<{ id: string; username: string } | null>(null);
   const [showComments, setShowComments] = useState(false);
-  const [localComments, setLocalComments] = useState<Record<number, Array<{ user: string; text: string; time: string }>>>({});
+  const [localComments, setLocalComments] = useState<Record<number, Array<{ user: string; text: string; time: string }>>>(loadPersistedComments);
   const [realComments, setRealComments] = useState<Record<number, Array<{user: string; text: string; time: string}>>>({});
   const [commentsLoading, setCommentsLoading] = useState(false);
 
@@ -121,6 +136,10 @@ export function FeaturedProjects() {
       .then(data => setUser(data.user ?? null))
       .catch(() => setUser(null));
   }, []);
+
+  useEffect(() => {
+    savePersistedComments(localComments);
+  }, [localComments]);
 
   useEffect(() => {
     if (!showComments) return;
@@ -244,13 +263,12 @@ export function FeaturedProjects() {
             <div className="mt-3 border-t border-ink-line pt-3 space-y-3 dark:border-slate-700">
               <h4 className="text-xs font-semibold text-ink">Komentar ({currentComments[page - 1]})</h4>
               
-              {/* Comments list — newest first, max 5 shown, scrollable */}
-              <div className="space-y-2 max-h-60 overflow-y-auto touch-pan-y overscroll-contain">
+              {/* Comments list — newest first, scrollable */}
+              <div className="space-y-2 overflow-y-auto touch-pan-y overscroll-contain" style={{ maxHeight: "60vh" }}>
                 {commentsLoading ? (
                   <p className="text-xs text-ink-muted text-center py-4">Memuat komentar...</p>
                 ) : (
                   [...(localComments[page - 1] || []), ...(realComments[page - 1] || []), ...(dummyComments[page - 1] || [])]
-                    .slice(0, 5)
                     .reverse()
                     .map((c, i) => (
                       <div key={`${c.user}-${i}`} className="rounded-lg bg-slate-50 p-2.5 dark:bg-slate-800">
