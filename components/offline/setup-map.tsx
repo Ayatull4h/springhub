@@ -44,7 +44,7 @@ function MapCircleController({
     },
   });
 
-  // Maintain a single circle instance
+  // Maintain a single circle instance with real-time drag
   useEffect(() => {
     // Remove old circle if exists
     if (circleRef.current) {
@@ -63,21 +63,35 @@ function MapCircleController({
 
     circleRef.current = circle;
 
-    // Track drag via mousedown/mousemove/mouseup on the circle
-    const onMouseDown = () => { isDragging.current = true; };
+    // Real-time drag handling
+    const onMouseDown = () => { 
+      isDragging.current = true;
+      map.dragging.disable(); // disable map drag while dragging circle
+    };
+    
+    const onMouseMove = (e: L.LeafletMouseEvent) => {
+      if (isDragging.current) {
+        circle.setLatLng(e.latlng); // move circle in real-time
+      }
+    };
+    
     const onMouseUp = (e: L.LeafletMouseEvent) => {
       if (isDragging.current) {
         isDragging.current = false;
+        map.dragging.enable(); // re-enable map drag
         onCenterChange({ lat: e.latlng.lat, lng: e.latlng.lng });
       }
     };
 
     circle.on("mousedown", onMouseDown);
+    map.on("mousemove", onMouseMove);
     map.on("mouseup", onMouseUp);
 
     return () => {
       circle.off("mousedown", onMouseDown);
+      map.off("mousemove", onMouseMove);
       map.off("mouseup", onMouseUp);
+      map.dragging.enable(); // ensure map drag is re-enabled on cleanup
       if (circleRef.current) {
         map.removeLayer(circleRef.current);
         circleRef.current = null;
@@ -195,7 +209,7 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
       <button
         onClick={handleLocate}
         disabled={geoLoading}
-        className="absolute left-3 top-3 z-[1000] rounded-md bg-white px-2.5 py-2 text-xs font-medium text-ink-muted shadow-lg transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
+        className="absolute left-3 top-16 z-[1000] rounded-md bg-white px-2.5 py-2 text-xs font-medium text-ink-muted shadow-lg transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
         title="Gunakan lokasi saya"
       >
         <Crosshair className={`h-4 w-4 ${geoLoading ? "animate-spin" : ""}`} />
@@ -206,7 +220,7 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
         <div className="rounded-lg bg-white/90 px-3 py-2 text-xs text-ink-muted shadow-lg backdrop-blur dark:bg-slate-900/90 dark:text-slate-400">
           <div className="flex items-center gap-1">
             <MapPin className="h-3 w-3 text-brand-600 dark:text-brand-400" />
-            <span>Klik peta untuk pindahkan pusat lingkaran</span>
+            <span>Seret lingkaran untuk pindahkan posisi</span>
           </div>
           <div className="mt-1 font-mono text-[10px] text-ink-subtle dark:text-slate-500">
             {center.lat.toFixed(4)}, {center.lng.toFixed(4)} — Radius: {selectedRadius} km
