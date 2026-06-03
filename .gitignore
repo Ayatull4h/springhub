@@ -56,3 +56,10 @@ e2e-report/
 # opencode
 .opencode/
 .vercel
+
+# playwright-mcp
+.playwright-mcp/
+
+# credentials
+*credentials*
+*credential*

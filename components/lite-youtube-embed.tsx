@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 type LiteYouTubeEmbedProps = {
   videoId: string;
@@ -9,6 +9,7 @@ type LiteYouTubeEmbedProps = {
 
 export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
   const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   if (loaded) {
     return (
@@ -23,16 +24,28 @@ export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
     );
   }
 
+  function handleImgError(e: React.SyntheticEvent<HTMLImageElement>) {
+    // Fallback to hqdefault if maxresdefault doesn't exist
+    (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  }
+
   return (
     <button
       type="button"
       onClick={() => setLoaded(true)}
-      className="absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center bg-cover bg-center transition hover:scale-105"
-      style={{ backgroundImage: `url(https://img.youtube.com/vi/${videoId}/maxresdefault.jpg)` }}
+      className="group absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center bg-slate-800"
       aria-label={`Play video: ${title}`}
     >
+      <img
+        ref={imgRef}
+        src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+        alt={title}
+        onError={handleImgError}
+        className="absolute inset-0 h-full w-full object-cover"
+        loading="lazy"
+      />
       {/* Play button overlay */}
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-600/90 shadow-lg transition hover:bg-brand-700 hover:scale-110">
+      <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-brand-600/90 shadow-lg transition group-hover:bg-brand-700 group-hover:scale-110">
         <svg className="ml-1 h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor">
           <path d="M8 5v14l11-7z" />
         </svg>
