@@ -492,8 +492,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   // When viewing form, take over the ENTIRE screen (no map, no buttons)
   if (view === "form" && activeForm) {
     return (
-      <div className="fixed inset-0 bg-white dark:bg-slate-900" style={{ zIndex: 9998, position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "auto" }}>
-        <div className="h-full overflow-y-auto p-4" style={{ WebkitOverflowScrolling: "touch" }}>
+      <div className="fixed inset-0 overflow-y-auto bg-white p-4 dark:bg-slate-900" style={{ zIndex: 9998, WebkitOverflowScrolling: "touch" }}>
         <div className="mx-auto max-w-lg">
           <div className="mb-4 flex items-center justify-between">
             <div>
@@ -607,7 +606,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               {t("offline.saveForm")}
             </button>
           </div>
-        </div>
         </div>
       </div>
     );
