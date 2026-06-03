@@ -90,6 +90,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     springCount: number;
     treeCount: number;
     trenchCount: number;
+    seedlingCount: number;
     reportCount: number;
     photoCount: number;
     markerCount: number;
@@ -100,6 +101,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     springCount: 0,
     treeCount: 0,
     trenchCount: 0,
+    seedlingCount: 0,
     reportCount: 0,
     photoCount: 0,
     markerCount: 0,
@@ -123,8 +125,9 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
       const springCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "spring").length;
       const treeCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "tree").length;
       const trenchCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "trench").length;
+      const seedlingCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "seedling").length;
       const trailCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === null).length;
-      const markerCount = springCount + treeCount + trenchCount;
+      const markerCount = springCount + treeCount + trenchCount + seedlingCount;
 
       // Rough distance estimate from tracking points
       let totalDistance = 0;
@@ -143,6 +146,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
         springCount,
         treeCount,
         trenchCount,
+        seedlingCount,
         reportCount: reports.length,
         photoCount: photos.length,
         markerCount,
@@ -183,6 +187,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
       `💧 Mata Air: ${summary.springCount}`,
       `🌳 Tanam Pohon: ${summary.treeCount}`,
       `🕳️ Rorak: ${summary.trenchCount}`,
+      `🌰 Seedling: ${summary.seedlingCount}`,
       `Total Marker: ${summary.markerCount}`,
       "",
       "--- Data ---",
@@ -348,6 +353,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
         const springCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "spring").length;
         const treeCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "tree").length;
         const trenchCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "trench").length;
+        const seedlingCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "seedling").length;
 
         await fetch("/api/offline/sync", {
           method: "POST",
@@ -358,6 +364,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
             springCount,
             treeCount,
             trenchCount,
+            seedlingCount,
           }),
         });
       } catch {
@@ -452,11 +459,21 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
           )}
 
           {summary.trenchCount > 0 && (
-            <div className="flex items-center gap-2.5 rounded-xl border border-ink-line bg-orange-50 p-3 dark:border-orange-800 dark:bg-orange-900/20">
-              <Mountain className="h-5 w-5 text-orange-500" />
+            <div className="flex items-center gap-2.5 rounded-xl border border-ink-line bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-900/20">
+              <Mountain className="h-5 w-5 text-amber-700" />
               <div>
-                <p className="text-xs text-orange-600 dark:text-orange-300">Rorak</p>
+                <p className="text-xs text-amber-700 dark:text-amber-300">Rorak</p>
                 <p className="text-sm font-bold text-ink">{summary.trenchCount}</p>
+              </div>
+            </div>
+          )}
+
+          {summary.seedlingCount > 0 && (
+            <div className="flex items-center gap-2.5 rounded-xl border border-ink-line bg-emerald-50 p-3 dark:border-emerald-800 dark:bg-emerald-900/20">
+              <Leaf className="h-5 w-5 text-emerald-700" />
+              <div>
+                <p className="text-xs text-emerald-700 dark:text-emerald-300">Seedling</p>
+                <p className="text-sm font-bold text-ink">{summary.seedlingCount}</p>
               </div>
             </div>
           )}
@@ -488,7 +505,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
           <div className="mt-1.5 space-y-1 text-xs text-ink-muted">
             <p>
               📍 {summary.markerCount} marker ({summary.springCount} 💧, {summary.treeCount} 🌱,{" "}
-              {summary.trenchCount} 🕳️)
+              {summary.trenchCount} 🕳️, {summary.seedlingCount} 🌰)
             </p>
             <p>🛤️ {summary.trailCount} titik GPS — {formatDistance(summary.totalDistance)}</p>
             <p>📸 {summary.photoCount} foto — {summary.reportCount} laporan</p>
@@ -675,6 +692,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
           <span>🛤️ {formatDistance(summary.totalDistance)}</span>
           <span>📸 {summary.photoCount} foto</span>
           <span>📋 {summary.reportCount} laporan</span>
+          <span>🌰 {summary.seedlingCount} seedling</span>
         </div>
       </div>
 

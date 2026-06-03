@@ -56,10 +56,18 @@ export const impactStats: Array<{
 ];
 
 export const monthlyProgress = [
-  { label: "Donasi Terkumpul", value: 18250000, total: 50000000, suffix: "now" },
-  { label: "Mata Air Direstorasi", value: 12, total: 30, suffix: "now" },
-  { label: "Rorak Dibangun", value: 45, total: 100, suffix: "now" },
-  { label: "Projek Berjalan", value: 3, total: 10, suffix: "now" },
+  // Page 1: Form activities
+  { label: "Tree Planting", value: 89, total: 120, suffix: "now" },
+  { label: "Spring Monitoring", value: 45, total: 60, suffix: "now" },
+  { label: "Spring Restoration", value: 12, total: 30, suffix: "now" },
+  { label: "Rorak (Trench)", value: 23, total: 50, suffix: "now" },
+  { label: "Seedling Stock", value: 200, total: 500, suffix: "now" },
+  // Page 2: Community & Impact
+  { label: "Active Users", value: 156, total: 200, suffix: "joined" },
+  { label: "Projects Submitted", value: 8, total: 15, suffix: "now" },
+  { label: "Courses Completed", value: 67, total: 100, suffix: "joined" },
+  { label: "Total Donations (IDR)", value: 27300000, total: 50000000, suffix: "now" },
+  { label: "Kawasan Terlindungi (Ha)", value: 45, total: 100, suffix: "now" },
 ];
 
 export const topRegions = [

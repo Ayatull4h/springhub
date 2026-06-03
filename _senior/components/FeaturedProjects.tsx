@@ -87,12 +87,17 @@ export function FeaturedProjects() {
 
           <div className="mt-4 flex items-center justify-between border-t border-ink-line pt-3 dark:border-slate-700">
             <button
-              onClick={() =>
-                setLikedProjects(prev => ({
-                  ...prev,
-                  [page]: !prev[page],
-                }))
-              }
+              onClick={async () => {
+                // Optimistic toggle
+                setLikedProjects(prev => ({ ...prev, [page]: !prev[page] }));
+                // Try to sync with API
+                try {
+                  await fetch(`/api/projects/${page}/like`, { method: "POST" });
+                } catch {
+                  // Revert on failure
+                  setLikedProjects(prev => ({ ...prev, [page]: !prev[page] }));
+                }
+              }}
               className={`inline-flex items-center gap-1.5 text-xs transition ${
                 likedProjects[page]
                   ? "text-brand-600"

@@ -3,37 +3,15 @@
 import { Fragment, useEffect, useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Tooltip, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { type SpringStatus } from "@/lib/data";
 
-const statusColors: Record<SpringStatus, string> = {
-  healthy: "#10b981",
-  degraded: "#ef4444",
-  restoration: "#f59e0b",
+// Distinct colors per form type
+const formColors: Record<string, { color: string; fillColor: string; label: string }> = {
+  "spring-monitoring": { color: "#2563eb", fillColor: "#3b82f6", label: "Spring Monitoring" },
+  "spring-restoration": { color: "#7dd3fc", fillColor: "#bae6fd", label: "Spring Restoration" },
+  "tree-planting": { color: "#16a34a", fillColor: "#22c55e", label: "Tree Planting" },
+  "trench-development": { color: "#78350f", fillColor: "#a16207", label: "Trench Development" },
+  "seedling-stock": { color: "#14532d", fillColor: "#166534", label: "Seedling Stock" },
 };
-
-function getStatusFromForm(formSlug: string): SpringStatus {
-  switch (formSlug) {
-    case "spring-monitoring":
-      return "healthy";
-    case "spring-restoration":
-      return "restoration";
-    case "trench-development":
-    case "tree-planting":
-      return "restoration";
-    case "seedling-stock":
-      return "healthy";
-    default:
-      return "degraded";
-  }
-}
-
-function getLabelFromStatus(status: SpringStatus): string {
-  switch (status) {
-    case "healthy": return "Sehat";
-    case "degraded": return "Terdegradasi";
-    case "restoration": return "Restorasi";
-  }
-}
 
 type ReportData = {
   id: string;
@@ -85,8 +63,7 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
           />
         )}
         {reports.map((r) => {
-            const status = getStatusFromForm(r.formSlug);
-            const color = statusColors[status];
+            const fc = formColors[r.formSlug] ?? { color: "#ef4444", fillColor: "#f87171", label: "Unknown" };
             if (!r.snappedLat || !r.snappedLng) return null;
             return (
               <Fragment key={r.id}>
@@ -94,15 +71,15 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
                   center={[r.snappedLat, r.snappedLng]}
                   radius={8}
                   pathOptions={{
-                    color,
-                    fillColor: color,
+                    color: fc.color,
+                    fillColor: fc.fillColor,
                     fillOpacity: 0.7,
                     weight: 2,
                   }}
                 >
                   <Tooltip direction="top" offset={[0, -8]}>
                     <div className="text-xs">
-                      <strong>{getLabelFromStatus(status)}</strong>
+                      <strong>{fc.label}</strong>
                       <br />
                       <span className="text-ink-muted">
                         {r.formSlug.replace(/-/g, " ")}
@@ -122,8 +99,8 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
                   center={[r.snappedLat, r.snappedLng]}
                   radius={5000}
                   pathOptions={{
-                    color,
-                    fillColor: color,
+                    color: fc.color,
+                    fillColor: fc.color,
                     fillOpacity: 0.05,
                     weight: 1,
                     dashArray: "4 4",

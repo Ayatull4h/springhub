@@ -143,6 +143,8 @@ model Project {
   status       ProjectStatus @default(pending)
   goalAmount   Int           @default(0)
   raisedAmount Int           @default(0)
+  likes        Int           @default(0)
+  comments     Int           @default(0)
   contactName  String        @default("")
   contactEmail String        @default("")
   contactPhone String        @default("")

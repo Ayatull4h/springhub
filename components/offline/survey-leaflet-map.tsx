@@ -118,6 +118,7 @@ export function SurveyLeafletMap({
   const springMarkers = useMemo(() => markers.filter((p) => p.markerType === "spring"), [markers]);
   const treeMarkers = useMemo(() => markers.filter((p) => p.markerType === "tree"), [markers]);
   const trenchMarkers = useMemo(() => markers.filter((p) => p.markerType === "trench"), [markers]);
+  const seedlingMarkers = useMemo(() => markers.filter((p) => p.markerType === "seedling"), [markers]);
 
   const initialCenter: [number, number] = currentPosition
     ? [currentPosition.lat, currentPosition.lng]
@@ -188,21 +189,40 @@ export function SurveyLeafletMap({
         </CircleMarker>
       ))}
 
-      {/* 🕳️ Trench markers — orange */}
+      {/* 🕳️ Trench markers — brown */}
       {trenchMarkers.map((m) => (
         <CircleMarker
           key={m.id}
           center={[m.lat, m.lng]}
           radius={10}
           pathOptions={{
-            color: "#ea580c",
-            fillColor: "#f97316",
+            color: "#78350f",
+            fillColor: "#a16207",
             fillOpacity: 0.8,
             weight: 3,
           }}
         >
           <Tooltip direction="top" offset={[0, -12]}>
             🕳️ {m.name || "Rorak"}
+          </Tooltip>
+        </CircleMarker>
+      ))}
+
+      {/* 🌰 Seedling markers — dark green */}
+      {seedlingMarkers.map((m) => (
+        <CircleMarker
+          key={m.id}
+          center={[m.lat, m.lng]}
+          radius={10}
+          pathOptions={{
+            color: "#14532d",
+            fillColor: "#166534",
+            fillOpacity: 0.8,
+            weight: 3,
+          }}
+        >
+          <Tooltip direction="top" offset={[0, -12]}>
+            🌰 {m.name || "Seedling"}
           </Tooltip>
         </CircleMarker>
       ))}

@@ -22,7 +22,7 @@ const iconMap: Record<string, typeof Droplets> = {
 export function ImpactDashboard() {
   const { t } = useI18n();
   const [monthlyPage, setMonthlyPage] = useState(0);
-  const monthlyPerPage = 2;
+  const monthlyPerPage = 5;
   const totalMonthlyPages = Math.ceil(monthlyProgress.length / monthlyPerPage);
   const visibleMonthly = monthlyProgress.slice(
     monthlyPage * monthlyPerPage,
@@ -37,10 +37,16 @@ export function ImpactDashboard() {
   };
 
   const monthlyKeys = [
-    "dashboard.monthly.donations",
-    "dashboard.monthly.restored",
-    "dashboard.monthly.trenches",
-    "dashboard.monthly.projects",
+    "dashboard.monthly.treePlanting",
+    "dashboard.monthly.springMonitoring",
+    "dashboard.monthly.springRestoration",
+    "dashboard.monthly.rorak",
+    "dashboard.monthly.seedlingStock",
+    "dashboard.monthly.activeUsers",
+    "dashboard.monthly.projectsSubmitted",
+    "dashboard.monthly.coursesCompleted",
+    "dashboard.monthly.totalDonations",
+    "dashboard.monthly.protectedArea",
   ];
 
   return (

@@ -126,6 +126,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const springCount = markers.filter((m) => m.markerType === "spring").length;
   const treeCount = markers.filter((m) => m.markerType === "tree").length;
   const trenchCount = markers.filter((m) => m.markerType === "trench").length;
+  const seedlingCount = markers.filter((m) => m.markerType === "seedling").length;
 
   // ── Load cached forms on mount ─────────────────────────────────────────
   useEffect(() => {
@@ -426,6 +427,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         return "🌳 Tanam Pohon";
       case "trench":
         return "🕳️ Rorak";
+      case "seedling":
+        return "🌰 Seedling";
       default:
         return "";
     }
@@ -461,8 +464,12 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             {treeCount}
           </span>
           <span className="inline-flex items-center gap-1" title="Rorak">
-            <Mountain className="h-3.5 w-3.5 text-orange-500" />
+            <Mountain className="h-3.5 w-3.5 text-amber-700" />
             {trenchCount}
+          </span>
+          <span className="inline-flex items-center gap-1" title="Seedling">
+            <Leaf className="h-3.5 w-3.5 text-emerald-800" />
+            {seedlingCount}
           </span>
           <button
             onClick={onExit}
@@ -544,11 +551,12 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                           "flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs",
                           m.markerType === "spring" && "bg-blue-50 dark:bg-blue-900/20",
                           m.markerType === "tree" && "bg-green-50 dark:bg-green-900/20",
-                          m.markerType === "trench" && "bg-orange-50 dark:bg-orange-900/20"
+                          m.markerType === "trench" && "bg-amber-50 dark:bg-amber-900/20",
+                          m.markerType === "seedling" && "bg-emerald-50 dark:bg-emerald-900/20"
                         )}
                       >
                         <span className="flex-none text-xs">
-                          {m.markerType === "spring" ? "💧" : m.markerType === "tree" ? "🌱" : "🕳️"}
+                          {m.markerType === "spring" ? "💧" : m.markerType === "tree" ? "🌱" : m.markerType === "trench" ? "🕳️" : "🌰"}
                         </span>
                         <span className="truncate text-ink">
                           {m.name || markerTypeLabel(m.markerType)}
@@ -608,10 +616,20 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               <button
                 onClick={() => handleMarkerButton("trench")}
                 disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-orange-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-orange-600 disabled:opacity-50 sm:text-sm"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-amber-800 disabled:opacity-50 sm:text-sm"
               >
                 <Mountain className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
                 <span className="truncate">Rorak</span>
+              </button>
+
+              {/* 🌰 Seedling marker button */}
+              <button
+                onClick={() => handleMarkerButton("seedling")}
+                disabled={!currentPos}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-800 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-emerald-900 disabled:opacity-50 sm:text-sm"
+              >
+                <Leaf className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
+                <span className="truncate">Seedling</span>
               </button>
 
               {/* Fill form button */}
@@ -638,6 +656,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               <span>💧 {springCount}</span>
               <span>🌱 {treeCount}</span>
               <span>🕳️ {trenchCount}</span>
+              <span>🌰 {seedlingCount}</span>
             </div>
           </div>
 
@@ -652,7 +671,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                       ? "💧"
                       : activeMarkerType === "tree"
                         ? "🌱"
-                        : "🕳️"}
+                        : activeMarkerType === "trench"
+                          ? "🕳️"
+                          : "🌰"}
                   </span>
                   Catat: {markerTypeLabel(activeMarkerType)}
                 </h3>

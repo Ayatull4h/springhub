@@ -15,7 +15,7 @@
 const DB_NAME = "springhub-offline";
 const DB_VERSION = 2;
 
-export type MarkerType = "spring" | "tree" | "trench";
+export type MarkerType = "spring" | "tree" | "trench" | "seedling";
 
 export type OfflineTrackingPoint = {
   id: string;
