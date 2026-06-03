@@ -77,9 +77,8 @@ function MapLayers() {
   const map = useMap();
 
   useEffect(() => {
-    const layer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const layer = L.tileLayer("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
-      subdomains: ["a", "b", "c"],
       maxZoom: 19,
     });
 
