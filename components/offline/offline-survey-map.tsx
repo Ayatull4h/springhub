@@ -159,7 +159,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     };
   }, [markerPhotos]);
 
-  // ── Auto-detect user location on mount (one-time) ───────────────────────
+  // ── Auto-detect user location on mount (one-time) then start continuous tracking ──
   useEffect(() => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -167,13 +167,16 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         const { latitude, longitude, accuracy } = pos.coords;
         setCurrentPos({ lat: latitude, lng: longitude });
         setGpsAccuracy(accuracy ?? null);
+        // Auto-start continuous tracking after getting position
+        startTracking();
       },
       () => {
-        // Silent fail — user can tap GPS button later
-        console.warn("[GPS] Auto-locate failed — user may need to tap GPS button");
+        // Silent fail — show the GPS button as fallback
+        console.warn("[GPS] Auto-locate failed — GPS button will be shown");
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── GPS Tracking ────────────────────────────────────────────────────────
