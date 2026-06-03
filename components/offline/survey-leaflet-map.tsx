@@ -26,6 +26,49 @@ function AutoFollow({ pos, isTracking }: { pos: { lat: number; lng: number } | n
   return null;
 }
 
+/** Locate Me button — centers map on user's GPS position */
+function LocateButton() {
+  const map = useMap();
+
+  const handleLocate = () => {
+    if (!navigator.geolocation) {
+      alert("GPS tidak didukung browser ini.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        map.setView([pos.coords.latitude, pos.coords.longitude], 15, {
+          animate: true,
+        });
+      },
+      () => {
+        alert("Gagal mendapatkan lokasi. Pastikan GPS aktif.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
+  return (
+    <div className="leaflet-top leaflet-left" style={{ marginTop: "10px", marginLeft: "10px" }}>
+      <button
+        onClick={handleLocate}
+        className="flex h-9 w-9 items-center justify-center rounded-md bg-white shadow-md hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700"
+        title="Lokasi Saya"
+        aria-label="Lokasi Saya"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-brand-600">
+          <circle cx="12" cy="12" r="10" />
+          <circle cx="12" cy="12" r="3" />
+          <line x1="12" y1="2" x2="12" y2="6" />
+          <line x1="12" y1="18" x2="12" y2="22" />
+          <line x1="2" y1="12" x2="6" y2="12" />
+          <line x1="18" y1="12" x2="22" y2="12" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 /** Dark-aware tile layer */
 function MapLayers() {
   const map = useMap();
@@ -82,11 +125,12 @@ export function SurveyLeafletMap({
       zoom={15}
       scrollWheelZoom={true}
       className="h-full w-full"
-      style={{ minHeight: "100%" }}
+      style={{ minHeight: "400px", height: "100%", width: "100%" }}
       zoomControl={false}
     >
       <MapLayers />
       <AutoFollow pos={currentPosition} isTracking={isTracking} />
+      <LocateButton />
 
       {/* GPS trail polyline — orange/red like Strava */}
       {trailPositions.length > 1 && (

@@ -41,6 +41,7 @@ export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
         src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
         alt={title}
         onError={handleImgError}
+        referrerPolicy="no-referrer"
         className="absolute inset-0 h-full w-full object-cover"
         loading="lazy"
       />

@@ -573,7 +573,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         )}
 
         {/* Map */}
-        <div className="relative flex-1">
+        <div className="relative flex-1 h-full">
           <SurveyLeafletMap
             trackingPoints={trackingPoints}
             markers={markers}
