@@ -32,6 +32,7 @@ import {
 import { distanceKm, snapToProtectionGrid } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { ErrorBoundary } from "./error-boundary";
 
 // ─── Dynamic import for survey map (SSR=false) ──────────────────────────────
 const SurveyLeafletMap = dynamic(
@@ -130,13 +131,19 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // ── Load cached forms on mount ─────────────────────────────────────────
   useEffect(() => {
-    offlineDB.getAllForms().then((forms) => {
-      setCachedForms(forms);
-      if (forms.length > 0 && !activeForm) {
-        setActiveForm(forms[0]);
-      }
-    });
-    offlineDB.getAllReports().then((reports) => setPendingReports(reports));
+    offlineDB
+      .getAllForms()
+      .then((forms) => {
+        setCachedForms(forms);
+        if (forms.length > 0 && !activeForm) {
+          setActiveForm(forms[0]);
+        }
+      })
+      .catch((err) => console.warn("[OfflineSurvey] Failed to load forms:", err));
+    offlineDB
+      .getAllReports()
+      .then((reports) => setPendingReports(reports))
+      .catch((err) => console.warn("[OfflineSurvey] Failed to load reports:", err));
   }, []);
 
   // ── Cleanup blob URLs on unmount ───────────────────────────────────────
@@ -605,12 +612,14 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
         {/* Map */}
         <div className="relative flex-1" style={{ paddingBottom: "120px" }}>
-          <SurveyLeafletMap
-            trackingPoints={trackingPoints}
-            markers={markers}
-            currentPosition={currentPos}
-            isTracking={isTracking}
-          />
+          <ErrorBoundary>
+            <SurveyLeafletMap
+              trackingPoints={trackingPoints}
+              markers={markers}
+              currentPosition={currentPos}
+              isTracking={isTracking}
+            />
+          </ErrorBoundary>
 
           {/* Bottom action bar */}
           <div className="absolute bottom-0 left-0 right-0 z-20 border-t border-ink-line bg-white/95 px-3 py-2 backdrop-blur dark:bg-slate-900/95">

@@ -422,6 +422,7 @@
   "common.done": "Done",
   "common.pts": "pts",
   "common.by": "by",
+  "common.select": "Select...",
   "common.guest": "Guest",
 
   "projects.new.notEligible": "Points not enough yet",
