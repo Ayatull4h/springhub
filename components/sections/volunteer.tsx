@@ -85,10 +85,16 @@ export function VolunteerActivities() {
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>
-                  <div className="mt-3 flex h-32 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-900/50">
+                  <div className={`mt-3 flex h-32 items-center justify-center rounded-lg ${
+                    a.formSlug?.includes("trench")
+                      ? "bg-gradient-to-br from-amber-50 to-stone-100 dark:from-amber-900/30 dark:to-stone-900/50"
+                      : a.formSlug?.includes("seedling")
+                        ? "bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/30 dark:to-green-900/50"
+                        : "bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-900/50"
+                  }`}>
                     {a.formSlug?.includes("monitoring") && <Eye className="h-10 w-10 text-emerald-500" />}
                     {a.formSlug?.includes("restoration") && <Wrench className="h-10 w-10 text-amber-500" />}
-                    {a.formSlug?.includes("trench") && <Layers className="h-10 w-10 text-blue-500" />}
+                    {a.formSlug?.includes("trench") && <Layers className="h-10 w-10 text-amber-800" />}
                     {a.formSlug?.includes("tree") && <TreePine className="h-10 w-10 text-green-500" />}
                     {a.formSlug?.includes("seedling") && <Sprout className="h-10 w-10 text-emerald-600" />}
                   </div>

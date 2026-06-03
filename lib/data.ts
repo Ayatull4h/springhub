@@ -48,11 +48,12 @@ export const impactStats: Array<{
   display?: string;
   delta: string;
   icon: "droplet" | "sparkles" | "tree" | "layers";
+  color: string; // tailwind text color class
 }> = [
-  { label: "Monitored Springs", value: 500, display: "500+", delta: "+12 this month", icon: "droplet" },
-  { label: "Restored Springs", value: 30, display: "30+", delta: "+3 this month", icon: "sparkles" },
-  { label: "Endemic Trees Planted", value: 20000, display: "20,000", delta: "+89 this month", icon: "tree" },
-  { label: "Trenches", value: 150, display: "150", delta: "+12 this month", icon: "layers" },
+  { label: "Monitored Springs", value: 500, display: "500+", delta: "+12 this month", icon: "droplet", color: "text-blue-600" },
+  { label: "Restored Springs", value: 30, display: "30+", delta: "+3 this month", icon: "sparkles", color: "text-emerald-600" },
+  { label: "Endemic Trees Planted", value: 20000, display: "20,000", delta: "+89 this month", icon: "tree", color: "text-green-600" },
+  { label: "Rorak (Trench)", value: 150, display: "150", delta: "+12 this month", icon: "layers", color: "text-amber-800" },
 ];
 
 export const monthlyProgress = [

@@ -69,7 +69,7 @@ export function ImpactDashboard() {
             <div key={s.label} className="card">
               <div className="flex items-center justify-between">
                 <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-300">
-                  <Icon className="h-5 w-5" />
+                  <Icon className={`h-5 w-5 ${(s as any).color || "text-brand-600"}`} />
                 </span>
                 <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                   <TrendingUp className="h-3 w-3" />
