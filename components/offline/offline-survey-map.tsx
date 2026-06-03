@@ -800,8 +800,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
       {/* ── Marker popup — at root level to avoid overflow clipping ── */}
       {activeMarkerType && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/40 py-8">
+          <div className="flex min-h-full items-center justify-center">
+            <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800">
             {/* Title */}
             <h3 className="flex items-center gap-2 text-sm font-bold text-ink">
               <span>
@@ -911,6 +912,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 <MapPin className="h-4 w-4" />
                 {t("common.save")}
               </button>
+            </div>
             </div>
           </div>
         </div>
