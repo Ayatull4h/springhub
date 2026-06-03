@@ -3,16 +3,38 @@
  *
  * Stores:
  * - pending-reports   → form submissions saved while offline
- * - tracking-points   → GPS trail points (saved every ~10m)
+ * - tracking-points   → GPS trail points (saved every ~5m)
  * - photo-blobs       → captured photos (blobs, uploaded on exit)
  * - form-definitions  → cached form schema from admin panel
  * - tile-manifest     → record of which OSM tiles are cached
+ * - offline-config    → offline session configuration
  *
  * Semua data dihapus setelah berhasil sync keluar.
  */
 
 const DB_NAME = "springhub-offline";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
+
+export type MarkerType = "spring" | "tree" | "trench";
+
+export type OfflineTrackingPoint = {
+  id: string;
+  lat: number;
+  lng: number;
+  accuracy: number | null;
+  markerType: MarkerType | null; // null = regular GPS tracking point
+  name: string | null; // optional name (for markers)
+  recordedAt: number; // Date.now()
+};
+
+export type OfflineConfig = {
+  id: "session-config";
+  selectedForms: string[];
+  radiusKm: 5 | 7 | 10;
+  qualityLevel: "ringan" | "sedang" | "lengkap";
+  totalDistance: number; // meters
+  startedAt: number;
+};
 
 type DBSchema = {
   "pending-reports": {
@@ -23,7 +45,7 @@ type DBSchema = {
   "tracking-points": {
     key: string;
     value: OfflineTrackingPoint;
-    indexes: { "by-recorded": number; "by-marker": boolean };
+    indexes: { "by-recorded": number; "by-marker-type": string };
   };
   "photo-blobs": {
     key: string;
@@ -40,16 +62,11 @@ type DBSchema = {
     value: TileRecord;
     indexes: { "by-url": string };
   };
-};
-
-export type OfflineTrackingPoint = {
-  id: string;
-  lat: number;
-  lng: number;
-  accuracy: number | null;
-  isSpringMarker: boolean;
-  springName: string | null;
-  recordedAt: number; // Date.now()
+  "offline-config": {
+    key: string;
+    value: OfflineConfig;
+    indexes: {};
+  };
 };
 
 export type PendingReport = {
@@ -105,35 +122,60 @@ function openDB(): Promise<IDBDatabase> {
 
     req.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
+      const oldVersion = event.oldVersion;
 
-      // pending-reports
-      if (!db.objectStoreNames.contains("pending-reports")) {
-        const store = db.createObjectStore("pending-reports", { keyPath: "id" });
-        store.createIndex("by-created", "createdAt", { unique: false });
+      // ── Initial schema (v1) ──
+      if (oldVersion < 1) {
+        // pending-reports
+        if (!db.objectStoreNames.contains("pending-reports")) {
+          const store = db.createObjectStore("pending-reports", { keyPath: "id" });
+          store.createIndex("by-created", "createdAt", { unique: false });
+        }
+
+        // tracking-points (v1 indexes — isSpringMarker / by-marker)
+        if (!db.objectStoreNames.contains("tracking-points")) {
+          const store = db.createObjectStore("tracking-points", { keyPath: "id" });
+          store.createIndex("by-recorded", "recordedAt", { unique: false });
+          store.createIndex("by-marker", "isSpringMarker", { unique: false });
+        }
+
+        // photo-blobs
+        if (!db.objectStoreNames.contains("photo-blobs")) {
+          const store = db.createObjectStore("photo-blobs", { keyPath: "id" });
+          store.createIndex("by-report", "reportId", { unique: false });
+        }
+
+        // form-definitions
+        if (!db.objectStoreNames.contains("form-definitions")) {
+          const store = db.createObjectStore("form-definitions", { keyPath: "slug" });
+          store.createIndex("by-slug", "slug", { unique: true });
+        }
+
+        // tile-manifest
+        if (!db.objectStoreNames.contains("tile-manifest")) {
+          db.createObjectStore("tile-manifest", { keyPath: "url" });
+        }
       }
 
-      // tracking-points
-      if (!db.objectStoreNames.contains("tracking-points")) {
-        const store = db.createObjectStore("tracking-points", { keyPath: "id" });
-        store.createIndex("by-recorded", "recordedAt", { unique: false });
-        store.createIndex("by-marker", "isSpringMarker", { unique: false });
-      }
+      // ── Version 2 migration ──
+      if (oldVersion < 2) {
+        // offline-config store
+        if (!db.objectStoreNames.contains("offline-config")) {
+          db.createObjectStore("offline-config", { keyPath: "id" });
+        }
 
-      // photo-blobs
-      if (!db.objectStoreNames.contains("photo-blobs")) {
-        const store = db.createObjectStore("photo-blobs", { keyPath: "id" });
-        store.createIndex("by-report", "reportId", { unique: false });
-      }
-
-      // form-definitions
-      if (!db.objectStoreNames.contains("form-definitions")) {
-        const store = db.createObjectStore("form-definitions", { keyPath: "slug" });
-        store.createIndex("by-slug", "slug", { unique: true });
-      }
-
-      // tile-manifest
-      if (!db.objectStoreNames.contains("tile-manifest")) {
-        const store = db.createObjectStore("tile-manifest", { keyPath: "url" });
+        // Migrate tracking-points indexes: replace "by-marker" (isSpringMarker)
+        // with "by-marker-type" (markerType)
+        if (db.objectStoreNames.contains("tracking-points")) {
+          const tx = (event.target as IDBOpenDBRequest).transaction!;
+          const store = tx.objectStore("tracking-points");
+          if (store.indexNames.contains("by-marker")) {
+            store.deleteIndex("by-marker");
+          }
+          if (!store.indexNames.contains("by-marker-type")) {
+            store.createIndex("by-marker-type", "markerType", { unique: false });
+          }
+        }
       }
     };
 
@@ -332,6 +374,19 @@ export const offlineDB = {
     return clearStore("tile-manifest");
   },
 
+  // ── Offline Config ──────────────────────────────────────────────────────
+  saveConfig(config: OfflineConfig) {
+    return addItem("offline-config", config);
+  },
+
+  getConfig(): Promise<OfflineConfig | undefined> {
+    return getItem("offline-config", "session-config");
+  },
+
+  clearConfig() {
+    return deleteItem("offline-config", "session-config");
+  },
+
   // ── Bulk Clear ─────────────────────────────────────────────────────────
   async clearAll() {
     await clearStore("pending-reports");
@@ -339,16 +394,18 @@ export const offlineDB = {
     await clearStore("photo-blobs");
     await clearStore("form-definitions");
     await clearStore("tile-manifest");
+    await deleteItem("offline-config", "session-config");
   },
 
   async getStats() {
-    const [reports, tracks, photos, forms, tiles] = await Promise.all([
+    const [reports, tracks, photos, forms, tiles, configs] = await Promise.all([
       countItems("pending-reports"),
       countItems("tracking-points"),
       countItems("photo-blobs"),
       countItems("form-definitions"),
       countItems("tile-manifest"),
+      countItems("offline-config"),
     ]);
-    return { reports, tracks, photos, forms, tiles };
+    return { reports, tracks, photos, forms, tiles, configs };
   },
 };

@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { MapContainer, TileLayer, Polyline, CircleMarker, Circle, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline, CircleMarker, Circle, Tooltip, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { type OfflineTrackingPoint } from "@/lib/offline-db";
 
 type SurveyLeafletMapProps = {
   trackingPoints: OfflineTrackingPoint[];
-  springMarkers: OfflineTrackingPoint[];
+  markers: OfflineTrackingPoint[];
   currentPosition: { lat: number; lng: number } | null;
   isTracking: boolean;
 };
@@ -26,7 +26,7 @@ function AutoFollow({ pos, isTracking }: { pos: { lat: number; lng: number } | n
   return null;
 }
 
-/** Dark tile layer */
+/** Dark-aware tile layer */
 function MapLayers() {
   const map = useMap();
 
@@ -37,7 +37,8 @@ function MapLayers() {
       : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
     const layer = L.tileLayer(tileUrl, {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
       maxZoom: 19,
     });
 
@@ -53,23 +54,23 @@ function MapLayers() {
 
 export function SurveyLeafletMap({
   trackingPoints,
-  springMarkers,
+  markers,
   currentPosition,
   isTracking,
 }: SurveyLeafletMapProps) {
-  // Convert tracking points to Leaflet latlng tuples
+  // GPS trail = markerType null (plain tracking points, not markers)
   const trailPositions: [number, number][] = useMemo(
     () =>
       trackingPoints
-        .filter((p) => !p.isSpringMarker)
+        .filter((p) => p.markerType === null)
         .map((p) => [p.lat, p.lng] as [number, number]),
     [trackingPoints]
   );
 
-  const springPositions: [number, number][] = useMemo(
-    () => springMarkers.map((p) => [p.lat, p.lng] as [number, number]),
-    [springMarkers]
-  );
+  // Filter markers by type
+  const springMarkers = useMemo(() => markers.filter((p) => p.markerType === "spring"), [markers]);
+  const treeMarkers = useMemo(() => markers.filter((p) => p.markerType === "tree"), [markers]);
+  const trenchMarkers = useMemo(() => markers.filter((p) => p.markerType === "trench"), [markers]);
 
   const initialCenter: [number, number] = currentPosition
     ? [currentPosition.lat, currentPosition.lng]
@@ -101,20 +102,60 @@ export function SurveyLeafletMap({
         />
       )}
 
-      {/* Spring markers — amber/gold */}
-      {springPositions.map((pos, i) => (
+      {/* 💧 Spring markers — blue */}
+      {springMarkers.map((m) => (
         <CircleMarker
-          key={`spring-${i}`}
-          center={pos}
+          key={m.id}
+          center={[m.lat, m.lng]}
           radius={10}
           pathOptions={{
-            color: "#d97706",
-            fillColor: "#f59e0b",
+            color: "#2563eb",
+            fillColor: "#3b82f6",
             fillOpacity: 0.8,
             weight: 3,
           }}
         >
-          {/* Optional: add tooltip with spring name */}
+          <Tooltip direction="top" offset={[0, -12]}>
+            💧 {m.name || "Mata Air"}
+          </Tooltip>
+        </CircleMarker>
+      ))}
+
+      {/* 🌱 Tree markers — green */}
+      {treeMarkers.map((m) => (
+        <CircleMarker
+          key={m.id}
+          center={[m.lat, m.lng]}
+          radius={10}
+          pathOptions={{
+            color: "#16a34a",
+            fillColor: "#22c55e",
+            fillOpacity: 0.8,
+            weight: 3,
+          }}
+        >
+          <Tooltip direction="top" offset={[0, -12]}>
+            🌱 {m.name || "Tanam Pohon"}
+          </Tooltip>
+        </CircleMarker>
+      ))}
+
+      {/* 🕳️ Trench markers — orange */}
+      {trenchMarkers.map((m) => (
+        <CircleMarker
+          key={m.id}
+          center={[m.lat, m.lng]}
+          radius={10}
+          pathOptions={{
+            color: "#ea580c",
+            fillColor: "#f97316",
+            fillOpacity: 0.8,
+            weight: 3,
+          }}
+        >
+          <Tooltip direction="top" offset={[0, -12]}>
+            🕳️ {m.name || "Rorak"}
+          </Tooltip>
         </CircleMarker>
       ))}
 

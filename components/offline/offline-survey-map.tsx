@@ -18,8 +18,17 @@ import {
   Layers,
   Camera,
   Loader2,
+  Leaf,
+  Mountain,
+  Trash2,
 } from "lucide-react";
-import { offlineDB, type OfflineTrackingPoint, type PendingReport, type FormDefinition } from "@/lib/offline-db";
+import {
+  offlineDB,
+  type OfflineTrackingPoint,
+  type MarkerType,
+  type PendingReport,
+  type FormDefinition,
+} from "@/lib/offline-db";
 import { distanceKm, snapToProtectionGrid } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -50,6 +59,34 @@ type OfflineSurveyMapProps = {
   onExit: () => void;
 };
 
+// ─── Compress image to 720p ─────────────────────────────────────────────────
+
+async function compressImage(file: File, maxDimension = 720): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement("canvas");
+      const scale = Math.min(maxDimension / img.width, maxDimension / img.height, 1);
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        (b) => {
+          if (b) resolve(b);
+          else resolve(file); // fallback
+        },
+        "image/jpeg",
+        0.85
+      );
+    };
+    img.onerror = () => resolve(file); // fallback
+    img.src = url;
+  });
+}
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProps) {
@@ -64,8 +101,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const lastPointRef = useRef<OfflineTrackingPoint | null>(null);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
 
-  // Spring markers
-  const [springMarkers, setSpringMarkers] = useState<OfflineTrackingPoint[]>([]);
+  // All markers (spring, tree, trench) — passed as `markers` to map
+  const [markers, setMarkers] = useState<OfflineTrackingPoint[]>([]);
 
   // UI state
   const [view, setView] = useState<SurveyView>("map");
@@ -77,8 +114,18 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const [pendingReports, setPendingReports] = useState<PendingReport[]>([]);
   const [formData, setFormData] = useState<Record<string, FormFieldValue>>({});
   const [formPhotos, setFormPhotos] = useState<Record<string, File | null>>({});
-  const [showSpringNameInput, setShowSpringNameInput] = useState(false);
-  const [springNameInput, setSpringNameInput] = useState("");
+
+  // Marker popup state
+  const [activeMarkerType, setActiveMarkerType] = useState<MarkerType | null>(null);
+  const [markerNameInput, setMarkerNameInput] = useState("");
+  const [markerNoteInput, setMarkerNoteInput] = useState("");
+  const [markerPhotos, setMarkerPhotos] = useState<{ blob: Blob; preview: string }[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Derived marker counts
+  const springCount = markers.filter((m) => m.markerType === "spring").length;
+  const treeCount = markers.filter((m) => m.markerType === "tree").length;
+  const trenchCount = markers.filter((m) => m.markerType === "trench").length;
 
   // ── Load cached forms on mount ─────────────────────────────────────────
   useEffect(() => {
@@ -90,6 +137,15 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     });
     offlineDB.getAllReports().then((reports) => setPendingReports(reports));
   }, []);
+
+  // ── Cleanup blob URLs on unmount ───────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      for (const p of markerPhotos) {
+        URL.revokeObjectURL(p.preview);
+      }
+    };
+  }, [markerPhotos]);
 
   // ── GPS Tracking ────────────────────────────────────────────────────────
   const startTracking = useCallback(() => {
@@ -114,15 +170,15 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             { lat: latitude, lng: longitude }
           );
 
-          // Record every 10 meters (0.01 km)
-          if (dist >= 0.01) {
+          // Record every 5 meters (0.005 km)
+          if (dist >= 0.005) {
             const point: OfflineTrackingPoint = {
               id: crypto.randomUUID(),
               lat: latitude,
               lng: longitude,
               accuracy: accuracy ?? null,
-              isSpringMarker: false,
-              springName: null,
+              markerType: null, // GPS tracking point
+              name: null,
               recordedAt: Date.now(),
             };
 
@@ -140,8 +196,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             lat: latitude,
             lng: longitude,
             accuracy: accuracy ?? null,
-            isSpringMarker: false,
-            springName: null,
+            markerType: null,
+            name: null,
             recordedAt: Date.now(),
           };
           lastPointRef.current = point;
@@ -177,33 +233,124 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     };
   }, []);
 
-  // ── Mark spring ─────────────────────────────────────────────────────────
-  const handleMarkSpring = useCallback(() => {
-    if (!currentPos) return;
-    setShowSpringNameInput(true);
-    setSpringNameInput("");
-  }, [currentPos]);
+  // ── Marker photo capture ───────────────────────────────────────────────
+  const handleMarkerPhotoCapture = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
 
-  const confirmSpringMarker = useCallback(() => {
-    if (!currentPos) return;
+      const file = files[0];
+
+      // Max 5 MB
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Foto maksimal 5 MB");
+        e.target.value = "";
+        return;
+      }
+
+      // Max 4 photos
+      if (markerPhotos.length >= 4) {
+        alert("Maksimal 4 foto per marker");
+        e.target.value = "";
+        return;
+      }
+
+      try {
+        const compressed = await compressImage(file);
+        const preview = URL.createObjectURL(compressed);
+        setMarkerPhotos((prev) => [...prev, { blob: compressed, preview }]);
+      } catch {
+        // Fallback: use original
+        const preview = URL.createObjectURL(file);
+        setMarkerPhotos((prev) => [...prev, { blob: file, preview }]);
+      }
+
+      // Reset input so the same file can be re-selected
+      e.target.value = "";
+    },
+    [markerPhotos.length]
+  );
+
+  const removeMarkerPhoto = useCallback((index: number) => {
+    setMarkerPhotos((prev) => {
+      const removed = prev[index];
+      if (removed) URL.revokeObjectURL(removed.preview);
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
+
+  // ── Marker buttons (show popup) ────────────────────────────────────────
+  const handleMarkerButton = useCallback(
+    (type: MarkerType) => {
+      if (!currentPos) {
+        alert("Aktifkan GPS dulu untuk menandai lokasi.");
+        return;
+      }
+      setActiveMarkerType(type);
+      setMarkerNameInput("");
+      setMarkerNoteInput("");
+      setMarkerPhotos([]);
+    },
+    [currentPos]
+  );
+
+  // Close marker popup
+  const closeMarkerPopup = useCallback(() => {
+    // Revoke any blob URLs
+    for (const p of markerPhotos) {
+      URL.revokeObjectURL(p.preview);
+    }
+    setActiveMarkerType(null);
+    setMarkerPhotos([]);
+  }, [markerPhotos]);
+
+  // Confirm marker
+  const confirmMarker = useCallback(async () => {
+    if (!currentPos || !activeMarkerType) return;
 
     const snapped = snapToProtectionGrid(currentPos);
+
+    // Build name from inputs
+    const nameParts: string[] = [];
+    if (markerNameInput.trim()) nameParts.push(markerNameInput.trim());
+    if (markerNoteInput.trim()) nameParts.push(`📝 ${markerNoteInput.trim()}`);
+    const finalName = nameParts.length > 0 ? nameParts.join(" — ") : null;
+
     const marker: OfflineTrackingPoint = {
       id: crypto.randomUUID(),
       lat: snapped.lat,
       lng: snapped.lng,
       accuracy: gpsAccuracy,
-      isSpringMarker: true,
-      springName: springNameInput.trim() || `Mata Air ${springMarkers.length + 1}`,
+      markerType: activeMarkerType,
+      name: finalName,
       recordedAt: Date.now(),
     };
 
-    setSpringMarkers((prev) => [...prev, marker]);
+    // Save photos as blobs associated with this marker
+    for (const photo of markerPhotos) {
+      await offlineDB.savePhoto({
+        id: crypto.randomUUID(),
+        reportId: marker.id,
+        fieldId: "marker_photo",
+        blob: photo.blob,
+        fileName: `marker_${Date.now()}.jpg`,
+        mimeType: "image/jpeg",
+      });
+    }
+
+    setMarkers((prev) => [...prev, marker]);
     setTrackingPoints((prev) => [...prev, marker]);
-    offlineDB.saveTrackingPoint(marker).catch(() => {});
-    setShowSpringNameInput(false);
-    setSpringNameInput("");
-  }, [currentPos, gpsAccuracy, springNameInput, springMarkers.length]);
+    await offlineDB.saveTrackingPoint(marker);
+
+    // Cleanup
+    for (const p of markerPhotos) {
+      URL.revokeObjectURL(p.preview);
+    }
+    setActiveMarkerType(null);
+    setMarkerPhotos([]);
+    setMarkerNameInput("");
+    setMarkerNoteInput("");
+  }, [currentPos, activeMarkerType, gpsAccuracy, markerNameInput, markerNoteInput, markerPhotos]);
 
   // ── Form handling ──────────────────────────────────────────────────────
   const handleSelectForm = (form: FormDefinition) => {
@@ -261,6 +408,20 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     setSidebarOpen(true);
   };
 
+  // ── Marker popup label ─────────────────────────────────────────────────
+  const markerTypeLabel = (type: MarkerType | null): string => {
+    switch (type) {
+      case "spring":
+        return "💧 Mata Air";
+      case "tree":
+        return "🌳 Tanam Pohon";
+      case "trench":
+        return "🕳️ Rorak";
+      default:
+        return "";
+    }
+  };
+
   // ── Render ──────────────────────────────────────────────────────────────
 
   return (
@@ -282,9 +443,17 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             <Footprints className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
             {(totalDistance / 1000).toFixed(2)} km
           </span>
-          <span className="inline-flex items-center gap-1">
-            <Flag className="h-3.5 w-3.5 text-amber-500" />
-            {springMarkers.length}
+          <span className="inline-flex items-center gap-1" title="Mata Air">
+            <Flag className="h-3.5 w-3.5 text-blue-500" />
+            {springCount}
+          </span>
+          <span className="inline-flex items-center gap-1" title="Tanam Pohon">
+            <Leaf className="h-3.5 w-3.5 text-green-500" />
+            {treeCount}
+          </span>
+          <span className="inline-flex items-center gap-1" title="Rorak">
+            <Mountain className="h-3.5 w-3.5 text-orange-500" />
+            {trenchCount}
           </span>
           <button
             onClick={onExit}
@@ -327,7 +496,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               </button>
 
               {/* GPS info */}
-              {gpsAccuracy && (
+              {gpsAccuracy !== null && (
                 <div className="mb-3 rounded-lg bg-slate-50 px-3 py-2 text-[10px] text-ink-muted dark:bg-slate-800">
                   Akurasi GPS: ±{gpsAccuracy.toFixed(0)}m
                 </div>
@@ -352,20 +521,29 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 </div>
               </div>
 
-              {/* Spring markers list */}
-              {springMarkers.length > 0 && (
+              {/* Markers list */}
+              {markers.length > 0 && (
                 <div>
                   <h4 className="mb-2 text-[10px] font-semibold uppercase text-ink-subtle">
-                    Mata Air Tercatat ({springMarkers.length})
+                    Marker Tercatat ({markers.length})
                   </h4>
                   <div className="space-y-1">
-                    {springMarkers.map((m, i) => (
+                    {markers.map((m) => (
                       <div
                         key={m.id}
-                        className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-1.5 text-xs dark:bg-amber-900/20"
+                        className={cn(
+                          "flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs",
+                          m.markerType === "spring" && "bg-blue-50 dark:bg-blue-900/20",
+                          m.markerType === "tree" && "bg-green-50 dark:bg-green-900/20",
+                          m.markerType === "trench" && "bg-orange-50 dark:bg-orange-900/20"
+                        )}
                       >
-                        <Flag className="h-3 w-3 flex-none text-amber-500" />
-                        <span className="truncate text-ink">{m.springName || `#${i + 1}`}</span>
+                        <span className="flex-none text-xs">
+                          {m.markerType === "spring" ? "💧" : m.markerType === "tree" ? "🌱" : "🕳️"}
+                        </span>
+                        <span className="truncate text-ink">
+                          {m.name || markerTypeLabel(m.markerType)}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -389,22 +567,42 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         <div className="relative flex-1">
           <SurveyLeafletMap
             trackingPoints={trackingPoints}
-            springMarkers={springMarkers}
+            markers={markers}
             currentPosition={currentPos}
             isTracking={isTracking}
           />
 
           {/* Bottom action bar */}
           <div className="absolute bottom-0 left-0 right-0 z-20 border-t border-ink-line bg-white/95 px-4 py-3 backdrop-blur dark:bg-slate-900/95">
-            <div className="mx-auto flex max-w-lg items-center justify-center gap-3">
-              {/* Mark spring button */}
+            <div className="mx-auto flex max-w-lg items-center justify-center gap-2">
+              {/* 💧 Spring marker button */}
               <button
-                onClick={handleMarkSpring}
+                onClick={() => handleMarkerButton("spring")}
                 disabled={!currentPos}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-sm font-bold text-white shadow-lg hover:bg-amber-600 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-blue-600 disabled:opacity-50 sm:text-sm"
               >
-                <Flag className="h-5 w-5" />
-                Catat Mata Air
+                <Flag className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
+                <span className="truncate">Mata Air</span>
+              </button>
+
+              {/* 🌳 Tree marker button */}
+              <button
+                onClick={() => handleMarkerButton("tree")}
+                disabled={!currentPos}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-green-600 disabled:opacity-50 sm:text-sm"
+              >
+                <Leaf className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
+                <span className="truncate">Tanam Pohon</span>
+              </button>
+
+              {/* 🕳️ Trench marker button */}
+              <button
+                onClick={() => handleMarkerButton("trench")}
+                disabled={!currentPos}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-orange-500 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-orange-600 disabled:opacity-50 sm:text-sm"
+              >
+                <Mountain className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
+                <span className="truncate">Rorak</span>
               </button>
 
               {/* Fill form button */}
@@ -413,10 +611,10 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                   setSidebarOpen(true);
                   setView("form-list");
                 }}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-3 text-sm font-bold text-white shadow-lg hover:bg-brand-700"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-brand-700 sm:text-sm"
               >
-                <Menu className="h-5 w-5" />
-                Isi Form
+                <Menu className="h-4 w-4 flex-none sm:h-5 sm:w-5" />
+                <span className="truncate">Isi Form</span>
               </button>
             </div>
           </div>
@@ -427,32 +625,122 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               <Ruler className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
               <span className="font-semibold">{(totalDistance / 1000).toFixed(2)} km</span>
             </div>
+            <div className="mt-1 flex gap-2 text-[10px] text-ink-subtle">
+              <span>💧 {springCount}</span>
+              <span>🌱 {treeCount}</span>
+              <span>🕳️ {trenchCount}</span>
+            </div>
           </div>
 
-          {/* Spring name input modal */}
-          {showSpringNameInput && (
+          {/* ── Marker popup ─────────────────────────────────────────────── */}
+          {activeMarkerType && (
             <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40">
               <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800">
-                <h3 className="text-sm font-bold text-ink">Catat Mata Air</h3>
+                {/* Title */}
+                <h3 className="flex items-center gap-2 text-sm font-bold text-ink">
+                  <span>
+                    {activeMarkerType === "spring"
+                      ? "💧"
+                      : activeMarkerType === "tree"
+                        ? "🌱"
+                        : "🕳️"}
+                  </span>
+                  Catat: {markerTypeLabel(activeMarkerType)}
+                </h3>
                 <p className="mt-1 text-xs text-ink-muted">
                   Lokasi akan di-snap ke grid 5 km.
                 </p>
+
+                {/* Name input */}
                 <input
                   type="text"
-                  value={springNameInput}
-                  onChange={(e) => setSpringNameInput(e.target.value)}
-                  placeholder="Nama mata air (opsional)"
+                  value={markerNameInput}
+                  onChange={(e) => setMarkerNameInput(e.target.value)}
+                  placeholder="Nama (opsional)"
                   className="mt-3 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
                   autoFocus
                 />
+
+                {/* Note/description */}
+                <textarea
+                  value={markerNoteInput}
+                  onChange={(e) => setMarkerNoteInput(e.target.value)}
+                  placeholder="Catatan (opsional)"
+                  rows={2}
+                  className="mt-2 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+                />
+
+                {/* Photo capture */}
+                <div className="mt-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-ink">Foto</span>
+                    <span className="text-[10px] text-ink-subtle">
+                      {4 - markerPhotos.length} tersisa
+                    </span>
+                  </div>
+
+                  {/* Photo preview grid */}
+                  {markerPhotos.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {markerPhotos.map((photo, idx) => (
+                        <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded-lg border border-ink-line">
+                          <img
+                            src={photo.preview}
+                            alt={`Foto ${idx + 1}`}
+                            className="h-full w-full object-cover"
+                          />
+                          <button
+                            onClick={() => removeMarkerPhoto(idx)}
+                            className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition group-hover:opacity-100"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+
+                      {/* Add more button */}
+                      {markerPhotos.length < 4 && (
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex h-16 w-16 items-center justify-center rounded-lg border-2 border-dashed border-ink-line text-xl text-ink-subtle hover:border-brand-400 hover:text-brand-500"
+                        >
+                          +
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Capture button (shown when less than 4 photos) */}
+                  {markerPhotos.length < 4 && (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600"
+                    >
+                      <Camera className="h-3.5 w-3.5" />
+                      {markerPhotos.length === 0 ? "Ambil Foto" : "Tambah Foto"}
+                    </button>
+                  )}
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleMarkerPhotoCapture}
+                    className="hidden"
+                  />
+                </div>
+
+                {/* Action buttons */}
                 <div className="mt-4 flex items-center gap-2">
-                  <button
-                    onClick={() => setShowSpringNameInput(false)}
-                    className="btn-secondary flex-1"
-                  >
+                  <button onClick={closeMarkerPopup} className="btn-secondary flex-1">
                     Batal
                   </button>
-                  <button onClick={confirmSpringMarker} className="btn-primary flex-1">
+                  <button
+                    onClick={confirmMarker}
+                    className="btn-primary flex-1 inline-flex items-center justify-center gap-1.5"
+                  >
+                    <MapPin className="h-4 w-4" />
                     Simpan
                   </button>
                 </div>
@@ -525,7 +813,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                         >
                           <option value="">Pilih...</option>
                           {field.options.map((opt) => (
-                            <option key={opt} value={opt}>{opt}</option>
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
                           ))}
                         </select>
                       ) : field.type === "photo" ? (
@@ -553,10 +843,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               </div>
 
               <div className="mt-6 flex items-center gap-3">
-                <button
-                  onClick={() => setView("map")}
-                  className="btn-secondary flex-1"
-                >
+                <button onClick={() => setView("map")} className="btn-secondary flex-1">
                   Batal
                 </button>
                 <button
