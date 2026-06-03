@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { MapContainer, TileLayer, Polyline, CircleMarker, Circle, Tooltip, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -74,27 +74,39 @@ function LocateButton() {
 /** Dark-aware tile layer */
 function MapLayers() {
   const map = useMap();
+  const layerRef = useRef<L.TileLayer | null>(null);
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains("dark");
+
+    function addTiles(tileUrl: string) {
+      if (layerRef.current) map.removeLayer(layerRef.current);
+      const layer = L.tileLayer(tileUrl, {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        maxZoom: 19,
+        subdomains: ["a", "b", "c"],
+      }).addTo(map);
+
+      layer.on("tileerror", () => {
+        console.warn("[SurveyMap] Tile error, trying fallback…");
+        // If primary URL fails, fallback to standard OSM
+        if (tileUrl.includes("cartocdn")) {
+          addTiles("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
+        }
+      });
+
+      layerRef.current = layer;
+    }
+
     const tileUrl = isDark
       ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
       : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
-    const layer = L.tileLayer(tileUrl, {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      maxZoom: 19,
-    });
-
-    map.addLayer(layer);
-
-    layer.on("tileerror", (e) => {
-      console.warn("[Map] Tile error:", e.error?.message || e.tile?.src);
-    });
+    addTiles(tileUrl);
 
     return () => {
-      map.removeLayer(layer);
+      if (layerRef.current) map.removeLayer(layerRef.current);
     };
   }, [map]);
 

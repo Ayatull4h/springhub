@@ -172,6 +172,11 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          subdomains={["a", "b", "c"]}
+          eventHandlers={{
+            tileerror: () => console.warn("[SetupMap] Tile load error"),
+          }}
+          maxZoom={19}
         />
         <MapCircleController
           center={center}
