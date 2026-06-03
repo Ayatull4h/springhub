@@ -113,7 +113,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const [cachedForms, setCachedForms] = useState<FormDefinition[]>([]);
   const [pendingReports, setPendingReports] = useState<PendingReport[]>([]);
   const [formData, setFormData] = useState<Record<string, FormFieldValue>>({});
-  const [formPhotos, setFormPhotos] = useState<Record<string, File | null>>({});
+  const [formPhotos, setFormPhotos] = useState<Record<string, File[]>>({});
 
   // Marker popup state
   const [activeMarkerType, setActiveMarkerType] = useState<MarkerType | null>(null);
@@ -365,8 +365,14 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     setFormData((prev) => ({ ...prev, [fieldId]: value }));
   };
 
-  const handlePhotoCapture = (fieldId: string, file: File | null) => {
-    setFormPhotos((prev) => ({ ...prev, [fieldId]: file }));
+  const handlePhotoCapture = (fieldId: string, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const newFiles = Array.from(files).slice(0, 5); // max 5 photos
+    setFormPhotos((prev) => {
+      const existing = prev[fieldId] || [];
+      const combined = [...existing, ...newFiles].slice(0, 5); // max 5 total
+      return { ...prev, [fieldId]: combined };
+    });
   };
 
   const handleSubmitForm = async () => {
@@ -377,7 +383,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
       formSlug: activeForm.slug,
       fieldData: formData as Record<string, unknown>,
       photoFieldIds: Object.entries(formPhotos)
-        .filter(([, f]) => f !== null)
+        .filter(([, files]) => files && files.length > 0)
         .map(([fieldId]) => fieldId),
       csrfToken: "",
       guestId: null,
@@ -385,17 +391,20 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     };
 
     // Save photos as blobs
-    for (const [fieldId, file] of Object.entries(formPhotos)) {
-      if (file) {
-        const blob = new Blob([await file.arrayBuffer()], { type: file.type });
-        await offlineDB.savePhoto({
-          id: crypto.randomUUID(),
-          reportId: report.id,
-          fieldId: fieldId,
-          blob,
-          fileName: file.name,
-          mimeType: file.type,
-        });
+    for (const [fieldId, files] of Object.entries(formPhotos)) {
+      if (files && files.length > 0) {
+        for (const file of files) {
+          // Compress to 720p
+          const compressed = await compressImage(file);
+          await offlineDB.savePhoto({
+            id: crypto.randomUUID(),
+            reportId: report.id,
+            fieldId: fieldId,
+            blob: compressed,
+            fileName: file.name,
+            mimeType: file.type,
+          });
+        }
       }
     }
 
@@ -824,16 +833,27 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                             type="file"
                             accept="image/*"
                             capture="environment"
+                            multiple
                             onChange={(e) => {
-                              const file = e.target.files?.[0] || null;
-                              handlePhotoCapture(field.id, file);
+                              handlePhotoCapture(field.id, e.target.files);
+                              e.target.value = ""; // allow re-selecting same file
                             }}
                             className="block w-full text-xs text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30 dark:file:text-brand-300"
                           />
-                          {formPhotos[field.id] && (
-                            <div className="mt-1 flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
-                              <CheckCircle2 className="h-3 w-3" />
-                              {formPhotos[field.id]?.name}
+                          {formPhotos[field.id] && formPhotos[field.id].length > 0 && (
+                            <div className="mt-1 flex flex-wrap gap-1">
+                              {formPhotos[field.id].map((file, idx) => (
+                                <div key={idx} className="relative h-12 w-12 overflow-hidden rounded-lg border border-ink-line">
+                                  <img
+                                    src={URL.createObjectURL(file)}
+                                    alt={`Photo ${idx + 1}`}
+                                    className="h-full w-full object-cover"
+                                  />
+                                </div>
+                              ))}
+                              <span className="ml-1 self-center text-[10px] text-ink-muted">
+                                {formPhotos[field.id].length}/5
+                              </span>
                             </div>
                           )}
                         </div>

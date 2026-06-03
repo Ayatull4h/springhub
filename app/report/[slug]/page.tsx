@@ -134,20 +134,21 @@ export default function ReportFormPage() {
           .map((f: FormField) => f.id);
 
         for (const fieldId of photoFieldIds) {
-          const file = formData.get(fieldId);
-          if (file && file instanceof File && file.size > 0) {
-            try {
-              const photoPayload = new FormData();
-              photoPayload.append("photo", file);
-              photoPayload.append("field_id", fieldId);
+          const files = formData.getAll(fieldId);
+          for (const file of files) {
+            if (file && file instanceof File && file.size > 0) {
+              try {
+                const photoPayload = new FormData();
+                photoPayload.append("photo", file);
+                photoPayload.append("field_id", fieldId);
 
-              await fetch(`/api/reports/${data.report.id}/photos`, {
-                method: "POST",
-                body: photoPayload,
-              });
-            } catch {
-              // Don't block on photo upload failure — report is already saved
-              console.warn(`Photo upload failed for field "${fieldId}"`);
+                await fetch(`/api/reports/${data.report.id}/photos`, {
+                  method: "POST",
+                  body: photoPayload,
+                });
+              } catch {
+                console.warn(`Photo upload failed for field "${fieldId}"`);
+              }
             }
           }
         }
@@ -416,6 +417,7 @@ function FieldRenderer({ field }: { field: FormField }) {
             type="file"
             accept="image/*"
             capture="environment"
+            multiple
             required={field.required}
             className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30"
           />

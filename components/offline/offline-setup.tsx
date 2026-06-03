@@ -197,7 +197,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
   useEffect(() => {
     if (step !== "form-select") return;
 
-    fetch("/api/admin/forms")
+    fetch("/api/forms")
       .then((r) => r.json())
       .then((data) => {
         const activeForms = (data.forms ?? []).filter((f: FormItem) => f.isActive);
