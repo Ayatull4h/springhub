@@ -159,6 +159,23 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     };
   }, [markerPhotos]);
 
+  // ── Auto-detect user location on mount (one-time) ───────────────────────
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        setCurrentPos({ lat: latitude, lng: longitude });
+        setGpsAccuracy(accuracy ?? null);
+      },
+      () => {
+        // Silent fail — user can tap GPS button later
+        console.warn("[GPS] Auto-locate failed — user may need to tap GPS button");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }, []);
+
   // ── GPS Tracking ────────────────────────────────────────────────────────
   const startTracking = useCallback(() => {
     if (!navigator.geolocation) {
@@ -315,10 +332,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   }, []);
 
   // ── Marker buttons (show popup) ────────────────────────────────────────
-  // Direct marker handler — no useCallback complexity
   const handleMarkerButton = (type: MarkerType) => {
-    const confirmed = window.confirm(`Tap marker: ${type}?`);
-    if (!confirmed) return;
     setActiveMarkerType(type);
     setMarkerNameInput("");
     setMarkerNoteInput("");
