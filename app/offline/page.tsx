@@ -34,18 +34,14 @@ function OfflinePageContent() {
           return;
         }
 
-        // Check if PWA is installed
+        // Check if PWA is installed — warn but don't block
         const isStandalone =
           window.matchMedia("(display-mode: standalone)").matches ||
           window.matchMedia("(display-mode: fullscreen)").matches ||
           window.matchMedia("(display-mode: minimal-ui)").matches;
 
         if (!isStandalone) {
-          setPhase("not-logged-in");
-          setCheckError(
-            "Mode offline membutuhkan aplikasi terinstall. Install SpringHub dari browser terlebih dahulu."
-          );
-          return;
+          console.warn("Mode offline berfungsi optimal saat aplikasi terinstall.");
         }
 
         // Check if setup was already done (forms cached)
