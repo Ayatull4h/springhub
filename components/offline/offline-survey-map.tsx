@@ -4,23 +4,16 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import {
   MapPin,
-  Crosshair,
   Footprints,
   Flag,
   X,
   Menu,
   Save,
-  Upload,
-  AlertCircle,
-  CheckCircle2,
   Navigation,
   Ruler,
-  Layers,
   Camera,
-  Loader2,
   Leaf,
   Mountain,
-  Trash2,
 } from "lucide-react";
 import {
   offlineDB,
@@ -107,7 +100,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // UI state
   const [view, setView] = useState<SurveyView>("map");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Form state
   const [activeForm, setActiveForm] = useState<FormDefinition | null>(null);
@@ -323,17 +315,13 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   }, []);
 
   // ── Marker buttons (show popup) ────────────────────────────────────────
-  const handleMarkerButton = useCallback(
-    (type: MarkerType) => {
-      console.log("[Marker] Button pressed:", type);
-      // No GPS check — user can place markers using map center as fallback
-      setActiveMarkerType(type);
-      setMarkerNameInput("");
-      setMarkerNoteInput("");
-      setMarkerPhotos([]);
-    },
-    []
-  );
+  // Direct marker handler — no useCallback complexity
+  const handleMarkerButton = (type: MarkerType) => {
+    setActiveMarkerType(type);
+    setMarkerNameInput("");
+    setMarkerNoteInput("");
+    setMarkerPhotos([]);
+  };
 
   // Close marker popup
   const closeMarkerPopup = useCallback(() => {
@@ -406,7 +394,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     setFormData({});
     setFormPhotos({});
     setView("form");
-    setSidebarOpen(false);
   };
 
   const handleFormFieldChange = (fieldId: string, value: FormFieldValue) => {
@@ -462,7 +449,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     setFormData({});
     setFormPhotos({});
     setView("map");
-    setSidebarOpen(true);
   };
 
   // ── Marker popup label ─────────────────────────────────────────────────
@@ -610,12 +596,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
       {/* Top bar */}
       <div className="flex items-center justify-between border-b border-ink-line bg-white px-4 py-2 dark:bg-slate-900">
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
           <span className="text-sm font-semibold text-ink">{t("offline.title")}</span>
         </div>
 
@@ -652,102 +632,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
       {/* Main content */}
       <div className="relative flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        {sidebarOpen && (
-          <div className="absolute left-0 top-0 z-30 flex h-full w-72 flex-col border-r border-ink-line bg-white shadow-lg dark:bg-slate-900">
-            <div className="flex items-center justify-between border-b border-ink-line px-4 py-3">
-              <h3 className="text-sm font-bold text-ink">{t("offline.surveyMenu") || "Survey Menu"}</h3>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="rounded-md p-1 text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-800"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
 
-            <div className="flex-1 overflow-y-auto p-3">
-              {/* GPS tracking button */}
-              <button
-                onClick={isTracking ? stopTracking : startTracking}
-                className={cn(
-                  "mb-3 flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-xs font-semibold transition",
-                  isTracking
-                    ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
-                    : "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
-                )}
-              >
-                <Navigation className={cn("h-4 w-4", isTracking && "animate-pulse")} />
-                {isTracking ? t("offline.survey.gpsActive") : t("offline.survey.gpsStart")}
-              </button>
-
-              {/* GPS info */}
-              {gpsAccuracy !== null && (
-                <div className="mb-3 rounded-lg bg-slate-50 px-3 py-2 text-[10px] text-ink-muted dark:bg-slate-800">
-                  {t("offline.gpsAccuracy") || "Akurasi GPS"}: ±{gpsAccuracy.toFixed(0)}m
-                </div>
-              )}
-
-              {/* Forms list */}
-              <div className="mb-3">
-                <h4 className="mb-2 text-[10px] font-semibold uppercase text-ink-subtle">
-                  {t("offline.availableForms") || "Form Tersedia"}
-                </h4>
-                <div className="space-y-1.5">
-                  {cachedForms.map((form) => (
-                    <button
-                      key={form.slug}
-                      onClick={() => handleSelectForm(form)}
-                      className="flex w-full items-center gap-2 rounded-lg border border-ink-line px-3 py-2 text-left text-xs text-ink hover:border-brand-200 hover:bg-brand-50 dark:hover:border-brand-700 dark:hover:bg-brand-900/20"
-                    >
-                      <Layers className="h-3.5 w-3.5 flex-none text-brand-600 dark:text-brand-400" />
-                      <span className="truncate">{form.title}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Markers list */}
-              {markers.length > 0 && (
-                <div>
-                  <h4 className="mb-2 text-[10px] font-semibold uppercase text-ink-subtle">
-                    {t("offline.markers") || "Marker Tercatat"} ({markers.length})
-                  </h4>
-                  <div className="space-y-1">
-                    {markers.map((m) => (
-                      <div
-                        key={m.id}
-                        className={cn(
-                          "flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs",
-                          m.markerType === "spring" && "bg-blue-50 dark:bg-blue-900/20",
-                          m.markerType === "tree" && "bg-green-50 dark:bg-green-900/20",
-                          m.markerType === "trench" && "bg-amber-50 dark:bg-amber-900/20",
-                          m.markerType === "seedling" && "bg-emerald-50 dark:bg-emerald-900/20"
-                        )}
-                      >
-                        <span className="flex-none text-xs">
-                          {m.markerType === "spring" ? "💧" : m.markerType === "tree" ? "🌱" : m.markerType === "trench" ? "🕳️" : "🌰"}
-                        </span>
-                        <span className="truncate text-ink">
-                          {m.name || markerTypeLabel(m.markerType)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Pending reports count */}
-            {pendingReports.length > 0 && (
-              <div className="border-t border-ink-line px-4 py-3">
-                <div className="flex items-center gap-2 text-xs text-ink-muted">
-                  <Save className="h-3.5 w-3.5" />
-                  <span>{pendingReports.length} {t("offline.reportsSaved") || "laporan tersimpan"}</span>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Map */}
         <div className="relative flex-1 flex flex-col">
@@ -841,8 +726,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 onClick={() => {
                 if (cachedForms.length > 0) {
                   handleSelectForm(cachedForms[0]);
-                } else {
-                  setSidebarOpen(true);
                 }
               }}
                 className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
@@ -886,8 +769,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 onClick={() => {
                 if (cachedForms.length > 0) {
                   handleSelectForm(cachedForms[0]);
-                } else {
-                  setSidebarOpen(true);
                 }
               }}
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
