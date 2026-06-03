@@ -696,123 +696,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           </div>
         </div>
 
-        {/* ── Marker popup (inside main content but outside map wrapper) ── */}
-        {activeMarkerType && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800">
-              {/* Title */}
-              <h3 className="flex items-center gap-2 text-sm font-bold text-ink">
-                <span>
-                  {activeMarkerType === "spring"
-                    ? "💧"
-                    : activeMarkerType === "tree"
-                      ? "🌱"
-                      : activeMarkerType === "trench"
-                        ? "🕳️"
-                        : "🌰"}
-                </span>
-                {t("offline.addMarker")}: {markerTypeLabel(activeMarkerType)}
-              </h3>
-              <p className="mt-1 text-xs text-ink-muted">
-                {t("offline.locationSnap") || "Lokasi akan di-snap ke grid 5 km."}
-              </p>
-
-              {/* Name input */}
-              <input
-                type="text"
-                value={markerNameInput}
-                onChange={(e) => setMarkerNameInput(e.target.value)}
-                placeholder={t("offline.nameOptional") || "Nama (opsional)"}
-                className="mt-3 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-                autoFocus
-              />
-
-              {/* Note/description */}
-              <textarea
-                value={markerNoteInput}
-                onChange={(e) => setMarkerNoteInput(e.target.value)}
-                placeholder={t("offline.noteOptional") || "Catatan (opsional)"}
-                rows={2}
-                className="mt-2 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-              />
-
-              {/* Photo capture */}
-              <div className="mt-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-ink">{t("offline.photo") || "Foto"}</span>
-                  <span className="text-[10px] text-ink-subtle">
-                    {4 - markerPhotos.length} {t("offline.remaining") || "tersisa"}
-                  </span>
-                </div>
-
-                {/* Photo preview grid */}
-                {markerPhotos.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {markerPhotos.map((photo, idx) => (
-                      <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded-lg border border-ink-line">
-                        <img
-                          src={photo.preview}
-                          alt={`Foto ${idx + 1}`}
-                          className="h-full w-full object-cover"
-                        />
-                        <button
-                          onClick={() => removeMarkerPhoto(idx)}
-                          className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition group-hover:opacity-100"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ))}
-
-                    {/* Add more button */}
-                    {markerPhotos.length < 4 && (
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex h-16 w-16 items-center justify-center rounded-lg border-2 border-dashed border-ink-line text-xl text-ink-subtle hover:border-brand-400 hover:text-brand-500"
-                      >
-                        +
-                      </button>
-                    )}
-                  </div>
-                )}
-
-                {/* Capture button (shown when less than 4 photos) */}
-                {markerPhotos.length < 4 && (
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600"
-                  >
-                    <Camera className="h-3.5 w-3.5" />
-                    {markerPhotos.length === 0 ? (t("offline.takePhoto") || "Ambil Foto") : (t("offline.addPhoto") || "Tambah Foto")}
-                  </button>
-                )}
-
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={handleMarkerPhotoCapture}
-                  className="hidden"
-                />
-              </div>
-
-              {/* Action buttons */}
-              <div className="mt-4 flex items-center gap-2">
-                <button onClick={closeMarkerPopup} className="btn-secondary flex-1">
-                  {t("common.cancel")}
-                </button>
-                <button
-                  onClick={confirmMarker}
-                  className="btn-primary flex-1 inline-flex items-center justify-center gap-1.5"
-                >
-                  <MapPin className="h-4 w-4" />
-                  {t("common.save")}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Bottom action bar — OUTSIDE map wrapper to avoid Leaflet click interception */}
@@ -911,6 +794,124 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           </button>
         </div>
       </div>
+
+      {/* ── Marker popup — at root level to avoid overflow clipping ── */}
+      {activeMarkerType && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800">
+            {/* Title */}
+            <h3 className="flex items-center gap-2 text-sm font-bold text-ink">
+              <span>
+                {activeMarkerType === "spring"
+                  ? "💧"
+                  : activeMarkerType === "tree"
+                    ? "🌱"
+                    : activeMarkerType === "trench"
+                      ? "🕳️"
+                      : "🌰"}
+              </span>
+              {t("offline.addMarker")}: {markerTypeLabel(activeMarkerType)}
+            </h3>
+            <p className="mt-1 text-xs text-ink-muted">
+              {t("offline.locationSnap") || "Lokasi akan di-snap ke grid 5 km."}
+            </p>
+
+            {/* Name input */}
+            <input
+              type="text"
+              value={markerNameInput}
+              onChange={(e) => setMarkerNameInput(e.target.value)}
+              placeholder={t("offline.nameOptional") || "Nama (opsional)"}
+              className="mt-3 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+              autoFocus
+            />
+
+            {/* Note/description */}
+            <textarea
+              value={markerNoteInput}
+              onChange={(e) => setMarkerNoteInput(e.target.value)}
+              placeholder={t("offline.noteOptional") || "Catatan (opsional)"}
+              rows={2}
+              className="mt-2 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+            />
+
+            {/* Photo capture */}
+            <div className="mt-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-ink">{t("offline.photo") || "Foto"}</span>
+                <span className="text-[10px] text-ink-subtle">
+                  {4 - markerPhotos.length} {t("offline.remaining") || "tersisa"}
+                </span>
+              </div>
+
+              {/* Photo preview grid */}
+              {markerPhotos.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {markerPhotos.map((photo, idx) => (
+                    <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded-lg border border-ink-line">
+                      <img
+                        src={photo.preview}
+                        alt={`Foto ${idx + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                      <button
+                        onClick={() => removeMarkerPhoto(idx)}
+                        className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition group-hover:opacity-100"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* Add more button */}
+                  {markerPhotos.length < 4 && (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex h-16 w-16 items-center justify-center rounded-lg border-2 border-dashed border-ink-line text-xl text-ink-subtle hover:border-brand-400 hover:text-brand-500"
+                    >
+                      +
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Capture button (shown when less than 4 photos) */}
+              {markerPhotos.length < 4 && (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600"
+                >
+                  <Camera className="h-3.5 w-3.5" />
+                  {markerPhotos.length === 0 ? (t("offline.takePhoto") || "Ambil Foto") : (t("offline.addPhoto") || "Tambah Foto")}
+                </button>
+              )}
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleMarkerPhotoCapture}
+                className="hidden"
+              />
+            </div>
+
+            {/* Action buttons */}
+            <div className="mt-4 flex items-center gap-2">
+              <button onClick={closeMarkerPopup} className="btn-secondary flex-1">
+                {t("common.cancel")}
+              </button>
+              <button
+                onClick={confirmMarker}
+                className="btn-primary flex-1 inline-flex items-center justify-center gap-1.5"
+              >
+                <MapPin className="h-4 w-4" />
+                {t("common.save")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
