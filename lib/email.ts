@@ -95,6 +95,29 @@ export async function sendEmail(params: SendEmailParams): Promise<void> {
   }
 }
 
+export async function sendNotificationEmail(
+  email: string,
+  subject: string,
+  body: string
+): Promise<void> {
+  const provider = process.env.EMAIL_PROVIDER || "log";
+  if (!provider || provider === "log") {
+    console.log(`[EMAIL] To: ${email}, Subject: ${subject}, Body: ${body}`);
+    return;
+  }
+  await sendEmail({
+    to: email,
+    subject,
+    html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;">
+      <h2 style="color:#1e293b;">${subject}</h2>
+      <p style="color:#475569;">${body}</p>
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;" />
+      <p style="color:#94a3b8;font-size:12px;">SpringHub — Jaga Semesta</p>
+    </div>`,
+    text: body,
+  });
+}
+
 export function buildResetPasswordEmail(resetUrl: string): { subject: string; html: string; text: string } {
   return {
     subject: "Reset Password — SpringHub",

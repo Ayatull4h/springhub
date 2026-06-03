@@ -26,7 +26,7 @@ export function SiteHeader() {
 
   useEffect(() => {
     if (user) {
-      fetch("/api/user/notifications")
+      fetch("/api/notifications/unread")
         .then((r) => r.json())
         .then((data) => setNotifCount(data.unread || 0))
         .catch(() => {});
@@ -108,11 +108,10 @@ export function SiteHeader() {
           </button>
 
           {user && (
-            <button
-              type="button"
+            <Link
+              href="/notifications"
               className="relative rounded-md p-2 text-ink-muted hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
               aria-label="Notifications"
-              title="Notifications — coming soon"
             >
               <Bell className="h-4 w-4" />
               {notifCount > 0 && (
@@ -120,7 +119,7 @@ export function SiteHeader() {
                   {notifCount > 9 ? "9+" : notifCount}
                 </span>
               )}
-            </button>
+            </Link>
           )}
 
           {loading ? (
@@ -192,14 +191,29 @@ export function SiteHeader() {
               </Link>
             )}
             {user && (
-              <Link
-                href="/profile"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-md px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
-              >
-                <User className="mr-2 inline-block h-4 w-4" />
-                {user.username}
-              </Link>
+              <>
+                <Link
+                  href="/notifications"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-md px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+                >
+                  <Bell className="mr-2 inline-block h-4 w-4" />
+                  Notifikasi
+                  {notifCount > 0 && (
+                    <span className="ml-2 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                      {notifCount}
+                    </span>
+                  )}
+                </Link>
+                <Link
+                  href="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-md px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+                >
+                  <User className="mr-2 inline-block h-4 w-4" />
+                  {user.username}
+                </Link>
+              </>
             )}
             {!user && (
               <Link

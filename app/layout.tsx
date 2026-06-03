@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { I18nProvider } from "@/lib/i18n";
 import { DarkModeProvider } from "@/lib/darkmode";
 import Watermark from "@/components/layout/watermark";
+import { QueueWorker } from "@/components/queue-worker";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -74,6 +75,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen font-sans">
+        <QueueWorker />
         <DarkModeProvider>
           <I18nProvider>
             <SiteHeader />

@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, Sparkles, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Sparkles, AlertCircle, Loader2, CheckCircle2, WifiOff } from "lucide-react";
 import { FORMS, getForm, type FormField } from "@/lib/forms";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
 import { LocationPicker } from "@/components/map/location-picker";
+import { useAutoSave } from "@/lib/use-auto-save";
+import { offlineDB } from "@/lib/offline-db";
 
 export default function ReportFormPage() {
   const params = useParams();
@@ -23,6 +25,13 @@ export default function ReportFormPage() {
   const [csrfToken, setCsrfToken] = useState("");
   // Catat waktu halaman dimuat — bukan waktu submit — untuk anti-spam time gate
   const [pageLoadTime] = useState(() => Date.now());
+
+  // ── Auto-Draft State ──────────────────────────────────────────────
+  const [fieldData, setFieldData] = useState<Record<string, unknown>>({});
+  const [photoBlobs, setPhotoBlobs] = useState<Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>>([]);
+  const [queuedOffline, setQueuedOffline] = useState(false);
+
+  useAutoSave(slug, fieldData, photoBlobs);
 
   useEffect(() => {
     fetch("/api/csrf")
@@ -155,9 +164,21 @@ export default function ReportFormPage() {
       }
 
       setSuccess(true);
+      await offlineDB.deleteDraft(`draft-${activeForm.slug}-${pageLoadTime}`);
       formEl.reset();
     } catch {
-      setError(t("report.errorNetwork"));
+      // ── Offline fallback: queue submission ────────────────────────
+      setQueuedOffline(true);
+      setSuccess(true);
+      await offlineDB.queueSubmission({
+        id: `queue-${activeForm.slug}-${Date.now()}`,
+        formSlug: activeForm.slug,
+        fieldData,
+        photoBlobs,
+        csrfToken,
+        createdAt: Date.now(),
+        retryCount: 0,
+      });
     } finally {
       setLoading(false);
     }
@@ -166,15 +187,27 @@ export default function ReportFormPage() {
   if (success) {
     return (
       <div className="container-page max-w-lg py-20 text-center">
-        <CheckCircle2 className="mx-auto h-16 w-16 text-emerald-500" />
-        <h1 className="mt-4 text-2xl font-extrabold text-ink">{t("report.reportSubmitted")}</h1>
-        <p className="mt-2 text-ink-muted">{t("report.thankYou")}</p>
+        {queuedOffline ? (
+          <>
+            <WifiOff className="mx-auto h-16 w-16 text-amber-500" />
+            <h1 className="mt-4 text-2xl font-extrabold text-ink">Tersimpan!</h1>
+            <p className="mt-2 text-ink-muted">
+              Laporan tersimpan di perangkat. Akan dikirim otomatis saat online.
+            </p>
+          </>
+        ) : (
+          <>
+            <CheckCircle2 className="mx-auto h-16 w-16 text-emerald-500" />
+            <h1 className="mt-4 text-2xl font-extrabold text-ink">{t("report.reportSubmitted")}</h1>
+            <p className="mt-2 text-ink-muted">{t("report.thankYou")}</p>
+          </>
+        )}
         <div className="mt-6 flex items-center justify-center gap-3">
           <Link href="/" className="btn-primary">
             {t("report.backToHome")}
           </Link>
           <button
-            onClick={() => setSuccess(false)}
+            onClick={() => { setSuccess(false); setQueuedOffline(false); }}
             className="btn-secondary"
           >
             {t("report.submitAnother")}
@@ -217,6 +250,30 @@ export default function ReportFormPage() {
         onSubmit={handleSubmit}
         encType="multipart/form-data"
         className="card mt-6 space-y-5"
+        onChange={(e) => {
+          const formEl = e.currentTarget;
+          const fd = new FormData(formEl);
+          const collected: Record<string, unknown> = {};
+          fd.forEach((value, key) => {
+            if (key === "_website" || key === "form_slug" || key === "_submit_time") return;
+            if (value instanceof File) {
+              if (value.size > 0) {
+                collected[key] = value.name;
+                // Capture photo blobs
+                setPhotoBlobs(prev => {
+                  const exists = prev.some(p => p.fieldId === key && p.fileName === value.name);
+                  if (!exists) {
+                    return [...prev, { fieldId: key, blob: value as Blob, fileName: value.name, mimeType: value.type }];
+                  }
+                  return prev;
+                });
+              }
+              return;
+            }
+            collected[key] = value;
+          });
+          setFieldData(collected);
+        }}
       >
         {/* Honeypot */}
         <div className="hidden" aria-hidden>

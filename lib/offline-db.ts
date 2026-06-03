@@ -13,7 +13,7 @@
  */
 
 const DB_NAME = "springhub-offline";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 export type MarkerType = "spring" | "tree" | "trench" | "seedling";
 
@@ -30,10 +30,28 @@ export type OfflineTrackingPoint = {
 export type OfflineConfig = {
   id: "session-config";
   selectedForms: string[];
-  radiusKm: 5 | 7 | 10;
+  radiusKm: 3 | 5 | 7 | 10;
   qualityLevel: "ringan" | "sedang" | "lengkap";
   totalDistance: number; // meters
   startedAt: number;
+};
+
+export type DraftReport = {
+  id: string;
+  formSlug: string;
+  fieldData: Record<string, unknown>;
+  photoBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>;
+  savedAt: number;
+};
+
+export type QueuedSubmission = {
+  id: string;
+  formSlug: string;
+  fieldData: Record<string, unknown>;
+  photoBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>;
+  csrfToken: string;
+  createdAt: number;
+  retryCount: number;
 };
 
 type DBSchema = {
@@ -66,6 +84,16 @@ type DBSchema = {
     key: string;
     value: OfflineConfig;
     indexes: {};
+  };
+  "draft-reports": {
+    key: string;
+    value: DraftReport;
+    indexes: { "by-updated": number };
+  };
+  "submission-queue": {
+    key: string;
+    value: QueuedSubmission;
+    indexes: { "by-created": number };
   };
 };
 
@@ -154,6 +182,18 @@ function openDB(): Promise<IDBDatabase> {
         // tile-manifest
         if (!db.objectStoreNames.contains("tile-manifest")) {
           db.createObjectStore("tile-manifest", { keyPath: "url" });
+        }
+      }
+
+      // ── Version 3 migration ──
+      if (oldVersion < 3) {
+        if (!db.objectStoreNames.contains("draft-reports")) {
+          const store = db.createObjectStore("draft-reports", { keyPath: "id" });
+          store.createIndex("by-updated", "savedAt", { unique: false });
+        }
+        if (!db.objectStoreNames.contains("submission-queue")) {
+          const store = db.createObjectStore("submission-queue", { keyPath: "id" });
+          store.createIndex("by-created", "createdAt", { unique: false });
         }
       }
 
@@ -387,6 +427,44 @@ export const offlineDB = {
     return deleteItem("offline-config", "session-config");
   },
 
+  // ── Draft Reports ──────────────────────────────────────────────────────
+  saveDraft(draft: DraftReport) {
+    return addItem("draft-reports", draft);
+  },
+
+  getDraft(id: string): Promise<DraftReport | undefined> {
+    return getItem("draft-reports", id);
+  },
+
+  getAllDrafts(): Promise<DraftReport[]> {
+    return getAllItems("draft-reports");
+  },
+
+  deleteDraft(id: string) {
+    return deleteItem("draft-reports", id);
+  },
+
+  draftCount(): Promise<number> {
+    return countItems("draft-reports");
+  },
+
+  // ── Submission Queue ───────────────────────────────────────────────────
+  queueSubmission(sub: QueuedSubmission) {
+    return addItem("submission-queue", sub);
+  },
+
+  getAllQueued(): Promise<QueuedSubmission[]> {
+    return getAllItems("submission-queue");
+  },
+
+  deleteQueued(id: string) {
+    return deleteItem("submission-queue", id);
+  },
+
+  queueCount(): Promise<number> {
+    return countItems("submission-queue");
+  },
+
   // ── Bulk Clear ─────────────────────────────────────────────────────────
   async clearAll() {
     await clearStore("pending-reports");
@@ -394,18 +472,22 @@ export const offlineDB = {
     await clearStore("photo-blobs");
     await clearStore("form-definitions");
     await clearStore("tile-manifest");
+    await clearStore("draft-reports");
+    await clearStore("submission-queue");
     await deleteItem("offline-config", "session-config");
   },
 
   async getStats() {
-    const [reports, tracks, photos, forms, tiles, configs] = await Promise.all([
+    const [reports, tracks, photos, forms, tiles, configs, drafts, queue] = await Promise.all([
       countItems("pending-reports"),
       countItems("tracking-points"),
       countItems("photo-blobs"),
       countItems("form-definitions"),
       countItems("tile-manifest"),
       countItems("offline-config"),
+      countItems("draft-reports"),
+      countItems("submission-queue"),
     ]);
-    return { reports, tracks, photos, forms, tiles, configs };
+    return { reports, tracks, photos, forms, tiles, configs, drafts, queue };
   },
 };

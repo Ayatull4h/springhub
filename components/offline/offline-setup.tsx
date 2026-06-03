@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 
 type SetupStep = "tutorial" | "form-select" | "radius-quality" | "area-select" | "downloading" | "ready";
 
-type RadiusKm = 5 | 7 | 10;
+type RadiusKm = 3 | 5 | 7 | 10;
 type QualityLevel = "ringan" | "sedang" | "lengkap";
 
 type FormItem = {
@@ -137,6 +137,7 @@ const qualityEstimates: Record<QualityLevel, { tileCount: number; sizeMB: number
 };
 
 const radiusMultiplier: Record<RadiusKm, number> = {
+  3: 0.5,
   5: 1,
   7: 2,
   10: 4,
@@ -158,6 +159,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
   const [selectedQuality, setSelectedQuality] = useState<QualityLevel>("ringan");
 
   // Area selection (for full mode)
+  const [selectedCenter, setSelectedCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedArea, setSelectedArea] = useState<{
     north: number;
     south: number;
@@ -269,8 +271,17 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
   // ── Handle area selection done ────────────────────────────────────────────
   const handleAreaSelected = useCallback(
-    (bounds: { north: number; south: number; east: number; west: number }) => {
-      setSelectedArea(bounds);
+    (center: { lat: number; lng: number }, radius: number) => {
+      setSelectedCenter(center);
+      // Calculate bounding box from circle center + radius
+      const latDelta = (radius / 6371) * (180 / Math.PI);
+      const lngDelta = (radius / 6371) * (180 / Math.PI) / Math.cos((center.lat * Math.PI) / 180);
+      setSelectedArea({
+        north: center.lat + latDelta,
+        south: center.lat - latDelta,
+        east: center.lng + Math.abs(lngDelta),
+        west: center.lng - Math.abs(lngDelta),
+      });
     },
     []
   );
@@ -713,7 +724,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             Semakin besar radius, semakin banyak tile yang di-cache
           </p>
           <div className="space-y-2">
-            {([5, 7, 10] as RadiusKm[]).map((r) => (
+            {([3, 5, 7, 10] as RadiusKm[]).map((r) => (
               <label
                 key={r}
                 className={cn(
@@ -732,12 +743,14 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
                 />
                 <div className="flex-1">
                   <span className="text-sm font-medium text-ink">
+                    {r === 3 && "🟢 "}
                     {r === 5 && "🟢 "}
                     {r === 7 && "🟡 "}
                     {r === 10 && "🔴 "}
                     {r} km
                   </span>
                   <p className="text-xs text-ink-subtle">
+                    {r === 3 && "Mini — sangat kecil, cepat di-cache"}
                     {r === 5 && "Kecil — cocok untuk area fokus"}
                     {r === 7 && "Sedang — area survei standar"}
                     {r === 10 && "Besar — area luas, cache lebih banyak"}
@@ -824,6 +837,10 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
   // ── AREA SELECTION STEP (full mode only) ─────────────────────────────────
   if (step === "area-select") {
+    const areaKm2 = selectedRadius ? (Math.PI * selectedRadius * selectedRadius).toFixed(0) : "—";
+    const estimatedTotalSize = estimatedSizeMB;
+    const estimatedTotalTiles = estimatedTiles;
+
     return (
       <div className="py-8">
         <div className="mx-auto max-w-lg">
@@ -834,14 +851,41 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             <div>
               <h2 className="text-lg font-bold text-ink">Pilih Area Survei</h2>
               <p className="text-xs text-ink-muted">
-                Tentukan area survei untuk pre-cache tile peta (gunakan scroll untuk zoom)
+                Klik peta untuk pindahkan pusat lingkaran. Gunakan tombol radius di bawah.
               </p>
             </div>
           </div>
+
+          {/* Radius selector */}
+          <div className="mt-3 flex items-center gap-2">
+            <span className="text-xs font-medium text-ink-muted">Radius:</span>
+            {([3, 5, 7, 10] as RadiusKm[]).map((r) => (
+              <button
+                key={r}
+                onClick={() => {
+                  setSelectedRadius(r);
+                  if (selectedCenter) {
+                    handleAreaSelected(selectedCenter, r);
+                  }
+                }}
+                className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                  selectedRadius === r
+                    ? "bg-brand-600 text-white"
+                    : "border border-ink-line bg-white text-ink-muted hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700"
+                }`}
+              >
+                {r} km
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="mt-4 h-[400px] overflow-hidden rounded-xl border border-ink-line">
-          <SetupMap onAreaSelected={handleAreaSelected} selectedArea={selectedArea} />
+        <div className="mt-3 h-[400px] overflow-hidden rounded-xl border border-ink-line">
+          <SetupMap
+            onAreaSelected={handleAreaSelected}
+            selectedCenter={selectedCenter}
+            selectedRadius={selectedRadius}
+          />
         </div>
 
         <div className="mx-auto mt-4 max-w-lg">
@@ -849,13 +893,17 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-700 dark:bg-emerald-900/20">
               <div className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-300">
                 <CheckCircle2 className="h-4 w-4" />
-                Area dipilih — zoom 12-15 akan di-cache
+                Area dipilih — ~{areaKm2} km²
+              </div>
+              <div className="mt-1 flex gap-3 text-xs text-emerald-600 dark:text-emerald-400">
+                <span>~{estimatedTotalTiles.toLocaleString("id-ID")} tile</span>
+                <span>~{estimatedTotalSize} MB</span>
               </div>
             </div>
           ) : (
             <div className="rounded-xl border border-ink-line bg-white p-3 dark:bg-slate-800">
               <p className="text-xs text-ink-muted">
-                Zoom dan geser peta ke area survei kamu. Area yang terlihat di layar akan dipilih.
+                Klik peta untuk memilih pusat area survei. Lingkaran menunjukkan area yang akan di-cache.
               </p>
             </div>
           )}
@@ -864,7 +912,11 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             <button onClick={() => setStep("radius-quality")} className="btn-secondary flex-1">
               Kembali
             </button>
-            <button onClick={cacheFormsAndFinish} className="btn-primary flex-1">
+            <button
+              onClick={cacheFormsAndFinish}
+              disabled={!selectedArea}
+              className="btn-primary flex-1"
+            >
               Download Tile & Siapkan
             </button>
           </div>

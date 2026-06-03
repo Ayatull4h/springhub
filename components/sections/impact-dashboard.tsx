@@ -10,6 +10,7 @@ import {
 } from "@/lib/data";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { DraftBanner } from "@/components/draft-banner";
 import { OfflineEntryButton } from "@/components/offline/offline-entry-button";
 
 const iconMap: Record<string, typeof Droplets> = {
@@ -55,6 +56,11 @@ export function ImpactDashboard() {
         {t("dashboard.title")}{" "}
         <span className="text-brand-600">{t("dashboard.titleAccent")}</span>
       </h2>
+
+      {/* Draft banner */}
+      <div className="mt-6">
+        <DraftBanner />
+      </div>
 
       <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
         {impactStats.map((s) => {
