@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, HardHat, Heart, ThumbsUp, MessageSquare } from "lucide-react";
 import { featuredProjects } from "@/lib/data";
@@ -14,13 +14,45 @@ const PROJECT_ICONS: Record<string, string> = {
   monitoring_expedition: "\uD83D\uDD2D",
 };
 
+const dummyComments: Record<number, Array<{ user: string; text: string; time: string }>> = {
+  0: [ // project index 0 = Restore Cibeureum Spring
+    { user: "Budi Santoso", text: "Semoga cepat terealisasi, warga di sini sangat membutuhkan!", time: "3 hari lalu" },
+    { user: "Rina W.", text: "Sudah pernah survei lokasi, potensi mata airnya besar.", time: "5 hari lalu" },
+    { user: "Agus P.", text: "Siap bantu gotong royong kalau ada jadwal lapangan.", time: "1 minggu lalu" },
+    { user: "Dewi L.", text: "Masyarakat sekitar mohon banget ini direstorasi.", time: "1 minggu lalu" },
+    { user: "Fajar N.", text: "Saya donasi untuk proyek ini! Semangat!", time: "2 minggu lalu" },
+  ],
+  1: [ // project index 1 = Endemic Tree Planting Tabanan
+    { user: "Maya Putri", text: "Pohon endemik sangat penting untuk ekosistem mata air.", time: "2 hari lalu" },
+    { user: "Wayan S.", text: "Di Tabanan banyak mata air yang perlu dilindungi.", time: "4 hari lalu" },
+    { user: "Komang A.", text: "Siap menyediakan bibit lokal dari desa saya.", time: "6 hari lalu" },
+    { user: "Putu W.", text: "Lokasi strategis, semoga cepet terkumpul dananya.", time: "1 minggu lalu" },
+    { user: "Made R.", text: "Program bagus! Semoga bisa diperluas ke desa lain.", time: "2 minggu lalu" },
+  ],
+  2: [ // project index 2 = Senjoyo Trench Network
+    { user: "Ahmad Fauzi", text: "Rorak di Senjoyo sangat efektif cegah banjir waktu hujan.", time: "1 hari lalu" },
+    { user: "Sari Dewi", text: "Saya lihat langsung dampaknya, air tanah naik.", time: "3 hari lalu" },
+    { user: "Hendra K.", text: "Desain roraknya sudah cocok dengan kontur tanah.", time: "5 hari lalu" },
+    { user: "Tono P.", text: "Monggo didukung, ini proyek nyata untuk warga.", time: "1 minggu lalu" },
+    { user: "Rina W.", text: "Semoga segera approved, sudah ditinjau tim teknis.", time: "1 minggu lalu" },
+  ],
+};
+
 export function FeaturedProjects() {
   const { t } = useI18n();
   const [page, setPage] = useState(1);
   const [likedProjects, setLikedProjects] = useState<Record<number, boolean>>({});
-  const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [currentComments, setCurrentComments] = useState(featuredProjects.map(p => p.comments));
+  const [user, setUser] = useState<{ id: string; username: string } | null>(null);
+  const [showComments, setShowComments] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then(r => r.json())
+      .then(data => setUser(data.user ?? null))
+      .catch(() => setUser(null));
+  }, []);
 
   if (!featuredProjects.length) return null;
 
@@ -111,7 +143,7 @@ export function FeaturedProjects() {
               {likedProjects[page] ? project.likes + 1 : project.likes}
             </button>
             <button
-              onClick={() => setShowCommentInput(!showCommentInput)}
+              onClick={() => setShowComments(!showComments)}
               className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink dark:hover:text-white"
             >
               <MessageSquare className="h-4 w-4" />
@@ -119,37 +151,60 @@ export function FeaturedProjects() {
             </button>
           </div>
 
-          {showCommentInput && (
-            <div className="mt-3 border-t border-ink-line pt-3 dark:border-slate-700">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (!commentText.trim()) return;
-                  setCurrentComments(prev => {
-                    const next = [...prev];
-                    next[page - 1] = (next[page - 1] || 0) + 1;
-                    return next;
-                  });
-                  setCommentText("");
-                  setShowCommentInput(false);
-                }}
-                className="flex gap-2"
-              >
-                <input
-                  type="text"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Tulis komentar..."
-                  className="flex-1 rounded-lg border border-ink-line px-3 py-1.5 text-xs focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/30 dark:bg-slate-700"
-                />
-                <button
-                  type="submit"
-                  disabled={!commentText.trim()}
-                  className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+          {showComments && (
+            <div className="mt-3 border-t border-ink-line pt-3 space-y-3 dark:border-slate-700">
+              <h4 className="text-xs font-semibold text-ink">Komentar ({currentComments[page - 1]})</h4>
+              
+              {/* Dummy comments list */}
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {(dummyComments[page - 1] || []).map((c, i) => (
+                  <div key={i} className="rounded-lg bg-slate-50 p-2.5 dark:bg-slate-800">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-ink">{c.user}</span>
+                      <span className="text-[10px] text-ink-subtle">{c.time}</span>
+                    </div>
+                    <p className="mt-0.5 text-xs text-ink-muted">{c.text}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Comment input — only for logged in users */}
+              {user ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!commentText.trim()) return;
+                    setCurrentComments(prev => {
+                      const next = [...prev];
+                      next[page - 1] = (next[page - 1] || 0) + 1;
+                      return next;
+                    });
+                    setCommentText("");
+                  }}
+                  className="flex gap-2 pt-1"
                 >
-                  Kirim
-                </button>
-              </form>
+                  <input
+                    type="text"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Tulis komentar..."
+                    className="flex-1 rounded-lg border border-ink-line px-3 py-1.5 text-xs focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/30 dark:bg-slate-700"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!commentText.trim()}
+                    className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+                  >
+                    Kirim
+                  </button>
+                </form>
+              ) : (
+                <div className="rounded-lg bg-amber-50 p-2.5 text-center dark:bg-amber-900/20">
+                  <Link href="/sign-in?redirect=/" className="text-xs font-medium text-amber-700 hover:text-amber-800 dark:text-amber-300">
+                    Login untuk berkomentar
+                  </Link>
+                </div>
+              )}
             </div>
           )}
 
