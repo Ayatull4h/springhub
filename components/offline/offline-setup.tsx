@@ -897,7 +897,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           </div>
         </div>
 
-        <div className="mt-3 h-[400px] overflow-hidden rounded-xl border border-ink-line">
+        <div className="mt-3 h-[400px] w-full overflow-hidden rounded-xl border border-ink-line">
           <SetupMap
             onAreaSelected={handleAreaSelected}
             selectedCenter={selectedCenter}
