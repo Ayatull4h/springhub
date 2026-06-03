@@ -87,6 +87,10 @@ function MapLayers() {
 
     map.addLayer(layer);
 
+    layer.on("tileerror", (e) => {
+      console.warn("[Map] Tile error:", e.error?.message || e.tile?.src);
+    });
+
     return () => {
       map.removeLayer(layer);
     };

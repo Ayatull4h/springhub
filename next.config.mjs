@@ -45,7 +45,7 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.openstreetmap.org",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.supabase.co https://*.r2.dev https://images.unsplash.com https://*.greennetwork.id https://upload.wikimedia.org https://img.youtube.com",
+              "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.supabase.co https://*.r2.dev https://images.unsplash.com https://*.greennetwork.id https://upload.wikimedia.org https://img.youtube.com https://i.ytimg.com",
               "font-src 'self' data:",
               "connect-src 'self' https://api.xendit.co https://*.supabase.co https://*.r2.dev",
               "media-src 'self' https://*.supabase.co https://*.r2.dev",

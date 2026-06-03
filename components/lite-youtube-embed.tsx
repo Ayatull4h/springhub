@@ -26,7 +26,7 @@ export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
 
   function handleImgError(e: React.SyntheticEvent<HTMLImageElement>) {
     // Fallback to hqdefault if maxresdefault doesn't exist
-    (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    (e.target as HTMLImageElement).src = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
   }
 
   return (
@@ -38,10 +38,11 @@ export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
     >
       <img
         ref={imgRef}
-        src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+        src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`}
         alt={title}
         onError={handleImgError}
         referrerPolicy="no-referrer"
+        crossOrigin="anonymous"
         className="absolute inset-0 h-full w-full object-cover"
         loading="lazy"
       />
