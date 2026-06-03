@@ -28,7 +28,7 @@ function MapCircleController({
 }) {
   const map = useMap();
   const circleRef = useRef<L.Circle | null>(null);
-  const [dragging, setDragging] = useState(false);
+  const isDragging = useRef(false);
 
   // Set initial view to center
   useEffect(() => {
@@ -38,16 +38,20 @@ function MapCircleController({
   // Listen for map clicks to move circle center
   useMapEvents({
     click(e) {
-      onCenterChange({ lat: e.latlng.lat, lng: e.latlng.lng });
+      if (!isDragging.current) {
+        onCenterChange({ lat: e.latlng.lat, lng: e.latlng.lng });
+      }
     },
   });
 
-  // Add draggable circle
+  // Maintain a single circle instance
   useEffect(() => {
+    // Remove old circle if exists
     if (circleRef.current) {
       map.removeLayer(circleRef.current);
     }
 
+    // Create new circle
     const circle = L.circle([center.lat, center.lng], {
       radius: radiusKm * 1000,
       color: "#059669",
@@ -59,26 +63,28 @@ function MapCircleController({
 
     circleRef.current = circle;
 
-    // Enable drag on the circle
-    const handleMouseDown = () => setDragging(true);
-    const handleMouseUp = (e: L.LeafletMouseEvent) => {
-      if (dragging) {
+    // Track drag via mousedown/mousemove/mouseup on the circle
+    const onMouseDown = () => { isDragging.current = true; };
+    const onMouseUp = (e: L.LeafletMouseEvent) => {
+      if (isDragging.current) {
+        isDragging.current = false;
         onCenterChange({ lat: e.latlng.lat, lng: e.latlng.lng });
-        setDragging(false);
       }
     };
 
-    circle.on("mousedown", handleMouseDown);
-    map.on("mouseup", handleMouseUp);
+    circle.on("mousedown", onMouseDown);
+    map.on("mouseup", onMouseUp);
 
     return () => {
-      circle.off("mousedown", handleMouseDown);
-      map.off("mouseup", handleMouseUp);
+      circle.off("mousedown", onMouseDown);
+      map.off("mouseup", onMouseUp);
       if (circleRef.current) {
         map.removeLayer(circleRef.current);
+        circleRef.current = null;
       }
     };
-  }, [map, center, radiusKm, dragging, onCenterChange]);
+    // Only recreate when center or radius changes — NOT on drag state
+  }, [map, center.lat, center.lng, radiusKm, onCenterChange]);
 
   return null;
 }
@@ -111,19 +117,22 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Auto-locate on first load
+  // Auto-locate on first load (only once)
   useEffect(() => {
+    let cancelled = false;
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        if (cancelled) return;
         const newCenter = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setCenter(newCenter);
         setUserPosition(newCenter);
         onAreaSelected(newCenter, selectedRadius);
       },
-      () => {}, // silently fail
+      () => {},
       { enableHighAccuracy: true, timeout: 5000 }
     );
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

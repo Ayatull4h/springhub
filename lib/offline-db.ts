@@ -30,7 +30,7 @@ export type OfflineTrackingPoint = {
 export type OfflineConfig = {
   id: "session-config";
   selectedForms: string[];
-  radiusKm: 3 | 5 | 7 | 10;
+  radiusKm: number;
   qualityLevel: "ringan" | "sedang" | "lengkap";
   totalDistance: number; // meters
   startedAt: number;

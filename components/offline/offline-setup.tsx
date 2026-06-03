@@ -136,12 +136,12 @@ const qualityEstimates: Record<QualityLevel, { tileCount: number; sizeMB: number
   lengkap: { tileCount: 5000, sizeMB: 60 },
 };
 
-const radiusMultiplier: Record<RadiusKm, number> = {
-  3: 0.5,
-  5: 1,
-  7: 2,
-  10: 4,
-};
+function getRadiusMultiplier(radius: number): number {
+  if (radius <= 3) return 0.5;
+  if (radius <= 5) return 1;
+  if (radius <= 7) return 2;
+  return 4;
+}
 
 // ─── Component ─────────────────────────────────────────────────────────────
 
@@ -155,7 +155,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
   const [selectedForms, setSelectedForms] = useState<Set<string>>(new Set());
 
   // Radius + Quality selection
-  const [selectedRadius, setSelectedRadius] = useState<RadiusKm>(5);
+  const [selectedRadius, setSelectedRadius] = useState<number>(5);
   const [selectedQuality, setSelectedQuality] = useState<QualityLevel>("ringan");
 
   // Area selection (for full mode)
@@ -177,7 +177,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
   // ── Derived estimates ─────────────────────────────────────────────────────
   const qualityInfo = qualityEstimates[selectedQuality];
-  const radiusMult = radiusMultiplier[selectedRadius];
+  const radiusMult = getRadiusMultiplier(selectedRadius);
   const estimatedTiles = qualityInfo.tileCount * radiusMult;
   const estimatedSizeMB = qualityInfo.sizeMB * radiusMult;
 
@@ -859,7 +859,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           {/* Radius selector */}
           <div className="mt-3 flex items-center gap-2">
             <span className="text-xs font-medium text-ink-muted">Radius:</span>
-            {([3, 5, 7, 10] as RadiusKm[]).map((r) => (
+            {([3, 5, 7, 10] as const).map((r) => (
               <button
                 key={r}
                 onClick={() => {
@@ -877,6 +877,26 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
                 {r} km
               </button>
             ))}
+          </div>
+
+          {/* Radius slider for fine-tuning */}
+          <div className="mt-2 flex items-center gap-3">
+            <input
+              type="range"
+              min="3"
+              max="10"
+              step="1"
+              value={selectedRadius}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                setSelectedRadius(v);
+                if (selectedCenter) {
+                  handleAreaSelected(selectedCenter, v);
+                }
+              }}
+              className="flex-1 h-2 rounded-full appearance-none bg-slate-200 accent-brand-600 dark:bg-slate-700"
+            />
+            <span className="text-xs font-mono text-ink-muted w-8 text-right">{selectedRadius} km</span>
           </div>
         </div>
 
