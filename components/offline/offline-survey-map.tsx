@@ -492,7 +492,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   // When viewing form, take over the ENTIRE screen (no map, no buttons)
   if (view === "form" && activeForm) {
     return (
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-white p-4 dark:bg-slate-900">
+      <div className="fixed inset-0 z-50 bg-white dark:bg-slate-900">
+        <div className="h-full overflow-y-auto p-4">
         <div className="mx-auto max-w-lg">
           <div className="mb-4 flex items-center justify-between">
             <div>
@@ -606,6 +607,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               {t("offline.saveForm")}
             </button>
           </div>
+        </div>
         </div>
       </div>
     );
@@ -800,7 +802,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
       {/* ── Marker popup — at root level to avoid overflow clipping ── */}
       {activeMarkerType && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/40 py-8">
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-black/40 py-8">
           <div className="flex min-h-full items-center justify-center">
             <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800">
             {/* Title */}
