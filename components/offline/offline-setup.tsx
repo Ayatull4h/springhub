@@ -442,7 +442,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
   // ── Start survey ─────────────────────────────────────────────────────────
   const handleStartSurvey = async () => {
-    // Save offline config
+    // Save offline config (including center from setup map)
     await offlineDB.saveConfig({
       id: "session-config",
       selectedForms: Array.from(selectedForms),
@@ -450,6 +450,8 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
       qualityLevel: selectedQuality,
       totalDistance: 0,
       startedAt: Date.now(),
+      centerLat: selectedCenter?.lat,
+      centerLng: selectedCenter?.lng,
     });
 
     // Create offline session on server

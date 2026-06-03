@@ -12,6 +12,7 @@ type SurveyLeafletMapProps = {
   markers: OfflineTrackingPoint[];
   currentPosition: { lat: number; lng: number } | null;
   isTracking: boolean;
+  initialCenter?: { lat: number; lng: number } | null;
 };
 
 /** Auto-follow GPS position */
@@ -101,6 +102,7 @@ export function SurveyLeafletMap({
   markers,
   currentPosition,
   isTracking,
+  initialCenter,
 }: SurveyLeafletMapProps) {
   const { t } = useI18n();
   // GPS trail = markerType null (plain tracking points, not markers)
@@ -118,13 +120,16 @@ export function SurveyLeafletMap({
   const trenchMarkers = useMemo(() => markers.filter((p) => p.markerType === "trench"), [markers]);
   const seedlingMarkers = useMemo(() => markers.filter((p) => p.markerType === "seedling"), [markers]);
 
-  const initialCenter: [number, number] = currentPosition
-    ? [currentPosition.lat, currentPosition.lng]
-    : [-7.5, 110];
+  // Priority: initialCenter (from setup) > current GPS position > Java default
+  const mapCenter: [number, number] = initialCenter
+    ? [initialCenter.lat, initialCenter.lng]
+    : currentPosition
+      ? [currentPosition.lat, currentPosition.lng]
+      : [-7.5, 110];
 
   return (
     <MapContainer
-      center={initialCenter}
+      center={mapCenter}
       zoom={15}
       scrollWheelZoom={true}
       className="h-full w-full"

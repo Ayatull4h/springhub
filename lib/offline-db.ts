@@ -34,6 +34,8 @@ export type OfflineConfig = {
   qualityLevel: "ringan" | "sedang" | "lengkap";
   totalDistance: number; // meters
   startedAt: number;
+  centerLat?: number; // center point from setup map
+  centerLng?: number; // center point from setup map
 };
 
 export type DraftReport = {

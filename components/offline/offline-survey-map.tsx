@@ -129,6 +129,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const trenchCount = markers.filter((m) => m.markerType === "trench").length;
   const seedlingCount = markers.filter((m) => m.markerType === "seedling").length;
 
+  // Survey config center from setup map
+  const [initialMapCenter, setInitialMapCenter] = useState<{lat: number; lng: number} | null>(null);
+
   // ── Load cached forms on mount ─────────────────────────────────────────
   useEffect(() => {
     offlineDB
@@ -144,6 +147,15 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
       .getAllReports()
       .then((reports) => setPendingReports(reports))
       .catch((err) => console.warn("[OfflineSurvey] Failed to load reports:", err));
+    // Load config center from IndexedDB
+    offlineDB
+      .getConfig()
+      .then((config) => {
+        if (config?.centerLat && config?.centerLng) {
+          setInitialMapCenter({ lat: config.centerLat, lng: config.centerLng });
+        }
+      })
+      .catch((err) => console.warn("[OfflineSurvey] Failed to load config:", err));
   }, []);
 
   // ── Cleanup blob URLs on unmount ───────────────────────────────────────
@@ -466,6 +478,128 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // ── Render ──────────────────────────────────────────────────────────────
 
+  // When viewing form, take over the ENTIRE screen (no map, no buttons)
+  if (view === "form" && activeForm) {
+    return (
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-white p-4 dark:bg-slate-900">
+        <div className="mx-auto max-w-lg">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-ink">{activeForm.title}</h2>
+              <p className="text-xs text-ink-muted">{activeForm.description}</p>
+            </div>
+            <button
+              onClick={() => setView("map")}
+              className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {activeForm.fields
+              .filter((f) => f.id !== "location") // location auto-filled from GPS
+              .map((field) => (
+                <div key={field.id}>
+                  <label className="mb-1 block text-sm font-medium text-ink">
+                    {field.label}
+                    {field.required && <span className="ml-1 text-red-500">*</span>}
+                  </label>
+
+                  {field.type === "text" || field.type === "phone" ? (
+                    <input
+                      type={field.type === "phone" ? "tel" : "text"}
+                      value={(formData[field.id] as string) || ""}
+                      onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
+                      placeholder={field.placeholder}
+                      className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+                    />
+                  ) : field.type === "longtext" ? (
+                    <textarea
+                      value={(formData[field.id] as string) || ""}
+                      onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
+                      rows={3}
+                      className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+                    />
+                  ) : field.type === "number" ? (
+                    <input
+                      type="number"
+                      value={(formData[field.id] as string) || ""}
+                      onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+                    />
+                  ) : field.type === "date" ? (
+                    <input
+                      type="date"
+                      value={(formData[field.id] as string) || ""}
+                      onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+                    />
+                  ) : field.type === "select" || field.type === "province" ? (
+                    <select
+                      value={(formData[field.id] as string) || ""}
+                      onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+                    >
+                      <option value="">{t("common.select") || "Pilih..."}</option>
+                      {field.options.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                  ) : field.type === "photo" ? (
+                    <div className="mt-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        multiple
+                        onChange={(e) => {
+                          handlePhotoCapture(field.id, e.target.files);
+                          e.target.value = ""; // allow re-selecting same file
+                        }}
+                        className="block w-full text-xs text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30 dark:file:text-brand-300"
+                      />
+                      {formPhotos[field.id] && formPhotos[field.id].length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {formPhotos[field.id].map((file, idx) => (
+                            <div key={idx} className="relative h-12 w-12 overflow-hidden rounded-lg border border-ink-line">
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={`Photo ${idx + 1}`}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                          ))}
+                          <span className="ml-1 self-center text-[10px] text-ink-muted">
+                            {formPhotos[field.id].length}/5
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+          </div>
+
+          <div className="mt-6 flex items-center gap-3">
+            <button onClick={() => setView("map")} className="btn-secondary flex-1">
+              {t("common.cancel")}
+            </button>
+            <button
+              onClick={handleSubmitForm}
+              className="btn-primary flex-1 inline-flex items-center justify-center gap-2"
+            >
+              <Save className="h-4 w-4" />
+              {t("offline.saveForm")}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-white dark:bg-slate-900">
       {/* Top bar */}
@@ -618,6 +752,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               markers={markers}
               currentPosition={currentPos}
               isTracking={isTracking}
+              initialCenter={initialMapCenter}
             />
           </ErrorBoundary>
 
@@ -868,125 +1003,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           )}
         </div>
 
-        {/* Form overlay — full screen */}
-        {view === "form" && activeForm && (
-          <div className="fixed inset-0 z-50 overflow-y-auto bg-white p-4 dark:bg-slate-900">
-            <div className="mx-auto max-w-lg">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-bold text-ink">{activeForm.title}</h2>
-                  <p className="text-xs text-ink-muted">{activeForm.description}</p>
-                </div>
-                <button
-                  onClick={() => setView("map")}
-                  className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-800"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {activeForm.fields
-                  .filter((f) => f.id !== "location") // location auto-filled from GPS
-                  .map((field) => (
-                    <div key={field.id}>
-                      <label className="mb-1 block text-sm font-medium text-ink">
-                        {field.label}
-                        {field.required && <span className="ml-1 text-red-500">*</span>}
-                      </label>
-
-                      {field.type === "text" || field.type === "phone" ? (
-                        <input
-                          type={field.type === "phone" ? "tel" : "text"}
-                          value={(formData[field.id] as string) || ""}
-                          onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
-                          placeholder={field.placeholder}
-                          className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-                        />
-                      ) : field.type === "longtext" ? (
-                        <textarea
-                          value={(formData[field.id] as string) || ""}
-                          onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
-                          rows={3}
-                          className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-                        />
-                      ) : field.type === "number" ? (
-                        <input
-                          type="number"
-                          value={(formData[field.id] as string) || ""}
-                          onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
-                          className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-                        />
-                      ) : field.type === "date" ? (
-                        <input
-                          type="date"
-                          value={(formData[field.id] as string) || ""}
-                          onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
-                          className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-                        />
-                      ) : field.type === "select" || field.type === "province" ? (
-                        <select
-                          value={(formData[field.id] as string) || ""}
-                          onChange={(e) => handleFormFieldChange(field.id, e.target.value)}
-                          className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-                        >
-                          <option value="">{t("common.select") || "Pilih..."}</option>
-                          {field.options.map((opt) => (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          ))}
-                        </select>
-                      ) : field.type === "photo" ? (
-                        <div className="mt-1">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            capture="environment"
-                            multiple
-                            onChange={(e) => {
-                              handlePhotoCapture(field.id, e.target.files);
-                              e.target.value = ""; // allow re-selecting same file
-                            }}
-                            className="block w-full text-xs text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30 dark:file:text-brand-300"
-                          />
-                          {formPhotos[field.id] && formPhotos[field.id].length > 0 && (
-                            <div className="mt-1 flex flex-wrap gap-1">
-                              {formPhotos[field.id].map((file, idx) => (
-                                <div key={idx} className="relative h-12 w-12 overflow-hidden rounded-lg border border-ink-line">
-                                  <img
-                                    src={URL.createObjectURL(file)}
-                                    alt={`Photo ${idx + 1}`}
-                                    className="h-full w-full object-cover"
-                                  />
-                                </div>
-                              ))}
-                              <span className="ml-1 self-center text-[10px] text-ink-muted">
-                                {formPhotos[field.id].length}/5
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      ) : null}
-                    </div>
-                  ))}
-              </div>
-
-              <div className="mt-6 flex items-center gap-3">
-                <button onClick={() => setView("map")} className="btn-secondary flex-1">
-                  {t("common.cancel")}
-                </button>
-                <button
-                  onClick={handleSubmitForm}
-                  className="btn-primary flex-1 inline-flex items-center justify-center gap-2"
-                >
-                  <Save className="h-4 w-4" />
-                  {t("offline.saveForm")}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+{/* Form overlay removed — now handled as early return above */}
       </div>
     </div>
   );
