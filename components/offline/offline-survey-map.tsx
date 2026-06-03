@@ -157,6 +157,29 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
     setIsTracking(true);
 
+    // Get current position immediately for instant feedback
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        setCurrentPos({ lat: latitude, lng: longitude });
+        setGpsAccuracy(accuracy ?? null);
+        const startPoint: OfflineTrackingPoint = {
+          id: crypto.randomUUID(),
+          lat: latitude,
+          lng: longitude,
+          accuracy: accuracy ?? null,
+          markerType: null,
+          name: null,
+          recordedAt: Date.now(),
+        };
+        lastPointRef.current = startPoint;
+        setTrackingPoints([startPoint]);
+        offlineDB.saveTrackingPoint(startPoint).catch(() => {});
+      },
+      () => {},
+      { enableHighAccuracy: true, timeout: 5000 }
+    );
+
     watchIdRef.current = navigator.geolocation.watchPosition(
       (pos) => {
         const { latitude, longitude, accuracy } = pos.coords;
@@ -232,14 +255,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
     };
-  }, []);
-
-  // Auto-start tracking on mount
-  useEffect(() => {
-    if (!currentPos) {
-      startTracking();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Marker photo capture ───────────────────────────────────────────────
@@ -696,9 +711,15 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
           {/* Distance overlay */}
           <div className="absolute right-3 top-3 z-20 rounded-lg bg-white/90 px-3 py-2 text-xs text-ink shadow backdrop-blur dark:bg-slate-900/90">
-            <div className="flex items-center gap-2">
-              <Ruler className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
-              <span className="font-semibold">{(totalDistance / 1000).toFixed(2)} km</span>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Ruler className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
+                <span className="font-semibold">{(totalDistance / 1000).toFixed(2)} km</span>
+              </div>
+              <span
+                className={`inline-block h-2 w-2 rounded-full ${isTracking ? "bg-green-500 animate-pulse" : "bg-slate-300"}`}
+                title={isTracking ? "Tracking aktif" : "Tracking tidak aktif"}
+              />
             </div>
             <div className="mt-1 flex gap-2 text-[10px] text-ink-subtle">
               <span>💧 {springCount}</span>
@@ -707,6 +728,17 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               <span>🌰 {seedlingCount}</span>
             </div>
           </div>
+
+          {/* GPS Start button — visible only when not tracking */}
+          {!isTracking && (
+            <button
+              onClick={startTracking}
+              className="absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-brand-600 px-6 py-4 text-sm font-bold text-white shadow-lg hover:bg-brand-700 active:scale-95 transition"
+            >
+              <Navigation className="mr-2 inline-block h-5 w-5" />
+              {t("offline.survey.gpsStart") || "Mulai Tracking GPS"}
+            </button>
+          )}
 
           {/* ── Marker popup ─────────────────────────────────────────────── */}
           {activeMarkerType && (
