@@ -338,8 +338,8 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
   }) => {
     const zoomLevels = [12, 13, 14, 15];
 
-    // Calculate all tile URLs
-    const tileUrls: string[] = [];
+    // Calculate all tile coordinates
+    const tileCoords: { z: number; x: number; y: number }[] = [];
 
     for (const z of zoomLevels) {
       const xMin = Math.floor(((bounds.west + 180) / 360) * Math.pow(2, z));
@@ -365,48 +365,78 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
       for (let x = xMin; x <= xMax; x++) {
         for (let y = yMin; y <= yMax; y++) {
-          tileUrls.push(`https://a.tile.openstreetmap.org/${z}/${x}/${y}.png`);
+          tileCoords.push({ z, x, y });
         }
       }
     }
 
-    if (tileUrls.length === 0) return;
+    if (tileCoords.length === 0) return;
 
-    setDownloadProgress({ current: 0, total: tileUrls.length });
+    setDownloadProgress({ current: 0, total: tileCoords.length });
 
-    // Send tiles to SW for caching in batches
-    const BATCH_SIZE = 50;
-    for (let i = 0; i < tileUrls.length; i += BATCH_SIZE) {
-      const batch = tileUrls.slice(i, i + BATCH_SIZE);
+    // Actually fetch each tile to populate the SW cache, showing real progress.
+    // The request goes through the SW's fetch handler (tileStrategy),
+    // which caches it on first network fetch and serves cached on subsequent requests.
+    const CONCURRENCY = 8;
+    const records: Array<{
+      url: string;
+      z: number;
+      x: number;
+      y: number;
+      cachedAt: number;
+    }> = [];
+    let completed = 0;
+    let anyFailed = false;
 
-      if (navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          type: "precache-tiles",
-          tiles: batch,
-        });
-      }
+    for (let i = 0; i < tileCoords.length; i += CONCURRENCY) {
+      const batch = tileCoords.slice(i, i + CONCURRENCY);
 
-      // Also save to tile manifest
-      await offlineDB.saveTileRecords(
-        batch.map((url) => {
-          const parts = url
-            .replace("https://a.tile.openstreetmap.org/", "")
-            .replace(".png", "")
-            .split("/");
-          return {
-            url,
-            z: parseInt(parts[0], 10),
-            x: parseInt(parts[1], 10),
-            y: parseInt(parts[2], 10),
-            cachedAt: Date.now(),
-          };
+      await Promise.allSettled(
+        batch.map(async (tc) => {
+          const url = `https://a.tile.openstreetmap.org/${tc.z}/${tc.x}/${tc.y}.png`;
+          try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 20000);
+
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeout);
+
+            if (response.ok) {
+              // Fully consume the response body to ensure the tile is downloaded
+              await response.blob();
+              records.push({
+                url,
+                z: tc.z,
+                x: tc.x,
+                y: tc.y,
+                cachedAt: Date.now(),
+              });
+            } else {
+              anyFailed = true;
+            }
+          } catch {
+            anyFailed = true;
+          }
+          completed++;
+          setDownloadProgress({ current: completed, total: tileCoords.length });
         })
       );
+    }
 
-      setDownloadProgress({
-        current: Math.min(i + BATCH_SIZE, tileUrls.length),
-        total: tileUrls.length,
+    // If any tile failed on the client, ask the SW to retry them as a fallback
+    if (anyFailed && navigator.serviceWorker.controller) {
+      const failedUrls = tileCoords.map(
+        (tc) => `https://a.tile.openstreetmap.org/${tc.z}/${tc.x}/${tc.y}.png`
+      );
+      navigator.serviceWorker.controller.postMessage({
+        type: "precache-tiles",
+        tiles: failedUrls,
       });
+    }
+
+    // Save tile records to IndexedDB
+    if (records.length > 0) {
+      await offlineDB.saveTileRecords(records);
     }
   };
 
