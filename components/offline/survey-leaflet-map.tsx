@@ -71,20 +71,14 @@ function LocateButton() {
   );
 }
 
-/** Dark-aware tile layer using CartoDB (reliable globally) */
+/** OSM tile layer */
 function MapLayers() {
   const map = useMap();
 
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark");
-    const tileUrl = isDark
-      ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
-      : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png";
-
-    const layer = L.tileLayer(tileUrl, {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      subdomains: ["a", "b", "c", "d"],
+    const layer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+      subdomains: ["a", "b", "c"],
       maxZoom: 19,
     });
 

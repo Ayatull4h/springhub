@@ -170,12 +170,9 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
         style={{ minHeight: 360 }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
-          subdomains={['a', 'b', 'c', 'd']}
-          eventHandlers={{
-            tileerror: (e) => console.warn("[SetupMap] Tile error:", e.error),
-          }}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          subdomains={['a', 'b', 'c']}
           maxZoom={19}
         />
         <MapCircleController

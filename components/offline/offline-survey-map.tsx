@@ -868,9 +868,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           )}
         </div>
 
-        {/* Form overlay */}
+        {/* Form overlay — full screen */}
         {view === "form" && activeForm && (
-          <div className="absolute inset-0 z-20 overflow-y-auto bg-white p-4 dark:bg-slate-900">
+          <div className="fixed inset-0 z-50 overflow-y-auto bg-white p-4 dark:bg-slate-900">
             <div className="mx-auto max-w-lg">
               <div className="mb-4 flex items-center justify-between">
                 <div>
