@@ -68,3 +68,19 @@
     at t (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:20711) @ https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:0
 [   46272ms] [WARNING] Deprecated API for given entry type. @ :20
 [   46272ms] [WARNING] Deprecated API for given entry type. @ :23
+[ 2719063ms] [ERROR] Failed to fetch RSC payload for https://springhub.vercel.app/sign-in. Falling back to browser navigation. TypeError: Cannot read properties of undefined (reading 'call')
+    at h (https://springhub.vercel.app/_next/static/chunks/webpack-8536bed1c3ae533b.js:1:158)
+    at w (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:15080)
+    at https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:17059
+    at A._fromJSON (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:17497)
+    at JSON.parse (<anonymous>)
+    at E (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:14812)
+    at t (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:20711) @ https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:0
+[ 2719081ms] [ERROR] Failed to fetch RSC payload for https://springhub.vercel.app/join. Falling back to browser navigation. TypeError: Cannot read properties of undefined (reading 'call')
+    at h (https://springhub.vercel.app/_next/static/chunks/webpack-8536bed1c3ae533b.js:1:158)
+    at w (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:15080)
+    at https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:17059
+    at A._fromJSON (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:17497)
+    at JSON.parse (<anonymous>)
+    at E (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:14812)
+    at t (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:20711) @ https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:0
