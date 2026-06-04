@@ -235,9 +235,10 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
       return;
     }
 
+    // Langsung dismiss overlay — GPS berjalan di background
     setIsTracking(true);
 
-    // Step 1: getCurrentPosition — one-time fix
+    // Step 1: getCurrentPosition — one-time fix + error feedback
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude, accuracy } = pos.coords;
@@ -256,10 +257,17 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         setTrackingPoints([startPoint]);
         offlineDB.saveTrackingPoint(startPoint).catch(() => {});
       },
-      () => {
-        console.warn("[GPS] getCurrentPosition failed — will try watchPosition");
+      (err) => {
+        // GPS gagal — balikin overlay + kasih tahu user
+        setIsTracking(false);
+        const gpsMsg: Record<number, string> = {
+          1: "Izin lokasi ditolak. Buka Settings → Privasi → Lokasi → Izinkan SpringHub.",
+          2: "Sinyal GPS tidak tersedia. Pastikan GPS aktif & coba di luar ruangan.",
+          3: "Waktu habis. Coba lagi di tempat terbuka.",
+        };
+        alert(gpsMsg[err.code] || "Gagal mengakses GPS. Coba lagi.");
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 15000 }
     );
 
     // Step 2: watchPosition — continuous updates
@@ -517,6 +525,45 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   };
 
   // ── Render ──────────────────────────────────────────────────────────────
+
+  // When viewing form list, show all available forms
+  if (view === "form-list") {
+    return (
+      <div className="fixed inset-0 overflow-y-auto bg-white p-4 dark:bg-slate-900" style={{ zIndex: 9998, WebkitOverflowScrolling: "touch" }}>
+        <div className="mx-auto max-w-lg">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-ink">{t("offline.survey.fillForm") || "Pilih Form"}</h2>
+            <button
+              onClick={() => setView("map")}
+              className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          {cachedForms.length === 0 ? (
+            <p className="text-sm text-ink-muted">Tidak ada form tersedia. Lakukan setup ulang.</p>
+          ) : (
+            <div className="space-y-3">
+              {cachedForms.map((form) => (
+                <button
+                  key={form.slug}
+                  onClick={() => handleSelectForm(form)}
+                  className="w-full rounded-xl border border-ink-line bg-white p-4 text-left shadow-sm transition hover:border-brand-300 hover:bg-brand-50 dark:bg-slate-800 dark:hover:bg-slate-700"
+                >
+                  <h3 className="text-sm font-bold text-ink">{form.title}</h3>
+                  <p className="mt-0.5 text-xs text-ink-muted">{form.description}</p>
+                  <div className="mt-2 flex items-center gap-3 text-[11px] text-ink-subtle">
+                    <span>+{form.pointsOnSubmit} pts</span>
+                    <span>{form.fields.length} field</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   // When viewing form, take over the ENTIRE screen (no map, no buttons)
   if (view === "form" && activeForm) {
@@ -895,13 +942,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               <span className="text-[10px] font-semibold">{t("offline.seedlings")}</span>
             </button>
           </div>
-          {/* Row 2: Fill Form full width */}
+          {/* Row 2: Pilih Form */}
           <button
-            onClick={() => {
-            if (cachedForms.length > 0) {
-              handleSelectForm(cachedForms[0]);
-            }
-          }}
+            onClick={() => setView("form-list")}
             className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
           >
             <Menu className="h-4 w-4" />
@@ -940,11 +983,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             <span className="truncate">{t("offline.seedlings")}</span>
           </button>
           <button
-            onClick={() => {
-            if (cachedForms.length > 0) {
-              handleSelectForm(cachedForms[0]);
-            }
-          }}
+            onClick={() => setView("form-list")}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-3 py-3 text-xs font-bold text-white shadow-lg hover:bg-brand-700"
           >
             <Menu className="h-4 w-4 flex-none" />
