@@ -285,6 +285,13 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
 
   // ── Main sync function ───────────────────────────────────────────────────
   const startSync = useCallback(async () => {
+    // Check network first
+    if (!navigator.onLine) {
+      setErrorMessage("Kamu sedang offline. Data akan tersimpan dan bisa diupload nanti saat online kembali.");
+      setPhase("error");
+      return;
+    }
+
     const photos = await offlineDB.getAllPhotos();
     const reports = await offlineDB.getAllReports();
 
@@ -697,20 +704,33 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
 
         {/* Error state — retry button */}
         {isError && (
-          <div className="mt-6 flex items-center gap-3">
-            <button onClick={onCancel} className="btn-secondary flex-1">
-              {t("offline.sync.back")}
-            </button>
-            <button
-              onClick={() => {
-                setErrorMessage("");
-                startSync();
-              }}
-              className="btn-primary flex-1 inline-flex items-center justify-center gap-2"
-            >
-              <RefreshCw className="h-4 w-4" />
-              {t("offline.sync.retry")}
-            </button>
+          <div className="mt-6 space-y-3">
+            {/* Online status indicator */}
+            {!navigator.onLine && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-center text-xs text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+                📡 Kamu sedang offline. Data tetap aman di perangkat.
+                Akan terkirim otomatis saat online.
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              <button onClick={onCancel} className="btn-secondary flex-1">
+                {t("offline.sync.back")}
+              </button>
+              <button
+                onClick={() => {
+                  if (!navigator.onLine) {
+                    alert("Kamu masih offline. Sambungkan ke internet lalu coba lagi.");
+                    return;
+                  }
+                  setErrorMessage("");
+                  startSync();
+                }}
+                className="btn-primary flex-1 inline-flex items-center justify-center gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                {t("offline.sync.retry")}
+              </button>
+            </div>
           </div>
         )}
       </div>

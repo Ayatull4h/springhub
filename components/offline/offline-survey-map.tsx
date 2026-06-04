@@ -196,27 +196,12 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     };
   }, []);
 
-  // ── Auto-detect user location on mount (one-time) then start continuous tracking ──
-  useEffect(() => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords;
-        setCurrentPos({ lat: latitude, lng: longitude });
-        setGpsAccuracy(accuracy ?? null);
-        // Auto-start continuous tracking after getting position
-        startTracking();
-      },
-      () => {
-        // Silent fail — show the GPS button as fallback
-        console.warn("[GPS] Auto-locate failed — GPS button will be shown");
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // ── GPS hanya via user gesture (Safari iOS tidak support auto-start) ──
+  // Tidak ada auto-detect di mount. User harus klik "Mulai Tracking GPS".
 
-  // ── GPS Tracking ────────────────────────────────────────────────────────
+  // ── GPS Tracking — user gesture required (Safari iOS) ─────────────────
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const startTracking = useCallback(() => {
     if (!navigator.geolocation) {
       alert(t("offline.gpsNotSupported") || "GPS tidak didukung browser ini.");
@@ -225,7 +210,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
     setIsTracking(true);
 
-    // Get current position immediately for instant feedback
+    // Step 1: getCurrentPosition — one-time fix
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude, accuracy } = pos.coords;
@@ -244,14 +229,16 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         setTrackingPoints([startPoint]);
         offlineDB.saveTrackingPoint(startPoint).catch(() => {});
       },
-      () => {},
-      { enableHighAccuracy: true, timeout: 5000 }
+      () => {
+        console.warn("[GPS] getCurrentPosition failed — will try watchPosition");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
     );
 
+    // Step 2: watchPosition — continuous updates
     watchIdRef.current = navigator.geolocation.watchPosition(
       (pos) => {
         const { latitude, longitude, accuracy } = pos.coords;
-
         setCurrentPos({ lat: latitude, lng: longitude });
         setGpsAccuracy(accuracy ?? null);
 
@@ -261,28 +248,22 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             { lat: lastPoint.lat, lng: lastPoint.lng },
             { lat: latitude, lng: longitude }
           );
-
-          // Record every 5 meters (0.005 km)
           if (dist >= 0.005) {
             const point: OfflineTrackingPoint = {
               id: crypto.randomUUID(),
               lat: latitude,
               lng: longitude,
               accuracy: accuracy ?? null,
-              markerType: null, // GPS tracking point
+              markerType: null,
               name: null,
               recordedAt: Date.now(),
             };
-
             lastPointRef.current = point;
             setTrackingPoints((prev) => [...prev, point]);
             setTotalDistance((prev) => prev + dist * 1000);
-
-            // Save to IndexedDB
             offlineDB.saveTrackingPoint(point).catch(() => {});
           }
         } else {
-          // First point
           const point: OfflineTrackingPoint = {
             id: crypto.randomUUID(),
             lat: latitude,
@@ -298,7 +279,11 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         }
       },
       (err) => {
-        console.warn("[GPS] Error:", err.message);
+        console.warn("[GPS] watchPosition error:", err.message);
+        // Safari iOS sering gagal watchPosition — fallback ke polling
+        if (!pollingRef.current) {
+          startPollingFallback();
+        }
       },
       {
         enableHighAccuracy: true,
@@ -306,12 +291,78 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         maximumAge: 5000,
       }
     );
+
+    // Fallback: jika watchPosition tidak memberi update dalam 15 detik → polling
+    setTimeout(() => {
+      if (pollingRef.current) return; // already started
+      if (!lastPointRef.current) {
+        // No position received yet — start polling
+        startPollingFallback();
+      }
+    }, 15000);
+  }, []);
+
+  // ── Polling fallback untuk Safari iOS ──────────────────────────────────
+  const startPollingFallback = useCallback(() => {
+    if (pollingRef.current) return;
+    console.log("[GPS] Starting polling fallback for Safari");
+    pollingRef.current = setInterval(() => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude, accuracy } = pos.coords;
+          setCurrentPos({ lat: latitude, lng: longitude });
+          setGpsAccuracy(accuracy ?? null);
+
+          const lastPoint = lastPointRef.current;
+          if (lastPoint) {
+            const dist = distanceKm(
+              { lat: lastPoint.lat, lng: lastPoint.lng },
+              { lat: latitude, lng: longitude }
+            );
+            if (dist >= 0.005) {
+              const point: OfflineTrackingPoint = {
+                id: crypto.randomUUID(),
+                lat: latitude,
+                lng: longitude,
+                accuracy: accuracy ?? null,
+                markerType: null,
+                name: null,
+                recordedAt: Date.now(),
+              };
+              lastPointRef.current = point;
+              setTrackingPoints((prev) => [...prev, point]);
+              setTotalDistance((prev) => prev + dist * 1000);
+              offlineDB.saveTrackingPoint(point).catch(() => {});
+            }
+          } else {
+            const point: OfflineTrackingPoint = {
+              id: crypto.randomUUID(),
+              lat: latitude,
+              lng: longitude,
+              accuracy: accuracy ?? null,
+              markerType: null,
+              name: null,
+              recordedAt: Date.now(),
+            };
+            lastPointRef.current = point;
+            setTrackingPoints([point]);
+            offlineDB.saveTrackingPoint(point).catch(() => {});
+          }
+        },
+        () => {},
+        { enableHighAccuracy: true, timeout: 15000 }
+      );
+    }, 10000); // polling setiap 10 detik
   }, []);
 
   const stopTracking = useCallback(() => {
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
+    }
+    if (pollingRef.current !== null) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
     }
     setIsTracking(false);
   }, []);
@@ -321,6 +372,12 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     return () => {
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+      if (pollingRef.current !== null) {
+        clearInterval(pollingRef.current);
+      }
+      if (autoFollowTimerRef.current) {
+        clearTimeout(autoFollowTimerRef.current);
       }
     };
   }, []);
