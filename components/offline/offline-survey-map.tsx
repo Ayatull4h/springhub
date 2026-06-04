@@ -67,6 +67,16 @@ type OfflineSurveyMapProps = {
   onExit: () => void;
 };
 
+// ─── UUID fallback untuk browser lama ─────────────────────────────────────
+function generateId(): string {
+  try {
+    return crypto.randomUUID();
+  } catch {
+    // Fallback untuk browser lama / WebView
+    return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}-${Math.random().toString(36).slice(2, 6)}`;
+  }
+}
+
 // ─── Compress image to 720p ─────────────────────────────────────────────────
 
 async function compressImage(file: File, maxDimension = 720): Promise<Blob> {
@@ -212,8 +222,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     };
   }, []);
 
-  // ── GPS hanya via user gesture (Safari iOS tidak support auto-start) ──
-  // Tidak ada auto-detect di mount. User harus klik "Mulai Tracking GPS".
+  // ── GPS start — WAJIB user gesture (iOS Safari) ──────────────────────
+  // Tidak auto-start di mount. User harus tap tombol "Mulai Tracking".
+  // Ini satu-satunya cara yang works di semua browser (Android, iOS Safari, Chrome iOS).
 
   // ── GPS Tracking — user gesture required (Safari iOS) ─────────────────
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -233,7 +244,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         setCurrentPos({ lat: latitude, lng: longitude });
         setGpsAccuracy(accuracy ?? null);
         const startPoint: OfflineTrackingPoint = {
-          id: crypto.randomUUID(),
+          id: generateId(),
           lat: latitude,
           lng: longitude,
           accuracy: accuracy ?? null,
@@ -266,7 +277,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           );
           if (dist >= 0.005) {
             const point: OfflineTrackingPoint = {
-              id: crypto.randomUUID(),
+              id: generateId(),
               lat: latitude,
               lng: longitude,
               accuracy: accuracy ?? null,
@@ -281,7 +292,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           }
         } else {
           const point: OfflineTrackingPoint = {
-            id: crypto.randomUUID(),
+            id: generateId(),
             lat: latitude,
             lng: longitude,
             accuracy: accuracy ?? null,
@@ -337,7 +348,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             );
             if (dist >= 0.005) {
               const point: OfflineTrackingPoint = {
-                id: crypto.randomUUID(),
+                id: generateId(),
                 lat: latitude,
                 lng: longitude,
                 accuracy: accuracy ?? null,
@@ -352,7 +363,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             }
           } else {
             const point: OfflineTrackingPoint = {
-              id: crypto.randomUUID(),
+              id: generateId(),
               lat: latitude,
               lng: longitude,
               accuracy: accuracy ?? null,
@@ -415,7 +426,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     autoFollowTimerRef.current = setTimeout(() => setAutoFollowPaused(false), 5000);
 
     const marker: OfflineTrackingPoint = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       lat: currentPos.lat,     // RAW GPS — tanpa snap
       lng: currentPos.lng,     // RAW GPS — tanpa snap
       accuracy: gpsAccuracy,
@@ -464,7 +475,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
     try {
       const report: PendingReport = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         formSlug: activeForm.slug,
         fieldData: formData as Record<string, unknown>,
         photoFieldIds: Object.entries(formPhotos)
@@ -482,7 +493,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             // Compress to 720p
             const compressed = await compressImage(file);
             await offlineDB.savePhoto({
-              id: crypto.randomUUID(),
+              id: generateId(),
               reportId: report.id,
               fieldId: fieldId,
               blob: compressed,
@@ -813,15 +824,32 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               </div>
             </div>
 
-            {/* GPS Start button — visible only when not tracking */}
+            {/* GPS Start overlay — WAJIB diklik sebelum tracking */}
             {!isTracking && (
-              <button
-                onClick={startTracking}
-                className="absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-brand-600 px-6 py-4 text-sm font-bold text-white shadow-lg hover:bg-brand-700 active:scale-95 transition"
-              >
-                <Navigation className="mr-2 inline-block h-5 w-5" />
-                {t("offline.survey.gpsStart") || "Mulai Tracking GPS"}
-              </button>
+              <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40">
+                <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-slate-800">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/30">
+                    <Navigation className="h-8 w-8 text-brand-600 dark:text-brand-400" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-ink">
+                    {t("offline.survey.gpsStart") || "Mulai Tracking GPS"}
+                  </h3>
+                  <p className="mt-2 text-sm text-ink-muted">
+                    Aplikasi perlu mengakses lokasi untuk merekam rute perjalananmu.
+                    Pastikan GPS dan lokasi aktif.
+                  </p>
+                  <button
+                    onClick={startTracking}
+                    className="mt-6 w-full rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-brand-700 active:scale-95 transition"
+                  >
+                    <Navigation className="mr-2 inline-block h-5 w-5" />
+                    Aktifkan GPS & Mulai Survey
+                  </button>
+                  <p className="mt-3 text-[11px] text-ink-subtle">
+                    Tombol ini memicu izin lokasi browser. Pilih "Allow" atau "Izinkan" saat diminta.
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </div>
