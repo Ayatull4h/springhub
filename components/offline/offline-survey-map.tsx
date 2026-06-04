@@ -26,6 +26,7 @@ import { distanceKm, snapToProtectionGrid } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ErrorBoundary } from "./error-boundary";
+import { getForm } from "@/lib/forms";
 
 // ─── Dynamic import for survey map (SSR=false) ──────────────────────────────
 const SurveyLeafletMap = dynamic(
@@ -123,6 +124,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // Survey config center from setup map
   const [initialMapCenter, setInitialMapCenter] = useState<{lat: number; lng: number} | null>(null);
+  // Last marker position — used to pan the map after saving a marker
+  const [lastMarkerPos, setLastMarkerPos] = useState<{lat: number; lng: number} | null>(null);
 
   // ── Load cached forms on mount ─────────────────────────────────────────
   useEffect(() => {
@@ -148,6 +151,32 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         }
       })
       .catch((err) => console.warn("[OfflineSurvey] Failed to load config:", err));
+    // Load saved tracking points and markers from IndexedDB
+    offlineDB.getAllTrackingPoints().then((points) => {
+      if (points.length > 0) {
+        setTrackingPoints(points);
+        const savedMarkers = points.filter((p) => p.markerType !== null);
+        if (savedMarkers.length > 0) {
+          setMarkers(savedMarkers);
+        }
+        // Calculate total distance from loaded tracking points
+        let totalDist = 0;
+        let prev = points[0];
+        for (let i = 1; i < points.length; i++) {
+          if (points[i].markerType === null && prev.markerType === null) {
+            const dist = distanceKm(
+              { lat: prev.lat, lng: prev.lng },
+              { lat: points[i].lat, lng: points[i].lng }
+            );
+            totalDist += dist * 1000;
+            prev = points[i];
+          } else if (points[i].markerType === null) {
+            prev = points[i];
+          }
+        }
+        setTotalDistance(totalDist);
+      }
+    });
   }, []);
 
   // ── Cleanup blob URLs on unmount ───────────────────────────────────────
@@ -403,6 +432,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     setMarkerNameInput("");
     setMarkerNoteInput("");
 
+    // Store last marker position so the map can pan to it
+    setLastMarkerPos({ lat: snapped.lat, lng: snapped.lng });
+
     console.log("[Marker] Saved:", marker);
   }, [currentPos, activeMarkerType, gpsAccuracy, markerNameInput, markerNoteInput, markerPhotos, trackingPoints]);
 
@@ -551,11 +583,17 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                       className="mt-1 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
                     >
                       <option value="">{t("common.select") || "Pilih..."}</option>
-                      {field.options.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
+                      {(() => {
+                        // Use options from form data, or fallback to static form definition
+                        const formDef = getForm(activeForm?.slug);
+                        const staticField = formDef?.fields.find(f => f.id === field.id);
+                        const opts = field.options.length > 0 ? field.options : (staticField?.options || []);
+                        return opts.map((opt: string) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ));
+                      })()}
                     </select>
                   ) : field.type === "photo" ? (
                     <div className="mt-1">
@@ -661,6 +699,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 currentPosition={currentPos}
                 isTracking={isTracking}
                 initialCenter={initialMapCenter}
+                focusMarker={lastMarkerPos}
               />
             </ErrorBoundary>
 

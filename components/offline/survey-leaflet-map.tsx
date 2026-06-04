@@ -13,6 +13,7 @@ type SurveyLeafletMapProps = {
   currentPosition: { lat: number; lng: number } | null;
   isTracking: boolean;
   initialCenter?: { lat: number; lng: number } | null;
+  focusMarker?: { lat: number; lng: number } | null;
 };
 
 /** Auto-follow GPS position */
@@ -72,6 +73,17 @@ function LocateButton() {
   );
 }
 
+/** Pan to a marker when focusMarker changes */
+function FocusMarker({ marker }: { marker: { lat: number; lng: number } | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (marker) {
+      map.flyTo([marker.lat, marker.lng], 15, { duration: 0.5 });
+    }
+  }, [marker, map]);
+  return null;
+}
+
 /** OSM tile layer */
 function MapLayers() {
   const map = useMap();
@@ -102,6 +114,7 @@ export function SurveyLeafletMap({
   currentPosition,
   isTracking,
   initialCenter,
+  focusMarker,
 }: SurveyLeafletMapProps) {
   const { t } = useI18n();
   // GPS trail = markerType null (plain tracking points, not markers)
@@ -137,6 +150,7 @@ export function SurveyLeafletMap({
     >
       <MapLayers />
       <AutoFollow pos={currentPosition} isTracking={isTracking} />
+      <FocusMarker marker={focusMarker ?? null} />
       <LocateButton />
 
       {/* GPS trail polyline — orange/red like Strava */}
