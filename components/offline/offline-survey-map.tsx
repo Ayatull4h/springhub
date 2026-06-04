@@ -389,42 +389,47 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const handleSubmitForm = async () => {
     if (!activeForm) return;
 
-    const report: PendingReport = {
-      id: crypto.randomUUID(),
-      formSlug: activeForm.slug,
-      fieldData: formData as Record<string, unknown>,
-      photoFieldIds: Object.entries(formPhotos)
-        .filter(([, files]) => files && files.length > 0)
-        .map(([fieldId]) => fieldId),
-      csrfToken: "",
-      guestId: null,
-      createdAt: Date.now(),
-    };
+    try {
+      const report: PendingReport = {
+        id: crypto.randomUUID(),
+        formSlug: activeForm.slug,
+        fieldData: formData as Record<string, unknown>,
+        photoFieldIds: Object.entries(formPhotos)
+          .filter(([, files]) => files && files.length > 0)
+          .map(([fieldId]) => fieldId),
+        csrfToken: "",
+        guestId: null,
+        createdAt: Date.now(),
+      };
 
-    // Save photos as blobs
-    for (const [fieldId, files] of Object.entries(formPhotos)) {
-      if (files && files.length > 0) {
-        for (const file of files) {
-          // Compress to 720p
-          const compressed = await compressImage(file);
-          await offlineDB.savePhoto({
-            id: crypto.randomUUID(),
-            reportId: report.id,
-            fieldId: fieldId,
-            blob: compressed,
-            fileName: file.name,
-            mimeType: file.type,
-          });
+      // Save photos as blobs
+      for (const [fieldId, files] of Object.entries(formPhotos)) {
+        if (files && files.length > 0) {
+          for (const file of files) {
+            // Compress to 720p
+            const compressed = await compressImage(file);
+            await offlineDB.savePhoto({
+              id: crypto.randomUUID(),
+              reportId: report.id,
+              fieldId: fieldId,
+              blob: compressed,
+              fileName: file.name,
+              mimeType: file.type,
+            });
+          }
         }
       }
-    }
 
-    await offlineDB.saveReport(report);
-    setPendingReports((prev) => [...prev, report]);
-    setActiveForm(null);
-    setFormData({});
-    setFormPhotos({});
-    setView("map");
+      await offlineDB.saveReport(report);
+      setPendingReports((prev) => [...prev, report]);
+      setActiveForm(null);
+      setFormData({});
+      setFormPhotos({});
+      setView("map");
+    } catch (err) {
+      console.error("[Form] Save error:", err);
+      alert("Gagal menyimpan form. Coba lagi.");
+    }
   };
 
   // ── Render ──────────────────────────────────────────────────────────────

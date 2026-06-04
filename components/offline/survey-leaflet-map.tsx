@@ -1,11 +1,43 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { MapContainer, Polyline, CircleMarker, Circle, Tooltip, useMap } from "react-leaflet";
+import { MapContainer, Polyline, CircleMarker, Circle, Tooltip, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { type OfflineTrackingPoint } from "@/lib/offline-db";
+import { type OfflineTrackingPoint, type MarkerType } from "@/lib/offline-db";
 import { useI18n } from "@/lib/i18n";
+
+// ── Custom divIcon untuk marker emoji ─────────────────────────────────────
+const markerIcons: Record<MarkerType, L.DivIcon> = {
+  spring: L.divIcon({
+    className: "bg-transparent",
+    html: `<div style="font-size:28px;line-height:1;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">💧</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 28],
+    tooltipAnchor: [0, -32],
+  }),
+  tree: L.divIcon({
+    className: "bg-transparent",
+    html: `<div style="font-size:28px;line-height:1;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">🌱</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 28],
+    tooltipAnchor: [0, -32],
+  }),
+  trench: L.divIcon({
+    className: "bg-transparent",
+    html: `<div style="font-size:28px;line-height:1;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">🕳️</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 28],
+    tooltipAnchor: [0, -32],
+  }),
+  seedling: L.divIcon({
+    className: "bg-transparent",
+    html: `<div style="font-size:28px;line-height:1;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">🌰</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 28],
+    tooltipAnchor: [0, -32],
+  }),
+};
 
 type SurveyLeafletMapProps = {
   trackingPoints: OfflineTrackingPoint[];
@@ -169,80 +201,56 @@ export function SurveyLeafletMap({
         />
       )}
 
-      {/* 💧 Spring markers — blue */}
+      {/* 💧 Spring markers — emoji */}
       {springMarkers.map((m) => (
-        <CircleMarker
+        <Marker
           key={m.id}
-          center={[m.lat, m.lng]}
-          radius={10}
-          pathOptions={{
-            color: "#2563eb",
-            fillColor: "#3b82f6",
-            fillOpacity: 0.8,
-            weight: 3,
-          }}
+          position={[m.lat, m.lng]}
+          icon={markerIcons.spring}
         >
-          <Tooltip direction="top" offset={[0, -12]}>
+          <Tooltip direction="top" offset={[0, -32]}>
             💧 {m.name || t("offline.springs")}
           </Tooltip>
-        </CircleMarker>
+        </Marker>
       ))}
 
-      {/* 🌱 Tree markers — green */}
+      {/* 🌱 Tree markers — emoji */}
       {treeMarkers.map((m) => (
-        <CircleMarker
+        <Marker
           key={m.id}
-          center={[m.lat, m.lng]}
-          radius={10}
-          pathOptions={{
-            color: "#16a34a",
-            fillColor: "#22c55e",
-            fillOpacity: 0.8,
-            weight: 3,
-          }}
+          position={[m.lat, m.lng]}
+          icon={markerIcons.tree}
         >
-          <Tooltip direction="top" offset={[0, -12]}>
+          <Tooltip direction="top" offset={[0, -32]}>
             🌱 {m.name || t("offline.trees")}
           </Tooltip>
-        </CircleMarker>
+        </Marker>
       ))}
 
-      {/* 🕳️ Trench markers — brown */}
+      {/* 🕳️ Trench markers — emoji */}
       {trenchMarkers.map((m) => (
-        <CircleMarker
+        <Marker
           key={m.id}
-          center={[m.lat, m.lng]}
-          radius={10}
-          pathOptions={{
-            color: "#78350f",
-            fillColor: "#a16207",
-            fillOpacity: 0.8,
-            weight: 3,
-          }}
+          position={[m.lat, m.lng]}
+          icon={markerIcons.trench}
         >
-          <Tooltip direction="top" offset={[0, -12]}>
+          <Tooltip direction="top" offset={[0, -32]}>
             🕳️ {m.name || t("offline.trenches")}
           </Tooltip>
-        </CircleMarker>
+        </Marker>
       ))}
 
-      {/* 🌰 Seedling markers — dark green */}
+      {/* 🌰 Seedling markers — emoji */}
       {seedlingMarkers.map((m) => (
-        <CircleMarker
+        <Marker
           key={m.id}
-          center={[m.lat, m.lng]}
-          radius={10}
-          pathOptions={{
-            color: "#14532d",
-            fillColor: "#166534",
-            fillOpacity: 0.8,
-            weight: 3,
-          }}
+          position={[m.lat, m.lng]}
+          icon={markerIcons.seedling}
         >
-          <Tooltip direction="top" offset={[0, -12]}>
+          <Tooltip direction="top" offset={[0, -32]}>
             🌰 {m.name || t("offline.seedlings")}
           </Tooltip>
-        </CircleMarker>
+        </Marker>
       ))}
 
       {/* Current position indicator — visible "You are here" */}

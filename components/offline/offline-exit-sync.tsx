@@ -21,6 +21,21 @@ import {
 import { offlineDB, type OfflineTrackingPoint } from "@/lib/offline-db";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import dynamic from "next/dynamic";
+import html2canvas from "html2canvas";
+
+// ── Dynamic import untuk map preview di exit sync ─────────────────────────
+const SurveyLeafletMap = dynamic(
+  () => import("./survey-leaflet-map").then((m) => m.SurveyLeafletMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full items-center justify-center bg-slate-100 text-sm text-ink-muted">
+        Loading map...
+      </div>
+    ),
+  }
+);
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -109,6 +124,14 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
   });
 
   const summaryRef = useRef<HTMLDivElement>(null);
+  const mapPreviewRef = useRef<HTMLDivElement>(null);
+
+  // Data untuk map preview
+  const [mapData, setMapData] = useState<{
+    trackingPoints: OfflineTrackingPoint[];
+    markers: OfflineTrackingPoint[];
+    center: { lat: number; lng: number } | null;
+  }>({ trackingPoints: [], markers: [], center: null });
 
   // ── Load data on confirm ─────────────────────────────────────────────────
   useEffect(() => {
@@ -155,6 +178,22 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
         startTime: config?.startedAt ?? null,
       });
 
+      // Calculate map center from tracking points
+      let center: { lat: number; lng: number } | null = null;
+      if (tracks.length > 0) {
+        const lats = tracks.map((t: OfflineTrackingPoint) => t.lat);
+        const lngs = tracks.map((t: OfflineTrackingPoint) => t.lng);
+        center = {
+          lat: (Math.min(...lats) + Math.max(...lats)) / 2,
+          lng: (Math.min(...lngs) + Math.max(...lngs)) / 2,
+        };
+      }
+      setMapData({
+        trackingPoints: tracks,
+        markers: tracks.filter((t: OfflineTrackingPoint) => t.markerType !== null),
+        center,
+      });
+
       setPhotoStatuses(
         photos.map((p) => ({
           id: p.id,
@@ -174,154 +213,63 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     loadSummary();
   }, [phase]);
 
-  // ── Download: canvas gambar map + rute + marker + overlay ───────────────
+  // ── Download: capture Leaflet map preview + overlay stats ───────────────
   const handleDownloadSummary = useCallback(async () => {
-    const tracks = await offlineDB.getAllTrackingPoints();
-    const trail = tracks.filter((t: OfflineTrackingPoint) => t.markerType === null);
-    const markers = tracks.filter((t: OfflineTrackingPoint) => t.markerType !== null);
+    const mapEl = mapPreviewRef.current;
+    if (!mapEl) { alert("Peta belum siap."); return; }
 
-    const W = 1000;
-    const H = 700;
-    const PAD = 60;
-    const canvas = document.createElement("canvas");
-    canvas.width = W;
-    canvas.height = H;
-    const ctx = canvas.getContext("2d")!;
+    try {
+      // Tunggu tiles load
+      const tiles = mapEl.querySelectorAll(".leaflet-tile-loaded");
+      await new Promise((r) => setTimeout(r, 500));
 
-    // ── Background ──
-    const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, "#f0f4f8");
-    grad.addColorStop(1, "#e2e8f0");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
+      const canvas = await html2canvas(mapEl, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        height: mapEl.scrollHeight,
+        width: mapEl.scrollWidth,
+      });
 
-    // ── Map-like grid ──
-    ctx.strokeStyle = "#cbd5e1";
-    ctx.lineWidth = 0.5;
-    for (let x = 0; x < W; x += 40) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      // Overlay teks stats di canvas
+      const overlay = document.createElement("canvas");
+      overlay.width = canvas.width;
+      overlay.height = canvas.height;
+      const ctx = overlay.getContext("2d")!;
+      ctx.drawImage(canvas, 0, 0);
+
+      // Panel info bawah
+      const pH = 80;
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.fillRect(0, overlay.height - pH, overlay.width, pH);
+
+      ctx.fillStyle = "#fff";
+      ctx.font = `bold ${Math.round(18 * 2)}px sans-serif`;
+      ctx.fillText("📊 SpringHub — Ringkasan Survey", 20 * 2, overlay.height - pH + 28 * 2);
+
+      ctx.font = `${Math.round(13 * 2)}px sans-serif`;
+      const dateStr = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+      const infoLine = `📍 ${formatDistance(summary.totalDistance)}  |  💧 ${summary.springCount}  🌱 ${summary.treeCount}  🕳️ ${summary.trenchCount}  🌰 ${summary.seedlingCount}  |  📋 ${summary.reportCount} laporan  📸 ${summary.photoCount} foto  |  🕐 ${dateStr}`;
+      ctx.fillText(infoLine, 20 * 2, overlay.height - pH + 54 * 2);
+
+      // Watermark
+      ctx.fillStyle = "rgba(255,255,255,0.2)";
+      ctx.font = `${Math.round(11 * 2)}px sans-serif`;
+      ctx.fillText("SpringHub — Jaga Semesta", overlay.width - 200 * 2, overlay.height - 12 * 2);
+
+      overlay.toBlob((blob) => {
+        if (!blob) { alert("Gagal membuat gambar."); return; }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.download = `springhub-rute-${Date.now()}.png`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      }, "image/png");
+    } catch (err) {
+      console.error("[Download] Failed:", err);
+      alert("Gagal mendownload gambar peta.");
     }
-    for (let y = 0; y < H; y += 40) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    }
-
-    // ── Project GPS → canvas ──
-    const allPoints = [...trail, ...markers];
-    let drawArea = { x: PAD, y: PAD, w: W - PAD * 2, h: H - PAD * 2 - 80 };
-
-    if (allPoints.length > 0) {
-      const lats = allPoints.map(p => p.lat);
-      const lngs = allPoints.map(p => p.lng);
-      let minLat = Math.min(...lats);
-      let maxLat = Math.max(...lats);
-      let minLng = Math.min(...lngs);
-      let maxLng = Math.max(...lngs);
-
-      // Jika cuma 1 titik, buat bounding box kecil
-      if (minLat === maxLat && minLng === maxLng) {
-        minLat -= 0.001; maxLat += 0.001;
-        minLng -= 0.001; maxLng += 0.001;
-      }
-
-      const mapW = maxLng - minLng;
-      const mapH = maxLat - minLat;
-      const scaleX = drawArea.w / mapW;
-      const scaleY = drawArea.h / mapH;
-      const scale = Math.min(scaleX, scaleY);
-
-      const centerX = drawArea.x + drawArea.w / 2;
-      const centerY = drawArea.y + drawArea.h / 2;
-      const midLng = (minLng + maxLng) / 2;
-      const midLat = (minLat + maxLat) / 2;
-
-      const toCanvas = (lat: number, lng: number): [number, number] => {
-        const x = centerX + (lng - midLng) * scale;
-        const y = centerY - (lat - midLat) * scale;
-        return [x, y];
-      };
-
-      // ── Draw trail polyline ──
-      if (trail.length >= 2) {
-        ctx.beginPath();
-        const [sx, sy] = toCanvas(trail[0].lat, trail[0].lng);
-        ctx.moveTo(sx, sy);
-        for (let i = 1; i < trail.length; i++) {
-          const [x, y] = toCanvas(trail[i].lat, trail[i].lng);
-          ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = "#f97316";
-        ctx.lineWidth = 4;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-        ctx.stroke();
-      }
-
-      // ── Draw markers ──
-      const markerColor = (type: string | null): string => {
-        switch (type) {
-          case "spring": return "#3b82f6";
-          case "tree": return "#22c55e";
-          case "trench": return "#a16207";
-          case "seedling": return "#166534";
-          default: return "#6b7280";
-        }
-      };
-      const markerLabel = (type: string | null): string => {
-        switch (type) {
-          case "spring": return "💧";
-          case "tree": return "🌱";
-          case "trench": return "🕳️";
-          case "seedling": return "🌰";
-          default: return "📍";
-        }
-      };
-
-      for (const m of markers) {
-        const [mx, my] = toCanvas(m.lat, m.lng);
-        // Outer circle
-        ctx.beginPath();
-        ctx.arc(mx, my, 10, 0, Math.PI * 2);
-        ctx.fillStyle = markerColor(m.markerType);
-        ctx.fill();
-        ctx.strokeStyle = "#fff";
-        ctx.lineWidth = 3;
-        ctx.stroke();
-        // Label
-        ctx.font = "14px sans-serif";
-        ctx.fillStyle = "#1e293b";
-        ctx.fillText(markerLabel(m.markerType), mx + 14, my + 5);
-      }
-    }
-
-    // ── Bottom info panel ──
-    const panelY = H - 80;
-    ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
-    ctx.fillRect(0, panelY, W, 80);
-
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 20px sans-serif";
-    ctx.fillText("📊 SpringHub — Ringkasan Survey", 20, panelY + 30);
-
-    ctx.font = "14px sans-serif";
-    const dateStr = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const infoLine = `📍 ${formatDistance(summary.totalDistance)}  |  💧 ${summary.springCount}  🌱 ${summary.treeCount}  🕳️ ${summary.trenchCount}  🌰 ${summary.seedlingCount}  |  📋 ${summary.reportCount} laporan  📸 ${summary.photoCount} foto  |  🕐 ${dateStr}`;
-    ctx.fillText(infoLine, 20, panelY + 58);
-
-    // ── Watermark ──
-    ctx.fillStyle = "rgba(255,255,255,0.25)";
-    ctx.font = "12px sans-serif";
-    ctx.fillText("SpringHub — Jaga Semesta", W - 200, H - 15);
-
-    // ── Download ──
-    canvas.toBlob((blob) => {
-      if (!blob) { alert("Gagal membuat gambar."); return; }
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.download = `springhub-rute-${Date.now()}.png`;
-      link.href = url;
-      link.click();
-      URL.revokeObjectURL(url);
-    }, "image/png");
   }, [summary]);
 
   // ── Helper: get CSRF token ──────────────────────────────────────────────
@@ -604,6 +552,26 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
             </p>
           </div>
         </div>
+
+        {/* ── Map Preview ── */}
+        {mapData.trackingPoints.length > 0 && (
+          <div className="mt-4 overflow-hidden rounded-xl border border-ink-line">
+            <div ref={mapPreviewRef} className="h-[400px] w-full">
+              <SurveyLeafletMap
+                trackingPoints={mapData.trackingPoints}
+                markers={mapData.markers}
+                currentPosition={null}
+                isTracking={false}
+                initialCenter={mapData.center}
+                focusMarker={null}
+                autoFollowPaused={true}
+              />
+            </div>
+            <div className="border-t border-ink-line bg-slate-50 px-4 py-2 text-xs text-ink-muted dark:bg-slate-800">
+              Peta pratinjau — akan tersimpan di gambar saat download
+            </div>
+          </div>
+        )}
 
         {/* Action buttons */}
         <div className="mt-6 flex flex-col gap-2">
