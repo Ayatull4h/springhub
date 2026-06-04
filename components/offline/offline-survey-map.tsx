@@ -70,27 +70,43 @@ type OfflineSurveyMapProps = {
 // ─── Compress image to 720p ─────────────────────────────────────────────────
 
 async function compressImage(file: File, maxDimension = 720): Promise<Blob> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
-    img.onload = () => {
+
+    // Safety timeout — iOS Safari kadang hang
+    const timer = setTimeout(() => {
       URL.revokeObjectURL(url);
-      const canvas = document.createElement("canvas");
-      const scale = Math.min(maxDimension / img.width, maxDimension / img.height, 1);
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
-      const ctx = canvas.getContext("2d")!;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(
-        (b) => {
-          if (b) resolve(b);
-          else resolve(file); // fallback
-        },
-        "image/jpeg",
-        0.7
-      );
+      resolve(file);
+    }, 10000);
+
+    img.onload = () => {
+      clearTimeout(timer);
+      URL.revokeObjectURL(url);
+      try {
+        const canvas = document.createElement("canvas");
+        const scale = Math.min(maxDimension / img.width, maxDimension / img.height, 1);
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (b) => {
+            if (b) resolve(b);
+            else resolve(file);
+          },
+          "image/jpeg",
+          0.7
+        );
+      } catch {
+        resolve(file);
+      }
     };
-    img.onerror = () => resolve(file); // fallback
+    img.onerror = () => {
+      clearTimeout(timer);
+      URL.revokeObjectURL(url);
+      resolve(file);
+    };
     img.src = url;
   });
 }
