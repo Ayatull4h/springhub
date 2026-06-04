@@ -12,7 +12,6 @@ import {
   Trash2,
   Upload,
   RefreshCw,
-  ArrowLeft,
   Download,
   Footprints,
   Flag,
@@ -27,9 +26,8 @@ import { useI18n } from "@/lib/i18n";
 
 type SyncPhase =
   | "confirm" // Review summary before exit
-  | "uploading-photos" // Upload foto — fase WAJIB
-  | "uploading-reports" // Upload forms ke /api/reports
-  | "uploading-tracks" // Upload tracking points
+  | "uploading-reports" // Upload forms ke /api/reports (DULUAN)
+  | "uploading-photos" // Upload foto (WAJIB)
   | "cleaning-up" // Hapus IndexedDB + cache
   | "done" // Selesai — tampilkan prompt cleanup
   | "error"; // Gagal — user tetap di mode offline
@@ -176,51 +174,154 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     loadSummary();
   }, [phase]);
 
-  // ── Download summary as text ──────────────────────────────────────────────
-  const handleDownloadSummary = useCallback(() => {
-    const dateStr = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const lines: string[] = [
-      "═══════════════════════════════════════",
-      "   SPRINGHUB — Ringkasan Survey",
-      "═══════════════════════════════════════",
-      "",
-      `📅 Tanggal: ${dateStr}`,
-      summary.startTime
-        ? `🕐 Mulai survey: ${new Date(summary.startTime).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}`
-        : "",
-      "",
-      "─── Statistik ───",
-      "",
-      `📍 Total jarak:       ${formatDistance(summary.totalDistance)}`,
-      `🛤️  Titik GPS:         ${summary.trailCount}`,
-      `📍 Marker:            ${summary.markerCount}`,
-      `   💧 Mata Air:        ${summary.springCount}`,
-      `   🌱 Tanam Pohon:     ${summary.treeCount}`,
-      `   🕳️ Rorak:          ${summary.trenchCount}`,
-      `   🌰 Seedling:        ${summary.seedlingCount}`,
-      `📋 Laporan diisi:     ${summary.reportCount}`,
-      `📸 Foto diambil:      ${summary.photoCount}`,
-      "",
-      "─── Rute ───",
-      "",
-      `Marker: ${summary.springCount} 💧, ${summary.treeCount} 🌱, ${summary.trenchCount} 🕳️, ${summary.seedlingCount} 🌰`,
-      `GPS: ${summary.trailCount} titik — ${formatDistance(summary.totalDistance)}`,
-      `Foto: ${summary.photoCount} — Laporan: ${summary.reportCount}`,
-      "",
-      "═══════════════════════════════════════",
-      "  SpringHub — Jaga Semesta",
-      "  https://springhub.vercel.app",
-      "═══════════════════════════════════════",
-    ];
+  // ── Download: canvas gambar map + rute + marker + overlay ───────────────
+  const handleDownloadSummary = useCallback(async () => {
+    const tracks = await offlineDB.getAllTrackingPoints();
+    const trail = tracks.filter((t: OfflineTrackingPoint) => t.markerType === null);
+    const markers = tracks.filter((t: OfflineTrackingPoint) => t.markerType !== null);
 
-    const content = lines.filter(Boolean).join("\n");
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = `springhub-ringkasan-${Date.now()}.txt`;
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
+    const W = 1000;
+    const H = 700;
+    const PAD = 60;
+    const canvas = document.createElement("canvas");
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext("2d")!;
+
+    // ── Background ──
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, "#f0f4f8");
+    grad.addColorStop(1, "#e2e8f0");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // ── Map-like grid ──
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x < W; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = 0; y < H; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    // ── Project GPS → canvas ──
+    const allPoints = [...trail, ...markers];
+    let drawArea = { x: PAD, y: PAD, w: W - PAD * 2, h: H - PAD * 2 - 80 };
+
+    if (allPoints.length > 0) {
+      const lats = allPoints.map(p => p.lat);
+      const lngs = allPoints.map(p => p.lng);
+      let minLat = Math.min(...lats);
+      let maxLat = Math.max(...lats);
+      let minLng = Math.min(...lngs);
+      let maxLng = Math.max(...lngs);
+
+      // Jika cuma 1 titik, buat bounding box kecil
+      if (minLat === maxLat && minLng === maxLng) {
+        minLat -= 0.001; maxLat += 0.001;
+        minLng -= 0.001; maxLng += 0.001;
+      }
+
+      const mapW = maxLng - minLng;
+      const mapH = maxLat - minLat;
+      const scaleX = drawArea.w / mapW;
+      const scaleY = drawArea.h / mapH;
+      const scale = Math.min(scaleX, scaleY);
+
+      const centerX = drawArea.x + drawArea.w / 2;
+      const centerY = drawArea.y + drawArea.h / 2;
+      const midLng = (minLng + maxLng) / 2;
+      const midLat = (minLat + maxLat) / 2;
+
+      const toCanvas = (lat: number, lng: number): [number, number] => {
+        const x = centerX + (lng - midLng) * scale;
+        const y = centerY - (lat - midLat) * scale;
+        return [x, y];
+      };
+
+      // ── Draw trail polyline ──
+      if (trail.length >= 2) {
+        ctx.beginPath();
+        const [sx, sy] = toCanvas(trail[0].lat, trail[0].lng);
+        ctx.moveTo(sx, sy);
+        for (let i = 1; i < trail.length; i++) {
+          const [x, y] = toCanvas(trail[i].lat, trail[i].lng);
+          ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = "#f97316";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.stroke();
+      }
+
+      // ── Draw markers ──
+      const markerColor = (type: string | null): string => {
+        switch (type) {
+          case "spring": return "#3b82f6";
+          case "tree": return "#22c55e";
+          case "trench": return "#a16207";
+          case "seedling": return "#166534";
+          default: return "#6b7280";
+        }
+      };
+      const markerLabel = (type: string | null): string => {
+        switch (type) {
+          case "spring": return "💧";
+          case "tree": return "🌱";
+          case "trench": return "🕳️";
+          case "seedling": return "🌰";
+          default: return "📍";
+        }
+      };
+
+      for (const m of markers) {
+        const [mx, my] = toCanvas(m.lat, m.lng);
+        // Outer circle
+        ctx.beginPath();
+        ctx.arc(mx, my, 10, 0, Math.PI * 2);
+        ctx.fillStyle = markerColor(m.markerType);
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        // Label
+        ctx.font = "14px sans-serif";
+        ctx.fillStyle = "#1e293b";
+        ctx.fillText(markerLabel(m.markerType), mx + 14, my + 5);
+      }
+    }
+
+    // ── Bottom info panel ──
+    const panelY = H - 80;
+    ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+    ctx.fillRect(0, panelY, W, 80);
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 20px sans-serif";
+    ctx.fillText("📊 SpringHub — Ringkasan Survey", 20, panelY + 30);
+
+    ctx.font = "14px sans-serif";
+    const dateStr = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    const infoLine = `📍 ${formatDistance(summary.totalDistance)}  |  💧 ${summary.springCount}  🌱 ${summary.treeCount}  🕳️ ${summary.trenchCount}  🌰 ${summary.seedlingCount}  |  📋 ${summary.reportCount} laporan  📸 ${summary.photoCount} foto  |  🕐 ${dateStr}`;
+    ctx.fillText(infoLine, 20, panelY + 58);
+
+    // ── Watermark ──
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    ctx.font = "12px sans-serif";
+    ctx.fillText("SpringHub — Jaga Semesta", W - 200, H - 15);
+
+    // ── Download ──
+    canvas.toBlob((blob) => {
+      if (!blob) { alert("Gagal membuat gambar."); return; }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = `springhub-rute-${Date.now()}.png`;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+    }, "image/png");
   }, [summary]);
 
   // ── Helper: get CSRF token ──────────────────────────────────────────────
@@ -238,7 +339,6 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
   const startSync = useCallback(async () => {
     const photos = await offlineDB.getAllPhotos();
     const reports = await offlineDB.getAllReports();
-    const tracks = await offlineDB.getAllTrackingPoints();
 
     // Map: clientReportId → serverReportId
     const reportIdMap = new Map<string, string>();
@@ -357,35 +457,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
       }
     }
 
-    // ── Phase 3: Upload tracking points ─────────────────────────────────
-    if (tracks.length > 0) {
-      setPhase("uploading-tracks");
-      setProgress({ current: 0, total: tracks.length });
-
-      try {
-        const springCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "spring").length;
-        const treeCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "tree").length;
-        const trenchCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "trench").length;
-        const seedlingCount = tracks.filter((t: OfflineTrackingPoint) => t.markerType === "seedling").length;
-
-        await fetch("/api/offline/sync", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            trackingPoints: tracks,
-            totalDistance: summary.totalDistance,
-            springCount,
-            treeCount,
-            trenchCount,
-            seedlingCount,
-          }),
-        });
-      } catch {
-        console.warn("[Sync] Failed to upload tracking points");
-      }
-    }
-
-    // ── Phase 4: Cleanup ─────────────────────────────────────────────────
+    // ── Phase 3: Cleanup ─────────────────────────────────────────────────
     setPhase("cleaning-up");
     setProgress({ current: 0, total: 3 });
 
@@ -589,10 +661,8 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
               ? errorMessage
               : phase === "uploading-photos"
                 ? `${t("offline.uploadProgress")} (${progress.current}/${progress.total})`
-                : phase === "uploading-reports"
-                  ? `${t("offline.syncingReports") || "Mengirim laporan"} (${progress.current}/${progress.total})`
-                  : phase === "uploading-tracks"
-                    ? t("offline.syncingTracks") || "Mengupload jejak GPS..."
+                  : phase === "uploading-reports"
+                    ? `${t("offline.syncingReports") || "Mengirim laporan"} (${progress.current}/${progress.total})`
                     : phase === "cleaning-up"
                       ? t("offline.sync.cleaning") || "Membersihkan data lokal..."
                       : t("offline.processing") || "Memproses..."}
@@ -610,10 +680,8 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
                     phase === "uploading-photos"
                       ? (progress.current / Math.max(progress.total, 1)) * 50
                       : phase === "uploading-reports"
-                        ? 50 + (progress.current / Math.max(progress.total, 1)) * 30
-                        : phase === "uploading-tracks"
-                          ? 80
-                          : phase === "cleaning-up"
+                        ? 50 + (progress.current / Math.max(progress.total, 1)) * 50
+                        : phase === "cleaning-up"
                             ? 80 + (progress.current / Math.max(progress.total, 1)) * 20
                             : 0
                   }%`,

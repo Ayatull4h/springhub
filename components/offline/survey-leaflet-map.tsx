@@ -14,17 +14,18 @@ type SurveyLeafletMapProps = {
   isTracking: boolean;
   initialCenter?: { lat: number; lng: number } | null;
   focusMarker?: { lat: number; lng: number } | null;
+  autoFollowPaused?: boolean;
 };
 
-/** Auto-follow GPS position */
-function AutoFollow({ pos, isTracking }: { pos: { lat: number; lng: number } | null; isTracking: boolean }) {
+/** Auto-follow GPS position — paused after marker placement */
+function AutoFollow({ pos, isTracking, paused }: { pos: { lat: number; lng: number } | null; isTracking: boolean; paused?: boolean }) {
   const map = useMap();
 
   useEffect(() => {
-    if (pos && isTracking) {
+    if (pos && isTracking && !paused) {
       map.panTo([pos.lat, pos.lng], { animate: true, duration: 0.5 });
     }
-  }, [pos, isTracking, map]);
+  }, [pos, isTracking, paused, map]);
 
   return null;
 }
@@ -115,6 +116,7 @@ export function SurveyLeafletMap({
   isTracking,
   initialCenter,
   focusMarker,
+  autoFollowPaused = false,
 }: SurveyLeafletMapProps) {
   const { t } = useI18n();
   // GPS trail = markerType null (plain tracking points, not markers)
@@ -149,7 +151,7 @@ export function SurveyLeafletMap({
       zoomControl={false}
     >
       <MapLayers />
-      <AutoFollow pos={currentPosition} isTracking={isTracking} />
+      <AutoFollow pos={currentPosition} isTracking={isTracking} paused={autoFollowPaused} />
       <FocusMarker marker={focusMarker ?? null} />
       <LocateButton />
 

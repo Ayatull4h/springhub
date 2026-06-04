@@ -11,12 +11,10 @@ import {
   Save,
   Navigation,
   Ruler,
-  Camera,
   Leaf,
   Mountain,
   Crosshair,
   MapIcon,
-  Loader2,
 } from "lucide-react";
 import {
   offlineDB,
@@ -25,7 +23,7 @@ import {
   type PendingReport,
   type FormDefinition,
 } from "@/lib/offline-db";
-import { distanceKm, snapToProtectionGrid } from "@/lib/geo";
+import { distanceKm } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ErrorBoundary } from "./error-boundary";
@@ -327,19 +325,26 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     };
   }, []);
 
-  // ── Marker — instant save at GPS position ──────────────────────────────
+  // ── Pause autoFollow setelah marker agar map tetap di marker ───────────
+  const [autoFollowPaused, setAutoFollowPaused] = useState(false);
+  const autoFollowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Marker — instant save at GPS position (RAW, tanpa snap) ────────────
   const saveMarkerInstant = useCallback(async (type: MarkerType) => {
     if (!currentPos) {
       alert("Posisi GPS belum tersedia. Tunggu hingga GPS aktif.");
       return;
     }
 
-    const snapped = snapToProtectionGrid(currentPos);
+    // PAUSE auto-follow agar map fokus ke marker, bukan lari ke GPS
+    setAutoFollowPaused(true);
+    if (autoFollowTimerRef.current) clearTimeout(autoFollowTimerRef.current);
+    autoFollowTimerRef.current = setTimeout(() => setAutoFollowPaused(false), 5000);
 
     const marker: OfflineTrackingPoint = {
       id: crypto.randomUUID(),
-      lat: snapped.lat,
-      lng: snapped.lng,
+      lat: currentPos.lat,     // RAW GPS — tanpa snap
+      lng: currentPos.lng,     // RAW GPS — tanpa snap
       accuracy: gpsAccuracy,
       markerType: type,
       name: null,
@@ -349,9 +354,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     setMarkers((prev) => [...prev, marker]);
     setTrackingPoints((prev) => [...prev, marker]);
     await offlineDB.saveTrackingPoint(marker);
-    setLastMarkerPos({ lat: snapped.lat, lng: snapped.lng });
+    setLastMarkerPos({ lat: currentPos.lat, lng: currentPos.lng });
 
-    console.log("[Marker] Instant saved:", type, snapped);
+    console.log("[Marker] Instant saved:", type, currentPos);
   }, [currentPos, gpsAccuracy]);
 
   // ── Marker buttons — langsung simpan ──────────────────────────────────
@@ -706,6 +711,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 isTracking={isTracking}
                 initialCenter={initialMapCenter}
                 focusMarker={lastMarkerPos}
+                autoFollowPaused={autoFollowPaused}
               />
             </ErrorBoundary>
 
