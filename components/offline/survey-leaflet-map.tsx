@@ -7,35 +7,42 @@ import L from "leaflet";
 import { type OfflineTrackingPoint, type MarkerType } from "@/lib/offline-db";
 import { useI18n } from "@/lib/i18n";
 
-// ── Custom divIcon untuk marker emoji ─────────────────────────────────────
-const markerIcons: Record<MarkerType, L.DivIcon> = {
+// ── SVG pin warna untuk marker ────────────────────────────────────────────
+function pinSvg(fill: string, stroke: string): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 42" width="28" height="42">
+    <path d="M14 1C7.4 1 2 6.4 2 13c0 9.5 12 27 12 27s12-17.5 12-27C26 6.4 20.6 1 14 1z" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+    <circle cx="14" cy="13" r="5.5" fill="#fff" stroke="${stroke}" stroke-width="0.8"/>
+  </svg>`;
+}
+
+const pinIcons: Record<MarkerType, L.DivIcon> = {
   spring: L.divIcon({
     className: "bg-transparent",
-    html: `<div style="font-size:28px;line-height:1;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">💧</div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 28],
-    tooltipAnchor: [0, -32],
+    html: pinSvg("#2563eb", "#1d4ed8"),
+    iconSize: [28, 42],
+    iconAnchor: [14, 42],
+    tooltipAnchor: [0, -44],
   }),
   tree: L.divIcon({
     className: "bg-transparent",
-    html: `<div style="font-size:28px;line-height:1;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">🌱</div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 28],
-    tooltipAnchor: [0, -32],
+    html: pinSvg("#16a34a", "#15803d"),
+    iconSize: [28, 42],
+    iconAnchor: [14, 42],
+    tooltipAnchor: [0, -44],
   }),
   trench: L.divIcon({
     className: "bg-transparent",
-    html: `<div style="font-size:28px;line-height:1;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">🕳️</div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 28],
-    tooltipAnchor: [0, -32],
+    html: pinSvg("#92400e", "#78350f"),
+    iconSize: [28, 42],
+    iconAnchor: [14, 42],
+    tooltipAnchor: [0, -44],
   }),
   seedling: L.divIcon({
     className: "bg-transparent",
-    html: `<div style="font-size:28px;line-height:1;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">🌰</div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 28],
-    tooltipAnchor: [0, -32],
+    html: pinSvg("#166534", "#14532d"),
+    iconSize: [28, 42],
+    iconAnchor: [14, 42],
+    tooltipAnchor: [0, -44],
   }),
 };
 
@@ -206,7 +213,7 @@ export function SurveyLeafletMap({
         <Marker
           key={m.id}
           position={[m.lat, m.lng]}
-          icon={markerIcons.spring}
+          icon={pinIcons.spring}
         >
           <Tooltip direction="top" offset={[0, -32]}>
             💧 {m.name || t("offline.springs")}
@@ -219,7 +226,7 @@ export function SurveyLeafletMap({
         <Marker
           key={m.id}
           position={[m.lat, m.lng]}
-          icon={markerIcons.tree}
+          icon={pinIcons.tree}
         >
           <Tooltip direction="top" offset={[0, -32]}>
             🌱 {m.name || t("offline.trees")}
@@ -232,7 +239,7 @@ export function SurveyLeafletMap({
         <Marker
           key={m.id}
           position={[m.lat, m.lng]}
-          icon={markerIcons.trench}
+          icon={pinIcons.trench}
         >
           <Tooltip direction="top" offset={[0, -32]}>
             🕳️ {m.name || t("offline.trenches")}
@@ -245,7 +252,7 @@ export function SurveyLeafletMap({
         <Marker
           key={m.id}
           position={[m.lat, m.lng]}
-          icon={markerIcons.seedling}
+          icon={pinIcons.seedling}
         >
           <Tooltip direction="top" offset={[0, -32]}>
             🌰 {m.name || t("offline.seedlings")}

@@ -87,7 +87,7 @@ async function compressImage(file: File, maxDimension = 720): Promise<Blob> {
           else resolve(file); // fallback
         },
         "image/jpeg",
-        0.85
+        0.7
       );
     };
     img.onerror = () => resolve(file); // fallback

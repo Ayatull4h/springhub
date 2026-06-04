@@ -9,7 +9,7 @@ import { OfflineSurveyMap } from "@/components/offline/offline-survey-map";
 import { OfflineExitSync } from "@/components/offline/offline-exit-sync";
 import { offlineDB } from "@/lib/offline-db";
 
-type OfflinePhase = "checking" | "not-logged-in" | "setup" | "survey" | "exit-sync";
+type OfflinePhase = "checking" | "not-logged-in" | "setup" | "survey" | "exit-sync" | "storage-error";
 
 function OfflinePageContent() {
   const searchParams = useSearchParams();
@@ -19,11 +19,32 @@ function OfflinePageContent() {
 
   const [phase, setPhase] = useState<OfflinePhase>("checking");
   const [checkError, setCheckError] = useState("");
+  const [storageInfo, setStorageInfo] = useState("");
 
   // ── Check prerequisites ────────────────────────────────────────────────
   useEffect(() => {
     async function check() {
       try {
+        // Check IndexedDB availability (iOS Chrome / private mode sering blokir)
+        const dbOk = await offlineDB.isAvailable();
+        if (!dbOk) {
+          setPhase("storage-error");
+          setCheckError("Penyimpanan lokal (IndexedDB) tidak tersedia. Coba gunakan Safari atau non-private browsing.");
+          return;
+        }
+
+        // Check storage estimate
+        try {
+          const { used, quota } = await offlineDB.estimateUsage();
+          if (quota !== null && used !== null) {
+            const usedMB = Math.round(used / 1024 / 1024);
+            const quotaMB = Math.round(quota / 1024 / 1024);
+            if (usedMB > quotaMB * 0.8) {
+              setStorageInfo(`Peringatan: penyimpanan hampir penuh (${usedMB}/${quotaMB} MB). Hapus data lama untuk hasil terbaik.`);
+            }
+          }
+        } catch {}
+
         // Check login
         const meRes = await fetch("/api/auth/me");
         const meData = await meRes.json();
@@ -108,6 +129,35 @@ function OfflinePageContent() {
     );
   }
 
+  // ── Phase: Storage Error ──────────────────────────────────────────────
+  if (phase === "storage-error") {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <div className="max-w-sm text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+            <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+          </div>
+          <h1 className="mt-4 text-xl font-bold text-ink">Mode Offline Tidak Tersedia</h1>
+          <p className="mt-2 text-sm text-ink-muted">{checkError}</p>
+          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+            <strong>Tips untuk iOS:</strong>
+            <ul className="mt-1 list-inside list-disc space-y-0.5">
+              <li>Gunakan <strong>Safari</strong> (Chrome di iOS terbatas)</li>
+              <li>Nonaktifkan <strong>Private Browsing</strong></li>
+              <li>Install PWA: Share → Add to Home Screen</li>
+              <li>Hapus data Safari: Settings → Safari → Clear History</li>
+            </ul>
+          </div>
+          <div className="mt-6 flex items-center justify-center gap-3">
+            <Link href="/" className="btn-primary">
+              Kembali ke Beranda
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // ── Phase: Setup ───────────────────────────────────────────────────────
   if (phase === "setup") {
     return (
@@ -119,6 +169,12 @@ function OfflinePageContent() {
           <ArrowLeft className="h-4 w-4" />
           Kembali ke Beranda
         </button>
+
+        {storageInfo && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+            {storageInfo}
+          </div>
+        )}
 
         <OfflineSetup
           mode={isFullMode ? "full" : "save-only"}

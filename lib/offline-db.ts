@@ -492,4 +492,30 @@ export const offlineDB = {
     ]);
     return { reports, tracks, photos, forms, tiles, configs, drafts, queue };
   },
+
+  // ── Storage check ───────────────────────────────────────────────────────
+  async isAvailable(): Promise<boolean> {
+    if (typeof indexedDB === "undefined") return false;
+    try {
+      const db = await openDB();
+      db.close();
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
+  async estimateUsage(): Promise<{ used: number; quota: number | null }> {
+    const used = 0;
+    let quota: number | null = null;
+    if (navigator.storage && navigator.storage.estimate) {
+      try {
+        const est = await navigator.storage.estimate();
+        return { used: est.usage ?? 0, quota: est.quota ?? null };
+      } catch {
+        // not available
+      }
+    }
+    return { used, quota: null };
+  },
 };
