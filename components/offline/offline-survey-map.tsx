@@ -14,6 +14,9 @@ import {
   Camera,
   Leaf,
   Mountain,
+  Crosshair,
+  MapIcon,
+  Loader2,
 } from "lucide-react";
 import {
   offlineDB,
@@ -36,6 +39,18 @@ const SurveyLeafletMap = dynamic(
     loading: () => (
       <div className="flex h-full items-center justify-center bg-slate-100 text-sm text-ink-muted dark:bg-slate-800">
         Loading map...
+      </div>
+    ),
+  }
+);
+
+const PickerMap = dynamic(
+  () => import("../map/picker-map").then((m) => m.PickerMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full items-center justify-center bg-slate-100 text-sm text-ink-muted dark:bg-slate-800">
+        Loading peta...
       </div>
     ),
   }
@@ -109,11 +124,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const [formData, setFormData] = useState<Record<string, FormFieldValue>>({});
   const [formPhotos, setFormPhotos] = useState<Record<string, File[]>>({});
 
-  // Marker popup state
-  const [activeMarkerType, setActiveMarkerType] = useState<MarkerType | null>(null);
-  const [markerNameInput, setMarkerNameInput] = useState("");
-  const [markerNoteInput, setMarkerNoteInput] = useState("");
-  const [markerPhotos, setMarkerPhotos] = useState<{ blob: Blob; preview: string }[]>([]);
+  // Map picker state for location field in forms
+  const [showMapPicker, setShowMapPicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Derived marker counts
@@ -182,11 +194,9 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   // ── Cleanup blob URLs on unmount ───────────────────────────────────────
   useEffect(() => {
     return () => {
-      for (const p of markerPhotos) {
-        URL.revokeObjectURL(p.preview);
-      }
+      // blob URLs cleaned up by component lifecycle
     };
-  }, [markerPhotos]);
+  }, []);
 
   // ── Auto-detect user location on mount (one-time) then start continuous tracking ──
   useEffect(() => {
@@ -317,126 +327,37 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     };
   }, []);
 
-  // ── Marker photo capture ───────────────────────────────────────────────
-  const handleMarkerPhotoCapture = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      if (!files || files.length === 0) return;
-
-      const file = files[0];
-
-      // Max 5 MB
-      if (file.size > 5 * 1024 * 1024) {
-        alert(t("offline.photoMaxSize") || "Foto maksimal 5 MB");
-        e.target.value = "";
-        return;
-      }
-
-      // Max 4 photos
-      if (markerPhotos.length >= 4) {
-        alert(t("offline.photoMaxCount") || "Maksimal 4 foto per marker");
-        e.target.value = "";
-        return;
-      }
-
-      try {
-        const compressed = await compressImage(file);
-        const preview = URL.createObjectURL(compressed);
-        setMarkerPhotos((prev) => [...prev, { blob: compressed, preview }]);
-      } catch {
-        // Fallback: use original
-        const preview = URL.createObjectURL(file);
-        setMarkerPhotos((prev) => [...prev, { blob: file, preview }]);
-      }
-
-      // Reset input so the same file can be re-selected
-      e.target.value = "";
-    },
-    [markerPhotos.length]
-  );
-
-  const removeMarkerPhoto = useCallback((index: number) => {
-    setMarkerPhotos((prev) => {
-      const removed = prev[index];
-      if (removed) URL.revokeObjectURL(removed.preview);
-      return prev.filter((_, i) => i !== index);
-    });
-  }, []);
-
-  // ── Marker buttons (show popup) ────────────────────────────────────────
-  const handleMarkerButton = (type: MarkerType) => {
-    setActiveMarkerType(type);
-    setMarkerNameInput("");
-    setMarkerNoteInput("");
-    setMarkerPhotos([]);
-  };
-
-  // Close marker popup
-  const closeMarkerPopup = useCallback(() => {
-    // Revoke any blob URLs
-    for (const p of markerPhotos) {
-      URL.revokeObjectURL(p.preview);
+  // ── Marker — instant save at GPS position ──────────────────────────────
+  const saveMarkerInstant = useCallback(async (type: MarkerType) => {
+    if (!currentPos) {
+      alert("Posisi GPS belum tersedia. Tunggu hingga GPS aktif.");
+      return;
     }
-    setActiveMarkerType(null);
-    setMarkerPhotos([]);
-  }, [markerPhotos]);
 
-  // Confirm marker
-  const confirmMarker = useCallback(async () => {
-    if (!activeMarkerType) return;
-
-    const location = currentPos
-      ? currentPos
-      : trackingPoints.length > 0
-        ? { lat: trackingPoints[trackingPoints.length - 1].lat, lng: trackingPoints[trackingPoints.length - 1].lng }
-        : { lat: -7.5, lng: 110 };
-
-    const snapped = snapToProtectionGrid(location);
-
-    const nameParts: string[] = [];
-    if (markerNameInput.trim()) nameParts.push(markerNameInput.trim());
-    if (markerNoteInput.trim()) nameParts.push(`📝 ${markerNoteInput.trim()}`);
-    const finalName = nameParts.length > 0 ? nameParts.join(" — ") : null;
+    const snapped = snapToProtectionGrid(currentPos);
 
     const marker: OfflineTrackingPoint = {
       id: crypto.randomUUID(),
       lat: snapped.lat,
       lng: snapped.lng,
       accuracy: gpsAccuracy,
-      markerType: activeMarkerType,
-      name: finalName,
+      markerType: type,
+      name: null,
       recordedAt: Date.now(),
     };
-
-    // Save photos
-    for (const photo of markerPhotos) {
-      await offlineDB.savePhoto({
-        id: crypto.randomUUID(),
-        reportId: marker.id,
-        fieldId: "marker_photo",
-        blob: photo.blob,
-        fileName: `marker_${Date.now()}.jpg`,
-        mimeType: "image/jpeg",
-      });
-    }
 
     setMarkers((prev) => [...prev, marker]);
     setTrackingPoints((prev) => [...prev, marker]);
     await offlineDB.saveTrackingPoint(marker);
-
-    for (const p of markerPhotos) {
-      URL.revokeObjectURL(p.preview);
-    }
-    setActiveMarkerType(null);
-    setMarkerPhotos([]);
-    setMarkerNameInput("");
-    setMarkerNoteInput("");
-
-    // Store last marker position so the map can pan to it
     setLastMarkerPos({ lat: snapped.lat, lng: snapped.lng });
 
-    console.log("[Marker] Saved:", marker);
-  }, [currentPos, activeMarkerType, gpsAccuracy, markerNameInput, markerNoteInput, markerPhotos, trackingPoints]);
+    console.log("[Marker] Instant saved:", type, snapped);
+  }, [currentPos, gpsAccuracy]);
+
+  // ── Marker buttons — langsung simpan ──────────────────────────────────
+  const handleMarkerButton = (type: MarkerType) => {
+    saveMarkerInstant(type);
+  };
 
   // ── Form handling ──────────────────────────────────────────────────────
   const handleSelectForm = (form: FormDefinition) => {
@@ -501,22 +422,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     setView("map");
   };
 
-  // ── Marker popup label ─────────────────────────────────────────────────
-  const markerTypeLabel = (type: MarkerType | null): string => {
-    switch (type) {
-      case "spring":
-        return "💧 Mata Air";
-      case "tree":
-        return "🌳 Tanam Pohon";
-      case "trench":
-        return "🕳️ Rorak";
-      case "seedling":
-        return "🌰 Seedling";
-      default:
-        return "";
-    }
-  };
-
   // ── Render ──────────────────────────────────────────────────────────────
 
   // When viewing form, take over the ENTIRE screen (no map, no buttons)
@@ -538,9 +443,110 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           </div>
 
           <div className="space-y-4">
-            {activeForm.fields
-              .filter((f) => f.id !== "location") // location auto-filled from GPS
-              .map((field) => (
+            {activeForm.fields.map((field) => {
+              // ── Location field — tampilkan dengan GPS + map picker ──
+              if (field.type === "location") {
+                return (
+                  <div key={field.id}>
+                    <label className="mb-1 block text-sm font-medium text-ink">
+                      {field.label}
+                      {field.required && <span className="ml-1 text-red-500">*</span>}
+                    </label>
+                    <div className="mt-1 space-y-2">
+                      {/* GPS auto-fill */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (currentPos) {
+                              handleFormFieldChange("location_lat", String(currentPos.lat.toFixed(6)));
+                              handleFormFieldChange("location_lng", String(currentPos.lng.toFixed(6)));
+                            } else {
+                              alert("Posisi GPS belum tersedia.");
+                            }
+                          }}
+                          className="inline-flex items-center gap-1.5 rounded-md border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700 hover:bg-brand-100"
+                        >
+                          <Crosshair className="h-3.5 w-3.5" />
+                          {t("form.location.getCurrent") || "Gunakan GPS"}
+                        </button>
+                        {currentPos && (
+                          <span className="text-[10px] text-ink-muted">
+                            📍 {currentPos.lat.toFixed(4)}, {currentPos.lng.toFixed(4)}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Manual input grid */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-[11px] font-medium text-ink-subtle">Latitude</label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={(formData["location_lat"] as string) || ""}
+                            onChange={(e) => handleFormFieldChange("location_lat", e.target.value)}
+                            placeholder={currentPos ? String(currentPos.lat.toFixed(6)) : "-6.644700"}
+                            className="mt-0.5 w-full rounded-md border border-ink-line px-2.5 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-medium text-ink-subtle">Longitude</label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={(formData["location_lng"] as string) || ""}
+                            onChange={(e) => handleFormFieldChange("location_lng", e.target.value)}
+                            placeholder={currentPos ? String(currentPos.lng.toFixed(6)) : "106.789200"}
+                            className="mt-0.5 w-full rounded-md border border-ink-line px-2.5 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Map picker toggle */}
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setShowMapPicker((prev) => !prev)}
+                          className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-600 hover:text-brand-700"
+                        >
+                          <MapIcon className="h-3.5 w-3.5" />
+                          {showMapPicker ? "Sembunyikan peta" : "Pilih di peta"}
+                        </button>
+                      </div>
+
+                      {/* Map picker */}
+                      {showMapPicker && (
+                        <div className="overflow-hidden rounded-lg border border-ink-line">
+                          <div className="aspect-[16/9] w-full min-h-[200px]">
+                            <PickerMap
+                              key={`picker-${showMapPicker}`}
+                              initialLat={currentPos?.lat ?? -7.5}
+                              initialLng={currentPos?.lng ?? 110}
+                              onPick={(lat, lng) => {
+                                handleFormFieldChange("location_lat", String(lat.toFixed(6)));
+                                handleFormFieldChange("location_lng", String(lng.toFixed(6)));
+                              }}
+                            />
+                          </div>
+                          <div className="border-t border-ink-line bg-slate-50 px-3 py-1.5 text-[11px] text-ink-muted dark:bg-slate-800">
+                            Klik pada peta untuk memilih lokasi
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {field.help && (
+                      <p className="mt-1 text-xs text-ink-subtle">
+                        <MapPin className="mr-0.5 inline h-3 w-3" />
+                        {field.help}
+                      </p>
+                    )}
+                  </div>
+                );
+              }
+
+              // ── Regular fields ──
+              return (
                 <div key={field.id}>
                   <label className="mb-1 block text-sm font-medium text-ink">
                     {field.label}
@@ -584,7 +590,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                     >
                       <option value="">{t("common.select") || "Pilih..."}</option>
                       {(() => {
-                        // Use options from form data, or fallback to static form definition
                         const formDef = getForm(activeForm?.slug);
                         const staticField = formDef?.fields.find(f => f.id === field.id);
                         const opts = field.options.length > 0 ? field.options : (staticField?.options || []);
@@ -604,7 +609,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                         multiple
                         onChange={(e) => {
                           handlePhotoCapture(field.id, e.target.files);
-                          e.target.value = ""; // allow re-selecting same file
+                          e.target.value = "";
                         }}
                         className="block w-full text-xs text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30 dark:file:text-brand-300"
                       />
@@ -627,7 +632,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                     </div>
                   ) : null}
                 </div>
-              ))}
+              );
+            })}
           </div>
 
           <div className="mt-6 flex items-center gap-3">
@@ -835,125 +841,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         </div>
       </div>
 
-      {/* ── Marker popup — at root level to avoid overflow clipping ── */}
-      {activeMarkerType && (
-        <div className="fixed inset-0 overflow-y-auto bg-black/40 py-8" style={{ zIndex: 9999, position: "fixed" }}>
-          <div className="flex min-h-full items-center justify-center">
-            <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800">
-            {/* Title */}
-            <h3 className="flex items-center gap-2 text-sm font-bold text-ink">
-              <span>
-                {activeMarkerType === "spring"
-                  ? "💧"
-                  : activeMarkerType === "tree"
-                    ? "🌱"
-                    : activeMarkerType === "trench"
-                      ? "🕳️"
-                      : "🌰"}
-              </span>
-              {t("offline.addMarker")}: {markerTypeLabel(activeMarkerType)}
-            </h3>
-            <p className="mt-1 text-xs text-ink-muted">
-              {t("offline.locationSnap") || "Lokasi akan di-snap ke grid 5 km."}
-            </p>
-
-            {/* Name input */}
-            <input
-              type="text"
-              value={markerNameInput}
-              onChange={(e) => setMarkerNameInput(e.target.value)}
-              placeholder={t("offline.nameOptional") || "Nama (opsional)"}
-              className="mt-3 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-              autoFocus
-            />
-
-            {/* Note/description */}
-            <textarea
-              value={markerNoteInput}
-              onChange={(e) => setMarkerNoteInput(e.target.value)}
-              placeholder={t("offline.noteOptional") || "Catatan (opsional)"}
-              rows={2}
-              className="mt-2 w-full rounded-lg border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-700"
-            />
-
-            {/* Photo capture */}
-            <div className="mt-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-ink">{t("offline.photo") || "Foto"}</span>
-                <span className="text-[10px] text-ink-subtle">
-                  {4 - markerPhotos.length} {t("offline.remaining") || "tersisa"}
-                </span>
-              </div>
-
-              {/* Photo preview grid */}
-              {markerPhotos.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {markerPhotos.map((photo, idx) => (
-                    <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded-lg border border-ink-line">
-                      <img
-                        src={photo.preview}
-                        alt={`Foto ${idx + 1}`}
-                        className="h-full w-full object-cover"
-                      />
-                      <button
-                        onClick={() => removeMarkerPhoto(idx)}
-                        className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition group-hover:opacity-100"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
-
-                  {/* Add more button */}
-                  {markerPhotos.length < 4 && (
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="flex h-16 w-16 items-center justify-center rounded-lg border-2 border-dashed border-ink-line text-xl text-ink-subtle hover:border-brand-400 hover:text-brand-500"
-                    >
-                      +
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {/* Capture button (shown when less than 4 photos) */}
-              {markerPhotos.length < 4 && (
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600"
-                >
-                  <Camera className="h-3.5 w-3.5" />
-                  {markerPhotos.length === 0 ? (t("offline.takePhoto") || "Ambil Foto") : (t("offline.addPhoto") || "Tambah Foto")}
-                </button>
-              )}
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={handleMarkerPhotoCapture}
-                className="hidden"
-              />
-            </div>
-
-            {/* Action buttons */}
-            <div className="mt-4 flex items-center gap-2">
-              <button onClick={closeMarkerPopup} className="btn-secondary flex-1">
-                {t("common.cancel")}
-              </button>
-              <button
-                onClick={confirmMarker}
-                className="btn-primary flex-1 inline-flex items-center justify-center gap-1.5"
-              >
-                <MapPin className="h-4 w-4" />
-                {t("common.save")}
-              </button>
-            </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ── No more marker popup — markers saved instantly on tap ── */}
     </div>
   );
 }

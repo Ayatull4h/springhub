@@ -21,9 +21,7 @@ import {
 } from "lucide-react";
 import { offlineDB, type OfflineTrackingPoint } from "@/lib/offline-db";
 import { cn } from "@/lib/utils";
-import { snapToProtectionGrid } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
-import html2canvas from "html2canvas";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -178,24 +176,63 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     loadSummary();
   }, [phase]);
 
-  // ── Download summary as PNG image ────────────────────────────────────────
-  const handleDownloadImage = useCallback(async () => {
-    if (!summaryRef.current) return;
+  // ── Download summary as text ──────────────────────────────────────────────
+  const handleDownloadSummary = useCallback(() => {
+    const dateStr = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    const lines: string[] = [
+      "═══════════════════════════════════════",
+      "   SPRINGHUB — Ringkasan Survey",
+      "═══════════════════════════════════════",
+      "",
+      `📅 Tanggal: ${dateStr}`,
+      summary.startTime
+        ? `🕐 Mulai survey: ${new Date(summary.startTime).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}`
+        : "",
+      "",
+      "─── Statistik ───",
+      "",
+      `📍 Total jarak:       ${formatDistance(summary.totalDistance)}`,
+      `🛤️  Titik GPS:         ${summary.trailCount}`,
+      `📍 Marker:            ${summary.markerCount}`,
+      `   💧 Mata Air:        ${summary.springCount}`,
+      `   🌱 Tanam Pohon:     ${summary.treeCount}`,
+      `   🕳️ Rorak:          ${summary.trenchCount}`,
+      `   🌰 Seedling:        ${summary.seedlingCount}`,
+      `📋 Laporan diisi:     ${summary.reportCount}`,
+      `📸 Foto diambil:      ${summary.photoCount}`,
+      "",
+      "─── Rute ───",
+      "",
+      `Marker: ${summary.springCount} 💧, ${summary.treeCount} 🌱, ${summary.trenchCount} 🕳️, ${summary.seedlingCount} 🌰`,
+      `GPS: ${summary.trailCount} titik — ${formatDistance(summary.totalDistance)}`,
+      `Foto: ${summary.photoCount} — Laporan: ${summary.reportCount}`,
+      "",
+      "═══════════════════════════════════════",
+      "  SpringHub — Jaga Semesta",
+      "  https://springhub.vercel.app",
+      "═══════════════════════════════════════",
+    ];
+
+    const content = lines.filter(Boolean).join("\n");
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = `springhub-ringkasan-${Date.now()}.txt`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [summary]);
+
+  // ── Helper: get CSRF token ──────────────────────────────────────────────
+  async function getCsrfToken(): Promise<string> {
     try {
-      const canvas = await html2canvas(summaryRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-      });
-      const link = document.createElement("a");
-      link.download = `springhub-summary-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    } catch (err) {
-      console.error("[Download] Failed:", err);
-      alert("Gagal mendownload gambar.");
+      const res = await fetch("/api/csrf");
+      const data = await res.json();
+      return data.token || "";
+    } catch {
+      return "";
     }
-  }, []);
+  }
 
   // ── Main sync function ───────────────────────────────────────────────────
   const startSync = useCallback(async () => {
@@ -203,34 +240,90 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     const reports = await offlineDB.getAllReports();
     const tracks = await offlineDB.getAllTrackingPoints();
 
-    // ── Phase 1: Upload photos (WAJIB berhasil) ─────────────────────────
+    // Map: clientReportId → serverReportId
+    const reportIdMap = new Map<string, string>();
+
+    // ── Phase 1: Upload pending reports (DULUAN) ─────────────────────────
+    if (reports.length > 0) {
+      setPhase("uploading-reports");
+      setProgress({ current: 0, total: reports.length });
+
+      for (let i = 0; i < reports.length; i++) {
+        const report = reports[i];
+        setProgress({ current: i + 1, total: reports.length });
+
+        try {
+          const csrfToken = await getCsrfToken();
+
+          const formData = new FormData();
+          formData.set("form_slug", report.formSlug);
+          formData.set("_submit_time", String(Date.now()));
+          formData.set("_website", ""); // honeypot
+
+          for (const [key, value] of Object.entries(report.fieldData)) {
+            formData.set(key, String(value ?? ""));
+          }
+
+          const res = await fetch("/api/reports", {
+            method: "POST",
+            headers: csrfToken ? { "x-csrf-token": csrfToken } : {},
+            body: formData,
+          });
+
+          if (res.ok) {
+            const result = await res.json();
+            const serverReportId: string = result.report?.id;
+            if (serverReportId) {
+              reportIdMap.set(report.id, serverReportId);
+            }
+            setReportStatuses((prev) =>
+              prev.map((r) => (r.id === report.id ? { ...r, status: "success" } : r))
+            );
+            await offlineDB.deleteReport(report.id);
+          } else {
+            const errData = await res.json().catch(() => ({ error: "Unknown" }));
+            setReportStatuses((prev) =>
+              prev.map((r) =>
+                r.id === report.id
+                  ? { ...r, status: "failed", error: errData.error || "Gagal kirim" }
+                  : r
+              )
+            );
+            // Non-fatal — continue to next report
+          }
+        } catch {
+          setReportStatuses((prev) =>
+            prev.map((r) =>
+              r.id === report.id ? { ...r, status: "failed", error: "Network error" } : r
+            )
+          );
+        }
+      }
+    }
+
+    // ── Phase 2: Upload photos (WAJIB) — dengan server reportId ──────────
     if (photos.length > 0) {
       setPhase("uploading-photos");
       setProgress({ current: 0, total: photos.length });
+      const csrfToken = await getCsrfToken();
 
       for (let i = 0; i < photos.length; i++) {
         const photo = photos[i];
         setProgress({ current: i + 1, total: photos.length });
 
+        // Map client reportId → server reportId
+        const serverReportId = reportIdMap.get(photo.reportId) || photo.reportId;
+
         try {
           const formData = new FormData();
           formData.append("photo", photo.blob, photo.fileName);
           formData.append("field_id", photo.fieldId);
-          formData.append("report_id", photo.reportId);
 
-          // Try to get CSRF token first
-          let csrfToken = "";
-          try {
-            const csrfRes = await fetch("/api/csrf");
-            const csrfData = await csrfRes.json();
-            csrfToken = csrfData.token || "";
-          } catch {}
-
-          const res = await fetch(`/api/reports/${photo.reportId}/photos`, {
+          const res = await fetch(`/api/reports/${serverReportId}/photos`, {
             method: "POST",
             headers: csrfToken ? { "x-csrf-token": csrfToken } : {},
             body: formData,
-            signal: AbortSignal.timeout(30_000), // 30s timeout per photo
+            signal: AbortSignal.timeout(30_000),
           });
 
           if (res.ok) {
@@ -249,7 +342,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
             );
             setErrorMessage(`Gagal upload foto ${photo.fileName}. Periksa koneksi dan coba lagi.`);
             setPhase("error");
-            return; // STOP — user tetap di mode offline
+            return; // STOP — foto gagal = tidak bisa keluar
           }
         } catch (err) {
           setPhotoStatuses((prev) =>
@@ -259,74 +352,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
           );
           setErrorMessage(`Gagal upload foto ${photo.fileName}. Koneksi tidak stabil.`);
           setPhase("error");
-          return; // STOP — foto gagal = tidak bisa keluar
-        }
-      }
-    }
-
-    // ── Phase 2: Upload pending reports ─────────────────────────────────
-    if (reports.length > 0) {
-      setPhase("uploading-reports");
-      setProgress({ current: 0, total: reports.length });
-
-      for (let i = 0; i < reports.length; i++) {
-        const report = reports[i];
-        setProgress({ current: i + 1, total: reports.length });
-
-        try {
-          // Get fresh CSRF token
-          let csrfToken = "";
-          try {
-            const csrfRes = await fetch("/api/csrf");
-            const csrfData = await csrfRes.json();
-            csrfToken = csrfData.token || "";
-          } catch {}
-
-          const formData = new FormData();
-          formData.set("form_slug", report.formSlug);
-          formData.set("_submit_time", String(Date.now()));
-          formData.set("_website", ""); // honeypot
-
-          for (const [key, value] of Object.entries(report.fieldData)) {
-            formData.set(key, String(value ?? ""));
-          }
-
-          // Add location from tracking data (find first spring marker)
-          const tracks = await offlineDB.getAllTrackingPoints();
-          const springTrack = tracks.find((t: OfflineTrackingPoint) => t.markerType === "spring");
-          if (springTrack) {
-            const snapped = snapToProtectionGrid({ lat: springTrack.lat, lng: springTrack.lng });
-            formData.set("location_lat", String(snapped.lat));
-            formData.set("location_lng", String(snapped.lng));
-          }
-
-          const res = await fetch("/api/reports", {
-            method: "POST",
-            headers: csrfToken ? { "x-csrf-token": csrfToken } : {},
-            body: formData,
-          });
-
-          if (res.ok) {
-            setReportStatuses((prev) =>
-              prev.map((r) => (r.id === report.id ? { ...r, status: "success" } : r))
-            );
-            await offlineDB.deleteReport(report.id);
-          } else {
-            const errData = await res.json().catch(() => ({ error: "Unknown" }));
-            setReportStatuses((prev) =>
-              prev.map((r) =>
-                r.id === report.id
-                  ? { ...r, status: "failed", error: errData.error || "Gagal kirim" }
-                  : r
-              )
-            );
-          }
-        } catch {
-          setReportStatuses((prev) =>
-            prev.map((r) =>
-              r.id === report.id ? { ...r, status: "failed", error: "Network error" } : r
-            )
-          );
+          return; // STOP
         }
       }
     }
@@ -355,7 +381,6 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
           }),
         });
       } catch {
-        // Non-critical — tracking history is nice to have
         console.warn("[Sync] Failed to upload tracking points");
       }
     }
@@ -364,23 +389,19 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     setPhase("cleaning-up");
     setProgress({ current: 0, total: 3 });
 
-    // Clear IndexedDB
     await offlineDB.clearAll();
     setProgress({ current: 1, total: 3 });
 
-    // Clear SW caches
     if (navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({ type: "clear-tiles" });
     }
     setProgress({ current: 2, total: 3 });
 
-    // Close session on server
     try {
       await fetch("/api/offline/session", { method: "DELETE" });
     } catch {}
     setProgress({ current: 3, total: 3 });
 
-    // ── Done — show completion screen ──
     setPhase("done");
   }, [onComplete, summary.totalDistance]);
 
@@ -515,7 +536,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
         {/* Action buttons */}
         <div className="mt-6 flex flex-col gap-2">
           <button
-            onClick={handleDownloadImage}
+            onClick={handleDownloadSummary}
             className="btn-secondary w-full inline-flex items-center justify-center gap-2"
           >
             <Download className="h-4 w-4" />
