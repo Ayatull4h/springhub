@@ -354,27 +354,16 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // Confirm marker
   const confirmMarker = useCallback(async () => {
-    if (!activeMarkerType) {
-      alert("DEBUG: activeMarkerType is null");
-      return;
-    }
+    if (!activeMarkerType) return;
 
-    alert(`DEBUG: Starting save for ${activeMarkerType}...`);
-
-    // Use currentPos if available, otherwise fall back to last tracking point or default center
     const location = currentPos
       ? currentPos
       : trackingPoints.length > 0
         ? { lat: trackingPoints[trackingPoints.length - 1].lat, lng: trackingPoints[trackingPoints.length - 1].lng }
-        : { lat: -7.5, lng: 110 }; // fallback Java center
-
-    alert(`DEBUG: Location: ${JSON.stringify(location)}`);
+        : { lat: -7.5, lng: 110 };
 
     const snapped = snapToProtectionGrid(location);
 
-    alert(`DEBUG: Snapped: ${JSON.stringify(snapped)}`);
-
-    // Build name from inputs
     const nameParts: string[] = [];
     if (markerNameInput.trim()) nameParts.push(markerNameInput.trim());
     if (markerNoteInput.trim()) nameParts.push(`📝 ${markerNoteInput.trim()}`);
@@ -390,9 +379,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
       recordedAt: Date.now(),
     };
 
-    alert(`DEBUG: Marker created: ${JSON.stringify(marker)}`);
-
-    // Save photos as blobs associated with this marker
+    // Save photos
     for (const photo of markerPhotos) {
       await offlineDB.savePhoto({
         id: crypto.randomUUID(),
@@ -404,15 +391,10 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
       });
     }
 
-    alert("DEBUG: Photos saved, now saving marker...");
-
     setMarkers((prev) => [...prev, marker]);
     setTrackingPoints((prev) => [...prev, marker]);
     await offlineDB.saveTrackingPoint(marker);
 
-    alert("DEBUG: Marker saved successfully!");
-
-    // Cleanup
     for (const p of markerPhotos) {
       URL.revokeObjectURL(p.preview);
     }
@@ -420,6 +402,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     setMarkerPhotos([]);
     setMarkerNameInput("");
     setMarkerNoteInput("");
+
+    console.log("[Marker] Saved:", marker);
   }, [currentPos, activeMarkerType, gpsAccuracy, markerNameInput, markerNoteInput, markerPhotos, trackingPoints]);
 
   // ── Form handling ──────────────────────────────────────────────────────
