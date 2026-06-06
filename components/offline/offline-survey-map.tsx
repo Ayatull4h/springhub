@@ -80,17 +80,48 @@ function generateId(): string {
 // ─── Compress image to 720p ─────────────────────────────────────────────────
 
 async function compressImage(file: File, maxDimension = 720): Promise<Blob> {
+  // Coba canvas compression dulu
+  try {
+    const blob = await compressViaCanvas(file, maxDimension);
+    // Pastikan blob punya MIME type valid (Chrome Android kadang kasih type='')
+    if (blob && blob.type && ["image/jpeg", "image/png", "image/webp"].includes(blob.type)) {
+      return blob;
+    }
+    // Fallback: jika type kosong, buat blob baru dengan type yang benar
+    if (blob && blob.size > 0) {
+      return new Blob([blob], { type: "image/jpeg" });
+    }
+  } catch {
+    // Fallback below
+  }
+  // Ultimate fallback: return file asli tapi dengan type yang dipastikan valid
+  const originalType = file.type || "image/jpeg";
+  const validType = ["image/jpeg", "image/png", "image/webp"].includes(originalType)
+    ? originalType
+    : "image/jpeg";
+  if (file.type !== validType) {
+    return new Blob([await file.arrayBuffer()], { type: validType });
+  }
+  return file;
+}
+
+async function compressViaCanvas(file: File, maxDimension: number): Promise<Blob | null> {
   return new Promise((resolve) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
+    let resolved = false;
 
-    // Safety timeout — iOS Safari kadang hang
+    // Safety timeout — iOS Safari / Chrome Android kadang hang
     const timer = setTimeout(() => {
-      URL.revokeObjectURL(url);
-      resolve(file);
+      if (!resolved) {
+        resolved = true;
+        URL.revokeObjectURL(url);
+        resolve(null);
+      }
     }, 10000);
 
     img.onload = () => {
+      if (resolved) return;
       clearTimeout(timer);
       URL.revokeObjectURL(url);
       try {
@@ -102,20 +133,35 @@ async function compressImage(file: File, maxDimension = 720): Promise<Blob> {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         canvas.toBlob(
           (b) => {
-            if (b) resolve(b);
-            else resolve(file);
+            if (!resolved) {
+              resolved = true;
+              resolve(b || null);
+            }
           },
           "image/jpeg",
           0.7
         );
+        // Fallback jika toBlob tidak memanggil callback (jarang)
+        setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            canvas.toBlob((b2) => resolve(b2 || null), "image/jpeg", 0.7);
+          }
+        }, 3000);
       } catch {
-        resolve(file);
+        if (!resolved) {
+          resolved = true;
+          resolve(null);
+        }
       }
     };
     img.onerror = () => {
-      clearTimeout(timer);
-      URL.revokeObjectURL(url);
-      resolve(file);
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timer);
+        URL.revokeObjectURL(url);
+        resolve(null);
+      }
     };
     img.src = url;
   });

@@ -370,8 +370,28 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
         const serverReportId = reportIdMap.get(photo.reportId) || photo.reportId;
 
         try {
+          // Re-create blob from ArrayBuffer to prevent Chrome Android IndexedDB blob detachment
+          let photoBlob = photo.blob;
+          // Jika blob type kosong, baca sebagai ArrayBuffer dan buat baru
+          if (!photoBlob.type || photoBlob.type === "" || photoBlob.size === 0) {
+            try {
+              const buf = await photoBlob.arrayBuffer();
+              photoBlob = new Blob([buf], { type: "image/jpeg" });
+            } catch {
+              // Jika blob benar-benar detached, skip foto ini
+              setPhotoStatuses((prev) =>
+                prev.map((p) =>
+                  p.id === photo.id ? { ...p, status: "failed", error: "Blob tidak terbaca" } : p
+                )
+              );
+              setErrorMessage(`Foto ${photo.fileName} rusak dan tidak bisa diupload.`);
+              setPhase("error");
+              return;
+            }
+          }
+
           const formData = new FormData();
-          formData.append("photo", photo.blob, photo.fileName);
+          formData.append("photo", photoBlob, photo.fileName);
           formData.append("field_id", photo.fieldId);
 
           const res = await fetch(`/api/reports/${serverReportId}/photos`, {

@@ -70,9 +70,15 @@ export default function AdminFormsPage() {
       const data = await res.json();
       if (res.ok) {
         if (data.softDelete) {
+          // Soft-delete: form dinonaktifkan, jangan hapus dari state
           alert(data.message);
+          setForms((prev) =>
+            prev.map((f) => (f.id === id ? { ...f, isActive: false } : f))
+          );
+        } else {
+          // Hard-delete: form benar-benar dihapus
+          setForms((prev) => prev.filter((f) => f.id !== id));
         }
-        setForms((prev) => prev.filter((f) => f.id !== id));
       } else {
         alert(data.error || "Gagal menghapus");
       }

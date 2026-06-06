@@ -8,13 +8,25 @@ function isAdmin(session: { userId: string; role: string } | null) {
 }
 
 // GET /api/admin/forms — semua form dengan field-nya
-export async function GET() {
+// Query params:
+//   ?status=active   — hanya form aktif
+//   ?status=inactive — hanya form tidak aktif
+//   ?status=all      — semua (default)
+export async function GET(request: Request) {
   const session = await getSession();
   if (!isAdmin(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
+    const { searchParams } = new URL(request.url);
+    const statusFilter = searchParams.get("status") || "all";
+
+    const where: Record<string, unknown> = {};
+    if (statusFilter === "active") where.isActive = true;
+    else if (statusFilter === "inactive") where.isActive = false;
+
     const forms = await prisma.form.findMany({
+      where,
       orderBy: { sortOrder: "asc" },
       include: {
         fields: { orderBy: { sortOrder: "asc" } },

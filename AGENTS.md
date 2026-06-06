@@ -408,10 +408,34 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
   - Global CSS: hover states, text-slate, shadows ✅
 - **Commit**: `a6a4dcf` — push ke `origin/master` ✅
 
-### Yang Belum Dikerjakan
-1. **Xendit & Email keys real** — masih placeholder di .env
-2. **Sentry DSN** — masih empty
-3. **Supabase RLS** — apply policies dari `supabase/rls-policies.sql`
-4. **Seed data** — forms, courses, point rules, content blocks
-5. **Migrasi ke VPS** — ditunda sampai web 100% stabil
-6. **Deploy ke Vercel** — sudah push ke GitHub, Vercel auto-deploy dari master
+### 6 Juni 2026 — Sesi 4: Database Audit & Perbaikan Critical
+- **Issue 1 — Database tidak sinkron**:
+  - 5 dari 6 migration belum diapply: comments, notifications, likes/comments, isActive, featuredPhotoId ✅
+  - Tabel OfflineSession, TrackingPoint, ContentBlock ada di Prisma schema tapi tidak ada migration ✅ (di-sync via `prisma db push`)
+  - **Tindakan**: `prisma migrate deploy` + `prisma db push` ✅
+- **Issue 2 — Seed data belum dijalankan**:
+  - Database kosong: tidak ada forms, courses, point rules, users, content ✅
+  - Seed file (`prisma/seed.ts`) pakai `PrismaClient()` tanpa adapter — error ✅ (perbaiki pakai PrismaPg)
+  - **Tindakan**: `npx prisma db seed` ✅ → 2 users, 5 forms, 3 courses, 14 point rules, 4 content blocks
+- **Issue 3 — Offline sync photo upload gagal di Chrome Android**:
+  - **Penyebab utama**: `canvas.toBlob()` di Chrome Android kadang produce blob dengan `type: ""` (empty string). Server nolak karena validasi MIME type.
+  - **Penyebab kedua**: Blob dari IndexedDB bisa "detached" saat dikirim via FormData di Chrome Android.
+  - **Penyebab ketiga**: Session cookie pakai `SameSite: "strict"` — tidak kompatibel dengan PWA standalone mode.
+  - **Fix 1**: `compressImage()` → fallback jika blob type kosong, re-create dengan `new Blob([data], { type: "image/jpeg" })` ✅
+  - **Fix 2**: `upload-photo.ts` → deteksi MIME via magic bytes (`detectMimeFromBuffer`), bukan dari `file.type` ✅
+  - **Fix 3**: `offline-exit-sync.tsx` → re-create blob dari ArrayBuffer sebelum append ke FormData ✅
+  - **Fix 4**: `lib/auth.ts` → `sameSite: "lax"` (dari "strict") untuk PWA compatibility ✅
+- **Issue 4 — Admin form delete kembali setelah refresh**:
+  - **Penyebab**: Soft-delete (`isActive=false`) tapi GET return semua form termasuk inactive. Frontend hapus dari state → refresh → GET balikin lagi.
+  - **Fix 1**: `GET /api/admin/forms` → tambah query param `?status=active|inactive|all` ✅
+  - **Fix 2**: `handleDelete()` → soft-delete update `isActive: false` di state (jangan dihapus) ✅
+- **Issue 5 — Comments tidak persisten**:
+  - **Penyebab**: `Comment` table dan migration belum diapply. API `/api/projects/[id]/comments` sudah benar pakai Prisma.
+  - **Status**: ✅ Migration sudah diapply, Comment table sudah ada. Namun frontend belum ada komponen yang panggil API ini (comments belum diintegrasikan ke UI).
+- **Yang Belum Dikerjakan**:
+  1. **Xendit & Email keys real** — masih placeholder di .env
+  2. **Sentry DSN** — masih empty
+  3. **Supabase RLS** — apply policies dari `supabase/rls-policies.sql`
+  4. **Seed data** — ✅ SEKARANG SUDAH DIISI
+  5. **Migrasi ke VPS** — ditunda sampai web 100% stabil
+  6. **Deploy ke Vercel** — sudah push ke GitHub, Vercel auto-deploy dari master
