@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
+import { getSession } from "@/lib/auth";
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const { id } = params;
     const project = await prisma.project.findUnique({ where: { id } });
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
-    // Increment likes
     const updated = await prisma.project.update({
       where: { id },
       data: { likes: { increment: 1 } },

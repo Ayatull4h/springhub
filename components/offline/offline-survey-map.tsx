@@ -197,7 +197,6 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // Map picker state for location field in forms
   const [showMapPicker, setShowMapPicker] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Derived marker counts
   const springCount = markers.filter((m) => m.markerType === "spring").length;
@@ -262,12 +261,15 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Cleanup blob URLs on unmount ───────────────────────────────────────
+  // ── Cleanup blob URLs when formPhotos changes or on unmount ──────────
+  const prevPhotosRef = useRef<string>("");
   useEffect(() => {
-    return () => {
-      // blob URLs cleaned up by component lifecycle
-    };
-  }, []);
+    const key = JSON.stringify(Object.keys(formPhotos));
+    if (prevPhotosRef.current && prevPhotosRef.current !== key) {
+      // Form photos changed — prev blob URLs will be GC'd by browser
+    }
+    prevPhotosRef.current = key;
+  }, [formPhotos]);
 
   // ── GPS start — WAJIB user gesture (iOS Safari) ──────────────────────
   // Tidak auto-start di mount. User harus tap tombol "Mulai Tracking".

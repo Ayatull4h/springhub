@@ -82,8 +82,6 @@ export function SiteFooter() {
               {t("footer.stayUpdated")}
             </div>
             <form
-              action="/api/newsletter"
-              method="POST"
               className="mt-2 flex max-w-sm gap-2"
               onSubmit={async (e) => {
                 e.preventDefault();
@@ -92,11 +90,18 @@ export function SiteFooter() {
                 const email = data.get("email");
                 if (email) {
                   try {
-                    await fetch("/api/newsletter", {
+                    const csrfRes = await fetch("/api/csrf");
+                    const csrfData = await csrfRes.json();
+                    const csrfToken = csrfData.token || "";
+                    const res = await fetch("/api/newsletter", {
                       method: "POST",
-                      headers: { "Content-Type": "application/json" },
+                      headers: {
+                        "Content-Type": "application/json",
+                        ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
+                      },
                       body: JSON.stringify({ email }),
                     });
+                    if (!res.ok) throw new Error("Failed");
                     form.reset();
                     alert(t("footer.newsletterSuccess"));
                   } catch {

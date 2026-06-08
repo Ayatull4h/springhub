@@ -144,6 +144,7 @@ export default function ReportFormPage() {
       }
 
       // ── Upload photos after successful report creation ────────────
+      let photoErrors: string[] = [];
       if (data.report?.id) {
         const photoFieldIds = activeForm.fields
           .filter((f: FormField) => f.type === "photo")
@@ -158,16 +159,25 @@ export default function ReportFormPage() {
                 photoPayload.append("photo", file);
                 photoPayload.append("field_id", fieldId);
 
-                await fetch(`/api/reports/${data.report.id}/photos`, {
+                const photoRes = await fetch(`/api/reports/${data.report.id}/photos`, {
                   method: "POST",
                   body: photoPayload,
                 });
+                if (!photoRes.ok) {
+                  photoErrors.push(`Foto ${(file as File).name} gagal diupload`);
+                }
               } catch {
-                console.warn(`Photo upload failed for field "${fieldId}"`);
+                photoErrors.push(`Foto ${(file as File).name} gagal — cek koneksi`);
               }
             }
           }
         }
+      }
+
+      if (photoErrors.length > 0) {
+        setError(photoErrors.join(". ") + ". Laporan tetap tersimpan.");
+        setLoading(false);
+        return;
       }
 
       setSuccess(true);
@@ -177,11 +187,21 @@ export default function ReportFormPage() {
       // ── Offline fallback: queue submission ────────────────────────
       setQueuedOffline(true);
       setSuccess(true);
+      const formBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }> = [];
+      const photoFieldIds = activeForm.fields.filter((f: FormField) => f.type === "photo").map((f: FormField) => f.id);
+      for (const fieldId of photoFieldIds) {
+        const files = formData.getAll(fieldId);
+        for (const file of files) {
+          if (file && file instanceof File && file.size > 0) {
+            formBlobs.push({ fieldId, blob: file, fileName: file.name, mimeType: file.type || "image/jpeg" });
+          }
+        }
+      }
       await offlineDB.queueSubmission({
         id: `queue-${activeForm.slug}-${Date.now()}`,
         formSlug: activeForm.slug,
         fieldData,
-        photoBlobs,
+        photoBlobs: formBlobs.length > 0 ? formBlobs : photoBlobs,
         csrfToken,
         createdAt: Date.now(),
         retryCount: 0,

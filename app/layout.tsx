@@ -8,6 +8,7 @@ import { I18nProvider } from "@/lib/i18n";
 import { DarkModeProvider } from "@/lib/darkmode";
 import Watermark from "@/components/layout/watermark";
 import { QueueWorker } from "@/components/queue-worker";
+import { ErrorBoundary } from "@/lib/error-boundary";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -75,12 +76,21 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen font-sans">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white">
+          Langsung ke konten utama
+        </a>
         <QueueWorker />
         <DarkModeProvider>
           <I18nProvider>
-            <SiteHeader />
-            <main>{children}</main>
-            <SiteFooter />
+            <ErrorBoundary>
+              <SiteHeader />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <main id="main-content">{children}</main>
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <SiteFooter />
+            </ErrorBoundary>
             <Watermark />
           </I18nProvider>
         </DarkModeProvider>

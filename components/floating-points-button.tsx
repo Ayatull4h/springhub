@@ -11,8 +11,8 @@ export function FloatingPointsButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-[9999] flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-brand-600 text-white shadow-lg transition hover:bg-brand-700 hover:scale-110 active:scale-95"
-        title="Cara Dapat Poin"
+        className="fixed bottom-6 right-6 z-40 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-brand-600 text-white shadow-lg transition hover:bg-brand-700 motion-reduce:hover:scale-100 hover:scale-110 active:scale-95"
+        aria-label="Cara Dapat Poin"
       >
         <Sparkles className="h-5 w-5" />
       </button>
