@@ -82,7 +82,7 @@ export function DonateSection() {
               <option value="">— {t("donate.chooseImpact")} —</option>
               {DONATION_TIERS.map(t => (
                 <option key={t.id} value={t.id}>
-                  {tierIcons[t.id]} {t.impact} — {t.label}
+                  {t.impact} — {t.label}
                 </option>
               ))}
               <option value="custom">{t("donate.customOption")}</option>

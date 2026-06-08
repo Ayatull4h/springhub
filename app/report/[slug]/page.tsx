@@ -408,6 +408,20 @@ function FieldRenderer({ field }: { field: FormField }) {
           />
         </div>
       );
+    case "link":
+      return (
+        <div>
+          {labelEl}
+          <input
+            id={field.id}
+            name={field.id}
+            type="url"
+            required={field.required}
+            placeholder={field.placeholder || "https://..."}
+            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
+          />
+        </div>
+      );
     case "select":
       return (
         <div>

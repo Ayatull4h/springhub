@@ -209,7 +209,7 @@ export function SpringMap() {
             <span className="text-[10px] uppercase tracking-wider text-ink-subtle">OpenStreetMap</span>
           </div>
         </div>
-        <div className="aspect-[21/9] w-full md:aspect-[21/8]">
+        <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
           <LeafletMap reports={visible} />
         </div>
       </div>

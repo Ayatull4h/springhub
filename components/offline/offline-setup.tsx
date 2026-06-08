@@ -15,7 +15,7 @@ import {
   Minimize,
   Download,
   Layers,
-  Grid3X3,
+  Grid3x3,
   Smartphone,
   Monitor,
   Apple,
@@ -531,7 +531,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           </span>
           {mode === "full" && (
             <span className="inline-flex items-center gap-1">
-              <Grid3X3 className="h-3.5 w-3.5" />
+              <Grid3x3 className="h-3.5 w-3.5" />
               {t("offline.areaSelected") || "Area dipilih"}
             </span>
           )}
@@ -736,7 +736,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
       <div className="mx-auto max-w-lg py-8">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-100 dark:bg-brand-900/30">
-            <Grid3X3 className="h-5 w-5 text-brand-700 dark:text-brand-300" />
+            <Grid3x3 className="h-5 w-5 text-brand-700 dark:text-brand-300" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-ink">{t("offline.radius")} & {t("offline.quality")}</h2>
@@ -875,7 +875,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
         <div className="mx-auto max-w-lg">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-100 dark:bg-brand-900/30">
-              <Grid3X3 className="h-5 w-5 text-brand-700 dark:text-brand-300" />
+              <Grid3x3 className="h-5 w-5 text-brand-700 dark:text-brand-300" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-ink">{t("offline.selectArea")}</h2>
