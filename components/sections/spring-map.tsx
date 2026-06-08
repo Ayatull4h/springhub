@@ -10,6 +10,7 @@ import {
   ClipboardList,
   Sparkles,
   Droplets,
+  Loader2,
 } from "lucide-react";
 import { type SpringStatus } from "@/lib/data";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
@@ -79,14 +80,20 @@ export function SpringMap() {
   const [showRestoration, setShowRestoration] = useState(true);
   const [page, setPage] = useState(1);
   const [reports, setReports] = useState<ReportItem[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(true);
+  const [reportsError, setReportsError] = useState("");
   const [dynamicForms, setDynamicForms] = useState<any[]>([]);
+  const [formsError, setFormsError] = useState("");
   const [showGuide, setShowGuide] = useState(false);
 
   const fetchReports = () => {
+    setReportsLoading(true);
+    setReportsError("");
     fetch("/api/reports?limit=50")
       .then((r) => r.json())
       .then((data) => setReports(data.reports || []))
-      .catch(() => {});
+      .catch(() => setReportsError("Gagal memuat data laporan"))
+      .finally(() => setReportsLoading(false));
   };
 
   useEffect(() => {
@@ -99,7 +106,8 @@ export function SpringMap() {
     fetch("/api/forms")
       .then(r => r.json())
       .then(data => setDynamicForms(data.forms || []))
-      .catch(() => {});
+      .catch(() => setFormsError("Gagal memuat daftar form"))
+      .finally(() => {});
   }, []);
 
   const visible = useMemo(
@@ -216,15 +224,35 @@ export function SpringMap() {
 
       {/* Below the map: report details (left) + Report Your Contribution (right) */}
       <div className="mt-4 grid gap-4 lg:grid-cols-12">
+
+        {reportsError && (
+          <div className="lg:col-span-12 rounded-md bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-300">
+            {reportsError}. <button onClick={fetchReports} className="underline font-medium">Coba lagi</button>
+          </div>
+        )}
+
+        {formsError && (
+          <div className="lg:col-span-12 rounded-md bg-amber-50 dark:bg-amber-900/30 p-3 text-xs text-amber-700 dark:text-amber-300">
+            {formsError}
+          </div>
+        )}
+
         <div className="card lg:col-span-6">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
             </h3>
             <span className="text-xs text-ink-subtle">
-              {t("common.pageOf", { current: String(Math.min(currentPage * itemsPerPage, visible.length)), total: String(visible.length) })}
+              {reportsLoading ? "Memuat..." : t("common.pageOf", { current: String(Math.min(currentPage * itemsPerPage, visible.length)), total: String(visible.length) })}
             </span>
           </div>
+          {reportsLoading && visible.length === 0 ? (
+            <div className="mt-3 flex items-center justify-center py-8 text-sm text-ink-muted">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Memuat data...
+            </div>
+          ) : visible.length === 0 ? (
+            <div className="mt-3 py-8 text-center text-sm text-ink-muted">Belum ada laporan</div>
+          ) : (
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {visibleList.map((r) => {
               const status = getStatusFromForm(r.formSlug);
@@ -263,6 +291,7 @@ export function SpringMap() {
               );
             })}
           </ul>
+          )}
           {visible.length > itemsPerPage && (
             <div className="mt-4 flex items-center justify-center gap-2">
               <button

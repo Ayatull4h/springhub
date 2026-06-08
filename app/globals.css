@@ -125,6 +125,66 @@ button:not(:disabled) {
   cursor: pointer !important;
 }
 
+/* Restore Leaflet map display in dark mode — jangan kena override global */
+.dark .leaflet-container {
+  background-color: #f8fafc !important;
+}
+.dark .leaflet-control-zoom a {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+}
+.dark .leaflet-control-attribution {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  color: #94a3b8 !important;
+}
+.dark .leaflet-popup-content-wrapper {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+.dark .leaflet-popup-tip {
+  background-color: #1e293b !important;
+}
+.dark .leaflet-bar a {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+/* SVG icons in dark mode — jangan kena override text-ink */
+.dark .lucide {
+  color: currentColor !important;
+}
+
+/* Fix offcanvas/openvegtiles map attribution */
+.dark .leaflet-control-attribution a {
+  color: #60a5fa !important;
+}
+
+/* Global focus-visible untuk keyboard accessibility */
+*:focus-visible {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Motion-reduce: matikan animasi untuk user yang sensitif */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Input base style (used by profile edit form) */
+.input {
+  @apply rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30;
+}
+.dark .input {
+  background-color: #1e293b;
+  color: #e2e8f0;
+}
+
 /* Better touch targets on mobile */
 @media (max-width: 767px) {
   button:not(.chip):not(nav a):not(.btn-primary):not(.btn-secondary) {
