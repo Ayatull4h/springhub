@@ -180,6 +180,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const watchIdRef = useRef<number | null>(null);
   const lastPointRef = useRef<OfflineTrackingPoint | null>(null);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
+  const [gpsError, setGpsError] = useState<string | null>(null);
 
   // All markers (spring, tree, trench) — passed as `markers` to map
   const [markers, setMarkers] = useState<OfflineTrackingPoint[]>([]);
@@ -259,7 +260,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         setTotalDistance(totalDist);
       }
     });
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Cleanup blob URLs on unmount ───────────────────────────────────────
   useEffect(() => {
@@ -277,11 +278,12 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   const startTracking = useCallback(() => {
     if (!navigator.geolocation) {
-      alert(t("offline.gpsNotSupported") || "GPS tidak didukung browser ini.");
+      setGpsError("GPS tidak didukung browser ini.");
       return;
     }
 
-    // Langsung dismiss overlay — GPS berjalan di background
+    // Reset error + dismiss overlay
+    setGpsError(null);
     setIsTracking(true);
 
     // Step 1: getCurrentPosition — one-time fix + error feedback
@@ -304,14 +306,14 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         offlineDB.saveTrackingPoint(startPoint).catch(() => {});
       },
       (err) => {
-        // GPS gagal — balikin overlay + kasih tahu user
+        // GPS gagal — balikin overlay supaya user bisa coba lagi
         setIsTracking(false);
         const gpsMsg: Record<number, string> = {
           1: "Izin lokasi ditolak. Buka Settings → Privasi → Lokasi → Izinkan SpringHub.",
           2: "Sinyal GPS tidak tersedia. Pastikan GPS aktif & coba di luar ruangan.",
           3: "Waktu habis. Coba lagi di tempat terbuka.",
         };
-        alert(gpsMsg[err.code] || "Gagal mengakses GPS. Coba lagi.");
+        setGpsError(gpsMsg[err.code] || "Gagal mengakses GPS. Coba lagi.");
       },
       { enableHighAccuracy: true, timeout: 15000 }
     );
@@ -381,7 +383,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         startPollingFallback();
       }
     }, 15000);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Polling fallback untuk Safari iOS ──────────────────────────────────
   const startPollingFallback = useCallback(() => {
@@ -804,6 +806,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                         <div className="mt-1 flex flex-wrap gap-1">
                           {formPhotos[field.id].map((file, idx) => (
                             <div key={idx} className="relative h-12 w-12 overflow-hidden rounded-lg border border-ink-line">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={URL.createObjectURL(file)}
                                 alt={`Photo ${idx + 1}`}
@@ -931,15 +934,20 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                     Aplikasi perlu mengakses lokasi untuk merekam rute perjalananmu.
                     Pastikan GPS dan lokasi aktif.
                   </p>
+                  {gpsError && (
+                    <div className="mt-3 rounded-md bg-amber-50 dark:bg-amber-900/30 p-3 text-xs text-amber-700 dark:text-amber-300">
+                      {gpsError}
+                    </div>
+                  )}
                   <button
                     onClick={startTracking}
-                    className="mt-6 w-full rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-brand-700 active:scale-95 transition"
+                    className="mt-4 w-full rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-brand-700 active:scale-95 transition"
                   >
                     <Navigation className="mr-2 inline-block h-5 w-5" />
-                    Aktifkan GPS & Mulai Survey
+                    {gpsError ? "Coba Lagi" : "Aktifkan GPS & Mulai Survey"}
                   </button>
                   <p className="mt-3 text-[11px] text-ink-subtle">
-                    Tombol ini memicu izin lokasi browser. Pilih "Allow" atau "Izinkan" saat diminta.
+                    {`Tombol ini memicu izin lokasi browser. Pilih "Allow" atau "Izinkan" saat diminta.`}
                   </p>
                 </div>
               </div>

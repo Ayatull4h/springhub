@@ -73,6 +73,16 @@ export async function POST(
         await checkDailyStreak(report.userId);
         await updateTrustScore(report.userId, true);
       }
+
+      await prisma.notification.create({
+        data: {
+          userId: report.userId,
+          type: "report-approved",
+          title: `Laporan ${report.formSlug} disetujui!`,
+          body: "Poin Anda bertambah. Terima kasih atas kontribusinya.",
+          link: "/profile",
+        },
+      });
     }
 
     return NextResponse.json({ success: true, status: "approved" });

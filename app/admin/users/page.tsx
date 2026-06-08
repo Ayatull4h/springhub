@@ -77,7 +77,50 @@ export default function AdminUsersPage() {
         </button>
       </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile card view */}
+      <div className="grid gap-3 md:hidden">
+        {users.map((u) => (
+          <div key={u.id} className="card space-y-2">
+            <div className="flex items-start justify-between">
+              <div className="font-medium text-ink">{u.username || "—"}</div>
+              {editingRole === u.id ? (
+                <div className="flex items-center gap-1">
+                  <select
+                    defaultValue={u.role}
+                    onChange={(e) => handleRoleSave(u.id, e.target.value)}
+                    disabled={savingRole}
+                    className="rounded-md border border-ink-line px-2 py-1 text-xs dark:bg-slate-800 dark:text-white"
+                  >
+                    <option value="user">User</option>
+                    <option value="volunteer">Volunteer</option>
+                    <option value="field_lead">Field Lead</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                  <button onClick={() => setEditingRole(null)} className="text-xs text-ink-muted hover:text-ink">Cancel</button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setEditingRole(u.id)}
+                  className="chip capitalize bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer dark:bg-brand-900/30 dark:text-brand-300 text-xs"
+                >
+                  {u.role}
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-1 text-xs text-ink-muted">
+              <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" /> {u.email}</span>
+              <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" /> {u.phone || "—"}</span>
+              <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> {u.region || "—"}</span>
+              <span className="inline-flex items-center gap-1"><Sparkles className="h-3 w-3 text-brand-600" /> {u.points.toLocaleString("id-ID")}</span>
+              <span className="inline-flex items-center gap-1"><Shield className="h-3 w-3 text-emerald-600" /> {u.trustScore}</span>
+              <span className="text-ink-muted">{new Date(u.createdAt).toLocaleDateString("id-ID")}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block overflow-x-auto">
         <div className="min-w-[900px]">
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead>
@@ -97,23 +140,17 @@ export default function AdminUsersPage() {
               <tr key={u.id} className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <td className="py-3 pr-4 font-medium text-ink">{u.username || "—"}</td>
                 <td className="py-3 pr-4 text-ink-muted">
-                  <span className="inline-flex items-center gap-1">
-                    <Mail className="h-3 w-3" /> {u.email}
-                  </span>
+                  <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" /> {u.email}</span>
                 </td>
                 <td className="py-3 pr-4 text-ink-muted">
-                  <span className="inline-flex items-center gap-1">
-                    <Phone className="h-3 w-3" /> {u.phone || "—"}
-                  </span>
+                  <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" /> {u.phone || "—"}</span>
                 </td>
                 <td className="py-3 pr-4">
                   {editingRole === u.id ? (
                     <div className="flex items-center gap-1">
                       <select
                         defaultValue={u.role}
-                        onChange={(e) => {
-                          handleRoleSave(u.id, e.target.value);
-                        }}
+                        onChange={(e) => handleRoleSave(u.id, e.target.value)}
                         disabled={savingRole}
                         className="rounded-md border border-ink-line px-2 py-1 text-xs dark:bg-slate-800 dark:text-white"
                       >
@@ -122,40 +159,22 @@ export default function AdminUsersPage() {
                         <option value="field_lead">Field Lead</option>
                         <option value="admin">Admin</option>
                       </select>
-                      <button
-                        onClick={() => setEditingRole(null)}
-                        className="text-xs text-ink-muted hover:text-ink dark:hover:text-white"
-                      >
-                        Cancel
-                      </button>
+                      <button onClick={() => setEditingRole(null)} className="text-xs text-ink-muted hover:text-ink dark:hover:text-white">Cancel</button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => setEditingRole(u.id)}
-                      className="chip capitalize bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer dark:bg-brand-900/30 dark:text-brand-300 dark:hover:bg-brand-800/50"
-                    >
-                      {u.role}
-                    </button>
+                    <button onClick={() => setEditingRole(u.id)} className="chip capitalize bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer dark:bg-brand-900/30 dark:text-brand-300">{u.role}</button>
                   )}
                 </td>
                 <td className="py-3 pr-4 text-ink-muted">
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin className="h-3 w-3" /> {u.region || "—"}
-                  </span>
+                  <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> {u.region || "—"}</span>
                 </td>
                 <td className="py-3 pr-4 font-medium text-ink">
-                  <span className="inline-flex items-center gap-1">
-                    <Sparkles className="h-3 w-3 text-brand-600" /> {u.points.toLocaleString("id-ID")}
-                  </span>
+                  <span className="inline-flex items-center gap-1"><Sparkles className="h-3 w-3 text-brand-600" /> {u.points.toLocaleString("id-ID")}</span>
                 </td>
                 <td className="py-3 pr-4">
-                  <span className="inline-flex items-center gap-1">
-                    <Shield className="h-3 w-3 text-emerald-600" /> {u.trustScore}
-                  </span>
+                  <span className="inline-flex items-center gap-1"><Shield className="h-3 w-3 text-emerald-600" /> {u.trustScore}</span>
                 </td>
-                <td className="py-3 text-xs text-ink-muted">
-                  {new Date(u.createdAt).toLocaleDateString("id-ID")}
-                </td>
+                <td className="py-3 text-xs text-ink-muted">{new Date(u.createdAt).toLocaleDateString("id-ID")}</td>
               </tr>
             ))}
           </tbody>

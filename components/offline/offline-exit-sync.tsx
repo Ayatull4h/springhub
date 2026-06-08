@@ -213,14 +213,34 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     loadSummary();
   }, [phase]);
 
+  // ── Download: text fallback if html2canvas fails ──────────────────────
+  const downloadText = useCallback(() => {
+    const dateStr = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    const lines = [
+      "=== SpringHub — Ringkasan Survey ===",
+      `Tanggal: ${dateStr}`,
+      `Jarak: ${formatDistance(summary.totalDistance)}`,
+      `Marker: 💧 ${summary.springCount}  🌱 ${summary.treeCount}  🕳️ ${summary.trenchCount}  🌰 ${summary.seedlingCount}`,
+      `Laporan: ${summary.reportCount}`,
+      `Foto: ${summary.photoCount}`,
+      "",
+      "SpringHub — Jaga Semesta",
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = `springhub-rute-${Date.now()}.txt`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [summary]);
+
   // ── Download: capture Leaflet map preview + overlay stats ───────────────
   const handleDownloadSummary = useCallback(async () => {
     const mapEl = mapPreviewRef.current;
-    if (!mapEl) { alert("Peta belum siap."); return; }
+    if (!mapEl) { downloadText(); return; }
 
     try {
-      // Tunggu tiles load
-      const tiles = mapEl.querySelectorAll(".leaflet-tile-loaded");
       await new Promise((r) => setTimeout(r, 500));
 
       const canvas = await html2canvas(mapEl, {
@@ -258,7 +278,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
       ctx.fillText("SpringHub — Jaga Semesta", overlay.width - 200 * 2, overlay.height - 12 * 2);
 
       overlay.toBlob((blob) => {
-        if (!blob) { alert("Gagal membuat gambar."); return; }
+        if (!blob) { downloadText(); return; }
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.download = `springhub-rute-${Date.now()}.png`;
@@ -267,10 +287,10 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
         URL.revokeObjectURL(url);
       }, "image/png");
     } catch (err) {
-      console.error("[Download] Failed:", err);
-      alert("Gagal mendownload gambar peta.");
+      console.error("[Download] Failed, using text fallback:", err);
+      downloadText();
     }
-  }, [summary]);
+  }, [summary, downloadText]);
 
   // ── Helper: get CSRF token ──────────────────────────────────────────────
   async function getCsrfToken(): Promise<string> {
@@ -450,7 +470,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     setProgress({ current: 3, total: 3 });
 
     setPhase("done");
-  }, [onComplete, summary.totalDistance]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Render ──────────────────────────────────────────────────────────────
 

@@ -195,7 +195,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
     if (hasSetupBefore && step === "tutorial") {
       setStep("form-select");
     }
-  }, [hasSetupBefore]);
+  }, [hasSetupBefore]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Fetch forms from admin API ────────────────────────────────────────────
   useEffect(() => {

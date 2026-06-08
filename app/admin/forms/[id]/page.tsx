@@ -105,7 +105,7 @@ export default function AdminEditFormPage() {
 
   useEffect(() => {
     fetchForm();
-  }, [formId]);
+  }, [formId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function fetchForm() {
     setLoading(true);

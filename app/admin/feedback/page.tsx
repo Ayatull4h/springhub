@@ -100,7 +100,47 @@ export default function AdminFeedbackPage() {
         </p>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Mobile card view */}
+      <div className="grid gap-3 md:hidden">
+        {feedback.length === 0 ? (
+          <div className="card py-6 text-center text-sm text-ink-muted">No feedback yet</div>
+        ) : (
+          feedback.map((item) => {
+            const Icon = typeIcon[item.type] ?? MessageSquare;
+            const status = statusConfig[item.status] ?? statusConfig.open;
+            const StatusIcon = status.icon;
+            const preview =
+              item.bugDescription?.slice(0, 80) ||
+              item.kritik?.slice(0, 80) ||
+              item.saran?.slice(0, 80) ||
+              "";
+            return (
+              <div key={item.id} className="card space-y-2">
+                <div className="flex items-start justify-between">
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${typeColor[item.type] ?? "text-slate-600 bg-slate-50"}`}>
+                    <Icon className="h-3 w-3" />
+                    {item.type}
+                  </span>
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}>
+                    <StatusIcon className="h-3 w-3" />
+                    {status.label}
+                  </span>
+                </div>
+                <div className="text-sm text-ink truncate">{preview}</div>
+                <div className="text-xs text-ink-muted">{new Date(item.createdAt).toLocaleDateString("id-ID")}</div>
+                <div className="flex items-center gap-2 text-xs">
+                  <button onClick={() => setSelectedId(selectedId === item.id ? null : item.id)} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"><Eye className="h-3 w-3" /> Detail</button>
+                  {item.status !== "read" && <button onClick={() => updateStatus(item.id, "read")} className="rounded-md px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30">Mark Read</button>}
+                  {item.status !== "resolved" && <button onClick={() => updateStatus(item.id, "resolved")} className="rounded-md px-2 py-1 text-xs font-medium text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30">Resolve</button>}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block overflow-x-auto">
         <div className="min-w-[600px]">
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead>
@@ -115,20 +155,14 @@ export default function AdminFeedbackPage() {
           <tbody>
             {feedback.length === 0 ? (
               <tr>
-                <td colSpan={5} className="py-6 text-center text-sm text-ink-muted">
-                  No feedback yet
-                </td>
+                <td colSpan={5} className="py-6 text-center text-sm text-ink-muted">No feedback yet</td>
               </tr>
             ) : (
               feedback.map((item) => {
                 const Icon = typeIcon[item.type] ?? MessageSquare;
                 const status = statusConfig[item.status] ?? statusConfig.open;
                 const StatusIcon = status.icon;
-                const preview =
-                  item.bugDescription?.slice(0, 80) ||
-                  item.kritik?.slice(0, 80) ||
-                  item.saran?.slice(0, 80) ||
-                  "";
+                const preview = item.bugDescription?.slice(0, 80) || item.kritik?.slice(0, 80) || item.saran?.slice(0, 80) || "";
                 return (
                   <tr key={item.id} className="border-b border-ink-line last:border-0">
                     <td className="py-3 pr-4">
@@ -137,43 +171,19 @@ export default function AdminFeedbackPage() {
                         {item.type}
                       </span>
                     </td>
-                    <td className="py-3 pr-4">
-                      <div className="max-w-xs truncate text-ink">{preview}...</div>
-                    </td>
+                    <td className="py-3 pr-4"><div className="max-w-xs truncate text-ink">{preview}...</div></td>
                     <td className="py-3 pr-4">
                       <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}>
                         <StatusIcon className="h-3 w-3" />
                         {status.label}
                       </span>
                     </td>
-                    <td className="py-3 pr-4 text-ink-muted">
-                      {new Date(item.createdAt).toLocaleDateString("id-ID")}
-                    </td>
+                    <td className="py-3 pr-4 text-ink-muted">{new Date(item.createdAt).toLocaleDateString("id-ID")}</td>
                     <td className="py-3">
                       <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => setSelectedId(selectedId === item.id ? null : item.id)}
-                          className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-800"
-                          title="View detail"
-                        >
-                          <Eye className="h-4 w-4 text-ink-subtle" />
-                        </button>
-                        {item.status !== "read" && (
-                          <button
-                            onClick={() => updateStatus(item.id, "read")}
-                            className="rounded-md px-2 py-0.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                          >
-                            Mark Read
-                          </button>
-                        )}
-                        {item.status !== "resolved" && (
-                          <button
-                            onClick={() => updateStatus(item.id, "resolved")}
-                            className="rounded-md px-2 py-0.5 text-xs font-medium text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
-                          >
-                            Resolve
-                          </button>
-                        )}
+                        <button onClick={() => setSelectedId(selectedId === item.id ? null : item.id)} className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-800" title="View detail"><Eye className="h-4 w-4 text-ink-subtle" /></button>
+                        {item.status !== "read" && <button onClick={() => updateStatus(item.id, "read")} className="rounded-md px-2 py-0.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30">Mark Read</button>}
+                        {item.status !== "resolved" && <button onClick={() => updateStatus(item.id, "resolved")} className="rounded-md px-2 py-0.5 text-xs font-medium text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30">Resolve</button>}
                       </div>
                     </td>
                   </tr>

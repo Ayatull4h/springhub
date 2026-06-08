@@ -122,7 +122,51 @@ export default function AdminReportsPage() {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Mobile card view */}
+      <div className="grid gap-3 md:hidden">
+        {filteredReports.map((r) => {
+          const status = statusConfig[r.status] ?? statusConfig.pending;
+          const StatusIcon = status.icon;
+          return (
+            <div key={r.id} className="card space-y-2">
+              <div className="flex items-start justify-between">
+                <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 text-xs">
+                  {formLabels[r.formSlug] ?? r.formSlug}
+                </span>
+                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}>
+                  <StatusIcon className="h-3 w-3" />
+                  {status.label}
+                </span>
+              </div>
+              <div className="text-xs text-ink-muted">
+                {r.user?.username ?? `${t("common.guest")} (${r.guestId?.slice(0, 8)}...)`} · {new Date(r.createdAt).toLocaleDateString("id-ID")}
+              </div>
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <button
+                  onClick={() => toggleActive(r.id)}
+                  disabled={toggling === r.id}
+                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition ${
+                    r.isActive
+                      ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+                      : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                  }`}
+                >
+                  {r.isActive ? <ToggleRight className="h-3 w-3" /> : <ToggleLeft className="h-3 w-3" />}
+                  {r.isActive ? "Active" : "Inactive"}
+                </button>
+                <span className="text-ink-subtle">
+                  {showPrecise
+                    ? `${r.preciseLat?.toFixed(4) ?? "—"}, ${r.preciseLng?.toFixed(4) ?? "—"}`
+                    : "••••••"}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block overflow-x-auto">
         <div className="min-w-[900px]">
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead>
@@ -144,12 +188,8 @@ export default function AdminReportsPage() {
               const StatusIcon = status.icon;
               return (
                 <tr key={r.id} className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800">
-                  <td className="py-3 pr-3 text-ink">
-                    {formLabels[r.formSlug] ?? r.formSlug}
-                  </td>
-                  <td className="py-3 pr-3 text-ink-muted">
-                    {r.user?.username ?? `${t("common.guest")} (${r.guestId?.slice(0, 8)}...)`}
-                  </td>
+                  <td className="py-3 pr-3 text-ink">{formLabels[r.formSlug] ?? r.formSlug}</td>
+                  <td className="py-3 pr-3 text-ink-muted">{r.user?.username ?? `${t("common.guest")} (${r.guestId?.slice(0, 8)}...)`}</td>
                   <td className="py-3 pr-3">
                     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}>
                       <StatusIcon className="h-3 w-3" />
@@ -160,31 +200,17 @@ export default function AdminReportsPage() {
                     <button
                       onClick={() => toggleActive(r.id)}
                       disabled={toggling === r.id}
-                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition ${
-                        r.isActive
-                          ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-                          : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-                      }`}
+                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition ${r.isActive ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}
                     >
                       {r.isActive ? <ToggleRight className="h-3 w-3" /> : <ToggleLeft className="h-3 w-3" />}
                       {r.isActive ? "Active" : "Inactive"}
                     </button>
                   </td>
-                  <td className="py-3 pr-3 font-mono text-xs text-ink-muted">
-                    {showPrecise ? r.preciseLat ?? "—" : "••••••"}
-                  </td>
-                  <td className="py-3 pr-3 font-mono text-xs text-ink-muted">
-                    {showPrecise ? r.preciseLng ?? "—" : "••••••"}
-                  </td>
-                  <td className="py-3 pr-3 font-mono text-xs text-ink-muted">
-                    {r.snappedLat?.toFixed(3) ?? "—"}, {r.snappedLng?.toFixed(3) ?? "—"}
-                  </td>
-                  <td className="py-3 pr-3 text-ink-muted">
-                    {r.reviewedBy?.username ?? "—"}
-                  </td>
-                  <td className="py-3 text-xs text-ink-muted">
-                    {new Date(r.createdAt).toLocaleDateString("id-ID")}
-                  </td>
+                  <td className="py-3 pr-3 font-mono text-xs text-ink-muted">{showPrecise ? r.preciseLat ?? "—" : "••••••"}</td>
+                  <td className="py-3 pr-3 font-mono text-xs text-ink-muted">{showPrecise ? r.preciseLng ?? "—" : "••••••"}</td>
+                  <td className="py-3 pr-3 font-mono text-xs text-ink-muted">{r.snappedLat?.toFixed(3) ?? "—"}, {r.snappedLng?.toFixed(3) ?? "—"}</td>
+                  <td className="py-3 pr-3 text-ink-muted">{r.reviewedBy?.username ?? "—"}</td>
+                  <td className="py-3 text-xs text-ink-muted">{new Date(r.createdAt).toLocaleDateString("id-ID")}</td>
                 </tr>
               );
             })}

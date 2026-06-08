@@ -55,18 +55,25 @@ export default function ReportFormPage() {
             description: data.form.description,
             pointsOnSubmit: data.form.pointsOnSubmit,
             contributionType: data.form.contributionType,
-            fields: data.form.fields.map((f: any) => ({
-              id: f.fieldId,
-              label: f.label,
-              type: f.type,
-              required: f.required,
-              placeholder: f.placeholder || "",
-              help: f.helpText || "",
-              options: (() => {
-                try { return JSON.parse(f.options || "[]"); }
-                catch { return []; }
-              })(),
-            })),
+            fields: data.form.fields.map((f: any) => {
+              let options: string[];
+              try { options = JSON.parse(f.options || "[]"); }
+              catch { options = []; }
+              const staticForm = getForm(slug);
+              const staticField = staticForm?.fields.find(sf => sf.id === f.fieldId);
+              if (options.length === 0 && staticField?.options && staticField.options.length > 0) {
+                options = staticField.options;
+              }
+              return {
+                id: f.fieldId,
+                label: f.label,
+                type: f.type,
+                required: f.required,
+                placeholder: f.placeholder || "",
+                help: f.helpText || "",
+                options,
+              };
+            }),
           });
         }
       })
@@ -249,7 +256,7 @@ export default function ReportFormPage() {
       <form
         onSubmit={handleSubmit}
         encType="multipart/form-data"
-        className="card mt-6 space-y-5"
+        className="card mt-6 space-y-5 w-full max-w-full"
         onChange={(e) => {
           const formEl = e.currentTarget;
           const fd = new FormData(formEl);
@@ -289,9 +296,13 @@ export default function ReportFormPage() {
           />
         </div>
 
-        {activeForm.fields.map((field: FormField) => (
-          <FieldRenderer key={field.id} field={field} />
-        ))}
+        <div className="w-full max-w-full overflow-hidden space-y-5">
+          {activeForm.fields.map((field: FormField) => (
+            <FieldWrapper key={field.id}>
+              <FieldRenderer field={field} />
+            </FieldWrapper>
+          ))}
+        </div>
 
         <div className="flex items-center justify-end gap-2 border-t border-ink-line pt-4">
           <Link href="/#map" className="btn-secondary">
@@ -315,6 +326,10 @@ export default function ReportFormPage() {
       </form>
     </div>
   );
+}
+
+function FieldWrapper({ children }: { children: React.ReactNode }) {
+  return <div className="w-full max-w-full overflow-hidden">{children}</div>;
 }
 
 function FieldRenderer({ field }: { field: FormField }) {

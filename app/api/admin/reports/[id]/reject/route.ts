@@ -49,6 +49,16 @@ export async function POST(
           metadata: JSON.stringify({ status: "rejected" }),
         },
       });
+
+      await prisma.notification.create({
+        data: {
+          userId: report.userId,
+          type: "report-rejected",
+          title: `Laporan ${report.formSlug} ditolak`,
+          body: body.note || "Laporan Anda tidak memenuhi kriteria validasi.",
+          link: "/profile",
+        },
+      });
     }
 
     return NextResponse.json({ success: true, status: "rejected" });

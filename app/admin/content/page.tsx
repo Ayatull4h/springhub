@@ -52,7 +52,7 @@ export default function AdminContentPage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchItems(); }, [activeSection]);
+  useEffect(() => { fetchItems(); }, [activeSection]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -174,6 +174,7 @@ export default function AdminContentPage() {
               <div key={item.id} className="card flex flex-col">
                 {item.imageUrl && (
                   <div className="-mx-4 -mt-4 mb-3 overflow-hidden rounded-t-xl">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={item.imageUrl} alt={item.title} className="h-40 w-full object-cover" />
                   </div>
                 )}

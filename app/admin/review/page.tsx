@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircle2, XCircle, Clock, MapPin, Sparkles } from "lucide-react";
+import Image from "next/image";
 import { useI18n } from "@/lib/i18n";
 
 type ReportPhoto = {
@@ -203,9 +204,11 @@ export default function AdminReviewPage() {
                               : "border-ink-line hover:border-brand-300"
                           }`}
                         >
-                          <img
+                          <Image
                             src={photo.url}
                             alt=""
+                            width={64}
+                            height={64}
                             className="h-full w-full object-cover"
                           />
                           {featured[r.id] === photo.id && (

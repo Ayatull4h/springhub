@@ -64,11 +64,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  const messages = allMessages[locale] ?? {};
-
   const t = useCallback(
     (key: string, paramsOrFallback?: I18nParams | string) => {
-      const raw = messages[key];
+      const msgs = allMessages[locale] ?? {};
+      const raw = msgs[key];
       if (raw !== undefined) {
         if (typeof paramsOrFallback === "object" && paramsOrFallback !== null) {
           return interpolate(raw, paramsOrFallback);
@@ -77,7 +76,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       }
       return typeof paramsOrFallback === "string" ? paramsOrFallback : key;
     },
-    [messages, interpolate]
+    [locale, interpolate]
   );
 
   return (

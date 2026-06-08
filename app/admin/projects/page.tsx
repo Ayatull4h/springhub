@@ -478,39 +478,70 @@ export default function AdminProjectsPage() {
         </div>
       )}
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-ink-line bg-white dark:bg-slate-800">
+      {/* Mobile card view */}
+      <div className="grid gap-3 md:hidden">
+        {filtered.length === 0 ? (
+          <div className="card py-12 text-center text-sm text-ink-muted">
+            <HardHat className="mx-auto h-8 w-8 text-ink-subtle" />
+            <p className="mt-2">No projects found</p>
+          </div>
+        ) : (
+          filtered.map((p) => {
+            const status = statusConfig[p.status] ?? statusConfig.pending;
+            const StatusIcon = status.icon;
+            return (
+              <div key={p.id} className="card space-y-2 cursor-pointer" onClick={() => setDetailProject(p)}>
+                <div className="flex items-start justify-between">
+                  <div className="font-medium text-ink text-sm">{p.title}</div>
+                  <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium", status.className)}>
+                    <StatusIcon className="h-3 w-3" />
+                    {status.label}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 text-xs">
+                  <span className="chip bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 capitalize">
+                    {typeLabels[p.typeId] || p.typeId.replace(/-/g, " ")}
+                  </span>
+                  {p.region && <span className="inline-flex items-center gap-1 text-ink-muted"><MapPin className="h-3 w-3" />{p.region}</span>}
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-ink-muted">{p.user?.username || "Guest"}</span>
+                  <span className="text-ink-muted">{new Date(p.createdAt).toLocaleDateString("id-ID", { month: "short", day: "numeric", year: "numeric" })}</span>
+                </div>
+                <div className="flex items-center gap-3 text-xs">
+                  <span>Goal: <strong>Rp {formatNumber(p.goalAmount)}</strong></span>
+                  <span>Raised: <strong className="text-brand-600">Rp {formatNumber(p.raisedAmount)}</strong></span>
+                  {p.goalAmount > 0 && <span>({Math.round((p.raisedAmount / p.goalAmount) * 100)}%)</span>}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block overflow-x-auto rounded-lg border border-ink-line bg-white dark:bg-slate-800">
           <div className="min-w-[900px]">
           <table className="w-full text-left text-sm whitespace-nowrap">
             <thead>
             <tr className="border-b border-ink-line bg-slate-50 dark:bg-slate-900 text-xs font-medium text-ink-subtle">
               <th className="pb-3 pl-4 pr-3">
-                <button onClick={() => toggleSort("title")} className="inline-flex items-center hover:text-ink">
-                  Title <SortIcon field="title" />
-                </button>
+                <button onClick={() => toggleSort("title")} className="inline-flex items-center hover:text-ink">Title <SortIcon field="title" /></button>
               </th>
               <th className="pb-3 pr-3">Type</th>
               <th className="pb-3 pr-3">Status</th>
               <th className="pb-3 pr-3">
-                <button onClick={() => toggleSort("region")} className="inline-flex items-center hover:text-ink">
-                  Region <SortIcon field="region" />
-                </button>
+                <button onClick={() => toggleSort("region")} className="inline-flex items-center hover:text-ink">Region <SortIcon field="region" /></button>
               </th>
               <th className="pb-3 pr-3">
-                <button onClick={() => toggleSort("goalAmount")} className="inline-flex items-center hover:text-ink">
-                  Goal (Rp) <SortIcon field="goalAmount" />
-                </button>
+                <button onClick={() => toggleSort("goalAmount")} className="inline-flex items-center hover:text-ink">Goal (Rp) <SortIcon field="goalAmount" /></button>
               </th>
               <th className="pb-3 pr-3">
-                <button onClick={() => toggleSort("raisedAmount")} className="inline-flex items-center hover:text-ink">
-                  Raised (Rp) <SortIcon field="raisedAmount" />
-                </button>
+                <button onClick={() => toggleSort("raisedAmount")} className="inline-flex items-center hover:text-ink">Raised (Rp) <SortIcon field="raisedAmount" /></button>
               </th>
               <th className="pb-3 pr-3">Contact</th>
               <th className="pb-3 pr-4">
-                <button onClick={() => toggleSort("createdAt")} className="inline-flex items-center hover:text-ink">
-                  Date <SortIcon field="createdAt" />
-                </button>
+                <button onClick={() => toggleSort("createdAt")} className="inline-flex items-center hover:text-ink">Date <SortIcon field="createdAt" /></button>
               </th>
             </tr>
           </thead>
@@ -527,19 +558,13 @@ export default function AdminProjectsPage() {
                 const status = statusConfig[p.status] ?? statusConfig.pending;
                 const StatusIcon = status.icon;
                 return (
-                  <tr
-                    key={p.id}
-                    className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
-                    onClick={() => setDetailProject(p)}
-                  >
+                  <tr key={p.id} className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer" onClick={() => setDetailProject(p)}>
                     <td className="py-3 pl-4 pr-3">
                       <div className="flex items-center gap-2">
                         <HardHat className="h-4 w-4 flex-shrink-0 text-ink-muted" />
                         <div>
                           <p className="font-medium text-ink truncate max-w-[200px]">{p.title}</p>
-                          <p className="text-xs text-ink-muted">
-                            {p.user?.username || "Guest"}
-                          </p>
+                          <p className="text-xs text-ink-muted">{p.user?.username || "Guest"}</p>
                         </div>
                       </div>
                     </td>
@@ -555,35 +580,18 @@ export default function AdminProjectsPage() {
                       </span>
                     </td>
                     <td className="py-3 pr-3">
-                      <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
-                        <MapPin className="h-3 w-3" />
-                        {p.region || "—"}
-                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs text-ink-muted"><MapPin className="h-3 w-3" />{p.region || "—"}</span>
                     </td>
-                    <td className="py-3 pr-3 font-medium text-ink">
-                      Rp {formatNumber(p.goalAmount)}
-                    </td>
+                    <td className="py-3 pr-3 font-medium text-ink">Rp {formatNumber(p.goalAmount)}</td>
                     <td className="py-3 pr-3">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-brand-600">
-                          Rp {formatNumber(p.raisedAmount)}
-                        </span>
-                        {p.goalAmount > 0 && (
-                          <span className="text-xs text-ink-muted">
-                            ({Math.round((p.raisedAmount / p.goalAmount) * 100)}%)
-                          </span>
-                        )}
+                        <span className="font-medium text-brand-600">Rp {formatNumber(p.raisedAmount)}</span>
+                        {p.goalAmount > 0 && <span className="text-xs text-ink-muted">({Math.round((p.raisedAmount / p.goalAmount) * 100)}%)</span>}
                       </div>
                     </td>
-                    <td className="py-3 pr-3 text-xs text-ink-muted">
-                      {p.contactName || p.contactEmail || "—"}
-                    </td>
+                    <td className="py-3 pr-3 text-xs text-ink-muted">{p.contactName || p.contactEmail || "—"}</td>
                     <td className="py-3 pr-4 text-xs text-ink-muted">
-                      {new Date(p.createdAt).toLocaleDateString("id-ID", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                      {new Date(p.createdAt).toLocaleDateString("id-ID", { month: "short", day: "numeric", year: "numeric" })}
                     </td>
                   </tr>
                 );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 
 type LiteYouTubeEmbedProps = {
   videoId: string;
@@ -36,15 +37,15 @@ export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
       className="group absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center bg-slate-800"
       aria-label={`Play video: ${title}`}
     >
-      <img
-        ref={imgRef}
+      <Image
+        ref={imgRef as React.Ref<HTMLImageElement>}
         src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`}
         alt={title}
         onError={handleImgError}
-        referrerPolicy="no-referrer"
-        crossOrigin="anonymous"
-        className="absolute inset-0 h-full w-full object-cover"
-        loading="lazy"
+        fill
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, 50vw"
+        priority={false}
       />
       {/* Play button overlay */}
       <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-brand-600/90 shadow-lg transition group-hover:bg-brand-700 group-hover:scale-110">

@@ -27,15 +27,13 @@ function MediaThumb({ item }: { item: MediaItem }) {
   const [imgError, setImgError] = useState(false);
 
   if (imgSrc && !imgError) {
-    return (
-      <img
-        src={imgSrc}
-        alt={item.title}
-        className="h-full w-full object-cover transition group-hover:scale-105"
-        loading="lazy"
-        onError={() => setImgError(true)}
-      />
-    );
+    return <img
+      src={imgSrc}
+      alt={item.title}
+      className="h-full w-full object-cover transition group-hover:scale-105"
+      loading="lazy"
+      onError={() => setImgError(true)}
+    />;
   }
 
   return (

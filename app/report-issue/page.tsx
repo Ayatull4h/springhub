@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bug, MessageSquare, Image, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
@@ -28,6 +28,14 @@ export default function ReportIssuePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(() => {
+    fetch("/api/csrf")
+      .then((r) => r.json())
+      .then((data) => { if (data.token) setCsrfToken(data.token); })
+      .catch(() => {});
+  }, []);
 
   function determineType(): FeedbackType {
     const hasBug = bugDescription.trim().length > 0;
@@ -68,7 +76,10 @@ export default function ReportIssuePage() {
 
       const res = await fetch("/api/feedback", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
+        },
         body: JSON.stringify(payload),
       });
 
@@ -154,6 +165,7 @@ export default function ReportIssuePage() {
               htmlFor="screenshot"
               className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-ink-line bg-white px-4 py-2.5 text-sm font-medium text-ink-muted transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:hover:bg-slate-700"
             >
+              {/* eslint-disable-next-line jsx-a11y/alt-text */}
               <Image className="h-4 w-4" />
               {screenshot
                 ? screenshot.name

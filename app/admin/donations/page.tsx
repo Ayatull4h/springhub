@@ -71,7 +71,39 @@ export default function AdminDonationsPage() {
         </button>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Mobile card view */}
+      <div className="grid gap-3 md:hidden">
+        {donations.length === 0 ? (
+          <div className="card py-6 text-center text-sm text-ink-muted">{t("admin.donations.noData")}</div>
+        ) : (
+          donations.map((d) => {
+            const status = statusConfig[d.status] ?? statusConfig.pending;
+            const StatusIcon = status.icon;
+            return (
+              <div key={d.id} className="card space-y-2">
+                <div className="flex items-start justify-between">
+                  <span className="font-medium text-ink">{d.donorName || d.user?.username || "—"}</span>
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}>
+                    <StatusIcon className="h-3 w-3" />
+                    {status.label}
+                  </span>
+                </div>
+                <div className="text-sm font-bold text-brand-600">Rp {d.amountIdr.toLocaleString("id-ID")}</div>
+                <div className="grid grid-cols-2 gap-1 text-xs text-ink-muted">
+                  <span>Invoice: {d.invoiceId ? d.invoiceId.slice(0, 12) + "..." : "—"}</span>
+                  <span>Tier: {d.tierId || "—"}</span>
+                  <span>{d.donorEmail || d.user?.email || "—"}</span>
+                  <span>{new Date(d.createdAt).toLocaleDateString("id-ID")}</span>
+                </div>
+                {d.project?.title && <div className="text-xs text-ink-muted">Project: {d.project.title}</div>}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block overflow-x-auto">
         <div className="min-w-[900px]">
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead>
@@ -92,14 +124,10 @@ export default function AdminDonationsPage() {
               const StatusIcon = status.icon;
               return (
                 <tr key={d.id} className="border-b border-ink-line last:border-0 hover:bg-slate-50">
-                  <td className="py-3 pr-3 font-mono text-xs text-ink-muted">
-                    {d.invoiceId ? d.invoiceId.slice(0, 12) + "..." : "—"}
-                  </td>
+                  <td className="py-3 pr-3 font-mono text-xs text-ink-muted">{d.invoiceId ? d.invoiceId.slice(0, 12) + "..." : "—"}</td>
                   <td className="py-3 pr-3 font-medium text-ink">{d.donorName || d.user?.username || "—"}</td>
                   <td className="py-3 pr-3 text-ink-muted">{d.donorEmail || d.user?.email || "—"}</td>
-                  <td className="py-3 pr-3 font-medium text-ink">
-                    Rp {d.amountIdr.toLocaleString("id-ID")}
-                  </td>
+                  <td className="py-3 pr-3 font-medium text-ink">Rp {d.amountIdr.toLocaleString("id-ID")}</td>
                   <td className="py-3 pr-3">
                     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}>
                       <StatusIcon className="h-3 w-3" />
@@ -108,17 +136,13 @@ export default function AdminDonationsPage() {
                   </td>
                   <td className="py-3 pr-3 text-xs text-ink-muted">{d.tierId || "—"}</td>
                   <td className="py-3 pr-3 text-xs text-ink-muted">{d.project?.title || "—"}</td>
-                  <td className="py-3 text-xs text-ink-muted">
-                    {new Date(d.createdAt).toLocaleDateString("id-ID")}
-                  </td>
+                  <td className="py-3 text-xs text-ink-muted">{new Date(d.createdAt).toLocaleDateString("id-ID")}</td>
                 </tr>
               );
             })}
             {donations.length === 0 && (
               <tr>
-                <td colSpan={8} className="py-6 text-center text-sm text-ink-muted">
-                  {t("admin.donations.noData")}
-                </td>
+                <td colSpan={8} className="py-6 text-center text-sm text-ink-muted">{t("admin.donations.noData")}</td>
               </tr>
             )}
           </tbody>
