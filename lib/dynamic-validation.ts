@@ -47,7 +47,7 @@ export function generateZodSchema(fields: DynamicFieldDef[]) {
         break;
 
       case "multiselect":
-        shape[`${field.fieldId}[]`] = z.array(z.string()).optional().default([]);
+        shape[field.fieldId] = z.array(z.string()).optional().default([]);
         break;
 
       case "date":

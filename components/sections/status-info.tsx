@@ -11,7 +11,8 @@ export function StatusInfo() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-ink"
+        className="text-xs text-ink-muted hover:text-ink transition underline underline-offset-2"
+        aria-label={t("status.what")}
       >
         <Info className="h-3 w-3" />
         {t("status.what")}
@@ -21,12 +22,16 @@ export function StatusInfo() {
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40"
           onClick={() => setOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="status-title"
+          onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}
         >
           <div
             className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-bold text-ink">{t("status.title")}</h3>
+            <h3 id="status-title" className="text-lg font-bold text-ink">{t("status.title")}</h3>
             <div className="mt-4 space-y-4">
               <div className="flex gap-3">
                 <Circle className="mt-0.5 h-5 w-5 fill-emerald-500 text-emerald-500" />

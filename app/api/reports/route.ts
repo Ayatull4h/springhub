@@ -170,6 +170,20 @@ export async function POST(request: Request) {
       }
     }
 
+    // Check trust score block for authenticated users
+    if (session?.userId) {
+      const profile = await prisma.profile.findUnique({
+        where: { id: session.userId },
+        select: { trustScore: true },
+      });
+      if (profile && profile.trustScore !== null && profile.trustScore <= 0) {
+        return NextResponse.json(
+          { error: "Akun Anda diblokir karena skor kepercayaan rendah. Hubungi admin." },
+          { status: 403 }
+        );
+      }
+    }
+
     // Check daily limit for authenticated users and guests
     const today = new Date();
     today.setHours(0, 0, 0, 0);

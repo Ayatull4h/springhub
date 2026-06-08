@@ -215,7 +215,7 @@ export default function ProfilePage() {
         </div>
       )}
       {!claimTried && claiming && (
-        <div className="mt-6 flex items-center gap-2 rounded-md bg-brand-50 p-4 text-sm text-brand-700 ring-1 ring-brand-200 dark:ring-brand-700">
+        <div className="mt-6 flex items-center gap-2 rounded-md bg-brand-50 p-4 text-sm text-brand-700 ring-1 ring-brand-200 dark:bg-brand-900/30 dark:text-brand-300 dark:ring-brand-700">
           <div className="h-4 w-4 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
           {t("profile.claiming")}
         </div>
@@ -224,7 +224,7 @@ export default function ProfilePage() {
       {/* Profile Header */}
       <div className="mt-6 card flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
             {profile.username.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
@@ -260,10 +260,10 @@ export default function ProfilePage() {
 
       {/* Edit Profile Form */}
       {editing && (
-        <form onSubmit={handleSave} className="mt-6 card border border-brand-200 bg-brand-50/40">
+        <form onSubmit={handleSave} className="mt-6 card border border-brand-200 bg-brand-50/40 dark:border-brand-700 dark:bg-brand-900/20">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-ink">{t("profile.editTitle")}</h2>
-            <button type="button" onClick={closeEdit} className="rounded-md p-1 text-ink-muted hover:bg-brand-100">
+            <button type="button" onClick={closeEdit} className="rounded-md p-1 text-ink-muted hover:bg-brand-100 dark:hover:bg-brand-800" aria-label="Tutup form edit">
               <X className="h-5 w-5" />
             </button>
           </div>

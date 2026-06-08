@@ -563,7 +563,7 @@ export default function AdminProjectsPage() {
                       <div className="flex items-center gap-2">
                         <HardHat className="h-4 w-4 flex-shrink-0 text-ink-muted" />
                         <div>
-                          <p className="font-medium text-ink truncate max-w-[200px]">{p.title}</p>
+                          <p className="font-medium text-ink line-clamp-2">{p.title}</p>
                           <p className="text-xs text-ink-muted">{p.user?.username || "Guest"}</p>
                         </div>
                       </div>

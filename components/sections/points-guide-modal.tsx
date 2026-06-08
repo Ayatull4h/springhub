@@ -99,6 +99,10 @@ export function PointsGuideModal({ open, onClose }: Props) {
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="points-guide-title"
+      onKeyDown={(e) => { if (e.key === "Escape") onClose(); }}
     >
       <div
         className="relative max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 pb-10 shadow-2xl"
@@ -107,6 +111,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
         <button
           onClick={onClose}
           className="absolute right-4 top-4 text-ink-muted hover:text-ink"
+          aria-label="Tutup"
         >
           <X className="h-5 w-5" />
         </button>

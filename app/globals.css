@@ -176,6 +176,15 @@ button:not(:disabled) {
   }
 }
 
+/* Print styles */
+@media print {
+  header, footer, .fixed, .sticky, button, .btn-primary, .btn-secondary, .card.shadow-* {
+    display: none !important;
+  }
+  body { background: white !important; color: black !important; font-size: 12pt; }
+  a { color: black !important; text-decoration: underline; }
+}
+
 /* Input base style (used by profile edit form) */
 .input {
   @apply rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30;
