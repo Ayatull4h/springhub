@@ -11,6 +11,7 @@ const nextConfig = {
       { protocol: "https", hostname: "*.greennetwork.id" },
       { protocol: "https", hostname: "upload.wikimedia.org" },
       { protocol: "https", hostname: "img.youtube.com" },
+      { protocol: "https", hostname: "i.ytimg.com" },
     ],
   },
   experimental: {
