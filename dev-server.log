@@ -1,0 +1,8 @@
+  ▲ Next.js 14.2.5
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · clientRouterFilterRedirects
+
+ ✓ Starting...
+ ✓ Ready in 5.5s

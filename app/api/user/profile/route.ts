@@ -9,7 +9,7 @@ const updateSchema = z.object({
   username: z.string().min(2).optional(),
   region: z.string().optional(),
   currentPassword: z.string().optional(),
-  newPassword: z.string().min(6).optional(),
+  newPassword: z.string().min(8, "Password minimal 8 karakter").optional(),
 });
 
 export async function GET() {

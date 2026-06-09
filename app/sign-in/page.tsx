@@ -107,7 +107,7 @@ export default function SignInPage() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 required
-                minLength={6}
+                minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t("auth.signIn.passwordPlaceholder")}

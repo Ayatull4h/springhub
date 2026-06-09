@@ -26,8 +26,8 @@ export default function ResetPasswordPage() {
       setError("Password tidak cocok");
       return;
     }
-    if (password.length < 6) {
-      setError("Password minimal 6 karakter");
+    if (password.length < 8) {
+      setError("Password minimal 8 karakter");
       return;
     }
 
