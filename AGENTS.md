@@ -200,6 +200,13 @@ Third Party
 
 ---
 
+## Catatan Pengerjaan
+
+## Semua perubahan sudah di-push ke GitHub dan auto-deploy ke Vercel.
+## Manual test plan tersedia di MANUAL-TEST.md (99 test case).
+
+---
+
 ## Diskusi Tersimpan
 
 ### 15 Mei 2026 — Sesi 1
@@ -382,6 +389,17 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 ---
 
 ## Sesi Diskusi Terbaru
+
+### 8-9 Juni 2026 — Sesi 5: Audit Sprint + Final Push
+- **Fokus**: Audit menyeluruh 91 isu, eksekusi 3 sprint, verifikasi Vercel
+- **Sprint 1** (🔴 17 critical): Foto error banner, newsletter CSRF, like auth, notif IDOR, global-error.tsx, ErrorBoundary, skip-link, aria-label
+- **Sprint 2** (🟠 6 high): Dark mode globals, spring-map loading states, `focus-visible`, `prefers-reduced-motion`, profile input class
+- **Sprint 3** (🟠🟡 7 medium): Modal a11y, dark mode profile, print styles, multiselect fix, trust score auto-block, password minLength 6→8
+- **Final fix**: Lint 0 error 0 warning, YouTube domain `i.ytimg.com`, MANUAL-TEST.md dengan 99 test case
+- **Vercel verification**: Form submit 200 ✅, Admin approve 200 ✅, Points +25 ✅, Notification terkirim ✅
+- **Status**: 30/91 isu diperbaiki, sisanya polish + manual test
+- **Output**: AGENTS.md diperbarui, MANUAL-TEST.md baru
+- **Commit**: `d624d53` — terpush ke `origin/master` ✅
 
 ### 1 Juni 2026 — Sesi 1: RAB & Infrastruktur
 - **Diskusi**: Perencanaan migrasi Vercel+Supabase → Hostinger VPS + Cloudflare
