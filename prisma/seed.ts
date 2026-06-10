@@ -19,10 +19,10 @@ async function main() {
   const volunteerPw = await bcrypt.hash("vol12345", 12);
 
   const admin = await prisma.profile.upsert({
-    where: { email: "admin@test.com" },
-    update: {},
+    where: { email: "admin@springhub.id" },
+    update: { passwordHash: adminPw },
     create: {
-      email: "admin@test.com",
+      email: "admin@springhub.id",
       passwordHash: adminPw,
       username: "Admin",
       role: "admin",
@@ -32,10 +32,10 @@ async function main() {
   });
 
   const volunteer = await prisma.profile.upsert({
-    where: { email: "volunteer@test.com" },
-    update: {},
+    where: { email: "volunteer@springhub.id" },
+    update: { passwordHash: volunteerPw },
     create: {
-      email: "volunteer@test.com",
+      email: "volunteer@springhub.id",
       passwordHash: volunteerPw,
       username: "Volunteer",
       role: "volunteer",
@@ -45,7 +45,7 @@ async function main() {
     },
   });
 
-  console.log(`   ✅ Users: admin@test.com, volunteer@test.com`);
+  console.log(`   ✅ Users: admin@springhub.id, volunteer@springhub.id`);
 
   // ── 2. Create courses with educational content ─────────────────────────
   const courses = [
@@ -396,8 +396,8 @@ async function main() {
   console.log(`   ✅ PointRules: ${pointRules.length} rules`);
 
   console.log("\n✅ Seeding complete!");
-  console.log(`   Admin: admin@test.com / admin123`);
-  console.log(`   Volunteer: volunteer@test.com / vol12345`);
+  console.log(`   Admin: admin@springhub.id / admin123`);
+  console.log(`   Volunteer: volunteer@springhub.id / vol12345`);
 }
 
 main()

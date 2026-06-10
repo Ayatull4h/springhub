@@ -11,7 +11,7 @@ test.describe("Forgot Password Flow", () => {
 
   test("should show response after email submission", async ({ page }) => {
     await page.goto("/forgot-password");
-    await page.fill("#email", "volunteer@test.com");
+    await page.fill("#email", "volunteer@springhub.id");
     await page.click('button[type="submit"]');
 
     await page.waitForTimeout(1500);

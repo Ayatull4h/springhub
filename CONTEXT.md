@@ -21,8 +21,8 @@ npm run dev
 **Akun test:**
 | Email | Password | Role | Poin |
 |---|---|---|---|
-| `admin@test.com` | `admin123` | admin | 99.999 |
-| `volunteer@test.com` | `vol12345` | volunteer | 24.168 |
+| `admin@springhub.id` | `admin123` | admin | 99.999 |
+| `volunteer@springhub.id` | `vol12345` | volunteer | 24.168 |
 
 ---
 

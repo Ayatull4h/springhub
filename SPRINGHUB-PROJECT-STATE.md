@@ -16,8 +16,8 @@
 ### Test Accounts
 | Role | Email | Password |
 |---|---|---|
-| Admin | admin@test.com | test123 |
-| Volunteer | volunteer@test.com | test123 |
+| Admin | admin@springhub.id | admin123 |
+| Volunteer | volunteer@springhub.id | vol12345 |
 | Ucup Bensing | ucup@springhub.id | ucup123 |
 
 ### Vercel

@@ -97,7 +97,7 @@ export function createRateLimiter(name: string, config: RateLimitConfig) {
 
 export const authLimiter = createRateLimiter("auth", {
   windowMs: 60_000,
-  maxRequests: 10,
+  maxRequests: 20,
 });
 
 export const apiLimiter = createRateLimiter("api", {

@@ -57,7 +57,7 @@ async function main() {
   console.log(`✓ ${reportCount} spring reports created (map markers)`);
 
   // ─── UPDATE PROFILE POINTS ───
-  const volunteer = await prisma.profile.findUnique({ where: { email: "volunteer@test.com" } });
+  const volunteer = await prisma.profile.findUnique({ where: { email: "volunteer@springhub.id" } });
   if (volunteer) {
     await prisma.profile.update({
       where: { id: volunteer.id },
@@ -65,7 +65,7 @@ async function main() {
     });
   }
 
-  const admin = await prisma.profile.findUnique({ where: { email: "admin@test.com" } });
+  const admin = await prisma.profile.findUnique({ where: { email: "admin@springhub.id" } });
   if (admin) {
     await prisma.profile.update({
       where: { id: admin.id },
@@ -75,13 +75,13 @@ async function main() {
 
   // Create some points log entries for demo
   const demoLogs = [
-    { email: "volunteer@test.com", amount: 25, reason: "Spring Monitoring - Cibeureum" },
-    { email: "volunteer@test.com", amount: 100, reason: "Spring Restoration - Sebatu" },
-    { email: "volunteer@test.com", amount: 50, reason: "Tree Planting - Ciwalu" },
-    { email: "volunteer@test.com", amount: 50, reason: "Trench Development - Sendang" },
-    { email: "volunteer@test.com", amount: 10, reason: "Bonus: Laporan Lengkap" },
-    { email: "volunteer@test.com", amount: 25, reason: "Spring Monitoring - Pancuran 7" },
-    { email: "volunteer@test.com", amount: 15, reason: "Seedling Stock" },
+    { email: "volunteer@springhub.id", amount: 25, reason: "Spring Monitoring - Cibeureum" },
+    { email: "volunteer@springhub.id", amount: 100, reason: "Spring Restoration - Sebatu" },
+    { email: "volunteer@springhub.id", amount: 50, reason: "Tree Planting - Ciwalu" },
+    { email: "volunteer@springhub.id", amount: 50, reason: "Trench Development - Sendang" },
+    { email: "volunteer@springhub.id", amount: 10, reason: "Bonus: Laporan Lengkap" },
+    { email: "volunteer@springhub.id", amount: 25, reason: "Spring Monitoring - Pancuran 7" },
+    { email: "volunteer@springhub.id", amount: 15, reason: "Seedling Stock" },
   ];
 
   for (const log of demoLogs) {

@@ -42,8 +42,9 @@ export async function POST(request: Request) {
     }
 
     const { email, password } = parsed.data;
+    const normalizedEmail = email.toLowerCase().trim();
 
-    const profile = await prisma.profile.findUnique({ where: { email } });
+    const profile = await prisma.profile.findUnique({ where: { email: normalizedEmail } });
     if (!profile) {
       return NextResponse.json(
         { error: "Email atau password salah" },

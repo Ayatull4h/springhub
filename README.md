@@ -22,8 +22,8 @@ npm run dev
 
 | Email | Password | Role |
 |---|---|---|
-| `admin@test.com` | `admin123` | admin |
-| `volunteer@test.com` | `vol12345` | volunteer |
+| `admin@springhub.id` | `admin123` | admin |
+| `volunteer@springhub.id` | `vol12345` | volunteer |
 
 ---
 
