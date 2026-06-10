@@ -241,7 +241,25 @@
 | 9 | Both | Footer: klik icon **Facebook** | Buka FB @jagasemesta (tab baru) | | |
 | 10 | Both | Footer: isi email + klik **Subscribe** | Alert "Terima kasih!" (jangan 403) | | |
 
-### 3.10 Floating Points Guide
+### 3.10 Spring Timeline (Fitur Baru 🆕)
+
+| # | Device | Aksi | Harapan | ✅/❌ | Catatan |
+|---|--------|------|---------|------|---------|
+| 1 | Both | Buka `/springs` | Daftar semua mata air, masing-masing card: nama, provinsi, jumlah laporan, tahun | | |
+| 2 | Both | Jika daftar kosong | Tampilkan "Belum ada mata air terdaftar" | | |
+| 3 | Both | Klik salah satu spring | Buka halaman `/springs/[id]` | | |
+| 4 | Both | Cek header halaman | Nama spring, provinsi, tahun pertama dipantau, jumlah laporan | | |
+| 5 | Both | Cek 3 stat cards | "Terakhir diperbarui", "Total laporan", "Tahun pemantauan" | | |
+| 6 | Both | Scroll ke timeline | Laporan per tahun, urut descending (terbaru di atas) | | |
+| 7 | Both | Cek 1 item timeline | Bulatan tahun di kiri, badge tipe form, tanggal, username | | |
+| 8 | Both | Cek field data preview | Field terisi dari report (flow_condition, water_quality, dll) | | |
+| 9 | Both | Cek foto (jika ada) | Thumbnail foto di timeline | | |
+| 10 | Both | Klik link "Semua Mata Air" | Kembali ke daftar `/springs` | | |
+| 11 | **HP** | Submit form spring-monitoring dengan nama spring yang SUDAH ADA | Report otomatis ter-link ke spring yang sama | | |
+| 12 | **HP** | Submit form spring-monitoring dengan nama spring BARU | Spring baru terbuat | | |
+| 13 | **PC** | Buka `/springs` → cek spring yang diupdate | Laporan terbaru muncul di timeline spring | | |
+
+### 3.11 Floating Points Guide
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
