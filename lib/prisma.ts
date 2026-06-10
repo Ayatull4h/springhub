@@ -8,7 +8,7 @@ const globalForPrisma = globalThis as unknown as {
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
-  max: 25,
+  max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
   maxUses: 7500,
