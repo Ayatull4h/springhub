@@ -329,7 +329,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
     }
   }, [forms, selectedForms, mode, selectedArea]);
 
-  // ── Download tiles ────────────────────────────────────────────────────────
+  // ── Download tiles (IndexedDB — tanpa Service Worker) ─────────────────
   const downloadTilesForArea = async (bounds: {
     north: number;
     south: number;
@@ -374,19 +374,16 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
     setDownloadProgress({ current: 0, total: tileCoords.length });
 
-    // Actually fetch each tile to populate the SW cache, showing real progress.
-    // The request goes through the SW's fetch handler (tileStrategy),
-    // which caches it on first network fetch and serves cached on subsequent requests.
     const CONCURRENCY = 8;
-    const records: Array<{
+    const blobs: Array<{
       url: string;
+      blob: Blob;
       z: number;
       x: number;
       y: number;
       cachedAt: number;
     }> = [];
     let completed = 0;
-    let anyFailed = false;
 
     for (let i = 0; i < tileCoords.length; i += CONCURRENCY) {
       const batch = tileCoords.slice(i, i + CONCURRENCY);
@@ -402,20 +399,20 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             clearTimeout(timeout);
 
             if (response.ok) {
-              // Fully consume the response body to ensure the tile is downloaded
-              await response.blob();
-              records.push({
-                url,
-                z: tc.z,
-                x: tc.x,
-                y: tc.y,
-                cachedAt: Date.now(),
-              });
-            } else {
-              anyFailed = true;
+              const blob = await response.blob();
+              if (blob && blob.size > 0) {
+                blobs.push({
+                  url,
+                  blob,
+                  z: tc.z,
+                  x: tc.x,
+                  y: tc.y,
+                  cachedAt: Date.now(),
+                });
+              }
             }
           } catch {
-            anyFailed = true;
+            // Tile gagal — dilewati, map tetap jalan tanpa tile itu
           }
           completed++;
           setDownloadProgress({ current: completed, total: tileCoords.length });
@@ -423,20 +420,9 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
       );
     }
 
-    // If any tile failed on the client, ask the SW to retry them as a fallback
-    if (anyFailed && navigator.serviceWorker.controller) {
-      const failedUrls = tileCoords.map(
-        (tc) => `https://a.tile.openstreetmap.org/${tc.z}/${tc.x}/${tc.y}.png`
-      );
-      navigator.serviceWorker.controller.postMessage({
-        type: "precache-tiles",
-        tiles: failedUrls,
-      });
-    }
-
-    // Save tile records to IndexedDB
-    if (records.length > 0) {
-      await offlineDB.saveTileRecords(records);
+    // Save tile blobs langsung ke IndexedDB (tanpa SW)
+    if (blobs.length > 0) {
+      await offlineDB.saveTileBlobs(blobs);
     }
   };
 

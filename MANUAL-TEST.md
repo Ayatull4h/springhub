@@ -92,26 +92,32 @@
 | 6 | Both | Isi Email | Terisi | | |
 | 7 | Both | Klik **Checkout / Donate Now** | Redirect ke halaman Xendit invoice | | |
 
-### 2.3 Offline Mode (PWA) — HP Only
+### 2.3 Offline Mode (Browser biasa — tanpa PWA) — HP Only
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 1 | HP | Buka `/offline` | Halaman setup muncul (6 step wizard) | | |
+| 1 | HP | Buka `/offline` di Chrome/Safari (bukan PWA) | Halaman setup muncul (6 step wizard) | | |
 | 2 | HP | Step 1: Tutorial → centang agreement → Next | Lanjut step 2 | | |
 | 3 | HP | Step 2: Pilih forms (centang spring-monitoring) → Next | Form terpilih | | |
 | 4 | HP | Step 3: Pilih radius 3km + kualitas "Ringan" → Next | Konfigurasi tersimpan | | |
 | 5 | HP | Step 4: Atur area di map (drag marker) → Next | Area tersimpan | | |
-| 6 | HP | Step 5: Klik **Download Tile** | Progress bar berjalan, selesai | | |
+| 6 | HP | Step 5: Klik **Download Tile** | Progress bar berjalan, tile disimpan ke IndexedDB | | |
 | 7 | HP | Step 6: Klik **Mulai Survey** | Map offline terbuka, GPS overlay muncul | | |
-| 8 | HP | Klik **Aktifkan GPS & Mulai Survey** | Izin lokasi, GPS mulai tracking | | |
-| 9 | HP | Tap marker 💧 (mata air) | Marker tersimpan di map | | |
-| 10 | HP | Tap marker 🌱 (pohon) | Marker tersimpan | | |
-| 11 | HP | Tap marker 🕳️ (rorak) | Marker tersimpan | | |
-| 12 | HP | Tap marker 🌰 (seedling) | Marker tersimpan | | |
-| 13 | HP | Tap tombol form (kanan bawah) → pilih form → isi → submit | "Tersimpan!" | | |
-| 14 | HP | Tap **Exit** | Masuk exit sync flow | | |
-| 15 | HP | Review summary (jarak, marker, laporan, foto) → **Upload & Selesai** | 4 phase: upload → foto → cleanup → done | | |
-| 16 | HP | Klik **Download Summary** | File PNG atau .txt terdownload | | |
+| 8 | HP | **Matikan koneksi internet** (Airplane mode) | Map masih muncul (dari tile IndexedDB) | | |
+| 9 | HP | Klik **Aktifkan GPS & Mulai Survey** | GPS tetap jalan meski offline | | |
+| 10 | HP | Tap marker 💧 (mata air) | Marker tersimpan — offline tetap jalan | | |
+| 11 | HP | Tap marker 🌱 (pohon) | Marker tersimpan | | |
+| 12 | HP | Tap marker 🕳️ (rorak) | Marker tersimpan | | |
+| 13 | HP | Tap marker 🌰 (seedling) | Marker tersimpan | | |
+| 14 | HP | Tap tombol form (kanan bawah) → pilih form → isi → submit | "Tersimpan!" (IndexedDB) | | |
+| 15 | HP | Ambil foto dari **kamera** | Kamera HP terbuka, foto tersimpan | | |
+| 16 | HP | Ambil foto dari **galeri** | Galeri terbuka, foto tersimpan | | |
+| 17 | HP | Tap **Exit** | Masuk exit sync flow | | |
+| 18 | HP | Review summary (jarak, marker, laporan, foto) → cek **2 tombol download** | Ada **"📄 Track Saja"** (TXT) dan **"🗺️ Track + Map"** (PNG) | | |
+| 19 | HP | Klik **📄 Track Saja** | Download file .txt: GPS points, markers, forms, jarak | | |
+| 20 | HP | Klik **🗺️ Track + Map** | Download file .png: screenshot map + overlay info | | |
+| 21 | HP | Klik **Upload & Selesai** | 4 phase: upload report → foto → cleanup → done | | |
+| 22 | HP | **Hidupkan koneksi** → buka kembali halaman | Data sudah terkirim, tidak ada duplikasi | | |
 
 ### 2.4 Dark Mode
 

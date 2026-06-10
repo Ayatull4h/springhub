@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { type OfflineTrackingPoint, type MarkerType } from "@/lib/offline-db";
 import { useI18n } from "@/lib/i18n";
+import { OfflineTileLayer } from "@/components/map/offline-tile-layer";
 
 // ── SVG pin warna untuk marker ────────────────────────────────────────────
 function pinSvg(fill: string, stroke: string): string {
@@ -189,6 +190,7 @@ export function SurveyLeafletMap({
       style={{ minHeight: "400px", height: "100%", width: "100%" }}
       zoomControl={false}
     >
+      <OfflineTileLayer />
       <MapLayers />
       <AutoFollow pos={currentPosition} isTracking={isTracking} paused={autoFollowPaused} />
       <FocusMarker marker={focusMarker ?? null} />

@@ -620,15 +620,24 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
           </div>
         )}
 
-        {/* Action buttons */}
+        {/* Action buttons — 2 download options */}
         <div className="mt-6 flex flex-col gap-2">
-          <button
-            onClick={handleDownloadSummary}
-            className="btn-secondary w-full inline-flex items-center justify-center gap-2"
-          >
-            <Download className="h-4 w-4" />
-            {t("offline.downloadSummary")}
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={downloadText}
+              className="btn-secondary inline-flex items-center justify-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              📄 Track Saja
+            </button>
+            <button
+              onClick={handleDownloadSummary}
+              className="btn-secondary inline-flex items-center justify-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              🗺️ Track + Map
+            </button>
+          </div>
 
           <div className="flex items-center gap-3">
             <button onClick={onCancel} className="btn-secondary flex-1">

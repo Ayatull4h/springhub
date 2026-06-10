@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { MapContainer, TileLayer, useMap, useMapEvents, Circle, CircleMarker, Tooltip } from "react-leaflet";
+import { MapContainer, useMap, useMapEvents, Circle, CircleMarker, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { MapPin, Crosshair } from "lucide-react";
 import L from "leaflet";
+import { OfflineTileLayer } from "@/components/map/offline-tile-layer";
 
 type SetupMapProps = {
   onAreaSelected: (center: { lat: number; lng: number }, radius: number) => void;
@@ -169,11 +170,7 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
         className="h-full w-full"
         style={{ minHeight: 360 }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          maxZoom={19}
-        />
+        <OfflineTileLayer />
         <MapCircleController
           center={center}
           radiusKm={selectedRadius}

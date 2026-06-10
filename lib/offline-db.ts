@@ -13,7 +13,7 @@
  */
 
 const DB_NAME = "springhub-offline";
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 export type MarkerType = "spring" | "tree" | "trench" | "seedling";
 
@@ -82,6 +82,11 @@ type DBSchema = {
     value: TileRecord;
     indexes: { "by-url": string };
   };
+  "tile-blobs": {
+    key: string;
+    value: TileBlob;
+    indexes: { "by-url": string };
+  };
   "offline-config": {
     key: string;
     value: OfflineConfig;
@@ -144,6 +149,15 @@ export type TileRecord = {
   cachedAt: number;
 };
 
+export type TileBlob = {
+  url: string;
+  blob: Blob;
+  z: number;
+  x: number;
+  y: number;
+  cachedAt: number;
+};
+
 type StoreNames = keyof DBSchema;
 
 function openDB(): Promise<IDBDatabase> {
@@ -184,6 +198,13 @@ function openDB(): Promise<IDBDatabase> {
         // tile-manifest
         if (!db.objectStoreNames.contains("tile-manifest")) {
           db.createObjectStore("tile-manifest", { keyPath: "url" });
+        }
+      }
+
+      // ── Version 4 migration — tile-blobs store ──
+      if (oldVersion < 4) {
+        if (!db.objectStoreNames.contains("tile-blobs")) {
+          db.createObjectStore("tile-blobs", { keyPath: "url" });
         }
       }
 
@@ -416,6 +437,23 @@ export const offlineDB = {
     return clearStore("tile-manifest");
   },
 
+  // ── Tile Blobs (tanpa Service Worker) ────────────────────────────────────
+  saveTileBlob(tile: TileBlob) {
+    return addItem("tile-blobs", tile);
+  },
+
+  saveTileBlobs(tiles: TileBlob[]) {
+    return Promise.all(tiles.map((t) => addItem("tile-blobs", t)));
+  },
+
+  getTileBlob(url: string): Promise<TileBlob | undefined> {
+    return getItem("tile-blobs", url);
+  },
+
+  clearTileBlobs() {
+    return clearStore("tile-blobs");
+  },
+
   // ── Offline Config ──────────────────────────────────────────────────────
   saveConfig(config: OfflineConfig) {
     return addItem("offline-config", config);
@@ -474,6 +512,7 @@ export const offlineDB = {
     await clearStore("photo-blobs");
     await clearStore("form-definitions");
     await clearStore("tile-manifest");
+    await clearStore("tile-blobs");
     await clearStore("draft-reports");
     await clearStore("submission-queue");
     await deleteItem("offline-config", "session-config");
@@ -486,6 +525,7 @@ export const offlineDB = {
       countItems("photo-blobs"),
       countItems("form-definitions"),
       countItems("tile-manifest"),
+      countItems("tile-blobs"),
       countItems("offline-config"),
       countItems("draft-reports"),
       countItems("submission-queue"),
