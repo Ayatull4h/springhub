@@ -88,6 +88,24 @@ model Session {
   @@index([expiresAt])
 }
 
+model Spring {
+  id          String   @id @default(uuid())
+  name        String
+  snappedLat  Float?
+  snappedLng  Float?
+  province    String   @default("")
+  regency     String   @default("")
+  village     String   @default("")
+  subdistrict String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reports Report[]
+
+  @@index([snappedLat, snappedLng])
+  @@index([name])
+}
+
 model Report {
   id              String       @id @default(uuid())
   userId          String?
@@ -103,12 +121,14 @@ model Report {
   reviewedById    String?
   reviewNote      String       @default("")
   featuredPhotoId String?
+  springId        String?
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
   user       Profile?      @relation(fields: [userId], references: [id])
   reviewedBy Profile?      @relation("reviewedReports", fields: [reviewedById], references: [id])
   photos     ReportPhoto[] @relation("ReportPhotos")
+  spring     Spring?       @relation(fields: [springId], references: [id])
 
   pointsLogs PointsLog[]
   form       Form?       @relation(fields: [formSlug], references: [slug])
@@ -118,6 +138,7 @@ model Report {
   @@index([formSlug])
   @@index([createdAt])
   @@index([guestId])
+  @@index([springId])
 }
 
 model ReportPhoto {

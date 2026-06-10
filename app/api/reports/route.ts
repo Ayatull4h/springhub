@@ -234,6 +234,49 @@ export async function POST(request: Request) {
       },
     });
 
+    // ── Link or create Spring ────────────────────────────────────────
+    const springName = (fieldData?.spring_name as string || "").trim();
+    if (springName && formSlug !== "trench-development" && formSlug !== "seedling-stock") {
+      try {
+        // Cari spring yang cocok: snapped location match + nama mirip
+        const existingSpring = snappedLat && snappedLng ? await prisma.spring.findFirst({
+          where: {
+            snappedLat: { gte: snappedLat - 0.001, lte: snappedLat + 0.001 },
+            snappedLng: { gte: snappedLng - 0.001, lte: snappedLng + 0.001 },
+            name: { contains: springName, mode: "insensitive" },
+          },
+        }) : null;
+
+        if (existingSpring) {
+          // Link ke spring yang sudah ada
+          await prisma.report.update({
+            where: { id: report.id },
+            data: { springId: existingSpring.id },
+          });
+        } else {
+          // Buat spring baru
+          const newSpring = await prisma.spring.create({
+            data: {
+              name: springName,
+              snappedLat,
+              snappedLng,
+              province: (fieldData?.province as string) || "",
+              regency: (fieldData?.regency as string) || "",
+              village: (fieldData?.village as string) || "",
+              subdistrict: (fieldData?.subdistrict as string) || "",
+            },
+          });
+          await prisma.report.update({
+            where: { id: report.id },
+            data: { springId: newSpring.id },
+          });
+        }
+      } catch (e) {
+        console.warn("[Spring] Link error:", e);
+        // Non-critical — report tetap tersimpan walau tanpa springId
+      }
+    }
+
     // NOTE: Points are NOT awarded here — they are awarded server-side
     // when an admin approves the report (see app/api/admin/reports/[id]/approve/route.ts).
     // This prevents double-awarding.
