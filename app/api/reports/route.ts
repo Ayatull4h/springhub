@@ -11,7 +11,7 @@ import { snapToProtectionGrid } from "@/lib/geo";
 import { verifyCsrfToken } from "@/lib/csrf";
 
 import { apiLimiter } from "@/lib/rate-limit";
-const DAILY_FORM_LIMIT = 5; // per user
+const DAILY_FORM_LIMIT = 999; // per user (sementara — untuk testing)
 
 export async function POST(request: Request) {
   try {
