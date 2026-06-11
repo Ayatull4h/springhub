@@ -157,7 +157,7 @@ export default function AdminReviewPage() {
                       {formLabels[r.formSlug] ?? r.formSlug}
                     </span>
                     <span className="ml-2 text-sm text-ink-muted">
-                      {t("common.by")} {r.user?.username ?? `${t("common.guest")} (${r.guestId?.slice(0, 8)}...)`}
+                      {t("common.by")} {(r as any).submitter?.name ?? `${t("common.guest")} (${(r as any).guestId?.slice(0, 8)}...)`}
                     </span>
                   </div>
                   <span className="text-xs text-ink-muted">

@@ -24,6 +24,6 @@ export const CONTACTS = {
       "https://youtube.com/@jagasemesta",
     tiktok:
       "https://www.tiktok.com/@jagasemesta",
-    facebook: "https://www.facebook.com/jagasemesta",
+    facebook: "https://www.facebook.com/p/Jaga-Semesta-100092833113441",
   },
 } as const;

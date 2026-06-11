@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 import { StatusInfo } from "@/components/sections/status-info";
+import { FloatingPointsButton } from "@/components/floating-points-button";
 
 const LeafletMap = dynamic(
   () => import("@/components/map/leaflet-map").then((m) => m.LeafletMap),
@@ -177,7 +178,7 @@ export function SpringMap() {
       </div>
 
       {/* Full-width map */}
-      <div className="card mt-6 overflow-hidden p-0">
+      <div className="card mt-6 p-0 relative">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-ink">{t("map.show")}</span>
@@ -196,7 +197,7 @@ export function SpringMap() {
             <label className="flex items-center gap-1.5 text-xs cursor-pointer">
               <input type="checkbox" checked={showTrench} onChange={e => setShowTrench(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-amber-800" />
               <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-amber-800" /> Rorak
+                <span className="h-2 w-2 rounded-full bg-amber-800" /> {t("map.checkTrench")}
               </span>
             </label>
             <label className="flex items-center gap-1.5 text-xs cursor-pointer">
@@ -243,15 +244,15 @@ export function SpringMap() {
               {t("map.springDetails")}
             </h3>
             <span className="text-xs text-ink-subtle">
-              {reportsLoading ? "Memuat..." : t("common.pageOf", { current: String(Math.min(currentPage * itemsPerPage, visible.length)), total: String(visible.length) })}
+              {reportsLoading ? t("loading") : t("common.pageOf", { current: String(Math.min(currentPage * itemsPerPage, visible.length)), total: String(visible.length) })}
             </span>
           </div>
           {reportsLoading && visible.length === 0 ? (
             <div className="mt-3 flex items-center justify-center py-8 text-sm text-ink-muted">
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Memuat data...
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("loading")}
             </div>
           ) : visible.length === 0 ? (
-            <div className="mt-3 py-8 text-center text-sm text-ink-muted">Belum ada laporan</div>
+            <div className="mt-3 py-8 text-center text-sm text-ink-muted">{t("map.noReports")}</div>
           ) : (
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {visibleList.map((r) => {
@@ -284,7 +285,7 @@ export function SpringMap() {
                         month: "short",
                         year: "numeric",
                       })}{" "}
-                      · {r.user?.username ?? "anonim"}
+                      · {r.user?.username ?? t("common.anonymous")}
                     </div>
                   </div>
                 </li>
@@ -369,6 +370,7 @@ export function SpringMap() {
         </div>
       </div>
       <PointsGuideModal open={showGuide} onClose={() => setShowGuide(false)} />
+      <FloatingPointsButton />
     </section>
   );
 }

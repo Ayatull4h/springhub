@@ -125,6 +125,9 @@ button:not(:disabled) {
   cursor: pointer !important;
 }
 
+/* Ensure Leaflet popups always appear above page headers */
+.leaflet-popup { z-index: 1000 !important; }
+
 /* Restore Leaflet map display in dark mode — jangan kena override global */
 .dark .leaflet-container {
   background-color: #f8fafc !important;

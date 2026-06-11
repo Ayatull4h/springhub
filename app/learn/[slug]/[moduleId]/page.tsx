@@ -13,6 +13,7 @@ import {
   Sparkles,
   Loader2,
   AlertCircle,
+  Lock,
 } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
 
@@ -102,6 +103,8 @@ export default function LearnModulePage() {
   const isCompletedModule = progress
     ? currentIndex < progress.completedModules
     : false;
+  const isLockedModule =
+    currentIndex > (progress?.completedModules ?? 0);
 
   async function handleComplete() {
     if (!user?.userId || !course || !module) {
@@ -207,6 +210,45 @@ export default function LearnModulePage() {
       {/* Content */}
       <div className="container-page py-8">
         <div className="mx-auto max-w-2xl">
+          {/* Locked module barrier */}
+          {isLockedModule && (
+            <div className="card mb-4 border-amber-200 bg-amber-50 dark:border-amber-700/50 dark:bg-amber-900/20">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 rounded-full bg-amber-100 p-2 dark:bg-amber-800/50">
+                  <Lock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                    {user
+                      ? "Complete previous modules first"
+                      : "Sign in to track your progress"}
+                  </p>
+                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                    {user
+                      ? "This module is locked until you complete the previous ones in this course."
+                      : "Create an account or sign in to save your progress, earn points, and unlock all modules."}
+                  </p>
+                  {!user && (
+                    <div className="mt-3 flex gap-2">
+                      <Link
+                        href="/sign-in"
+                        className="rounded-md bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700"
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        href="/join"
+                        className="rounded-md border border-ink-line bg-white px-3 py-1.5 text-xs font-medium text-ink hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                      >
+                        Create Account
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Module content */}
           <div className="card">
             {module.content ? (

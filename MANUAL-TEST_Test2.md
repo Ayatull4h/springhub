@@ -1,17 +1,17 @@
 # Manual Test Plan — SpringHub
 
-> \\\*\\\*URL:\\\*\\\* https://springhub.vercel.app/
+> \\\\\\\*\\\\\\\*URL:\\\\\\\*\\\\\\\* https://springhub.vercel.app/
 > 
-> \\\*\\\*Akun Test:\\\*\\\*
-> - Volunteer: `volunteer@springhub.id` / `vol12345`
+> \\\\\\\*\\\\\\\*Akun Test:\\\\\\\*\\\\\\\*
+> - Volunteer: `volunteer@springhub.id` / `vol123`
 > - Admin: `admin@springhub.id` / `admin123`
 > 
-> \\\*\\\*Cara pakai:\\\*\\\*
-> - Isi kolom \\\*\\\*✅/❌\\\*\\\* setelah test (✅ = berhasil, ❌ = gagal)
-> - Isi kolom \\\*\\\*Catatan\\\*\\\* jika ada yang tidak sesuai harapan
-> - \\\*\\\*HP\\\*\\\* = test pakai handphone (Chrome/Safari)
-> - \\\*\\\*PC\\\*\\\* = test pakai komputer/laptop
-> - \\\*\\\*Both\\\*\\\* = test di kedua perangkat
+> \\\\\\\*\\\\\\\*Cara pakai:\\\\\\\*\\\\\\\*
+> - Isi kolom \\\\\\\*\\\\\\\*✅/❌\\\\\\\*\\\\\\\* setelah test (✅ = berhasil, ❌ = gagal)
+> - Isi kolom \\\\\\\*\\\\\\\*Catatan\\\\\\\*\\\\\\\* jika ada yang tidak sesuai harapan
+> - \\\\\\\*\\\\\\\*HP\\\\\\\*\\\\\\\* = test pakai handphone (Chrome/Safari)
+> - \\\\\\\*\\\\\\\*PC\\\\\\\*\\\\\\\* = test pakai komputer/laptop
+> - \\\\\\\*\\\\\\\*Both\\\\\\\*\\\\\\\* = test di kedua perangkat
 
 \---
 
@@ -39,28 +39,28 @@
 |1|Both|Login admin: `admin@springhub.id` / `admin123`|Redirect ke `/admin` dashboard|✅||
 |2|Both|Klik sidebar **Review Queue**|Daftar pending report muncul|✅|Kalo Input sengaja panjang dan bukan fullscreen bisa keluar dari box form.<br /><br />Tadi sempat bisa namun sekarang review queue menjadi kosong|
 |3|Both|Cek foto yang diupload sebelumnya (jika ada)|Foto thumbnail muncul, bisa diklik jadi featured (border biru)|-|Tidak ada thumbnail karena tidak bisa upload foto, nam|
-|4|Both|Klik tombol **Approve** (centang hijau)|Loading, report hilang dari queue|-||
-|5|Both|Buka tab **Reports**|Status report berubah jadi "approved"|-||
+|4|Both|Klik tombol **Approve** (centang hijau)|Loading, report hilang dari queue|✅||
+|5|Both|Buka tab **Reports**|Status report berubah jadi "approved"|✅||
 
 ### 1.3 Verifikasi Poin + Notifikasi (sebagai Volunteer)
 
 |#|Device|Aksi|Harapan|✅/❌|Catatan|
 |-|-|-|-|-|-|
-|1|Both|Logout admin, login volunteer: `volunteer@springhub.id` / `vol123`|Masuk landing|-|Volunteer passwordnya kurang panjang hingga tidak mencapai karakter minimum untuk bisa login|
-|2|Both|Klik bell icon 🔔 di header (atas kanan)|Notif baru muncul: ✅ "Laporan spring-monitoring disetujui!"|-||
-|3|Both|Klik **Profile** di menu user (pojok kanan)|Halaman profile terbuka|-||
-|4|Both|Cek angka **Points** di header profile|Poin bertambah **+25** dari sebelumnya|-||
-|5|Both|Scroll ke **Points History**|Ada baris "Approved spring-monitoring" +25 pts|-||
+|1|Both|Logout admin, login volunteer: `volunteer@springhub.id` / `vol123`|Masuk landing|✅||
+|2|Both|Klik bell icon 🔔 di header (atas kanan)|Notif baru muncul: ✅ "Laporan spring-monitoring disetujui!"|✅||
+|3|Both|Klik **Profile** di menu user (pojok kanan)|Halaman profile terbuka|✅||
+|4|Both|Cek angka **Points** di header profile|Poin bertambah **+25** dari sebelumnya|✅||
+|5|Both|Scroll ke **Points History**|Ada baris "Approved spring-monitoring" +25 pts|✅||
 
 ### 1.4 Admin Reject + Catatan
 
 |#|Device|Aksi|Harapan|✅/❌|Catatan|
 |-|-|-|-|-|-|
-|1|Both|Submit form baru sebagai volunteer (ulangi langkah 1.1 nomor 1-9)|Report pending baru siap|-||
-|2|Both|Login admin, buka **Review Queue**|Report baru muncul di queue|-||
-|3|Both|Isi **note** di field catatan, contoh: "Foto tidak jelas, mohon upload ulang"|Text muncul di field|-||
-|4|Both|Klik tombol **Reject** (X merah)|Report hilang dari queue|-||
-|5|Both|Login volunteer, cek notifikasi 🔔|Notif baru: ❌ "Laporan ... ditolak" + catatan admin terbaca|-||
+|1|Both|Submit form baru sebagai volunteer (ulangi langkah 1.1 nomor 1-9)|Report pending baru siap|✅||
+|2|Both|Login admin, buka **Review Queue**|Report baru muncul di queue|✅||
+|3|Both|Isi **note** di field catatan, contoh: "Foto tidak jelas, mohon upload ulang"|Text muncul di field|✅||
+|4|Both|Klik tombol **Reject** (X merah)|Report hilang dari queue|✅||
+|5|Both|Login volunteer, cek notifikasi 🔔|Notif baru: ❌ "Laporan ... ditolak" + catatan admin terbaca|✅||
 
 \---
 
@@ -70,15 +70,15 @@
 
 |#|Device|Aksi|Harapan|✅/❌|Catatan|
 |-|-|-|-|-|-|
-|1|HP|Buka `/admin` (login admin dulu)|Sidebar collapse/hilang, hamburger menu (☰) muncul|✅|Admin di laptop dan Hp saya rusak|
+|1|HP|Buka `/admin` (login admin dulu)|Sidebar collapse/hilang, hamburger menu (☰) muncul|✅||
 |2|HP|Tap hamburger menu (☰)|Sidebar overlay terbuka dari kiri|✅||
 |3|HP|Tap **Users**|Tabel desktop berubah jadi **card view** (bukan kolom-kolom)|✅||
-|4|HP|Tap **Reports**|Card view: form, status badge, active toggle|-||
-|5|HP|Tap **Donations**|Card view: donor name, amount Rp, status badge|-||
-|6|HP|Tap **Projects**|Card view: title, region, progress|-||
-|7|HP|Tap **Feedback**|Card view: type badge, preview text, status|-||
-|8|PC|Resize browser ke <768px|Semua admin halaman jadi card view|-||
-|9|Both|Klik overlay gelap di samping sidebar|Sidebar tertutup|-||
+|4|HP|Tap **Reports**|Card view: form, status badge, active toggle|✅||
+|5|HP|Tap **Donations**|Card view: donor name, amount Rp, status badge|✅||
+|6|HP|Tap **Projects**|Card view: title, region, progress|✅||
+|7|HP|Tap **Feedback**|Card view: type badge, preview text, status|✅||
+|8|PC|Resize browser ke <768px|Semua admin halaman jadi card view|✅||
+|9|Both|Klik overlay gelap di samping sidebar|Sidebar tertutup|✅||
 
 ### 2.2 Donasi Flow
 
@@ -147,11 +147,11 @@
 
 |#|Device|Aksi|Harapan|✅/❌|Catatan|
 |-|-|-|-|-|-|
-|1|Both|Login volunteer, cek bell icon 🔔|Angka merah (unread count) muncul|-|Volunteer tidak bisa diakses|
-|2|Both|Klik bell icon|Buka halaman `/notifications`|-||
-|3|Both|Cek daftar notifikasi|Ada ✅ "Laporan ... disetujui" dan/atau ❌ "ditolak"|-||
-|4|Both|Klik **Tandai Dibaca** pada satu notif|Blue dot di kiri hilang|-||
-|5|Both|Klik **Tandai Semua Dibaca**|Semua notif jadi read (tanpa blue dot)|-||
+|1|Both|Login volunteer, cek bell icon 🔔|Angka merah (unread count) muncul|✅||
+|2|Both|Klik bell icon|Buka halaman `/notifications`|✅||
+|3|Both|Cek daftar notifikasi|Ada ✅ "Laporan ... disetujui" dan/atau ❌ "ditolak"|✅||
+|4|Both|Klik **Tandai Dibaca** pada satu notif|Blue dot di kiri hilang|✅||
+|5|Both|Klik **Tandai Semua Dibaca**|Semua notif jadi read (tanpa blue dot)|✅||
 
 \---
 
@@ -197,7 +197,7 @@
 
 |#|Device|Aksi|Harapan|✅/❌|Catatan|
 |-|-|-|-|-|-|
-|1|Both|Buka landing, scroll ke Learning Hub|Course cards (dengan image + title + deskripsi)|✅|Imagenya tidak ada |
+|1|Both|Buka landing, scroll ke Learning Hub|Course cards (dengan image + title + deskripsi)|✅|Imagenya tidak ada|
 |2|Both|Klik salah satu course|Detail course: title, module list, progress|✅||
 |3|Both|Klik nama module|Halaman module: konten, video embed|-|Video embed tidak ada dalam module.<br /><br />Pada module walaupun ada tulisan locked masih bisa terakses|
 |4|Both|Klik **Tandai Selesai**|Progress bar terisi, poin +25|❌|Walau sudah signed in masih diminta untuk sign in, untuk track progress|
@@ -253,7 +253,7 @@
 |-|-|-|-|-|-|
 |1|Both|Buka `/springs`|Daftar semua mata air, masing-masing card: nama, provinsi, jumlah laporan, tahun|✅||
 |2|Both|Jika daftar kosong|Tampilkan "Belum ada mata air terdaftar"|✅||
-|3|Both|Klik salah satu spring|Buka halaman `/springs/\\\[id]`|✅||
+|3|Both|Klik salah satu spring|Buka halaman `/springs/\\\\\\\[id]`|✅||
 |4|Both|Cek header halaman|Nama spring, provinsi, tahun pertama dipantau, jumlah laporan|✅||
 |5|Both|Cek 3 stat cards|"Terakhir diperbarui", "Total laporan", "Tahun pemantauan"|✅||
 |6|Both|Scroll ke timeline|Laporan per tahun, urut descending (terbaru di atas)|✅||
@@ -261,8 +261,8 @@
 |8|Both|Cek field data preview|Field terisi dari report (flow\_condition, water\_quality, dll)|-|Hanya terlihat flow condition|
 |9|Both|Cek foto (jika ada)|Thumbnail foto di timeline|-|Tidak bisa upload foto|
 |10|Both|Klik link "Semua Mata Air"|Kembali ke daftar `/springs`|✅||
-|11|**HP**|Submit form spring-monitoring dengan nama spring yang SUDAH ADA|Report otomatis ter-link ke spring yang sama|-|Tidak dapat akses review queue pada device saya |
-|12|**HP**|Submit form spring-monitoring dengan nama spring BARU|Spring baru terbuat|-||
+|11|**HP**|Submit form spring-monitoring dengan nama spring yang SUDAH ADA|Report otomatis ter-link ke spring yang sama|-|Tidak dapat akses review queue pada device saya|
+|12|**HP**|Submit form spring-monitoring dengan nama spring BARU|Spring baru terbuat|✅||
 |13|**PC**|Buka `/springs` → cek spring yang diupdate|Laporan terbaru muncul di timeline spring|-||
 
 ### 3.11 Floating Points Guide
@@ -281,9 +281,9 @@
 
 |Prioritas|Total Test|✅ Pass|❌ Fail|Skip|
 |-|:-:|:-:|:-:|:-:|
-|P1 — Core Flow|25|10|1|14|
+|P1 — Core Flow|25||||
 |P2 — UI \& Fitur|39||||
-|P3 — Polish|35|21|2|12|
+|P3 — Polish|35||||
 |**TOTAL**|**99**||||
 
 ### Catatan Bug Ditemukan
@@ -292,11 +292,14 @@
 |-|-|-|-|
 |1|Login Page|Password Volunteer sudah tidak valid||
 |2|Admin Dashboard|Kadang Data di Admin dashboard suka hilang secara tiba tiba dan walaupun di refresh masih tidak muncul kembali||
-|3|Main Page|Tombol Login dan Join kadang suka error ||
+|3|Main Page|Tombol Login dan Join kadang suka error||
+|4|All|Kadang saat memencet tombol yang harusnya membawa ke page lain, suka ada tulisan internal server error||
 
 \---
 
-> \\\*\\\*Estimasi:\\\*\\\* 45-60 menit untuk PC + 30 menit untuk HP
+> \\\\\\\*\\\\\\\*Estimasi:\\\\\\\*\\\\\\\* 45-60 menit untuk PC + 30 menit untuk HP
 > 
-> \\\*\\\*Tips:\\\*\\\* Prioritaskan P1 dulu. Kalau P1 semua ✅, web siap production.
+> \\\\\\\*\\\\\\\*Tips:\\\\\\\*\\\\\\\* Prioritaskan P1 dulu. Kalau P1 semua ✅, web siap production.
+
+link fb yang benar : https://www.facebook.com/p/Jaga-Semesta-100092833113441
 

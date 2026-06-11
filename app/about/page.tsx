@@ -1,43 +1,39 @@
-import { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
 import { Shield, Users, TreePine, Droplets, Heart, MapPin } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Tentang SpringHub — Jaga Semesta",
-  description:
-    "SpringHub adalah platform komunitas untuk pemantauan dan restorasi mata air di Indonesia.",
-};
+import { useI18n } from "@/lib/i18n";
 
 const values = [
-  { icon: Droplets, label: "Mata Air Terlindungi", desc: "Memantau dan merestorasi mata air di seluruh Indonesia" },
-  { icon: Users, label: "Komunitas", desc: "Relawan, Field Lead, dan mitra yang bekerja bersama" },
-  { icon: TreePine, label: "Restorasi", desc: "Menanam pohon, membuat rorak, dan konservasi daerah tangkapan air" },
-  { icon: Shield, label: "Transparansi", desc: "Data real-time, donasi terverifikasi, dan laporan terbuka" },
-  { icon: Heart, label: "Gotong Royong", desc: "Semua kontribusi dihargai dengan sistem poin dan penghargaan" },
-  { icon: MapPin, label: "Berbasis Lokasi", desc: "Peta interaktif dengan perlindungan privasi grid 5 km" },
+  { icon: Droplets, labelKey: "about.value1", descKey: "about.value1Desc" },
+  { icon: Users, labelKey: "about.value2", descKey: "about.value2Desc" },
+  { icon: TreePine, labelKey: "about.value3", descKey: "about.value3Desc" },
+  { icon: Shield, labelKey: "about.value4", descKey: "about.value4Desc" },
+  { icon: Heart, labelKey: "about.value5", descKey: "about.value5Desc" },
+  { icon: MapPin, labelKey: "about.value6", descKey: "about.value6Desc" },
 ];
 
 export default function AboutPage() {
+  const { t } = useI18n();
+
   return (
     <div className="container-page py-16">
       {/* Hero */}
       <div className="mx-auto max-w-3xl text-center">
         <h1 className="text-4xl font-extrabold tracking-tight text-ink">
-          Tentang <span className="text-brand-600">SpringHub</span>
+          {t("about.title")} <span className="text-brand-600">{t("about.titleBrand")}</span>
         </h1>
-        <p className="mt-4 text-lg text-ink-muted leading-relaxed">
-          SpringHub adalah platform berbasis komunitas untuk <strong>pemantauan dan restorasi mata air</strong> di Indonesia. 
-          Kami menghubungkan relawan, field lead, dan mitra untuk melindungi sumber air bersih.
-        </p>
+        <p
+          className="mt-4 text-lg text-ink-muted leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: t("about.description") }}
+        />
       </div>
 
       {/* Visi */}
       <div className="mx-auto mt-16 max-w-3xl">
-        <h2 className="text-2xl font-bold text-ink">Visi & Misi</h2>
+        <h2 className="text-2xl font-bold text-ink">{t("about.vision")}</h2>
         <p className="mt-4 text-ink-muted leading-relaxed">
-          Indonesia memiliki ribuan mata air yang menjadi sumber kehidupan bagi masyarakat. 
-          Sayangnya, banyak mata air yang terancam karena alih fungsi lahan, pencemaran, dan perubahan iklim. 
-          SpringHub lahir untuk menjembatani masyarakat, relawan, dan donor dalam upaya konservasi.
+          {t("about.visionText")}
         </p>
       </div>
 
@@ -47,10 +43,10 @@ export default function AboutPage() {
           {values.map((v) => {
             const Icon = v.icon;
             return (
-              <div key={v.label} className="card">
+              <div key={v.labelKey} className="card">
                 <Icon className="h-8 w-8 text-brand-600" />
-                <h3 className="mt-3 font-semibold text-ink">{v.label}</h3>
-                <p className="mt-1 text-sm text-ink-muted">{v.desc}</p>
+                <h3 className="mt-3 font-semibold text-ink">{t(v.labelKey)}</h3>
+                <p className="mt-1 text-sm text-ink-muted">{t(v.descKey)}</p>
               </div>
             );
           })}
@@ -59,16 +55,16 @@ export default function AboutPage() {
 
       {/* CTA */}
       <div className="mx-auto mt-16 max-w-2xl rounded-2xl bg-brand-50 dark:bg-brand-900/20 p-8 text-center">
-        <h2 className="text-2xl font-bold text-ink">Ikut Berkontribusi</h2>
+        <h2 className="text-2xl font-bold text-ink">{t("about.ctaTitle")}</h2>
         <p className="mt-2 text-ink-muted">
-          Setiap laporan, donasi, dan aksi kecil berarti untuk masa depan air bersih Indonesia.
+          {t("about.ctaDesc")}
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <Link href="/join" className="btn-primary inline-flex items-center gap-2">
-            <Users className="h-4 w-4" /> Gabung Sekarang
+            <Users className="h-4 w-4" /> {t("about.ctaJoin")}
           </Link>
           <Link href="/#map" className="btn-secondary inline-flex items-center gap-2">
-            <MapPin className="h-4 w-4" /> Lihat Peta
+            <MapPin className="h-4 w-4" /> {t("about.ctaMap")}
           </Link>
         </div>
       </div>

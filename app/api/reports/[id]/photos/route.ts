@@ -65,9 +65,17 @@ export async function POST(
       { status: 201 }
     );
   } catch (error) {
-    console.error("Photo upload error:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
+    console.error("Photo upload error:", {
+      message,
+      stack: error instanceof Error ? error.stack : undefined,
+      reportId: params.id,
+    });
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Internal server error" },
+      {
+        error: message,
+        reportId: params.id,
+      },
       { status: 500 }
     );
   }

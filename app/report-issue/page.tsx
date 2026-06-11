@@ -156,7 +156,7 @@ export default function ReportIssuePage() {
               value={bugDescription}
               onChange={(e) => setBugDescription(e.target.value)}
               placeholder={t("reportIssue.bugPlaceholder", "Jelaskan apa yang terjadi...")}
-              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
             />
           </div>
 

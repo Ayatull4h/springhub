@@ -10,6 +10,32 @@ export const metadata: Metadata = {
   description: "Riwayat pemantauan dan restorasi mata air",
 };
 
+const fieldLabels: Record<string, string> = {
+  spring_name: "Nama Mata Air",
+  village: "Desa",
+  subdistrict: "Kecamatan",
+  province: "Provinsi",
+  regency: "Kota / Kabupaten",
+  date: "Tanggal",
+  flow_condition: "Kondisi Debit / Aliran",
+  water_quality: "Kualitas Air",
+  cleanliness: "Kebersihan",
+  notes: "Catatan",
+  activity_types: "Jenis Kegiatan",
+  volunteer_count: "Jumlah Relawan",
+  measurement: "Pengukuran",
+  coordinator_phone: "HP Koordinator",
+  volunteer_name: "Nama Relawan",
+  trench_count: "Jumlah Rorak",
+  dimensions: "Dimensi Rorak",
+  tree_count: "Jumlah Pohon",
+  tree_species: "Jenis Tanaman",
+  species: "Jenis Tanaman",
+  count: "Jumlah Bibit",
+  contact_name: "Narahubung",
+  contact_phone: "HP Narahubung",
+};
+
 const formLabels: Record<string, string> = {
   "spring-monitoring": "Pemantauan",
   "spring-restoration": "Restorasi",
@@ -136,10 +162,10 @@ export default async function SpringTimelinePage({
 
                     {/* Field data preview */}
                     <div className="mt-2 grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
-                      {Object.entries(fieldData).slice(0, 6).map(([key, val]) => (
+                      {Object.entries(fieldData).slice(0, 8).map(([key, val]) => (
                         key !== "_website" && key !== "_submit_time" && key !== "form_slug" && (
                           <div key={key} className="text-xs">
-                            <span className="text-ink-subtle">{key.replace(/_/g, " ")}: </span>
+                            <span className="text-ink-subtle">{fieldLabels[key] ?? key.replace(/_/g, " ")}: </span>
                             <span className="text-ink">{Array.isArray(val) ? val.join(", ") : String(val).slice(0, 60)}</span>
                           </div>
                         )

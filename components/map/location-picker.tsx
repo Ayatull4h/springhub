@@ -223,7 +223,7 @@ export function LocationPicker({ name, required }: LocationPickerProps) {
 
       {/* Map picker */}
       {inputMode === "map" && (
-        <div className="overflow-hidden rounded-lg border border-ink-line">
+        <div className="relative rounded-lg border border-ink-line leaflet-popup-override">
           <div className="aspect-[16/9] w-full min-h-[200px]">
             <PickerMap
               key={mapKey}

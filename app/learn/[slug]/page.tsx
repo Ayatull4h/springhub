@@ -186,16 +186,10 @@ export default function LearnCoursePage() {
             course.modules.map((mod, index) => {
               const isCompletedModule = index < completedCount;
               const isCurrentModule = index === completedCount;
-              return (
-                <Link
-                  key={mod.id}
-                  href={`/learn/${slug}/${mod.id}`}
-                  className={`card flex items-center gap-4 transition ${
-                    isCurrentModule && !isCompleted
-                      ? "border-brand-300 ring-1 ring-brand-200 dark:ring-brand-700"
-                      : ""
-                  } ${isCompletedModule ? "bg-emerald-50/50 dark:bg-emerald-900/20" : ""}`}
-                >
+              const isLocked = index > completedCount;
+
+              const inner = (
+                <>
                   <div className="flex-shrink-0">
                     {isCompletedModule ? (
                       <CheckCircle2 className="h-5 w-5 text-emerald-500" />
@@ -211,13 +205,51 @@ export default function LearnCoursePage() {
                       Module {index + 1} of {totalModules}
                     </p>
                   </div>
-                  <span className="text-xs font-medium text-brand-600">
+                  <span
+                    className={`text-xs font-medium ${
+                      isCompletedModule
+                        ? "text-emerald-600"
+                        : isCurrentModule
+                          ? "text-brand-600"
+                          : "text-slate-400 dark:text-slate-500"
+                    }`}
+                  >
                     {isCompletedModule
                       ? "Review"
                       : isCurrentModule
                         ? "Start"
                         : "Locked"}
                   </span>
+                </>
+              );
+
+              if (isLocked) {
+                return (
+                  <div
+                    key={mod.id}
+                    className={`card flex cursor-not-allowed items-center gap-4 opacity-60 ${
+                      isCompletedModule
+                        ? "bg-emerald-50/50 dark:bg-emerald-900/20"
+                        : ""
+                    }`}
+                    title="Complete previous modules first"
+                  >
+                    {inner}
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={mod.id}
+                  href={`/learn/${slug}/${mod.id}`}
+                  className={`card flex items-center gap-4 transition ${
+                    isCurrentModule && !isCompleted
+                      ? "border-brand-300 ring-1 ring-brand-200 dark:ring-brand-700"
+                      : ""
+                  } ${isCompletedModule ? "bg-emerald-50/50 dark:bg-emerald-900/20" : ""}`}
+                >
+                  {inner}
                 </Link>
               );
             })
