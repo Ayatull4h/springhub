@@ -793,17 +793,31 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                     </select>
                   ) : field.type === "photo" ? (
                     <div className="mt-1">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                        multiple
-                        onChange={(e) => {
-                          handlePhotoCapture(field.id, e.target.files);
-                          e.target.value = "";
-                        }}
-                        className="block w-full text-xs text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30 dark:file:text-brand-300"
-                      />
+                      <div className="flex gap-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          multiple
+                          onChange={(e) => {
+                            handlePhotoCapture(field.id, e.target.files);
+                            e.target.value = "";
+                          }}
+                          className="block w-full text-xs text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30 dark:file:text-brand-300"
+                          title="Ambil foto dari kamera"
+                        />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={(e) => {
+                            handlePhotoCapture(field.id, e.target.files);
+                            e.target.value = "";
+                          }}
+                          className="block w-full text-xs text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-slate-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100 dark:file:bg-slate-700 dark:file:text-slate-300"
+                          title="Pilih dari galeri"
+                        />
+                      </div>
                       {formPhotos[field.id] && formPhotos[field.id].length > 0 && (
                         <div className="mt-1 flex flex-wrap gap-1">
                           {formPhotos[field.id].map((file, idx) => (

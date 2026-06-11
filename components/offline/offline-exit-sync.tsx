@@ -241,21 +241,35 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     if (!mapEl) { downloadText(); return; }
 
     try {
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 800));
 
-      const canvas = await html2canvas(mapEl, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        height: mapEl.scrollHeight,
-        width: mapEl.scrollWidth,
-      });
+      // Coba html2canvas — jika gagal (Leaflet CORS), fallback ke canvas manual
+      let canvas: HTMLCanvasElement | null = null;
+      try {
+        canvas = await html2canvas(mapEl, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          height: mapEl.scrollHeight,
+          width: mapEl.scrollWidth,
+          logging: false,
+          allowTaint: false,
+        });
+      } catch {
+        // Buat canvas putih dengan info sebagai fallback
+        canvas = document.createElement("canvas");
+        canvas.width = 800 * 2;
+        canvas.height = 600 * 2;
+      }
 
-      // Overlay teks stats di canvas
       const overlay = document.createElement("canvas");
       overlay.width = canvas.width;
-      overlay.height = canvas.height;
+      overlay.height = Math.max(canvas.height, 600 * 2);
       const ctx = overlay.getContext("2d")!;
+
+      // Gambar canvas (atau putih jika fallback)
+      ctx.fillStyle = "#f0f0f0";
+      ctx.fillRect(0, 0, overlay.width, overlay.height);
       ctx.drawImage(canvas, 0, 0);
 
       // Panel info bawah
@@ -265,14 +279,13 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
 
       ctx.fillStyle = "#fff";
       ctx.font = `bold ${Math.round(18 * 2)}px sans-serif`;
-      ctx.fillText("📊 SpringHub — Ringkasan Survey", 20 * 2, overlay.height - pH + 28 * 2);
+      ctx.fillText("SpringHub — Ringkasan Survey", 20 * 2, overlay.height - pH + 28 * 2);
 
       ctx.font = `${Math.round(13 * 2)}px sans-serif`;
       const dateStr = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-      const infoLine = `📍 ${formatDistance(summary.totalDistance)}  |  💧 ${summary.springCount}  🌱 ${summary.treeCount}  🕳️ ${summary.trenchCount}  🌰 ${summary.seedlingCount}  |  📋 ${summary.reportCount} laporan  📸 ${summary.photoCount} foto  |  🕐 ${dateStr}`;
+      const infoLine = `${formatDistance(summary.totalDistance)}  |  Springs: ${summary.springCount}  Trees: ${summary.treeCount}  Trenches: ${summary.trenchCount}  Seedlings: ${summary.seedlingCount}  |  Reports: ${summary.reportCount}  Photos: ${summary.photoCount}  |  ${dateStr}`;
       ctx.fillText(infoLine, 20 * 2, overlay.height - pH + 54 * 2);
 
-      // Watermark
       ctx.fillStyle = "rgba(255,255,255,0.2)";
       ctx.font = `${Math.round(11 * 2)}px sans-serif`;
       ctx.fillText("SpringHub — Jaga Semesta", overlay.width - 200 * 2, overlay.height - 12 * 2);
