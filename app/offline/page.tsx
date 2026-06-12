@@ -72,16 +72,37 @@ function OfflinePageContent() {
   const [phase, setPhase] = useState<OfflinePhase>("checking");
   const [checkError, setCheckError] = useState("");
   const [storageInfo, setStorageInfo] = useState("");
+  const [isAndroid, setIsAndroid] = useState(false);
 
   // ── Check prerequisites ────────────────────────────────────────────────
   useEffect(() => {
     async function check() {
       try {
-        // Check IndexedDB availability (iOS Chrome / private mode sering blokir)
+        // Deteksi Android
+        try {
+          if (typeof navigator !== "undefined" && /Android/i.test(navigator.userAgent)) {
+            setIsAndroid(true);
+          }
+        } catch {}
+
+        // Check IndexedDB availability (iOS Chrome / private mode / Android Incognito sering blokir)
         const dbOk = await offlineDB.isAvailable();
         if (!dbOk) {
           setPhase("storage-error");
-          setCheckError("Penyimpanan lokal (IndexedDB) tidak tersedia. Coba gunakan Safari atau non-private browsing.");
+          const isChrome = typeof navigator !== "undefined" && /Chrome|CriOS/i.test(navigator.userAgent);
+          const isAndroid2 = /Android/i.test(typeof navigator !== "undefined" ? navigator.userAgent : "");
+          if (isAndroid2 && isChrome) {
+            setCheckError(
+              "Penyimpanan lokal (IndexedDB) tidak tersedia. Android Chrome di mode Incognito atau private browsing tidak mendukung IndexedDB.\n\n" +
+              "Solusi:\n" +
+              "1. Tutup mode Incognito (buka Chrome > tab biasa)\n" +
+              "2. Pastikan storage tidak penuh (>500 MB free)\n" +
+              "3. Chrome Settings > Site Settings > Storage > Hapus data\n" +
+              "4. Atau gunakan Firefox / Kiwi Browser yang support IndexedDB di private mode"
+            );
+          } else {
+            setCheckError("Penyimpanan lokal (IndexedDB) tidak tersedia. Coba gunakan non-private browsing.");
+          }
           return;
         }
 
@@ -207,6 +228,7 @@ function OfflinePageContent() {
 
   // ── Phase: Storage Error ──────────────────────────────────────────────
   if (phase === "storage-error") {
+    const isAndroidChrome = isAndroid && typeof navigator !== "undefined" && /Chrome/i.test(navigator.userAgent);
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="max-w-sm text-center">
@@ -214,16 +236,30 @@ function OfflinePageContent() {
             <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
           </div>
           <h1 className="mt-4 text-xl font-bold text-ink">Mode Offline Tidak Tersedia</h1>
-          <p className="mt-2 text-sm text-ink-muted">{checkError}</p>
-          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
-            <strong>Tips untuk iOS:</strong>
-            <ul className="mt-1 list-inside list-disc space-y-0.5">
-              <li>Gunakan <strong>Safari</strong> (Chrome di iOS terbatas)</li>
-              <li>Nonaktifkan <strong>Private Browsing</strong></li>
-              <li>Install PWA: Share → Add to Home Screen</li>
-              <li>Hapus data Safari: Settings → Safari → Clear History</li>
-            </ul>
-          </div>
+          <p className="mt-2 whitespace-pre-line text-left text-sm text-ink-muted">{checkError}</p>
+
+          {isAndroidChrome ? (
+            <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-left text-xs text-red-700 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300">
+              <strong className="block mb-1">🔍 Deteksi: Android + Chrome</strong>
+              <p>IndexedDB tidak tersedia. Kemungkinan penyebab:</p>
+              <ul className="mt-1 list-inside list-disc space-y-0.5">
+                <li><strong>Mode Incognito</strong> — buka Chrome tab biasa</li>
+                <li><strong>Storage penuh</strong> — hapus file/cache HP</li>
+                <li><strong>Pengaturan situs</strong> — Settings → Site Settings → Clear Data</li>
+              </ul>
+            </div>
+          ) : (
+            <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-left text-xs text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+              <strong>Tips:</strong>
+              <ul className="mt-1 list-inside list-disc space-y-0.5">
+                <li>Nonaktifkan <strong>Private Browsing</strong></li>
+                <li>Coba browser lain (Firefox, Kiwi Browser)</li>
+                <li>Install PWA: ⋮ → Add to Home Screen</li>
+                <li>Clear cache: Settings → Apps → Chrome → Storage</li>
+              </ul>
+            </div>
+          )}
+
           <div className="mt-6 flex items-center justify-center gap-3">
             <Link href="/" className="btn-primary">
               Kembali ke Beranda
