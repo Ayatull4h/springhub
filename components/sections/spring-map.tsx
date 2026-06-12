@@ -114,11 +114,12 @@ export function SpringMap() {
   const visible = useMemo(
     () => reports.filter(r => {
       const slug = r.formSlug;
-      if (slug.includes("monitoring") && !showMonitoring) return false;
-      if (slug.includes("trench") && !showTrench) return false;
-      if (slug.includes("tree") && !showTreePlanting) return false;
-      if (slug.includes("seedling") && !showSeedling) return false;
-      if (slug.includes("restoration") && !showRestoration) return false;
+      // Use exact slug matching so each filter is independent and predicTable
+      if (slug === "spring-monitoring" && !showMonitoring) return false;
+      if (slug === "trench-development" && !showTrench) return false;
+      if (slug === "tree-planting" && !showTreePlanting) return false;
+      if (slug === "seedling-stock" && !showSeedling) return false;
+      if (slug === "spring-restoration" && !showRestoration) return false;
       return true;
     }),
     [reports, showMonitoring, showTrench, showTreePlanting, showSeedling, showRestoration]

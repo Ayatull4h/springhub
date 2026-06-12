@@ -1,14 +1,16 @@
-export const dynamic = "force-dynamic";
+"use client";
 
-import { Metadata } from "next";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
-import { ArrowLeft, Droplets, MapPin, CalendarDays, ChevronRight, Sparkles } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Timeline Mata Air — SpringHub",
-  description: "Riwayat pemantauan dan restorasi mata air",
-};
+import {
+  ArrowLeft,
+  MapPin,
+  CalendarDays,
+  MessageCircle,
+  Send,
+  User,
+  Loader2,
+} from "lucide-react";
 
 const fieldLabels: Record<string, string> = {
   spring_name: "Nama Mata Air",
@@ -52,28 +54,97 @@ const typeColors: Record<string, string> = {
   "seedling-stock": "bg-sky-50 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300",
 };
 
-export default async function SpringTimelinePage({
+type SpringData = {
+  id: string;
+  name: string;
+  province: string | null;
+  regency: string | null;
+  snappedLat: number | null;
+  snappedLng: number | null;
+  createdAt: string;
+  reports: Array<{
+    id: string;
+    formSlug: string;
+    status: string;
+    fieldData: string;
+    createdAt: string;
+    user: { username: string } | null;
+    photos: Array<{ id: string; storagePath: string; fieldId: string }>;
+  }>;
+};
+
+type Comment = {
+  id: string;
+  userName: string;
+  text: string;
+  createdAt: string;
+};
+
+function getComments(springId: string): Comment[] {
+  try {
+    const raw = localStorage.getItem(`spring-comments-${springId}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function saveComments(springId: string, comments: Comment[]) {
+  localStorage.setItem(`spring-comments-${springId}`, JSON.stringify(comments));
+}
+
+export default function SpringTimelinePage({
   params,
 }: {
   params: { id: string };
 }) {
-  const spring = await prisma.spring.findUnique({
-    where: { id: params.id },
-    include: {
-      reports: {
-        orderBy: { createdAt: "desc" },
-        include: {
-          user: { select: { username: true, region: true } },
-          photos: { select: { id: true, storagePath: true, fieldId: true }, take: 2 },
-        },
-      },
-    },
-  });
+  const [spring, setSpring] = useState<SpringData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentText, setCommentText] = useState("");
+  const [userName, setUserName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  if (!spring) {
+  useEffect(() => {
+    fetch(`/api/springs/${params.id}`)
+      .then(r => r.json())
+      .then(data => { setSpring(data.spring); setLoading(false); })
+      .catch(() => { setError("Gagal memuat data"); setLoading(false); });
+  }, [params.id]);
+
+  useEffect(() => {
+    setComments(getComments(params.id));
+  }, [params.id]);
+
+  function handleAddComment() {
+    if (!commentText.trim() || submitting) return;
+    setSubmitting(true);
+    const newComment: Comment = {
+      id: `c-${Date.now()}`,
+      userName: userName.trim() || "Pengunjung",
+      text: commentText.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [...comments, newComment];
+    setComments(updated);
+    saveComments(params.id, updated);
+    setCommentText("");
+    setSubmitting(false);
+  }
+
+  if (loading) {
+    return (
+      <div className="container-page py-20 text-center">
+        <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-600" />
+        <p className="mt-3 text-sm text-ink-muted">Memuat data...</p>
+      </div>
+    );
+  }
+
+  if (error || !spring) {
     return (
       <div className="container-page py-20 text-center">
         <h1 className="text-2xl font-bold text-ink">Mata air tidak ditemukan</h1>
+        <p className="mt-2 text-sm text-ink-muted">{error}</p>
         <Link href="/springs" className="btn-primary mt-4 inline-flex">Lihat Semua Mata Air</Link>
       </div>
     );
@@ -81,7 +152,7 @@ export default async function SpringTimelinePage({
 
   const reportCount = spring.reports.length;
   const latestReport = spring.reports[0];
-  const years = [...new Set(spring.reports.map(r => new Date(r.createdAt).getFullYear()))].sort((a, b) => b - a);
+  const years = [...new Set(spring.reports.map(r => new Date(r.createdAt).getFullYear()))].sort((a: number, b: number) => b - a);
 
   return (
     <div className="container-page py-12">
@@ -191,6 +262,79 @@ export default async function SpringTimelinePage({
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      <div className="mt-12">
+        <h2 className="flex items-center gap-2 text-xl font-bold text-ink">
+          <MessageCircle className="h-5 w-5 text-brand-600" />
+          Komentar ({comments.length})
+        </h2>
+
+        {/* Comment list */}
+        <div className="mt-4 space-y-3">
+          {comments.length === 0 ? (
+            <p className="py-6 text-center text-sm text-ink-muted">Belum ada komentar. Jadilah yang pertama!</p>
+          ) : (
+            comments.map((c) => (
+              <div key={c.id} className="card flex items-start gap-3">
+                <div className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-brand-50 dark:bg-brand-900/30">
+                  <User className="h-4 w-4 text-brand-600" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-semibold text-ink">{c.userName}</span>
+                    <span className="text-[11px] text-ink-subtle">
+                      {new Date(c.createdAt).toLocaleDateString("id-ID", {
+                        day: "numeric", month: "short", year: "numeric",
+                        hour: "2-digit", minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-sm text-ink-muted">{c.text}</p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Comment form */}
+        <div className="card mt-4">
+          <h3 className="text-sm font-semibold text-ink">Tambah Komentar</h3>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <input
+              type="text"
+              value={userName}
+              onChange={e => setUserName(e.target.value)}
+              placeholder="Nama Anda (opsional)"
+              maxLength={50}
+              className="w-full rounded-md border border-ink-line px-3 py-2 text-sm text-ink placeholder-ink-subtle outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 sm:w-48"
+            />
+            <div className="flex flex-1 gap-2">
+              <input
+                type="text"
+                value={commentText}
+                onChange={e => setCommentText(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleAddComment(); } }}
+                placeholder="Tulis komentar..."
+                maxLength={500}
+                className="flex-1 rounded-md border border-ink-line px-3 py-2 text-sm text-ink placeholder-ink-subtle outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+              />
+              <button
+                onClick={handleAddComment}
+                disabled={!commentText.trim() || submitting}
+                className="inline-flex items-center gap-1.5 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-40"
+              >
+                {submitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+                Kirim
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
