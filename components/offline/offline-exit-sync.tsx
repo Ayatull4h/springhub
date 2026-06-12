@@ -241,36 +241,70 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     if (!mapEl) { downloadText(); return; }
 
     try {
-      await new Promise((r) => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, 1000));
 
-      // Coba html2canvas — jika gagal (Leaflet CORS), fallback ke canvas manual
-      let canvas: HTMLCanvasElement | null = null;
+      // Coba html2canvas dengan allowTaint ( bisa render OSM tiles )
+      let capturedCanvas: HTMLCanvasElement | null = null;
       try {
-        canvas = await html2canvas(mapEl, {
+        capturedCanvas = await html2canvas(mapEl, {
           scale: 2,
           useCORS: true,
           backgroundColor: "#ffffff",
           height: mapEl.scrollHeight,
           width: mapEl.scrollWidth,
           logging: false,
-          allowTaint: false,
+          allowTaint: true, // OSM tiles gak punya CORS, perlu allowTaint
         });
       } catch {
-        // Buat canvas putih dengan info sebagai fallback
-        canvas = document.createElement("canvas");
-        canvas.width = 800 * 2;
-        canvas.height = 600 * 2;
+        // Jika html2canvas gagal total, cari tile <img> langsung dari DOM
+        try {
+          capturedCanvas = document.createElement("canvas");
+          const tileImages = mapEl.querySelectorAll("img.leaflet-tile");
+          if (tileImages.length > 0) {
+            // Ukur extent semua tile
+            let minX = Infinity, minY = Infinity, maxX = 0, maxY = 0;
+            const tiles: { img: HTMLImageElement; x: number; y: number }[] = [];
+            tileImages.forEach((img) => {
+              const el = img as HTMLElement;
+              const x = el.offsetLeft;
+              const y = el.offsetTop;
+              const w = el.offsetWidth || 256;
+              const h = el.offsetHeight || 256;
+              minX = Math.min(minX, x);
+              minY = Math.min(minY, y);
+              maxX = Math.max(maxX, x + w);
+              maxY = Math.max(maxY, y + h);
+              tiles.push({ img: img as HTMLImageElement, x, y });
+            });
+            const cw = Math.max(maxX - minX, 400);
+            const ch = Math.max(maxY - minY, 300);
+            capturedCanvas.width = cw * 2;
+            capturedCanvas.height = ch * 2;
+            const ctx2 = capturedCanvas.getContext("2d")!;
+            ctx2.scale(2, 2);
+            // Gambar tile
+            tiles.forEach((t) => {
+              try { ctx2.drawImage(t.img, t.x - minX, t.y - minY, t.img.naturalWidth || 256, t.img.naturalHeight || 256); } catch {}
+            });
+          } else {
+            capturedCanvas.width = 800 * 2;
+            capturedCanvas.height = 600 * 2;
+          }
+        } catch {
+          capturedCanvas = document.createElement("canvas");
+          capturedCanvas.width = 800 * 2;
+          capturedCanvas.height = 600 * 2;
+        }
       }
 
       const overlay = document.createElement("canvas");
-      overlay.width = canvas.width;
-      overlay.height = Math.max(canvas.height, 600 * 2);
+      overlay.width = capturedCanvas.width;
+      overlay.height = Math.max(capturedCanvas.height, 600 * 2);
       const ctx = overlay.getContext("2d")!;
 
-      // Gambar canvas (atau putih jika fallback)
       ctx.fillStyle = "#f0f0f0";
       ctx.fillRect(0, 0, overlay.width, overlay.height);
-      ctx.drawImage(canvas, 0, 0);
+      ctx.drawImage(capturedCanvas, 0, 0);
 
       // Panel info bawah
       const pH = 80;
@@ -290,14 +324,23 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
       ctx.font = `${Math.round(11 * 2)}px sans-serif`;
       ctx.fillText("SpringHub — Jaga Semesta", overlay.width - 200 * 2, overlay.height - 12 * 2);
 
+      // Konversi ke blob dan download
       overlay.toBlob((blob) => {
         if (!blob) { downloadText(); return; }
+        const fileName = `springhub-rute-${Date.now()}.png`;
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.download = `springhub-rute-${Date.now()}.png`;
+        link.download = fileName;
         link.href = url;
+        link.rel = "noopener";
+        // Trigger download
+        document.body.appendChild(link);
         link.click();
-        URL.revokeObjectURL(url);
+        // Delay revoke agar download sempat diproses (terutama di mobile)
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }, 500);
       }, "image/png");
     } catch (err) {
       console.error("[Download] Failed, using text fallback:", err);
