@@ -3,7 +3,7 @@
 import { Component, useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { WifiOff, Loader2, AlertCircle, ArrowLeft, RefreshCw, CheckCircle2 } from "lucide-react";
+import { WifiOff, Loader2, AlertCircle, ArrowLeft, RefreshCw } from "lucide-react";
 import { OfflineSetup } from "@/components/offline/offline-setup";
 import { OfflineSurveyMap } from "@/components/offline/offline-survey-map";
 import { OfflineExitSync } from "@/components/offline/offline-exit-sync";
@@ -72,8 +72,6 @@ function OfflinePageContent() {
   const [phase, setPhase] = useState<OfflinePhase>("checking");
   const [checkError, setCheckError] = useState("");
   const [storageInfo, setStorageInfo] = useState("");
-  const [mapAvailable, setMapAvailable] = useState(true);
-  const [effectiveMode, setEffectiveMode] = useState(isFullMode ? "full" : "save-only");
 
   // ── Check prerequisites ────────────────────────────────────────────────
   useEffect(() => {
@@ -141,23 +139,6 @@ function OfflinePageContent() {
           setCheckError(`Gagal membaca data offline: ${dbErr instanceof Error ? dbErr.message : "Unknown error"}. Coba refresh halaman.`);
           setPhase("not-logged-in");
           return;
-        }
-
-        if (isFullMode) {
-          try {
-            // Test if Leaflet can be loaded (fails on some mobile browsers)
-            const leaflet = await import("leaflet");
-            const mapDiv = typeof document !== "undefined" ? document.createElement("div") : null;
-            if (mapDiv && leaflet.version) {
-              setMapAvailable(true);
-              setEffectiveMode("full");
-            }
-          } catch {
-            setMapAvailable(false);
-            setEffectiveMode("save-only");
-          }
-        } else {
-          setEffectiveMode("save-only");
         }
 
         if (forms.length > 0) {
@@ -271,15 +252,9 @@ function OfflinePageContent() {
           </div>
         )}
 
-        {!mapAvailable && (
-          <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-xs text-blue-700 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
-            <strong>Mode Lite:</strong> Peta tidak tersedia di perangkat ini. Kamu tetap bisa mengisi form dan upload data offline, tanpa fitur peta dan marker GPS.
-          </div>
-        )}
-
         <OfflineErrorBoundary>
           <OfflineSetup
-            mode={effectiveMode as "full" | "save-only"}
+            mode={isFullMode ? "full" : "save-only"}
             onComplete={() => setPhase("survey")}
           />
         </OfflineErrorBoundary>
@@ -289,30 +264,6 @@ function OfflinePageContent() {
 
   // ── Phase: Survey ──────────────────────────────────────────────────────
   if (phase === "survey") {
-    if (!mapAvailable) {
-      return (
-        <div className="container-page py-8">
-          <div className="mx-auto max-w-md text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-              <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
-            </div>
-            <h1 className="mt-4 text-xl font-bold text-ink">Siap!</h1>
-            <p className="mt-2 text-sm text-ink-muted">
-              Data form dan definisi field sudah tersimpan di perangkatmu.
-            </p>
-            <p className="mt-1 text-xs text-ink-subtle">
-              Kamu bisa mengisi form tanpa koneksi internet. Data akan diupload saat kamu kembali online.
-            </p>
-            <div className="mt-6 flex items-center justify-center gap-3">
-              <Link href="/" className="btn-secondary">Kembali ke Beranda</Link>
-              <Link href="/report/spring-monitoring" className="btn-primary">
-                Mulai Isi Form
-              </Link>
-            </div>
-          </div>
-        </div>
-      );
-    }
     return (
       <OfflineErrorBoundary>
         <OfflineSurveyMap

@@ -8,7 +8,7 @@ import { offlineDB } from "@/lib/offline-db";
 /**
  * TileLayer yang bisa load tile dari IndexedDB saat offline.
  *
- * - Online: fetch tile normal dari OpenStreetMap
+ * - Online: pakai implementasi asli Leaflet (getTileUrl, crossorigin, alt, dll)
  * - Offline: load tile dari IndexedDB (tile-blobs store)
  */
 export function OfflineTileLayer() {
@@ -29,51 +29,31 @@ export function OfflineTileLayer() {
   }, []);
 
   useEffect(() => {
-    // Simpan reference ke original createTile
     const OrigTileLayer = L.TileLayer as any;
     const origCreateTile = OrigTileLayer.prototype.createTile;
 
-    // Override createTile untuk intervensi offline
-    // GUARD: _getUrlForCoord adalah method internal Leaflet yang bisa berubah antar versi.
-    // Jika method tidak tersedia, fallback konstruksi URL manual.
     OrigTileLayer.prototype.createTile = function (coords: any, done: Function) {
-      let tileUrl: string;
-      try {
-        if (typeof this._getUrlForCoord === "function") {
-          tileUrl = this._getUrlForCoord(coords);
-        } else {
-          // Fallback: konstruksi URL tile manual
-          tileUrl = `https://{s}.tile.openstreetmap.org/${coords.z}/${coords.x}/${coords.y}.png`
-            .replace("{s}", ["a", "b", "c"][Math.floor(Math.random() * 3)]);
-        }
-      } catch {
-        // Ultimate fallback jika _getUrlForCoord error
-        tileUrl = `https://a.tile.openstreetmap.org/${coords.z}/${coords.x}/${coords.y}.png`;
-      }
-
-      const tile = document.createElement("img");
-
+      // Mode offline: ambil tile dari IndexedDB
       if (!navigator.onLine) {
+        const tileUrl = this.getTileUrl(coords);
+        const tile = document.createElement("img");
+
         offlineDB.getTileBlob(tileUrl).then((cached) => {
           if (cached?.blob) {
             const url = URL.createObjectURL(cached.blob);
             tile.src = url;
             setTimeout(() => { try { URL.revokeObjectURL(url); } catch {} }, 1000);
-            done(null, tile);
-          } else {
-            tile.src = "";
-            done(null, tile);
           }
+          done(null, tile);
         }).catch(() => {
-          tile.src = "";
           done(null, tile);
         });
-      } else {
-        tile.src = tileUrl;
-        tile.onload = () => done(null, tile);
-        tile.onerror = () => done(null, tile);
+
+        return tile;
       }
-      return tile;
+
+      // Mode online: pakai createTile asli Leaflet (crossOrigin, alt, referrerPolicy, dll berfungsi normal)
+      return origCreateTile.call(this, coords, done);
     };
 
     return () => {
