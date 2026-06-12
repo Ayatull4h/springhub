@@ -34,8 +34,23 @@ export function OfflineTileLayer() {
     const origCreateTile = OrigTileLayer.prototype.createTile;
 
     // Override createTile untuk intervensi offline
+    // GUARD: _getUrlForCoord adalah method internal Leaflet yang bisa berubah antar versi.
+    // Jika method tidak tersedia, fallback konstruksi URL manual.
     OrigTileLayer.prototype.createTile = function (coords: any, done: Function) {
-      const tileUrl = this._getUrlForCoord(coords);
+      let tileUrl: string;
+      try {
+        if (typeof this._getUrlForCoord === "function") {
+          tileUrl = this._getUrlForCoord(coords);
+        } else {
+          // Fallback: konstruksi URL tile manual
+          tileUrl = `https://{s}.tile.openstreetmap.org/${coords.z}/${coords.x}/${coords.y}.png`
+            .replace("{s}", ["a", "b", "c"][Math.floor(Math.random() * 3)]);
+        }
+      } catch {
+        // Ultimate fallback jika _getUrlForCoord error
+        tileUrl = `https://a.tile.openstreetmap.org/${coords.z}/${coords.x}/${coords.y}.png`;
+      }
+
       const tile = document.createElement("img");
 
       if (!navigator.onLine) {

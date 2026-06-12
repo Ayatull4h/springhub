@@ -29,9 +29,34 @@ import { cn } from "@/lib/utils";
 import { ErrorBoundary } from "./error-boundary";
 import { getForm } from "@/lib/forms";
 
+// ─── Fallback map — saat Leaflet gagal load ──────────────────────────────────
+function MapFallback({ message = "Map tidak tersedia di perangkat ini" }: { message?: string }) {
+  return (
+    <div className="flex h-full min-h-[200px] items-center justify-center rounded-xl bg-amber-50 p-6 text-center dark:bg-amber-900/20">
+      <div>
+        <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+          {message}
+        </p>
+        <p className="mt-1 text-xs text-amber-600/70 dark:text-amber-400/70">
+          Fitur peta tidak didukung oleh browser ini. Silakan gunakan Chrome atau Edge terbaru.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Dynamic import for survey map (SSR=false) ──────────────────────────────
 const SurveyLeafletMap = dynamic(
-  () => import("./survey-leaflet-map").then((m) => m.SurveyLeafletMap),
+  () =>
+    import("./survey-leaflet-map")
+      .then((m) => m.SurveyLeafletMap)
+      .catch(() => {
+        // Return component with any-props agar kompatibel dengan tipe dynamic()
+        const Fallback: React.FC<any> = () => (
+          <MapFallback message="Map tidak tersedia di perangkat ini" />
+        );
+        return Fallback;
+      }),
   {
     ssr: false,
     loading: () => (
@@ -43,7 +68,15 @@ const SurveyLeafletMap = dynamic(
 );
 
 const PickerMap = dynamic(
-  () => import("../map/picker-map").then((m) => m.PickerMap),
+  () =>
+    import("../map/picker-map")
+      .then((m) => m.PickerMap)
+      .catch(() => {
+        const Fallback: React.FC<any> = () => (
+          <MapFallback message="Map tidak tersedia di perangkat ini" />
+        );
+        return Fallback;
+      }),
   {
     ssr: false,
     loading: () => (
@@ -714,7 +747,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                               key={`picker-${showMapPicker}`}
                               initialLat={currentPos?.lat ?? -7.5}
                               initialLng={currentPos?.lng ?? 110}
-                              onPick={(lat, lng) => {
+                              onPick={(lat: number, lng: number) => {
                                 handleFormFieldChange("location_lat", String(lat.toFixed(6)));
                                 handleFormFieldChange("location_lng", String(lng.toFixed(6)));
                               }}

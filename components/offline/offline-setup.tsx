@@ -26,6 +26,7 @@ import dynamic from "next/dynamic";
 import { offlineDB, type FormDefinition, type OfflineConfig } from "@/lib/offline-db";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { ErrorBoundary } from "./error-boundary";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -49,9 +50,28 @@ type FormItem = {
   }>;
 };
 
-// ─── Lazy load map (SSR=false) ─────────────────────────────────────────────
+// ─── Lazy load map (SSR=false) with error fallback ──────────────────────────
 const SetupMap = dynamic(
-  () => import("./setup-map").then((m) => m.SetupMap),
+  () =>
+    import("./setup-map")
+      .then((m) => m.SetupMap)
+      .catch(() => {
+        // Jika Leaflet gagal load, tampilkan komponen fallback
+        return function MapFallback() {
+          return (
+            <div className="flex h-full min-h-[200px] items-center justify-center rounded-xl bg-amber-50 p-6 text-center dark:bg-amber-900/20">
+              <div>
+                <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+                  Map tidak tersedia di perangkat ini
+                </p>
+                <p className="mt-1 text-xs text-amber-600/70 dark:text-amber-400/70">
+                  Pilih radius dan area secara manual untuk melanjutkan.
+                </p>
+              </div>
+            </div>
+          );
+        };
+      }),
   {
     ssr: false,
     loading: () => (
@@ -916,11 +936,13 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
         </div>
 
         <div className="mt-3 h-[400px] w-full overflow-hidden rounded-xl border border-ink-line">
-          <SetupMap
-            onAreaSelected={handleAreaSelected}
-            selectedCenter={selectedCenter}
-            selectedRadius={selectedRadius}
-          />
+          <ErrorBoundary>
+            <SetupMap
+              onAreaSelected={handleAreaSelected}
+              selectedCenter={selectedCenter}
+              selectedRadius={selectedRadius}
+            />
+          </ErrorBoundary>
         </div>
 
         <div className="mx-auto mt-4 max-w-lg">

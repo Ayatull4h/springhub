@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import { MapPin, Crosshair } from "lucide-react";
 import L from "leaflet";
 import { OfflineTileLayer } from "@/components/map/offline-tile-layer";
+import { ErrorBoundary } from "./error-boundary";
 
 type SetupMapProps = {
   onAreaSelected: (center: { lat: number; lng: number }, radius: number) => void;
@@ -161,65 +162,67 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
   };
 
   return (
-    <div className="relative h-full w-full">
-      <MapContainer
-        center={[center.lat, center.lng]}
-        zoom={10}
-        scrollWheelZoom={true}
-        zoomControl={true}
-        className="h-full w-full"
-        style={{ minHeight: 360 }}
-      >
-        <OfflineTileLayer />
-        <MapCircleController
-          center={center}
-          radiusKm={selectedRadius}
-          onCenterChange={handleCenterChange}
-        />
-        {/* User location marker */}
-        {userPosition && (
-          <CircleMarker
-            center={[userPosition.lat, userPosition.lng]}
-            radius={7}
-            pathOptions={{
-              color: "#047857",
-              fillColor: "#34d399",
-              fillOpacity: 1,
-              weight: 3,
-            }}
-          >
-            <Tooltip direction="top" permanent>
-              <span className="text-xs font-bold">📍 Kamu</span>
-            </Tooltip>
-          </CircleMarker>
-        )}
-      </MapContainer>
+    <ErrorBoundary>
+      <div className="relative h-full w-full">
+        <MapContainer
+          center={[center.lat, center.lng]}
+          zoom={10}
+          scrollWheelZoom={true}
+          zoomControl={true}
+          className="h-full w-full"
+          style={{ minHeight: 360 }}
+        >
+          <OfflineTileLayer />
+          <MapCircleController
+            center={center}
+            radiusKm={selectedRadius}
+            onCenterChange={handleCenterChange}
+          />
+          {/* User location marker */}
+          {userPosition && (
+            <CircleMarker
+              center={[userPosition.lat, userPosition.lng]}
+              radius={7}
+              pathOptions={{
+                color: "#047857",
+                fillColor: "#34d399",
+                fillOpacity: 1,
+                weight: 3,
+              }}
+            >
+              <Tooltip direction="top" permanent>
+                <span className="text-xs font-bold">📍 Kamu</span>
+              </Tooltip>
+            </CircleMarker>
+          )}
+        </MapContainer>
 
-      {/* Locate button */}
-      <button
-        onClick={handleLocate}
-        disabled={geoLoading}
-        className="absolute right-3 top-3 z-[1000] rounded-md bg-white px-2.5 py-2 text-xs font-medium text-ink-muted shadow-lg transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
-        title="Gunakan lokasi saya"
-      >
-        <Crosshair className={`h-4 w-4 ${geoLoading ? "animate-spin" : ""}`} />
-      </button>
+        {/* Locate button */}
+        <button
+          onClick={handleLocate}
+          disabled={geoLoading}
+          className="absolute right-3 top-3 z-[1000] rounded-md bg-white px-2.5 py-2 text-xs font-medium text-ink-muted shadow-lg transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
+          title="Gunakan lokasi saya"
+        >
+          <Crosshair className={`h-4 w-4 ${geoLoading ? "animate-spin" : ""}`} />
+        </button>
 
-      {/* Info overlay */}
-      <div className="absolute bottom-3 left-3 right-3 z-[1000]">
-        <div className="rounded-lg bg-white/90 px-3 py-2 text-xs text-ink-muted shadow-lg backdrop-blur dark:bg-slate-900/90 dark:text-slate-400">
-          <div className="flex items-center gap-1">
-            <MapPin className="h-3 w-3 text-brand-600 dark:text-brand-400" />
-            <span>Seret marker ● untuk pindah posisi</span>
-          </div>
-          <div className="mt-1 font-mono text-[10px] text-ink-subtle dark:text-slate-500">
-            {center.lat.toFixed(4)}, {center.lng.toFixed(4)} — Radius: {selectedRadius} km
-          </div>
-          <div className="mt-0.5 text-[10px] text-ink-subtle dark:text-slate-500">
-            Area: ~{((Math.PI * selectedRadius * selectedRadius)).toFixed(0)} km²
+        {/* Info overlay */}
+        <div className="absolute bottom-3 left-3 right-3 z-[1000]">
+          <div className="rounded-lg bg-white/90 px-3 py-2 text-xs text-ink-muted shadow-lg backdrop-blur dark:bg-slate-900/90 dark:text-slate-400">
+            <div className="flex items-center gap-1">
+              <MapPin className="h-3 w-3 text-brand-600 dark:text-brand-400" />
+              <span>Seret marker ● untuk pindah posisi</span>
+            </div>
+            <div className="mt-1 font-mono text-[10px] text-ink-subtle dark:text-slate-500">
+              {center.lat.toFixed(4)}, {center.lng.toFixed(4)} — Radius: {selectedRadius} km
+            </div>
+            <div className="mt-0.5 text-[10px] text-ink-subtle dark:text-slate-500">
+              Area: ~{((Math.PI * selectedRadius * selectedRadius)).toFixed(0)} km²
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 }

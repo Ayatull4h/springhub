@@ -7,6 +7,7 @@ import L from "leaflet";
 import { type OfflineTrackingPoint, type MarkerType } from "@/lib/offline-db";
 import { useI18n } from "@/lib/i18n";
 import { OfflineTileLayer } from "@/components/map/offline-tile-layer";
+import { ErrorBoundary } from "./error-boundary";
 
 // ── SVG pin warna untuk marker ────────────────────────────────────────────
 function pinSvg(fill: string, stroke: string): string {
@@ -182,117 +183,119 @@ export function SurveyLeafletMap({
       : [-7.5, 110];
 
   return (
-    <MapContainer
-      center={mapCenter}
-      zoom={15}
-      scrollWheelZoom={true}
-      className="h-full w-full"
-      style={{ minHeight: "400px", height: "100%", width: "100%" }}
-      zoomControl={false}
-    >
-      <OfflineTileLayer />
-      <MapLayers />
-      <AutoFollow pos={currentPosition} isTracking={isTracking} paused={autoFollowPaused} />
-      <FocusMarker marker={focusMarker ?? null} />
-      <LocateButton />
+    <ErrorBoundary>
+      <MapContainer
+        center={mapCenter}
+        zoom={15}
+        scrollWheelZoom={true}
+        className="h-full w-full"
+        style={{ minHeight: "400px", height: "100%", width: "100%" }}
+        zoomControl={false}
+      >
+        <OfflineTileLayer />
+        <MapLayers />
+        <AutoFollow pos={currentPosition} isTracking={isTracking} paused={autoFollowPaused} />
+        <FocusMarker marker={focusMarker ?? null} />
+        <LocateButton />
 
-      {/* GPS trail polyline — orange/red like Strava */}
-      {trailPositions.length > 1 && (
-        <Polyline
-          positions={trailPositions}
-          pathOptions={{
-            color: "#f97316",
-            weight: 4,
-            opacity: 0.8,
-            lineCap: "round",
-            lineJoin: "round",
-          }}
-        />
-      )}
-
-      {/* 💧 Spring markers — emoji */}
-      {springMarkers.map((m) => (
-        <Marker
-          key={m.id}
-          position={[m.lat, m.lng]}
-          icon={pinIcons.spring}
-        >
-          <Tooltip direction="top" offset={[0, -32]}>
-            💧 {m.name || t("offline.springs")}
-          </Tooltip>
-        </Marker>
-      ))}
-
-      {/* 🌱 Tree markers — emoji */}
-      {treeMarkers.map((m) => (
-        <Marker
-          key={m.id}
-          position={[m.lat, m.lng]}
-          icon={pinIcons.tree}
-        >
-          <Tooltip direction="top" offset={[0, -32]}>
-            🌱 {m.name || t("offline.trees")}
-          </Tooltip>
-        </Marker>
-      ))}
-
-      {/* 🕳️ Trench markers — emoji */}
-      {trenchMarkers.map((m) => (
-        <Marker
-          key={m.id}
-          position={[m.lat, m.lng]}
-          icon={pinIcons.trench}
-        >
-          <Tooltip direction="top" offset={[0, -32]}>
-            🕳️ {m.name || t("offline.trenches")}
-          </Tooltip>
-        </Marker>
-      ))}
-
-      {/* 🌰 Seedling markers — emoji */}
-      {seedlingMarkers.map((m) => (
-        <Marker
-          key={m.id}
-          position={[m.lat, m.lng]}
-          icon={pinIcons.seedling}
-        >
-          <Tooltip direction="top" offset={[0, -32]}>
-            🌰 {m.name || t("offline.seedlings")}
-          </Tooltip>
-        </Marker>
-      ))}
-
-      {/* Current position indicator — visible "You are here" */}
-      {currentPosition && (
-        <>
-          {/* Outer pulse ring */}
-          <Circle
-            center={[currentPosition.lat, currentPosition.lng]}
-            radius={25}
+        {/* GPS trail polyline — orange/red like Strava */}
+        {trailPositions.length > 1 && (
+          <Polyline
+            positions={trailPositions}
             pathOptions={{
-              color: "#10b981",
-              fillColor: "#10b981",
-              fillOpacity: 0.1,
-              weight: 1.5,
+              color: "#f97316",
+              weight: 4,
+              opacity: 0.8,
+              lineCap: "round",
+              lineJoin: "round",
             }}
           />
-          {/* Inner dot with border */}
-          <CircleMarker
-            center={[currentPosition.lat, currentPosition.lng]}
-            radius={7}
-            pathOptions={{
-              color: "#047857",
-              fillColor: "#34d399",
-              fillOpacity: 1,
-              weight: 3,
-            }}
+        )}
+
+        {/* 💧 Spring markers — emoji */}
+        {springMarkers.map((m) => (
+          <Marker
+            key={m.id}
+            position={[m.lat, m.lng]}
+            icon={pinIcons.spring}
           >
-            <Tooltip direction="top" permanent>
-              <span className="text-xs font-bold">{t("offline.youAreHere") || "📍 Kamu"}</span>
+            <Tooltip direction="top" offset={[0, -32]}>
+              💧 {m.name || t("offline.springs")}
             </Tooltip>
-          </CircleMarker>
-        </>
-      )}
-    </MapContainer>
+          </Marker>
+        ))}
+
+        {/* 🌱 Tree markers — emoji */}
+        {treeMarkers.map((m) => (
+          <Marker
+            key={m.id}
+            position={[m.lat, m.lng]}
+            icon={pinIcons.tree}
+          >
+            <Tooltip direction="top" offset={[0, -32]}>
+              🌱 {m.name || t("offline.trees")}
+            </Tooltip>
+          </Marker>
+        ))}
+
+        {/* 🕳️ Trench markers — emoji */}
+        {trenchMarkers.map((m) => (
+          <Marker
+            key={m.id}
+            position={[m.lat, m.lng]}
+            icon={pinIcons.trench}
+          >
+            <Tooltip direction="top" offset={[0, -32]}>
+              🕳️ {m.name || t("offline.trenches")}
+            </Tooltip>
+          </Marker>
+        ))}
+
+        {/* 🌰 Seedling markers — emoji */}
+        {seedlingMarkers.map((m) => (
+          <Marker
+            key={m.id}
+            position={[m.lat, m.lng]}
+            icon={pinIcons.seedling}
+          >
+            <Tooltip direction="top" offset={[0, -32]}>
+              🌰 {m.name || t("offline.seedlings")}
+            </Tooltip>
+          </Marker>
+        ))}
+
+        {/* Current position indicator — visible "You are here" */}
+        {currentPosition && (
+          <>
+            {/* Outer pulse ring */}
+            <Circle
+              center={[currentPosition.lat, currentPosition.lng]}
+              radius={25}
+              pathOptions={{
+                color: "#10b981",
+                fillColor: "#10b981",
+                fillOpacity: 0.1,
+                weight: 1.5,
+              }}
+            />
+            {/* Inner dot with border */}
+            <CircleMarker
+              center={[currentPosition.lat, currentPosition.lng]}
+              radius={7}
+              pathOptions={{
+                color: "#047857",
+                fillColor: "#34d399",
+                fillOpacity: 1,
+                weight: 3,
+              }}
+            >
+              <Tooltip direction="top" permanent>
+                <span className="text-xs font-bold">{t("offline.youAreHere") || "📍 Kamu"}</span>
+              </Tooltip>
+            </CircleMarker>
+          </>
+        )}
+      </MapContainer>
+    </ErrorBoundary>
   );
 }
