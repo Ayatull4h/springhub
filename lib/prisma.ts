@@ -4,16 +4,23 @@ import pg from "pg";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
+  pool: pg.Pool | undefined;
 };
 
-const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
-  maxUses: 7500,
-});
-const adapter = new PrismaPg(pool, { schema: "public" });
+function getPool(): pg.Pool {
+  if (!globalForPrisma.pool) {
+    globalForPrisma.pool = new pg.Pool({
+      connectionString: process.env.DATABASE_URL,
+      max: 3,
+      idleTimeoutMillis: 10000,
+      connectionTimeoutMillis: 5000,
+      maxUses: 3000,
+    });
+  }
+  return globalForPrisma.pool;
+}
+
+const adapter = new PrismaPg(getPool(), { schema: "public" });
 
 function getPrisma(): PrismaClient {
   if (!globalForPrisma.prisma) {

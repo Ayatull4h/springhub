@@ -6,7 +6,14 @@ const globalForRedis = globalThis as unknown as {
 
 function getRedis(): Redis {
   if (!globalForRedis.redis) {
-    globalForRedis.redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379", {
+    if (!process.env.REDIS_URL) {
+      const noop = new Proxy({} as Redis, {
+        get: () => () => Promise.reject(new Error("Redis not configured")),
+      });
+      globalForRedis.redis = noop;
+      return globalForRedis.redis;
+    }
+    globalForRedis.redis = new Redis(process.env.REDIS_URL, {
       maxRetriesPerRequest: 3,
       retryStrategy(times) {
         if (times > 3) return null;
@@ -14,6 +21,7 @@ function getRedis(): Redis {
       },
       lazyConnect: true,
     });
+    globalForRedis.redis.on("error", () => {});
   }
   return globalForRedis.redis;
 }
