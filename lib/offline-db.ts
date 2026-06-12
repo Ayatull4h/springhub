@@ -538,17 +538,17 @@ export const offlineDB = {
     if (typeof indexedDB === "undefined" || typeof window === "undefined") return false;
     try {
       const db = await openDB();
+      // Test bahwa transaksi benar-benar bisa jalan (bukan cuma open)
+      // INI HARUS SEBELUM db.close() — db yang sudah ditutup gak bisa dipake!
+      try {
+        const tx = db.transaction("pending-reports", "readonly");
+        tx.abort();
+      } catch {
+        db.close();
+        return false;
+      }
       db.close();
-      // Test that transactions actually work (iOS Chrome can open but not use IndexedDB)
-      return new Promise((resolve) => {
-        try {
-          const tx = db.transaction("pending-reports", "readonly");
-          tx.abort();
-          resolve(true);
-        } catch {
-          resolve(false);
-        }
-      });
+      return true;
     } catch {
       return false;
     }
