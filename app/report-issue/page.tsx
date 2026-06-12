@@ -56,7 +56,7 @@ export default function ReportIssuePage() {
 
     const type = determineType();
     if (!type) {
-      setError("Isi setidaknya satu bagian — bug atau kritik/saran.");
+      setError(t("reportIssue.fillAtLeastOne", "Isi setidaknya satu bagian — bug atau kritik/saran."));
       return;
     }
 
@@ -85,7 +85,7 @@ export default function ReportIssuePage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? data.details ?? "Gagal mengirim laporan.");
+        throw new Error(data.error ?? data.details ?? t("reportIssue.failedSend", "Gagal mengirim laporan."));
       }
 
       setSuccess(true);
@@ -94,7 +94,7 @@ export default function ReportIssuePage() {
       setKritik("");
       setSaran("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Terjadi kesalahan.");
+      setError(err instanceof Error ? err.message : t("reportIssue.genericError", "Terjadi kesalahan."));
     } finally {
       setLoading(false);
     }

@@ -15,7 +15,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       },
     });
     return NextResponse.json({ comments });
-  } catch {
+  } catch (err) {
+    console.error("GET /api/projects/[id]/comments error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
@@ -30,6 +31,11 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const { text } = await req.json();
     if (!text || text.trim().length === 0) {
       return NextResponse.json({ error: "Comment text required" }, { status: 400 });
+    }
+    // Verify project exists
+    const project = await prisma.project.findUnique({ where: { id: params.id } });
+    if (!project) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
     const comment = await prisma.comment.create({
       data: {
@@ -47,7 +53,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       data: { comments: { increment: 1 } },
     });
     return NextResponse.json({ comment }, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  } catch (err) {
+    console.error("POST /api/projects/[id]/comments error:", err);
+    return NextResponse.json({ error: "Failed to save comment" }, { status: 500 });
   }
 }

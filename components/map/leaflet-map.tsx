@@ -4,14 +4,28 @@ import { Fragment, useEffect, useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Tooltip, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Distinct colors per form type
-const formColors: Record<string, { color: string; fillColor: string; label: string }> = {
-  "spring-monitoring": { color: "#2563eb", fillColor: "#3b82f6", label: "Spring Monitoring" },
-  "spring-restoration": { color: "#7dd3fc", fillColor: "#bae6fd", label: "Spring Restoration" },
-  "tree-planting": { color: "#16a34a", fillColor: "#22c55e", label: "Tree Planting" },
-  "trench-development": { color: "#78350f", fillColor: "#a16207", label: "Trench Development" },
-  "seedling-stock": { color: "#14532d", fillColor: "#166534", label: "Seedling Stock" },
+// Status (condition) based colors for springs:
+//   Biru (baik/healthy) → Kuning (sedang/restoration) → Merah (terdegradasi/degraded)
+const statusColors: Record<string, { color: string; fillColor: string; label: string }> = {
+  healthy: { color: "#2563eb", fillColor: "#3b82f6", label: "Sehat" },
+  restoration: { color: "#d97706", fillColor: "#f59e0b", label: "Restorasi" },
+  degraded: { color: "#dc2626", fillColor: "#ef4444", label: "Terdegradasi" },
 };
+
+// Map form slug to spring status
+function getStatusFromForm(formSlug: string): string {
+  switch (formSlug) {
+    case "spring-monitoring":
+    case "seedling-stock":
+      return "healthy";
+    case "spring-restoration":
+    case "trench-development":
+    case "tree-planting":
+      return "restoration";
+    default:
+      return "degraded";
+  }
+}
 
 type ReportData = {
   id: string;
@@ -63,7 +77,8 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
           />
         )}
         {reports.map((r) => {
-            const fc = formColors[r.formSlug] ?? { color: "#ef4444", fillColor: "#f87171", label: "Unknown" };
+            const status = getStatusFromForm(r.formSlug);
+            const fc = statusColors[status] ?? { color: "#dc2626", fillColor: "#ef4444", label: "Terdegradasi" };
             if (!r.snappedLat || !r.snappedLng) return null;
             return (
               <Fragment key={r.id}>
@@ -81,7 +96,7 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
                     <div className="text-xs">
                       <strong>{fc.label}</strong>
                       <br />
-                      <span className="text-ink-muted">
+                      <span className="text-ink-muted capitalize">
                         {r.formSlug.replace(/-/g, " ")}
                       </span>
                       {r.user?.username && (

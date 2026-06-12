@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Bell, CheckCheck, ArrowLeft, Loader2, BellOff, ExternalLink } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 type NotificationItem = {
   id: string;
@@ -15,6 +16,7 @@ type NotificationItem = {
 };
 
 export default function NotificationsPage() {
+  const { t } = useI18n();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -23,11 +25,11 @@ export default function NotificationsPage() {
     try {
       setError("");
       const res = await fetch("/api/notifications");
-      if (!res.ok) throw new Error("Gagal memuat notifikasi");
+      if (!res.ok) throw new Error(t("notifications.loadError", "Gagal memuat notifikasi"));
       const data = await res.json();
       setNotifications(data.notifications ?? []);
     } catch {
-      setError("Gagal memuat notifikasi. Coba lagi nanti.");
+      setError(t("notifications.loadErrorDesc", "Gagal memuat notifikasi. Coba lagi nanti."));
     } finally {
       setLoading(false);
     }
@@ -93,9 +95,9 @@ export default function NotificationsPage() {
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-extrabold text-ink">Notifikasi</h1>
+            <h1 className="text-2xl font-extrabold text-ink">{t("notifications.title", "Notifikasi")}</h1>
             <p className="text-sm text-ink-muted">
-              Aktivitas dan pemberitahuan akun kamu
+              {t("notifications.subtitle", "Aktivitas dan pemberitahuan akun kamu")}
             </p>
           </div>
         </div>
@@ -106,7 +108,7 @@ export default function NotificationsPage() {
             className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/20"
           >
             <CheckCheck className="h-4 w-4" />
-            Tandai semua dibaca
+            {t("notifications.markAllRead", "Tandai semua dibaca")}
           </button>
         )}
       </div>
@@ -120,12 +122,12 @@ export default function NotificationsPage() {
       {notifications.length === 0 && !error ? (
         <div className="mt-12 text-center">
           <BellOff className="mx-auto h-12 w-12 text-ink-muted" />
-          <h2 className="mt-3 text-lg font-semibold text-ink">Belum ada notifikasi</h2>
+          <h2 className="mt-3 text-lg font-semibold text-ink">{t("notifications.emptyTitle", "Belum ada notifikasi")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
-            Notifikasi tentang laporan, poin, dan aktivitas akan muncul di sini.
+            {t("notifications.emptyDesc", "Notifikasi tentang laporan, poin, dan aktivitas akan muncul di sini.")}
           </p>
           <Link href="/" className="btn-primary mt-6 inline-flex">
-            Kembali ke Beranda
+            {t("notifications.backToHome", "Kembali ke Beranda")}
           </Link>
         </div>
       ) : (
@@ -164,7 +166,7 @@ export default function NotificationsPage() {
                       className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
                     >
                       <ExternalLink className="h-3 w-3" />
-                      Lihat detail
+                      {t("notifications.viewDetail", "Lihat detail")}
                     </Link>
                   )}
                   {!n.isRead && (
@@ -172,7 +174,7 @@ export default function NotificationsPage() {
                       onClick={() => markAsRead(n.id)}
                       className="text-xs text-ink-subtle hover:text-ink"
                     >
-                      Tandai dibaca
+                      {t("notifications.markRead", "Tandai dibaca")}
                     </button>
                   )}
                 </div>

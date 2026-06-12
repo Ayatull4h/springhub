@@ -209,7 +209,7 @@ export default function ProfilePage() {
           {claimError}
         </div>
       )}
-      {claimTried && claimResult && claimResult.claimed === 0 && (
+      {claimTried && claimResult && claimResult.claimed === 0 && profile && reports.length === 0 && (
         <div className="mt-6 rounded-md bg-amber-50 p-4 text-sm text-amber-700 ring-1 ring-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:ring-amber-700">
           {t("profile.claimNone")}
         </div>

@@ -103,7 +103,7 @@ export function MediaSection() {
         </div>
       ) : items.length === 0 ? (
         <div className="mt-8 text-center text-ink-muted">
-          <p>No media content yet. Check back soon!</p>
+          <p>{t("media.empty", "No media content yet. Check back soon!")}</p>
         </div>
       ) : (
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

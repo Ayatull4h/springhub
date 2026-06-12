@@ -50,7 +50,7 @@ export function PickerMap({ initialLat, initialLng, onPick }: PickerMapProps) {
       zoom={8}
       scrollWheelZoom={true}
       className="h-full w-full"
-      style={{ minHeight: 200 }}
+      style={{ minHeight: 300, height: 300 }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

@@ -146,6 +146,7 @@ export default function ReportFormPage() {
       // ── Upload photos after successful report creation ────────────
       let photoErrors: string[] = [];
       if (data.report?.id) {
+        const reportId = data.report.id;
         const photoFieldIds = activeForm.fields
           .filter((f: FormField) => f.type === "photo")
           .map((f: FormField) => f.id);
@@ -159,7 +160,7 @@ export default function ReportFormPage() {
                 photoPayload.append("photo", file);
                 photoPayload.append("field_id", fieldId);
 
-                const photoRes = await fetch(`/api/reports/${data.report.id}/photos`, {
+                const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
                   method: "POST",
                   body: photoPayload,
                 });
@@ -172,12 +173,18 @@ export default function ReportFormPage() {
             }
           }
         }
-      }
 
-      if (photoErrors.length > 0) {
-        setError(photoErrors.join(". ") + ". Laporan tetap tersimpan.");
-        setLoading(false);
-        return;
+        // ── Atomic rollback: if any photo fails, delete the entire report ──
+        if (photoErrors.length > 0) {
+          try {
+            await fetch(`/api/reports/${reportId}`, { method: "DELETE" });
+          } catch {
+            // If rollback fails, report may remain orphaned — log is enough
+          }
+          setError(photoErrors.join(". ") + ". Laporan gagal — foto tidak tersimpan.");
+          setLoading(false);
+          return;
+        }
       }
 
       setSuccess(true);
@@ -522,7 +529,6 @@ function FieldRenderer({ field }: { field: FormField }) {
             name={field.id}
             type="file"
             accept="image/*"
-            capture="environment"
             multiple
             required={field.required}
             className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30"

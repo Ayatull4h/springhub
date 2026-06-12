@@ -46,8 +46,15 @@ function OfflinePageContent() {
         } catch {}
 
         // Check login
-        const meRes = await fetch("/api/auth/me");
-        const meData = await meRes.json();
+        let meData;
+        try {
+          const meRes = await fetch("/api/auth/me");
+          meData = await meRes.json();
+        } catch (fetchErr) {
+          setPhase("not-logged-in");
+          setCheckError(`Gagal terhubung ke server: ${fetchErr instanceof Error ? fetchErr.message : "Network error"}. Pastikan kamu online untuk setup awal.`);
+          return;
+        }
 
         if (!meData.user) {
           setPhase("not-logged-in");
@@ -66,7 +73,15 @@ function OfflinePageContent() {
         }
 
         // Check if setup was already done (forms cached)
-        const forms = await offlineDB.getAllForms();
+        let forms;
+        try {
+          forms = await offlineDB.getAllForms();
+        } catch (dbErr) {
+          setCheckError(`Gagal membaca data offline: ${dbErr instanceof Error ? dbErr.message : "Unknown error"}. Coba refresh halaman.`);
+          setPhase("not-logged-in");
+          return;
+        }
+
         if (forms.length > 0) {
           // Check if there's an active session
           try {
@@ -86,9 +101,11 @@ function OfflinePageContent() {
 
         // Need to go through setup
         setPhase("setup");
-      } catch {
+      } catch (err) {
+        console.error("Offline prerequisite check failed:", err);
         setPhase("not-logged-in");
-        setCheckError("Gagal memeriksa status. Pastikan kamu online untuk setup awal.");
+        const msg = err instanceof Error ? err.message : "Unknown error";
+        setCheckError(`Gagal memeriksa status: ${msg}. Pastikan kamu online untuk setup awal.`);
       }
     }
 

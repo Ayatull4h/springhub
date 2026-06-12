@@ -34,7 +34,7 @@ const LeafletMap = dynamic(
 );
 
 const statusStyles: Record<SpringStatus, { dot: string; chip: string }> = {
-  healthy: { dot: "bg-emerald-500", chip: "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  healthy: { dot: "bg-blue-500", chip: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" },
   degraded: { dot: "bg-red-500", chip: "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
   restoration: { dot: "bg-amber-500", chip: "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300" },
 };
@@ -185,31 +185,31 @@ export function SpringMap() {
             <label className="flex items-center gap-1.5 text-xs cursor-pointer">
               <input type="checkbox" checked={showMonitoring} onChange={e => setShowMonitoring(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
               <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" /> {t("map.checkMonitoring")}
-              </span>
-            </label>
-            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-              <input type="checkbox" checked={showTreePlanting} onChange={e => setShowTreePlanting(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-green-500" /> {t("map.checkTree")}
-              </span>
-            </label>
-            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-              <input type="checkbox" checked={showTrench} onChange={e => setShowTrench(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-amber-800" />
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-amber-800" /> {t("map.checkTrench")}
-              </span>
-            </label>
-            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-              <input type="checkbox" checked={showSeedling} onChange={e => setShowSeedling(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-sky-500" /> {t("map.checkSeedling")}
+                <span className="h-2 w-2 rounded-full bg-blue-500" /> {t("map.checkMonitoring")}
               </span>
             </label>
             <label className="flex items-center gap-1.5 text-xs cursor-pointer">
               <input type="checkbox" checked={showRestoration} onChange={e => setShowRestoration(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
               <span className="inline-flex items-center gap-1">
                 <span className="h-2 w-2 rounded-full bg-amber-500" /> {t("map.checkRestoration")}
+              </span>
+            </label>
+            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+              <input type="checkbox" checked={showTreePlanting} onChange={e => setShowTreePlanting(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-amber-500" /> {t("map.checkTree")}
+              </span>
+            </label>
+            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+              <input type="checkbox" checked={showTrench} onChange={e => setShowTrench(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-amber-800" />
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-amber-500" /> {t("map.checkTrench")}
+              </span>
+            </label>
+            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+              <input type="checkbox" checked={showSeedling} onChange={e => setShowSeedling(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-blue-500" /> {t("map.checkSeedling")}
               </span>
             </label>
           </div>
