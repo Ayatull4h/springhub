@@ -17,6 +17,29 @@ type MediaItem = {
   linkLabel: string;
 };
 
+const mediaStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
+  video: {
+    gradient: "from-rose-600/90 to-rose-800/90",
+    icon: <Video className="h-10 w-10 text-white/80" />,
+    label: "Video",
+  },
+  event: {
+    gradient: "from-amber-600/90 to-amber-800/90",
+    icon: <CalendarDays className="h-10 w-10 text-white/80" />,
+    label: "Event",
+  },
+  publication: {
+    gradient: "from-blue-600/90 to-blue-800/90",
+    icon: <FileText className="h-10 w-10 text-white/80" />,
+    label: "Publication",
+  },
+  press: {
+    gradient: "from-purple-600/90 to-purple-800/90",
+    icon: <Newspaper className="h-10 w-10 text-white/80" />,
+    label: "Press",
+  },
+};
+
 function getYoutubeThumb(url: string): string | null {
   if (!url) return null;
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
@@ -26,10 +49,22 @@ function getYoutubeThumb(url: string): string | null {
 function MediaThumb({ item }: { item: MediaItem }) {
   const imgSrc = item.imageUrl || getYoutubeThumb(item.linkUrl);
   const [imgError, setImgError] = useState(false);
+  const style = mediaStyles[item.type] || mediaStyles.video;
 
-  if (imgSrc && !imgError) {
+  if (item.imageUrl && !imgError) {
     return <img
-      src={imgSrc}
+      src={item.imageUrl}
+      alt={item.title}
+      className="h-full w-full object-cover transition group-hover:scale-105"
+      loading="lazy"
+      onError={() => setImgError(true)}
+    />;
+  }
+
+  const ytThumb = getYoutubeThumb(item.linkUrl);
+  if (ytThumb && !imgError) {
+    return <img
+      src={ytThumb}
       alt={item.title}
       className="h-full w-full object-cover transition group-hover:scale-105"
       loading="lazy"
@@ -38,11 +73,11 @@ function MediaThumb({ item }: { item: MediaItem }) {
   }
 
   return (
-    <div className="flex h-full items-center justify-center">
-      {item.type === "video" && <Video className="h-12 w-12 text-rose-500" />}
-      {item.type === "event" && <CalendarDays className="h-12 w-12 text-amber-500" />}
-      {item.type === "publication" && <FileText className="h-12 w-12 text-blue-500" />}
-      {item.type === "press" && <Newspaper className="h-12 w-12 text-purple-500" />}
+    <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${style.gradient}`}>
+      <div className="flex flex-col items-center gap-2">
+        {style.icon}
+        <span className="text-xs font-semibold uppercase tracking-wider text-white/70">{style.label}</span>
+      </div>
     </div>
   );
 }
