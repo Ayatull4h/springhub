@@ -535,27 +535,34 @@ export const offlineDB = {
 
   // ── Storage check ───────────────────────────────────────────────────────
   async isAvailable(): Promise<boolean> {
-    if (typeof indexedDB === "undefined") return false;
+    if (typeof indexedDB === "undefined" || typeof window === "undefined") return false;
     try {
       const db = await openDB();
       db.close();
-      return true;
+      // Test that transactions actually work (iOS Chrome can open but not use IndexedDB)
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction("pending-reports", "readonly");
+          tx.abort();
+          resolve(true);
+        } catch {
+          resolve(false);
+        }
+      });
     } catch {
       return false;
     }
   },
 
   async estimateUsage(): Promise<{ used: number; quota: number | null }> {
-    const used = 0;
-    let quota: number | null = null;
-    if (navigator.storage && navigator.storage.estimate) {
-      try {
-        const est = await navigator.storage.estimate();
-        return { used: est.usage ?? 0, quota: est.quota ?? null };
-      } catch {
-        // not available
-      }
+    if (typeof navigator === "undefined" || !navigator.storage || !navigator.storage.estimate) {
+      return { used: 0, quota: null };
     }
-    return { used, quota: null };
+    try {
+      const est = await navigator.storage.estimate();
+      return { used: est.usage ?? 0, quota: est.quota ?? null };
+    } catch {
+      return { used: 0, quota: null };
+    }
   },
 };
