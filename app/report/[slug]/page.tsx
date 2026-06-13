@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, Sparkles, AlertCircle, Loader2, CheckCircle2, WifiOff } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Sparkles, AlertCircle, Loader2, CheckCircle2, WifiOff, Camera } from "lucide-react";
 import { FORMS, getForm, getFormTitle, type FormField } from "@/lib/forms";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
@@ -25,6 +25,16 @@ export default function ReportFormPage() {
   const [csrfToken, setCsrfToken] = useState("");
   // Catat waktu halaman dimuat — bukan waktu submit — untuk anti-spam time gate
   const [pageLoadTime] = useState(() => Date.now());
+
+  // Real-time timestamp (captured saat form dibuka, read-only, gak bisa diubah)
+  const [capturedAt] = useState(() => new Date().toISOString());
+  const capturedAtDisplay = new Date(capturedAt).toLocaleDateString("id-ID", {
+    year: "numeric", month: "long", day: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  });
+
+  // Per-field photo count (max 3 per field)
+  const [photoCounts, setPhotoCounts] = useState<Record<string, number>>({});
 
   // ── Auto-Draft State ──────────────────────────────────────────────
   const [fieldData, setFieldData] = useState<Record<string, unknown>>({});
@@ -117,6 +127,7 @@ export default function ReportFormPage() {
     formData.set("form_slug", activeForm.slug);
     formData.set("_submit_time", pageLoadTime.toString());
     formData.set("_website", honeypot);
+    formData.set("_captured_at", capturedAt);
 
     try {
       const res = await fetch("/api/reports", {
@@ -207,7 +218,7 @@ export default function ReportFormPage() {
       await offlineDB.queueSubmission({
         id: `queue-${activeForm.slug}-${Date.now()}`,
         formSlug: activeForm.slug,
-        fieldData,
+        fieldData: { ...fieldData, _captured_at: capturedAt },
         photoBlobs: formBlobs.length > 0 ? formBlobs : photoBlobs,
         csrfToken,
         createdAt: Date.now(),
@@ -330,10 +341,29 @@ export default function ReportFormPage() {
         </div>
 
         <div className="w-full max-w-full overflow-hidden space-y-5">
+          {/* Real-time timestamp — read-only, auto-captured */}
+          <div className="rounded-md bg-brand-50 px-4 py-3 dark:bg-brand-900/20">
+            <label className="block text-sm font-medium text-ink">
+              {t("form.timestamp") || "Waktu Laporan"}
+            </label>
+            <p className="mt-1 text-sm font-semibold text-brand-700 dark:text-brand-300">
+              {capturedAtDisplay} WIB
+            </p>
+            <p className="mt-0.5 text-[11px] text-ink-subtle">
+              Waktu dicatat otomatis saat form dibuka, tidak bisa diubah.
+            </p>
+          </div>
+
           {activeForm.fields.map((field: FormField) => (
-            <FieldWrapper key={field.id}>
-              <FieldRenderer field={field} />
-            </FieldWrapper>
+            field.type === "date" ? (
+              <div key={field.id} className="hidden" aria-hidden>
+                <input type="hidden" name={field.id} value={capturedAt.split("T")[0]} />
+              </div>
+            ) : (
+              <FieldWrapper key={field.id}>
+                <FieldRenderer field={field} capturedAtDisplay={capturedAtDisplay} photoCounts={photoCounts} setPhotoCounts={setPhotoCounts} />
+              </FieldWrapper>
+            )
           ))}
         </div>
 
@@ -365,7 +395,17 @@ function FieldWrapper({ children }: { children: React.ReactNode }) {
   return <div className="w-full max-w-full overflow-hidden">{children}</div>;
 }
 
-function FieldRenderer({ field }: { field: FormField }) {
+function FieldRenderer({
+  field,
+  capturedAtDisplay,
+  photoCounts,
+  setPhotoCounts,
+}: {
+  field: FormField;
+  capturedAtDisplay?: string;
+  photoCounts?: Record<string, number>;
+  setPhotoCounts?: React.Dispatch<React.SetStateAction<Record<string, number>>>;
+}) {
   const { t } = useI18n();
   const required = field.required ? (
     <span className="ml-1 text-red-500" aria-hidden>
@@ -429,16 +469,16 @@ function FieldRenderer({ field }: { field: FormField }) {
         </div>
       );
     case "date":
+      // ⏱ Diganti dengan timestamp real-time — read-only
       return (
         <div>
           {labelEl}
-          <input
-            id={field.id}
-            name={field.id}
-            type="date"
-            required={field.required}
-            className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-          />
+          <p className="mt-1 text-sm font-semibold text-brand-700 dark:text-brand-300">
+            {capturedAtDisplay || "—"} WIB
+          </p>
+          <p className="mt-0.5 text-[11px] text-ink-subtle">
+            Waktu otomatis — tidak bisa diubah
+          </p>
         </div>
       );
     case "link":
@@ -527,18 +567,53 @@ function FieldRenderer({ field }: { field: FormField }) {
         </fieldset>
       );
     case "photo":
+      const currentCount = photoCounts?.[field.id] ?? 0;
+      const maxReached = currentCount >= 3;
       return (
         <div>
           {labelEl}
-          <input
-            id={field.id}
-            name={field.id}
-            type="file"
-            accept="image/*"
-            multiple
-            required={field.required}
-            className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30"
-          />
+          {/* Photo count indicator */}
+          <div className="mt-1 flex items-center gap-2 text-xs text-ink-muted">
+            <Camera className="h-3.5 w-3.5" />
+            <span>{currentCount} / 3 foto</span>
+            {maxReached && (
+              <span className="font-semibold text-amber-600">(maksimal 3 foto)</span>
+            )}
+          </div>
+          {/* Camera only — langsung kamera, bukan galeri */}
+          {!maxReached && (
+            <input
+              id={field.id}
+              name={field.id}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              multiple
+              required={field.required && currentCount === 0}
+              onChange={(e) => {
+                const files = e.target.files;
+                if (files) {
+                  const newCount = Math.min(files.length + currentCount, 3);
+                  setPhotoCounts?.((prev) => ({ ...prev, [field.id]: newCount }));
+                  // If user selects more than remaining slots, trim
+                  const remaining = 3 - currentCount;
+                  if (files.length > remaining) {
+                    const dt = new DataTransfer();
+                    for (let i = 0; i < remaining; i++) {
+                      dt.items.add(files[i]);
+                    }
+                    (e.target as HTMLInputElement).files = dt.files;
+                  }
+                }
+              }}
+              className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30"
+            />
+          )}
+          {maxReached && (
+            <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+              Maksimal 3 foto. Hapus yang ada untuk mengganti.
+            </p>
+          )}
         </div>
       );
     case "location":

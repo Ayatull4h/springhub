@@ -7,6 +7,7 @@ import { WifiOff, Loader2, AlertCircle, ArrowLeft, RefreshCw } from "lucide-reac
 import { OfflineSetup } from "@/components/offline/offline-setup";
 import { OfflineSurveyMap } from "@/components/offline/offline-survey-map";
 import { OfflineExitSync } from "@/components/offline/offline-exit-sync";
+import { SimpleOfflineForm } from "@/components/offline/simple-offline-form";
 import { offlineDB } from "@/lib/offline-db";
 
 class OfflineErrorBoundary extends Component<
@@ -61,7 +62,7 @@ class OfflineErrorBoundary extends Component<
   }
 }
 
-type OfflinePhase = "checking" | "not-logged-in" | "setup" | "survey" | "exit-sync" | "storage-error";
+type OfflinePhase = "checking" | "not-logged-in" | "setup" | "survey" | "simple-form" | "exit-sync" | "storage-error";
 
 function OfflinePageContent() {
   const searchParams = useSearchParams();
@@ -288,6 +289,30 @@ function OfflinePageContent() {
           </div>
         )}
 
+        {/* Mode selection */}
+        {!isFullMode && (
+          <div className="mb-4 grid gap-3 sm:grid-cols-2">
+            <button
+              onClick={() => setPhase("simple-form")}
+              className="card border-brand-300 bg-brand-50 text-left transition hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40"
+            >
+              <h3 className="font-semibold text-brand-700 dark:text-brand-300">📋 Mode Form Cepat</h3>
+              <p className="mt-1 text-xs text-ink-muted">
+                Pilih form → isi → simpan. Tanpa peta, tanpa setup rumit.
+              </p>
+            </button>
+            <button
+              onClick={() => {/* Ke setup full */}}
+              className="card text-left transition hover:border-brand-300"
+            >
+              <h3 className="font-semibold text-ink">🗺️ Mode Survey Lengkap</h3>
+              <p className="mt-1 text-xs text-ink-muted">
+                Dengan peta offline, GPS tracking, dan marker di lapangan.
+              </p>
+            </button>
+          </div>
+        )}
+
         <OfflineErrorBoundary>
           <OfflineSetup
             mode={isFullMode ? "full" : "save-only"}
@@ -295,6 +320,13 @@ function OfflinePageContent() {
           />
         </OfflineErrorBoundary>
       </div>
+    );
+  }
+
+  // ── Phase: Simple form (PWA-friendly, no map) ─────────────────────────
+  if (phase === "simple-form") {
+    return (
+      <SimpleOfflineForm onExit={() => setPhase("setup")} />
     );
   }
 
