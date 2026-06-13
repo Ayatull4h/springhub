@@ -31,6 +31,17 @@ export const metadata: Metadata = {
     "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://springhub.vercel.app"),
   manifest: "/manifest.json",
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.png", type: "image/png" },
@@ -53,6 +64,12 @@ export const metadata: Metadata = {
     siteName: "SpringHub",
     locale: "id_ID",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SpringHub · Community-Driven Spring Restoration",
+    description:
+      "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
   },
 };
 
