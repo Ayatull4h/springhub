@@ -31,7 +31,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti." }, { status: 429 });
     }
 
-    const token = await new SignJWT({ email, userId: profile.id } as unknown as JWTPayload)
+    const jwtPayload: JWTPayload = { email, userId: profile.id };
+    const token = await new SignJWT(jwtPayload)
       .setProtectedHeader({ alg: "HS256" })
       .setExpirationTime("1h")
       .sign(SECRET);

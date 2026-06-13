@@ -25,7 +25,14 @@ export async function POST(request: Request) {
     let payload: { email: string; userId: string };
     try {
       const { payload: p } = await jwtVerify(token, SECRET);
-      payload = p as unknown as { email: string; userId: string };
+      if (!p || typeof p !== "object") {
+        return NextResponse.json({ error: "Token tidak valid atau sudah kadaluarsa" }, { status: 400 });
+      }
+      const pData = p as Record<string, unknown>;
+      if (typeof pData.email !== "string" || typeof pData.userId !== "string") {
+        return NextResponse.json({ error: "Token tidak valid atau sudah kadaluarsa" }, { status: 400 });
+      }
+      payload = { email: pData.email, userId: pData.userId };
     } catch {
       return NextResponse.json({ error: "Token tidak valid atau sudah kadaluarsa" }, { status: 400 });
     }

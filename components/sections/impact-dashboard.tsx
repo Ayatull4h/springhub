@@ -70,11 +70,11 @@ export function ImpactDashboard() {
             <div key={s.label} className="card">
               <div className="flex items-center justify-between">
                 <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-300">
-                  <Icon className={`h-5 w-5 ${(s as any).color || "text-brand-600"}`} />
+                  <Icon className={`h-5 w-5 ${(s as any).color || "text-brand-600"}`} aria-hidden="true" />
                 </span>
                 <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
-                  <TrendingUp className="h-3 w-3" />
-                  {(s.delta.match(/^[+-]?\d+/) ?? ["0"])[0]}
+                  <TrendingUp className="h-3 w-3" aria-hidden="true" />
+                  {(s.delta?.match(/^[+-]?\d+/) ?? ["0"])[0]}
                 </span>
               </div>
               <div className="mt-4 text-3xl font-bold tracking-tight">
@@ -91,7 +91,7 @@ export function ImpactDashboard() {
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         <div className="card">
           <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
-            <TrendingUp className="h-4 w-4 text-brand-600" />
+            <TrendingUp className="h-4 w-4 text-brand-600" aria-hidden="true" />
             {t("dashboard.monthly")}
           </h3>
           <ul className="mt-4 space-y-4">

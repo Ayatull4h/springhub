@@ -93,7 +93,6 @@ export default function AdminUsersPage() {
                   >
                     <option value="user">User</option>
                     <option value="volunteer">Volunteer</option>
-                    <option value="field_lead">Field Lead</option>
                     <option value="admin">Admin</option>
                   </select>
                   <button onClick={() => setEditingRole(null)} className="text-xs text-ink-muted hover:text-ink">Cancel</button>
@@ -156,7 +155,6 @@ export default function AdminUsersPage() {
                       >
                         <option value="user">User</option>
                         <option value="volunteer">Volunteer</option>
-                        <option value="field_lead">Field Lead</option>
                         <option value="admin">Admin</option>
                       </select>
                       <button onClick={() => setEditingRole(null)} className="text-xs text-ink-muted hover:text-ink dark:hover:text-white">Cancel</button>

@@ -521,7 +521,7 @@ Base path: `/report/spring-monitoring`, `/report/spring-restoration`, dll
 | Table columns: Username, Email, Phone, Role, Region, Points, Trust, Joined | ✅ 8 columns | ☐ |
 | Email displayed with `Mail` icon | ✅ | ☐ |
 | Phone displayed with `Phone` icon or "—" | ✅ | ☐ |
-| Role: clickable chip → inline `<select>` to change role | ✅ 4 options: user, volunteer, field_lead, admin | ☐ |
+| Role: clickable chip → inline `<select>` to change role | ✅ 3 options: user, volunteer, admin | ☐ |
 | Inline role edit: dropdown + Cancel button | ✅ | ☐ |
 | Points: `Sparkles` icon + `toLocaleString("id-ID")` | ✅ | ☐ |
 | Trust score: `Shield` icon + numeric value | ✅ | ☐ |

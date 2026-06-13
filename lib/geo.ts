@@ -36,12 +36,12 @@ export function distanceKm(a: LatLng, b: LatLng): number {
 /**
  * Choose what to display based on the viewer's clearance.
  * - "public" / "volunteer": always snapped
- * - "field_lead" / "admin": precise coords
+ * - "admin": precise coords
  */
 export function visibleLocation(
   precise: LatLng,
-  role: "public" | "volunteer" | "field_lead" | "admin"
+  role: "public" | "volunteer" | "admin"
 ): LatLng {
-  if (role === "field_lead" || role === "admin") return precise;
+  if (role === "admin") return precise;
   return snapToProtectionGrid(precise);
 }

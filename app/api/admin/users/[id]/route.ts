@@ -16,7 +16,7 @@ export async function PUT(
     const body = await request.json();
     const { role } = body;
 
-    const validRoles = ["user", "volunteer", "field_lead", "admin"];
+    const validRoles = ["user", "volunteer", "admin"];
     if (!validRoles.includes(role)) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 });
     }

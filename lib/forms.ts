@@ -262,7 +262,7 @@ export const seedlingStockSchema = z.object({
   notes: z.string().optional(),
 });
 
-export const formSchemaMap: Record<string, z.ZodObject<any, any>> = {
+export const formSchemaMap: Record<string, z.ZodObject<z.ZodRawShape>> = {
   "spring-monitoring": springMonitoringSchema,
   "spring-restoration": springRestorationSchema,
   "trench-development": trenchDevelopmentSchema,
@@ -270,7 +270,7 @@ export const formSchemaMap: Record<string, z.ZodObject<any, any>> = {
   "seedling-stock": seedlingStockSchema,
 };
 
-export function getFormSchema(slug: string): z.ZodObject<any, any> | undefined {
+export function getFormSchema(slug: string): z.ZodObject<z.ZodRawShape> | undefined {
   return formSchemaMap[slug];
 }
 

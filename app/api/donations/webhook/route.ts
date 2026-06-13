@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { timingSafeEqual } from "crypto";
+import type { DonationStatus } from "@prisma/client";
 
 /**
  * Xendit webhook handler for payment status notifications.
@@ -88,7 +89,7 @@ export async function POST(request: Request) {
       await tx.donation.update({
         where: { id: existing.id },
         data: {
-          status: localStatus as any,
+          status: localStatus as DonationStatus,
           paidAt: paid_at ? new Date(paid_at) : localStatus === "paid" ? new Date() : null,
         },
       });

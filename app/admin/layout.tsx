@@ -128,7 +128,7 @@ export default function AdminLayout({
               <div className="text-sm font-medium text-ink">{user?.username}</div>
               <div className="text-xs text-ink-subtle">{user?.email}</div>
             </div>
-            <button onClick={handleLogout} className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-700">
+            <button onClick={handleLogout} className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label="Logout">
               <LogOut className="h-4 w-4" />
             </button>
           </div>
@@ -175,7 +175,7 @@ export default function AdminLayout({
           >
             <div className="flex h-16 items-center justify-between border-b border-ink-line px-5 dark:border-slate-700">
               <span className="text-sm font-bold text-ink dark:text-white">SpringHub Admin</span>
-              <button onClick={() => setSidebarOpen(false)} className="rounded-md p-1 text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white">
+              <button onClick={() => setSidebarOpen(false)} className="rounded-md p-1 text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white" aria-label="Tutup menu">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -209,7 +209,7 @@ export default function AdminLayout({
                   <div className="text-sm font-medium text-ink dark:text-white">{user?.username}</div>
                   <div className="text-xs text-ink-subtle dark:text-slate-400">{user?.email}</div>
                 </div>
-                <button onClick={handleLogout} className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-700">
+                <button onClick={handleLogout} className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label="Logout">
                   <LogOut className="h-4 w-4" />
                 </button>
               </div>

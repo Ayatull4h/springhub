@@ -51,7 +51,15 @@ export default function ReportFormPage() {
   }, []);
 
   // Dynamic form from DB
-  const [dbForm, setDbForm] = useState<any>(null);
+  type DbFormData = {
+    slug: string;
+    title: string;
+    description: string;
+    pointsOnSubmit: number;
+    contributionType: string;
+    fields: FormField[];
+  };
+  const [dbForm, setDbForm] = useState<DbFormData | null>(null);
   const [dbFormLoading, setDbFormLoading] = useState(true);
 
   useEffect(() => {

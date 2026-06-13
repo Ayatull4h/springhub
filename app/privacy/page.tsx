@@ -30,8 +30,7 @@ export default function PrivacyPage() {
           <h2 className="text-xl font-semibold text-ink">Privasi Lokasi</h2>
           <p className="mt-2">
             Lokasi presisi mata air adalah data sensitif. Publik hanya melihat snapped location
-            (grid 5 km) untuk melindungi mata air dari eksploitasi. Field Lead dapat mengakses
-            lokasi presisi di area kerjanya. Admin memiliki akses penuh.
+            (grid 5 km) untuk melindungi mata air dari eksploitasi. Admin memiliki akses penuh.
           </p>
         </section>
         <section>

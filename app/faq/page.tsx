@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "Apa itu SpringHub?",
-    a: "SpringHub adalah platform komunitas untuk memonitor, merestorasi, dan melindungi mata air di Indonesia. Kami menghubungkan relawan, field lead, dan donor dalam satu ekosistem.",
+    a: "SpringHub adalah platform komunitas untuk memonitor, merestorasi, dan melindungi mata air di Indonesia. Kami menghubungkan relawan dan donor dalam satu ekosistem.",
   },
   {
     q: "Bagaimana cara mendaftar?",

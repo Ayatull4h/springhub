@@ -26,7 +26,15 @@ export async function verifyPassword(
 }
 
 export async function createSession(payload: SessionPayload): Promise<string> {
-  const token = await new SignJWT(payload as unknown as JWTPayload)
+  if (!payload || typeof payload !== "object") {
+    throw new Error("Invalid session payload");
+  }
+  const jwtPayload: JWTPayload = {
+    userId: payload.userId,
+    role: payload.role,
+    username: payload.username,
+  };
+  const token = await new SignJWT(jwtPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime(`${SESSION_DURATION_SEC}s`)
     .sign(SECRET);
@@ -61,7 +69,16 @@ export async function getSession(): Promise<SessionPayload | null> {
 
   try {
     const { payload } = await jwtVerify(token, SECRET);
-    return payload as unknown as SessionPayload;
+    if (!payload || typeof payload !== "object") return null;
+    const p = payload as Record<string, unknown>;
+    if (
+      typeof p.userId !== "string" ||
+      typeof p.role !== "string" ||
+      typeof p.username !== "string"
+    ) {
+      return null;
+    }
+    return { userId: p.userId, role: p.role, username: p.username };
   } catch {
     return null;
   }

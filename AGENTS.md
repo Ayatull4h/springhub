@@ -15,7 +15,6 @@
 |---|---|
 | **Publik** (no login) | Lihat map, dashboard, learning hub, media, activity feed, project listing |
 | **Volunteer** (login, verified) | Isi form + dapet poin + submit project (jika >= 20K pts) + lihat history sendiri |
-| **Field Lead** (login, verified) | Semua akses volunteer + lihat lokasi presisi (terbatas area kerjanya) |
 | **Admin** | Semua data: email, phone, precise coords, donasi, user management, review queue, export |
 
 ---
@@ -24,11 +23,11 @@
 
 **Prinsip**: Data sensitif TIDAK pernah dikirim ke frontend publik. Perlindungan di level database (Supabase RLS), bukan UI hiding.
 
-| Data | Publik | Volunteer | Field Lead | Admin |
+| Data | Publik | Volunteer | Admin |
 |---|---|---|---|---|
 | Username, region | ✅ | ✅ | ✅ | ✅ |
 | Snapped location (5km) | ✅ | ✅ | ✅ | ✅ |
-| Precise location | ❌ | ❌ | ✅ (area sendiri) | ✅ |
+| Precise location | ❌ | ❌ | ✅ |
 | Email, phone | ❌ | ❌ | ❌ | ✅ |
 | Donation detail | ❌ (aggregate only) | ❌ | ❌ | ✅ |
 | Trust score | ❌ | ❌ | ❌ | ✅ |
@@ -177,9 +176,9 @@ Third Party
 7. **CSRF**: form submission pakai token untuk cegah cross-site request
 
 ### Database Requirements
-- `profiles.role` ENUM: 'user', 'volunteer', 'field_lead', 'admin'
+- `profiles.role` ENUM: 'user', 'volunteer', 'admin'
 - `profiles.email` dan `profiles.phone` hanya bisa diSELECT oleh admin
-- `reports.precise_location` hanya bisa diSELECT oleh field_lead dan admin
+- `reports.precise_location` hanya bisa diSELECT oleh admin
 - `donations` — donor_name publik, donor_email + phone admin-only
 - Index: user_id, form_slug, status, created_at, region
 
@@ -319,14 +318,14 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 
 ### 🔐 RLS Policies
 
-| Table | Publik | Volunteer | Field Lead | Admin |
-|---|---|---|---|---|
-| profiles | username,region,points | dirinya sendiri | dirinya + area | ALL |
-| reports | snapped+status | CRUD sendiri | area | ALL |
-| report_photos | thumbnail | upload sendiri | area | ALL |
-| donations | donor_name+amount+status=paid | riwayat sendiri | area | ALL |
-| projects | approved | create (>=20K pts) | area | ALL |
-| points_log | — | riwayat sendiri | area | ALL |
+| Table | Publik | Volunteer | Admin |
+|---|---|---|---|
+| profiles | username,region,points | dirinya sendiri | ALL |
+| reports | snapped+status | CRUD sendiri | ALL |
+| report_photos | thumbnail | upload sendiri | ALL |
+| donations | donor_name+amount+status=paid | riwayat sendiri | ALL |
+| projects | approved | create (>=20K pts) | ALL |
+| points_log | — | riwayat sendiri | ALL |
 
 ### 📋 Route Map (Updated 1 Juni 2026)
 

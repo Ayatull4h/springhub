@@ -51,6 +51,6 @@ Digunakan untuk mode offline:
 
 ## Catatan Penting
 - Foto dikompres ke 720p sebelum disimpan
-- Lokasi presisi hanya untuk admin & field lead
+- Lokasi presisi hanya untuk admin
 - Data IndexedDB dihapus setelah sync berhasil
 - Like & komen saat ini optimistic (lokal dulu, nanti sync ke DB)

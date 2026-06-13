@@ -98,7 +98,7 @@ type SpringRecord = {
   status: SpringStatus;
   reports: number;
   lastReport: string;
-  /** Precise coordinates — only released to admins / field leads. */
+  /** Precise coordinates — only released to admins. */
   precise: LatLng;
   /** Public-safe location, snapped to the 5 km protection grid. */
   publicLoc: LatLng;

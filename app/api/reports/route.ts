@@ -93,12 +93,26 @@ export async function POST(request: Request) {
 
       // Handle location fields
       if (key === "location_lat" || key.endsWith("_lat")) {
-        preciseLat = parseFloat(value as string);
+        const parsed = parseFloat(value as string);
+        if (isNaN(parsed)) {
+          return NextResponse.json(
+            { error: "Lokasi lat tidak valid" },
+            { status: 400 }
+          );
+        }
+        preciseLat = parsed;
         fieldData[key] = value as string;
         continue;
       }
       if (key === "location_lng" || key.endsWith("_lng")) {
-        preciseLng = parseFloat(value as string);
+        const parsed = parseFloat(value as string);
+        if (isNaN(parsed)) {
+          return NextResponse.json(
+            { error: "Lokasi lng tidak valid" },
+            { status: 400 }
+          );
+        }
+        preciseLng = parsed;
         fieldData[key] = value as string;
         continue;
       }
@@ -132,7 +146,7 @@ export async function POST(request: Request) {
     // Try dynamic form validation from DB first
     let dynamicForm: any = null;
     try {
-      dynamicForm = await (prisma as any).form.findUnique({
+      dynamicForm = await prisma.form.findUnique({
         where: { slug: formSlug },
         include: { fields: true },
       });

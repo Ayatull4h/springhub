@@ -21,8 +21,12 @@ type ReportItem = {
   snappedLat: number | null;
   snappedLng: number | null;
   createdAt: string;
-  user: { username: string } | null;
-  guestId: string | null;
+  submitter: {
+    type: string;
+    id: string | null;
+    name: string | null;
+    email: string | null;
+  };
   _photos?: ReportPhoto[];
 };
 
@@ -157,7 +161,7 @@ export default function AdminReviewPage() {
                       {formLabels[r.formSlug] ?? r.formSlug}
                     </span>
                     <span className="ml-2 text-sm text-ink-muted">
-                      {t("common.by")} {(r as any).submitter?.name ?? `${t("common.guest")} (${(r as any).guestId?.slice(0, 8)}...)`}
+                      {t("common.by")} {r.submitter?.name ?? t("common.guest")}
                     </span>
                   </div>
                   <span className="text-xs text-ink-muted">

@@ -21,7 +21,15 @@ export async function middleware(request: NextRequest) {
   if (sessionToken) {
     try {
       const { payload } = await jwtVerify(sessionToken, SECRET);
-      session = payload as unknown as { userId: string; role: string };
+      if (!payload || typeof payload !== "object") {
+        session = null;
+      } else {
+        const p = payload as Record<string, unknown>;
+        session = {
+          userId: typeof p.userId === "string" ? p.userId : "",
+          role: typeof p.role === "string" ? p.role : "user",
+        };
+      }
     } catch {
       // Invalid token
     }

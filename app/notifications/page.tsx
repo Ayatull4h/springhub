@@ -91,6 +91,7 @@ export default function NotificationsPage() {
           <Link
             href="/"
             className="rounded-md p-2 text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-800"
+            aria-label="Kembali ke beranda"
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>

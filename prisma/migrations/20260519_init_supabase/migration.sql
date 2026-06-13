@@ -2,7 +2,7 @@
 CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('user', 'volunteer', 'field_lead', 'admin');
+CREATE TYPE "Role" AS ENUM ('user', 'volunteer', 'admin');
 
 -- CreateEnum
 CREATE TYPE "FormSlug" AS ENUM ('spring_monitoring', 'spring_restoration', 'trench_development', 'tree_planting', 'seedling_stock');

@@ -116,7 +116,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
           <X className="h-5 w-5" />
         </button>
 
-        <h3 className="text-lg font-bold text-ink">Cara Mendapatkan Poin</h3>
+        <h3 id="points-guide-title" className="text-lg font-bold text-ink">Cara Mendapatkan Poin</h3>
         <p className="mt-1 text-sm text-ink-muted">
           Kumpulkan poin dengan berkontribusi dan raih milestone!
         </p>
