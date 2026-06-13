@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { offlineDB, type FormDefinition, type OfflineConfig } from "@/lib/offline-db";
+import { getFormTitle } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { ErrorBoundary } from "./error-boundary";
@@ -706,7 +707,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
                   className="mt-0.5 h-4 w-4 rounded border-ink-line text-brand-600 focus:ring-brand-500"
                 />
                 <div className="min-w-0 flex-1">
-                  <span className="text-sm font-semibold text-ink">{form.title}</span>
+                  <span className="text-sm font-semibold text-ink">{getFormTitle(form.slug, form.title, t)}</span>
                   <p className="mt-0.5 line-clamp-1 text-xs text-ink-muted">{form.description}</p>
                   <div className="mt-1.5 flex items-center gap-2 text-[10px] text-ink-subtle">
                     <span className="rounded bg-brand-50 px-1.5 py-0.5 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">

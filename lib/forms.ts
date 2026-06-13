@@ -282,3 +282,42 @@ export const POINTS_MAP: Record<string, number> = {
   "tree-planting": 50,
   "seedling-stock": 15,
 };
+
+/**
+ * Maps a form slug to its i18n key in messages/{locale}.json.
+ *
+ * Slug → key mapping:
+ *   spring-monitoring → form.title.monitoring
+ *   spring-restoration → form.title.restoration
+ *   trench-development → form.title.trench
+ *   tree-planting      → form.title.planting
+ *   seedling-stock     → form.title.seedling
+ */
+export function getFormI18nKey(slug: string): string | undefined {
+  const map: Record<string, string> = {
+    "spring-monitoring": "form.title.monitoring",
+    "spring-restoration": "form.title.restoration",
+    "trench-development": "form.title.trench",
+    "tree-planting": "form.title.planting",
+    "seedling-stock": "form.title.seedling",
+  };
+  return map[slug];
+}
+
+/**
+ * Returns the translated form title using the i18n `t()` function.
+ * Falls back to `fallbackTitle` if no translation is found.
+ */
+export function getFormTitle(
+  slug: string,
+  fallbackTitle: string,
+  t: (key: string, fallback?: string) => string
+): string {
+  const i18nKey = getFormI18nKey(slug);
+  if (i18nKey) {
+    const translated = t(i18nKey);
+    // t() returns the key itself if no translation found — treat as miss
+    if (translated && translated !== i18nKey) return translated;
+  }
+  return fallbackTitle;
+}

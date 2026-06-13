@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Sparkles, AlertCircle, Loader2, CheckCircle2, WifiOff } from "lucide-react";
-import { FORMS, getForm, type FormField } from "@/lib/forms";
+import { FORMS, getForm, getFormTitle, type FormField } from "@/lib/forms";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
 import { LocationPicker } from "@/components/map/location-picker";
@@ -260,7 +260,7 @@ export default function ReportFormPage() {
         <ArrowLeft className="h-4 w-4" /> Kembali ke Beranda
       </Link>
 
-      <h1 className="mt-4 text-3xl font-extrabold tracking-tight">{activeForm.title}</h1>
+      <h1 className="mt-4 text-3xl font-extrabold tracking-tight">{getFormTitle(activeForm.slug, activeForm.title, t)}</h1>
       <p className="mt-2 text-ink-muted">{activeForm.description}</p>
 
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">

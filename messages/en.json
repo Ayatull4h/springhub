@@ -523,6 +523,7 @@
   "offline.survey.exit": "Exit",
   "offline.survey.gpsStart": "Start GPS Tracking",
   "offline.survey.gpsActive": "Tracking Active",
+  "offline.survey.searchingGps": "Finding location...",
 
   "offline.sync.confirm": "Exit Offline Mode",
   "offline.sync.confirmDesc": "Data will be uploaded to the server. Ensure stable connection.",

@@ -523,6 +523,7 @@
   "offline.survey.exit": "Exit",
   "offline.survey.gpsStart": "Mulai Tracking GPS",
   "offline.survey.gpsActive": "Tracking Aktif",
+  "offline.survey.searchingGps": "Mencari lokasi...",
 
   "offline.sync.confirm": "Keluar Mode Offline",
   "offline.sync.confirmDesc": "Data akan dikirim ke server. Pastikan koneksi stabil.",

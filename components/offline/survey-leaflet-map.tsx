@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { MapContainer, Polyline, CircleMarker, Circle, Tooltip, Marker, useMap } from "react-leaflet";
+import { MapContainer, Polyline, CircleMarker, Circle, Tooltip, Marker, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { type OfflineTrackingPoint, type MarkerType } from "@/lib/offline-db";
@@ -56,6 +56,7 @@ type SurveyLeafletMapProps = {
   initialCenter?: { lat: number; lng: number } | null;
   focusMarker?: { lat: number; lng: number } | null;
   autoFollowPaused?: boolean;
+  onSetLocation?: (lat: number, lng: number) => void;
 };
 
 /** Auto-follow GPS position — paused after marker placement */
@@ -115,6 +116,21 @@ function LocateButton() {
   );
 }
 
+/**
+ * Map click handler — lets user tap on map to manually set location
+ * when GPS is unavailable. Adds a prompt overlay when no GPS position.
+ */
+function MapClickHandler({ onSetLocation, noGps }: { onSetLocation?: (lat: number, lng: number) => void; noGps: boolean }) {
+  useMapEvents({
+    click(e) {
+      if (noGps && onSetLocation) {
+        onSetLocation(e.latlng.lat, e.latlng.lng);
+      }
+    },
+  });
+  return null;
+}
+
 /** Pan to a marker when focusMarker changes */
 function FocusMarker({ marker }: { marker: { lat: number; lng: number } | null }) {
   const map = useMap();
@@ -126,30 +142,6 @@ function FocusMarker({ marker }: { marker: { lat: number; lng: number } | null }
   return null;
 }
 
-/** OSM tile layer */
-function MapLayers() {
-  const map = useMap();
-
-  useEffect(() => {
-    const layer = L.tileLayer("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
-      maxZoom: 19,
-    });
-
-    layer.on("tileerror", (e) => {
-      console.warn("[SurveyMap] Tile error:", e.error?.message || e.tile?.src);
-    });
-
-    map.addLayer(layer);
-
-    return () => {
-      map.removeLayer(layer);
-    };
-  }, [map]);
-
-  return null;
-}
-
 export function SurveyLeafletMap({
   trackingPoints,
   markers,
@@ -158,6 +150,7 @@ export function SurveyLeafletMap({
   initialCenter,
   focusMarker,
   autoFollowPaused = false,
+  onSetLocation,
 }: SurveyLeafletMapProps) {
   const { t } = useI18n();
   // GPS trail = markerType null (plain tracking points, not markers)
@@ -193,7 +186,6 @@ export function SurveyLeafletMap({
         zoomControl={false}
       >
         <OfflineTileLayer />
-        <MapLayers />
         <AutoFollow pos={currentPosition} isTracking={isTracking} paused={autoFollowPaused} />
         <FocusMarker marker={focusMarker ?? null} />
         <LocateButton />
@@ -263,6 +255,18 @@ export function SurveyLeafletMap({
             </Tooltip>
           </Marker>
         ))}
+
+        {/* Map click handler — manual location set when GPS unavailable */}
+        <MapClickHandler onSetLocation={onSetLocation} noGps={isTracking && !currentPosition} />
+
+        {/* Manual location prompt — shown when GPS not available */}
+        {isTracking && !currentPosition && (
+          <div className="leaflet-bottom leaflet-left z-[1000]">
+            <div className="leaflet-control mx-2 mb-4 rounded-lg bg-amber-50 px-4 py-3 text-xs text-amber-700 shadow dark:bg-amber-900/30 dark:text-amber-300">
+              {"📍 GPS tidak tersedia. Ketuk di peta untuk atur posisi."}
+            </div>
+          </div>
+        )}
 
         {/* Current position indicator — visible "You are here" */}
         {currentPosition && (

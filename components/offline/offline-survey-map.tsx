@@ -27,7 +27,7 @@ import { distanceKm } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ErrorBoundary } from "./error-boundary";
-import { getForm } from "@/lib/forms";
+import { getForm, getFormTitle } from "@/lib/forms";
 
 // ─── Fallback map — saat Leaflet gagal load ──────────────────────────────────
 function MapFallback({ message = "Map tidak tersedia di perangkat ini" }: { message?: string }) {
@@ -214,6 +214,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const lastPointRef = useRef<OfflineTrackingPoint | null>(null);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
   const [gpsError, setGpsError] = useState<string | null>(null);
+  // GPS status: "idle" | "searching" | "active" | "error"
+  const [gpsStatus, setGpsStatus] = useState<"idle" | "searching" | "active" | "error">("idle");
 
   // All markers (spring, tree, trench) — passed as `markers` to map
   const [markers, setMarkers] = useState<OfflineTrackingPoint[]>([]);
@@ -304,30 +306,26 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     prevPhotosRef.current = key;
   }, [formPhotos]);
 
-  // ── GPS start — WAJIB user gesture (iOS Safari) ──────────────────────
-  // Tidak auto-start di mount. User harus tap tombol "Mulai Tracking".
-  // Ini satu-satunya cara yang works di semua browser (Android, iOS Safari, Chrome iOS).
-
-  // ── GPS Tracking — user gesture required (Safari iOS) ─────────────────
+  // ── GPS — Ref-based untuk hindari stale closure ──────────────────────
+  // Semua fungsi GPS disimpan di ref agar callback dari Geolocation API
+  // selalu akses versi terbaru (bukan stale closure).
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const gpsStatusRef = useRef<"idle" | "searching" | "active" | "error">("idle");
 
-  const startTracking = useCallback(() => {
-    if (!navigator.geolocation) {
-      setGpsError("GPS tidak didukung browser ini.");
-      return;
-    }
+  // Save a tracking point (always reads latest via refs)
+  const saveTrackingPointFn = (pos: GeolocationPosition) => {
+    const { latitude, longitude, accuracy } = pos.coords;
+    setCurrentPos({ lat: latitude, lng: longitude });
+    setGpsAccuracy(accuracy ?? null);
 
-    // Reset error + dismiss overlay
-    setGpsError(null);
-    setIsTracking(true);
-
-    // Step 1: getCurrentPosition — one-time fix + error feedback
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords;
-        setCurrentPos({ lat: latitude, lng: longitude });
-        setGpsAccuracy(accuracy ?? null);
-        const startPoint: OfflineTrackingPoint = {
+    const lastPoint = lastPointRef.current;
+    if (lastPoint) {
+      const dist = distanceKm(
+        { lat: lastPoint.lat, lng: lastPoint.lng },
+        { lat: latitude, lng: longitude }
+      );
+      if (dist >= 0.005) {
+        const point: OfflineTrackingPoint = {
           id: generateId(),
           lat: latitude,
           lng: longitude,
@@ -336,142 +334,164 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
           name: null,
           recordedAt: Date.now(),
         };
-        lastPointRef.current = startPoint;
-        setTrackingPoints([startPoint]);
-        offlineDB.saveTrackingPoint(startPoint).catch(() => {});
-      },
-      (err) => {
-        // GPS gagal — balikin overlay supaya user bisa coba lagi
-        setIsTracking(false);
-        const gpsMsg: Record<number, string> = {
-          1: "Izin lokasi ditolak. Buka Settings → Privasi → Lokasi → Izinkan SpringHub.",
-          2: "Sinyal GPS tidak tersedia. Pastikan GPS aktif & coba di luar ruangan.",
-          3: "Waktu habis. Coba lagi di tempat terbuka.",
-        };
-        setGpsError(gpsMsg[err.code] || "Gagal mengakses GPS. Coba lagi.");
-      },
-      { enableHighAccuracy: true, timeout: 15000 }
-    );
-
-    // Step 2: watchPosition — continuous updates
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords;
-        setCurrentPos({ lat: latitude, lng: longitude });
-        setGpsAccuracy(accuracy ?? null);
-
-        const lastPoint = lastPointRef.current;
-        if (lastPoint) {
-          const dist = distanceKm(
-            { lat: lastPoint.lat, lng: lastPoint.lng },
-            { lat: latitude, lng: longitude }
-          );
-          if (dist >= 0.005) {
-            const point: OfflineTrackingPoint = {
-              id: generateId(),
-              lat: latitude,
-              lng: longitude,
-              accuracy: accuracy ?? null,
-              markerType: null,
-              name: null,
-              recordedAt: Date.now(),
-            };
-            lastPointRef.current = point;
-            setTrackingPoints((prev) => [...prev, point]);
-            setTotalDistance((prev) => prev + dist * 1000);
-            offlineDB.saveTrackingPoint(point).catch(() => {});
-          }
-        } else {
-          const point: OfflineTrackingPoint = {
-            id: generateId(),
-            lat: latitude,
-            lng: longitude,
-            accuracy: accuracy ?? null,
-            markerType: null,
-            name: null,
-            recordedAt: Date.now(),
-          };
-          lastPointRef.current = point;
-          setTrackingPoints([point]);
-          offlineDB.saveTrackingPoint(point).catch(() => {});
-        }
-      },
-      (err) => {
-        console.warn("[GPS] watchPosition error:", err.message);
-        // Safari iOS sering gagal watchPosition — fallback ke polling
-        if (!pollingRef.current) {
-          startPollingFallback();
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 5000,
+        lastPointRef.current = point;
+        setTrackingPoints((prev) => [...prev, point]);
+        setTotalDistance((prev) => prev + dist * 1000);
+        offlineDB.saveTrackingPoint(point).catch(() => {});
       }
-    );
+    } else {
+      const point: OfflineTrackingPoint = {
+        id: generateId(),
+        lat: latitude,
+        lng: longitude,
+        accuracy: accuracy ?? null,
+        markerType: null,
+        name: null,
+        recordedAt: Date.now(),
+      };
+      lastPointRef.current = point;
+      setTrackingPoints([point]);
+      offlineDB.saveTrackingPoint(point).catch(() => {});
+    }
+  };
 
-    // Fallback: jika watchPosition tidak memberi update dalam 15 detik → polling
-    setTimeout(() => {
-      if (pollingRef.current) return; // already started
-      if (!lastPointRef.current) {
-        // No position received yet — start polling
-        startPollingFallback();
-      }
-    }, 15000);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // ── GPS onSuccess — called by getCurrentPosition / watchPosition ──────
+  const onGpsSuccessRef = useRef<(pos: GeolocationPosition) => void>(() => {});
+  onGpsSuccessRef.current = (pos: GeolocationPosition) => {
+    saveTrackingPointFn(pos);
+    if (gpsStatusRef.current !== "active") {
+      gpsStatusRef.current = "active";
+      setGpsStatus("active");
+      setIsTracking(true);
+    }
+  };
 
-  // ── Polling fallback untuk Safari iOS ──────────────────────────────────
-  const startPollingFallback = useCallback(() => {
+  // ── Polling fallback (Safari iOS) ─────────────────────────────────────
+  const startPollingFn = () => {
     if (pollingRef.current) return;
-    console.log("[GPS] Starting polling fallback for Safari");
+    console.log("[GPS] Starting polling fallback");
     pollingRef.current = setInterval(() => {
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude, accuracy } = pos.coords;
-          setCurrentPos({ lat: latitude, lng: longitude });
-          setGpsAccuracy(accuracy ?? null);
-
-          const lastPoint = lastPointRef.current;
-          if (lastPoint) {
-            const dist = distanceKm(
-              { lat: lastPoint.lat, lng: lastPoint.lng },
-              { lat: latitude, lng: longitude }
-            );
-            if (dist >= 0.005) {
-              const point: OfflineTrackingPoint = {
-                id: generateId(),
-                lat: latitude,
-                lng: longitude,
-                accuracy: accuracy ?? null,
-                markerType: null,
-                name: null,
-                recordedAt: Date.now(),
-              };
-              lastPointRef.current = point;
-              setTrackingPoints((prev) => [...prev, point]);
-              setTotalDistance((prev) => prev + dist * 1000);
-              offlineDB.saveTrackingPoint(point).catch(() => {});
-            }
-          } else {
-            const point: OfflineTrackingPoint = {
-              id: generateId(),
-              lat: latitude,
-              lng: longitude,
-              accuracy: accuracy ?? null,
-              markerType: null,
-              name: null,
-              recordedAt: Date.now(),
-            };
-            lastPointRef.current = point;
-            setTrackingPoints([point]);
-            offlineDB.saveTrackingPoint(point).catch(() => {});
-          }
-        },
+        (pos) => onGpsSuccessRef.current(pos),
         () => {},
-        { enableHighAccuracy: true, timeout: 15000 }
+        { enableHighAccuracy: false, timeout: 10000 }
       );
-    }, 10000); // polling setiap 10 detik
-  }, []);
+    }, 8000);
+  };
+  const startPollingRef = useRef(startPollingFn);
+  startPollingRef.current = startPollingFn;
+
+  // ── High-accuracy watchPosition ──────────────────────────────────────
+  const startWatchFn = () => {
+    if (watchIdRef.current !== null) return;
+    console.log("[GPS] Starting high-accuracy watchPosition");
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (pos) => onGpsSuccessRef.current(pos),
+      (err) => {
+        console.warn("[GPS] watchPosition error:", err.message);
+        if (!pollingRef.current) startPollingRef.current();
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
+    );
+  };
+
+  // ── main entry: called by user tap ───────────────────────────────────
+  const startTracking = useCallback(() => {
+    if (!navigator.geolocation) {
+      setGpsStatus("error");
+      setGpsError("GPS tidak didukung browser ini.");
+      return;
+    }
+
+    console.log("[GPS] startTracking called");
+    setGpsError(null);
+    gpsStatusRef.current = "searching";
+    setGpsStatus("searching");
+
+    // ── Check permission state ──────────────────────────────────────────
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: "geolocation" } as any).then((status) => {
+        console.log("[GPS] Permission state:", status.state);
+        if (status.state === "denied") {
+          gpsStatusRef.current = "error";
+          setGpsStatus("error");
+          setGpsError("Izin lokasi ditolak di pengaturan browser. Buka Settings → Privasi → Lokasi → Izinkan.");
+          return;
+        }
+      }).catch(() => {});
+    }
+
+    // ── Attempt 1: fast (low accuracy) ──────────────────────────────────
+    const attemptFast = () => {
+      console.log("[GPS] Attempt fast (low accuracy)");
+      try {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            console.log("[GPS] Fast fix success");
+            onGpsSuccessRef.current(pos);
+            startWatchFn();
+          },
+          (err) => {
+            console.warn("[GPS] Fast fix failed:", err.code, err.message);
+            // ── Attempt 2: slow (high accuracy) ──────────────────────────
+            console.log("[GPS] Attempt high-accuracy");
+            try {
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  console.log("[GPS] High-accuracy success");
+                  onGpsSuccessRef.current(pos);
+                  startWatchFn();
+                },
+                (err2) => {
+                  console.warn("[GPS] Both attempts failed:", err2.code, err2.message);
+                  gpsStatusRef.current = "error";
+                  setGpsStatus("error");
+                  const gpsMsg: Record<number, string> = {
+                    1: "Izin lokasi ditolak. Buka Settings → Privasi → Lokasi → Izinkan SpringHub.",
+                    2: "Sinyal GPS tidak tersedia. Pastikan GPS aktif & coba di luar ruangan.",
+                    3: "Waktu habis. Coba lagi di tempat terbuka.",
+                  };
+                  setGpsError(gpsMsg[err.code] || gpsMsg[err2.code] || "Gagal mengakses GPS.");
+                },
+                { enableHighAccuracy: true, timeout: 15000 }
+              );
+            } catch (e) {
+              console.error("[GPS] High-accuracy threw synchronously:", e);
+              gpsStatusRef.current = "error";
+              setGpsStatus("error");
+              setGpsError("GPS error: " + String(e));
+            }
+          },
+          { enableHighAccuracy: false, timeout: 10000 }
+        );
+      } catch (e) {
+        console.error("[GPS] Fast attempt threw synchronously:", e);
+        gpsStatusRef.current = "error";
+        setGpsStatus("error");
+        setGpsError("GPS error: " + String(e));
+      }
+    };
+
+    attemptFast();
+
+    // ── Safety net: polling fallback after 28s if still no fix ─────────
+    setTimeout(() => {
+      if (pollingRef.current) return;
+      if (!lastPointRef.current) {
+        console.log("[GPS] No position after 28s, starting polling");
+        startPollingRef.current();
+      }
+    }, 28000);
+
+    // ── Ultimate safety: auto-dismiss after 35s if still searching ─────
+    setTimeout(() => {
+      if (gpsStatusRef.current !== "searching") return;
+      console.log("[GPS] 35s timeout reached, forcing active mode");
+      gpsStatusRef.current = "active";
+      setGpsStatus("active");
+      setIsTracking(true);
+    }, 35000);
+  }, []); // empty deps — semua akses via ref
 
   const stopTracking = useCallback(() => {
     if (watchIdRef.current !== null) {
@@ -483,6 +503,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
       pollingRef.current = null;
     }
     setIsTracking(false);
+    setGpsStatus("idle");
   }, []);
 
   // Cleanup on unmount
@@ -633,7 +654,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                   onClick={() => handleSelectForm(form)}
                   className="w-full rounded-xl border border-ink-line bg-white p-4 text-left shadow-sm transition hover:border-brand-300 hover:bg-brand-50 dark:bg-slate-800 dark:hover:bg-slate-700"
                 >
-                  <h3 className="text-sm font-bold text-ink">{form.title}</h3>
+                  <h3 className="text-sm font-bold text-ink">{getFormTitle(form.slug, form.title, t)}</h3>
                   <p className="mt-0.5 text-xs text-ink-muted">{form.description}</p>
                   <div className="mt-2 flex items-center gap-3 text-[11px] text-ink-subtle">
                     <span>+{form.pointsOnSubmit} pts</span>
@@ -655,7 +676,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         <div className="mx-auto max-w-lg">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-ink">{activeForm.title}</h2>
+              <h2 className="text-lg font-bold text-ink">{getFormTitle(activeForm.slug, activeForm.title, t)}</h2>
               <p className="text-xs text-ink-muted">{activeForm.description}</p>
             </div>
             <button
@@ -946,6 +967,21 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 initialCenter={initialMapCenter}
                 focusMarker={lastMarkerPos}
                 autoFollowPaused={autoFollowPaused}
+                onSetLocation={(lat: number, lng: number) => {
+                  setCurrentPos({ lat, lng });
+                  const point: OfflineTrackingPoint = {
+                    id: generateId(),
+                    lat,
+                    lng,
+                    accuracy: null,
+                    markerType: null,
+                    name: null,
+                    recordedAt: Date.now(),
+                  };
+                  lastPointRef.current = point;
+                  setTrackingPoints([point]);
+                  offlineDB.saveTrackingPoint(point).catch(() => {});
+                }}
               />
             </ErrorBoundary>
 
@@ -969,8 +1005,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               </div>
             </div>
 
-            {/* GPS Start overlay — WAJIB diklik sebelum tracking */}
-            {!isTracking && (
+            {/* GPS overlay — status-based */}
+            {gpsStatus === "idle" && (
               <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40">
                 <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-slate-800">
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/30">
@@ -983,20 +1019,69 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                     Aplikasi perlu mengakses lokasi untuk merekam rute perjalananmu.
                     Pastikan GPS dan lokasi aktif.
                   </p>
-                  {gpsError && (
-                    <div className="mt-3 rounded-md bg-amber-50 dark:bg-amber-900/30 p-3 text-xs text-amber-700 dark:text-amber-300">
-                      {gpsError}
-                    </div>
-                  )}
                   <button
                     onClick={startTracking}
                     className="mt-4 w-full rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-brand-700 active:scale-95 transition"
                   >
                     <Navigation className="mr-2 inline-block h-5 w-5" />
-                    {gpsError ? "Coba Lagi" : "Aktifkan GPS & Mulai Survey"}
+                    {"Aktifkan GPS & Mulai Survey"}
                   </button>
                   <p className="mt-3 text-[11px] text-ink-subtle">
                     {`Tombol ini memicu izin lokasi browser. Pilih "Allow" atau "Izinkan" saat diminta.`}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {gpsStatus === "searching" && (
+              <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/50">
+                <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-slate-800">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-200 border-t-brand-600" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-ink">{t("offline.survey.searchingGps") || "Mencari lokasi..."}</h3>
+                  <p className="mt-2 text-sm text-ink-muted">
+                    Pastikan GPS aktif dan Anda berada di luar ruangan.
+                  </p>
+                  <button
+                    onClick={() => { stopTracking(); setGpsStatus("idle"); }}
+                    className="mt-4 w-full rounded-xl bg-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300"
+                  >
+                    {"Batal"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {gpsStatus === "error" && (
+              <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40">
+                <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-slate-800">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
+                    <Navigation className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-ink">{"Lokasi tidak ditemukan"}</h3>
+                  {gpsError && (
+                    <div className="mt-3 rounded-md bg-amber-50 dark:bg-amber-900/30 p-3 text-xs text-amber-700 dark:text-amber-300 text-left">
+                      {gpsError}
+                    </div>
+                  )}
+                  <div className="mt-4 flex flex-col gap-2">
+                    <button
+                      onClick={startTracking}
+                      className="w-full rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-brand-700 active:scale-95 transition"
+                    >
+                      <Navigation className="mr-2 inline-block h-5 w-5" />
+                      {"Coba Lagi"}
+                    </button>
+                    <button
+                      onClick={() => { setIsTracking(true); setGpsStatus("active"); }}
+                      className="w-full rounded-xl bg-slate-100 px-6 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300"
+                    >
+                      {"Lanjutkan Tanpa GPS (geser peta)"}
+                    </button>
+                  </div>
+                  <p className="mt-3 text-[11px] text-ink-subtle">
+                    Anda tetap bisa menambahkan marker dengan mengetuk tombol di bawah.
                   </p>
                 </div>
               </div>

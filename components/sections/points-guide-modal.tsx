@@ -15,11 +15,11 @@ type PointRule = {
 };
 
 const FALLBACK_RULES: PointRule[] = [
-  { id: "basic-1", name: "Spring Monitoring", description: "Laporan pemantauan mata air", points: 25, category: "basic", icon: "Eye", sortOrder: 1 },
-  { id: "basic-2", name: "Spring Restoration", description: "Laporan restorasi mata air", points: 100, category: "basic", icon: "Wrench", sortOrder: 2 },
-  { id: "basic-3", name: "Trench Development", description: "Pembangunan rorak/resapan", points: 50, category: "basic", icon: "TreePine", sortOrder: 3 },
-  { id: "basic-4", name: "Tree Planting", description: "Penanaman pohon endemik", points: 50, category: "basic", icon: "Sprout", sortOrder: 4 },
-  { id: "basic-5", name: "Seedling Stock", description: "Penyediaan bibit", points: 15, category: "basic", icon: "Sprout", sortOrder: 5 },
+  { id: "basic-1", name: "Pemantauan Mata Air", description: "Laporan pemantauan mata air", points: 25, category: "basic", icon: "Eye", sortOrder: 1 },
+  { id: "basic-2", name: "Restorasi Mata Air", description: "Laporan restorasi mata air", points: 100, category: "basic", icon: "Wrench", sortOrder: 2 },
+  { id: "basic-3", name: "Pembangunan Rorak", description: "Pembangunan rorak/resapan", points: 50, category: "basic", icon: "TreePine", sortOrder: 3 },
+  { id: "basic-4", name: "Penanaman Pohon", description: "Penanaman pohon endemik", points: 50, category: "basic", icon: "Sprout", sortOrder: 4 },
+  { id: "basic-5", name: "Penyediaan Bibit", description: "Penyediaan bibit", points: 15, category: "basic", icon: "Sprout", sortOrder: 5 },
   { id: "bonus-1", name: "Streak Harian", description: "Lapor 3 hari berturut-turut", points: 5, category: "bonus", icon: "Flame", sortOrder: 6 },
   { id: "bonus-2", name: "Streak Mingguan", description: "Lapor tiap hari seminggu", points: 50, category: "bonus", icon: "CalendarCheck", sortOrder: 7 },
   { id: "bonus-3", name: "Laporan Lengkap", description: "Semua field + foto + notes", points: 10, category: "bonus", icon: "ClipboardCheck", sortOrder: 8 },
