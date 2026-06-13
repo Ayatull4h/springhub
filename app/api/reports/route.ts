@@ -11,7 +11,7 @@ import { snapToProtectionGrid } from "@/lib/geo";
 import { verifyCsrfToken } from "@/lib/csrf";
 
 import { apiLimiter } from "@/lib/rate-limit";
-const DAILY_FORM_LIMIT = 999; // per user (sementara — untuk testing)
+const GUEST_DAILY_LIMIT = 5; // guest only — volunteer & admin unlimited
 
 export async function POST(request: Request) {
   try {
@@ -198,26 +198,13 @@ export async function POST(request: Request) {
       }
     }
 
-    // Check daily limit for authenticated users and guests
+    // Daily limit: guest max 5/hari, volunteer & admin unlimited
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    if (session?.userId) {
-      const todayCount = await prisma.report.count({
-        where: {
-          userId: session.userId,
-          createdAt: { gte: today, lt: tomorrow },
-        },
-      });
-      if (todayCount >= DAILY_FORM_LIMIT) {
-        return NextResponse.json(
-          { error: "Batas laporan harian (5) tercapai. Coba lagi besok." },
-          { status: 429 }
-        );
-      }
-    } else if (guestId) {
+    if (!session?.userId && guestId) {
       const todayCount = await prisma.report.count({
         where: {
           guestId: guestId,
@@ -225,13 +212,14 @@ export async function POST(request: Request) {
           createdAt: { gte: today, lt: tomorrow },
         },
       });
-      if (todayCount >= DAILY_FORM_LIMIT) {
+      if (todayCount >= GUEST_DAILY_LIMIT) {
         return NextResponse.json(
-          { error: "Batas laporan harian (5) tercapai. Coba lagi besok." },
+          { error: "Batas laporan harian (5) untuk guest tercapai. Daftar jadi volunteer untuk lapor tanpa batas!" },
           { status: 429 }
         );
       }
     }
+    // Volunteer & admin: no daily limit
 
     // Create the report
     const report = await prisma.report.create({
