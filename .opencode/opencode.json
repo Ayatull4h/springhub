@@ -52,9 +52,9 @@
       "command": ["npx", "-y", "@supabase/mcp-server-supabase"],
       "enabled": true,
       "env": {
-        "SUPABASE_PROJECT_ID": "",
+        "SUPABASE_PROJECT_ID": "bhelvywlvwlqmvyblwmn",
         "SUPABASE_SERVICE_ROLE_KEY": "",
-        "SUPABASE_DB_PASSWORD": ""
+        "SUPABASE_DB_PASSWORD": "jagasemesta001"
       }
     },
     "context7": {

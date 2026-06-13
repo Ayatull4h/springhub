@@ -180,17 +180,11 @@ export default function ReportFormPage() {
           }
         }
 
-        // ── Atomic rollback: if any photo fails, delete the entire report ──
-        if (photoErrors.length > 0) {
-          try {
-            await fetch(`/api/reports/${reportId}`, { method: "DELETE" });
-          } catch {
-            // If rollback fails, report may remain orphaned — log is enough
-          }
-          setError(photoErrors.join(". ") + ". Laporan gagal — foto tidak tersimpan.");
-          setLoading(false);
-          return;
-        }
+      }
+
+      // If photos failed, warn but still show success
+      if (photoErrors.length > 0) {
+        setError("⚠️ " + photoErrors.join(". ") + " — Laporan tetap tersimpan. Admin akan mereview.");
       }
 
       setSuccess(true);
@@ -240,6 +234,12 @@ export default function ReportFormPage() {
             <CheckCircle2 className="mx-auto h-16 w-16 text-emerald-500" />
             <h1 className="mt-4 text-2xl font-extrabold text-ink">{t("report.reportSubmitted")}</h1>
             <p className="mt-2 text-ink-muted">{t("report.thankYou")}</p>
+            {error && (
+              <div className="mt-4 flex items-start gap-2 rounded-md bg-amber-50 p-3 text-sm text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 text-left">
+                <span className="mt-0.5">⚠️</span>
+                <span>{error}</span>
+              </div>
+            )}
           </>
         )}
         <div className="mt-6 flex items-center justify-center gap-3">
