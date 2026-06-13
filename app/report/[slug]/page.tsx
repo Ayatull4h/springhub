@@ -164,8 +164,14 @@ export default function ReportFormPage() {
                   method: "POST",
                   body: photoPayload,
                 });
+                const photoData = photoRes.ok ? null : await photoRes.json().catch(() => null);
                 if (!photoRes.ok) {
-                  photoErrors.push(`Foto ${(file as File).name} gagal diupload`);
+                  const serverMsg = photoData?.error || "";
+                  photoErrors.push(
+                    serverMsg
+                      ? `Foto ${(file as File).name}: ${serverMsg}`
+                      : `Foto ${(file as File).name} gagal diupload`
+                  );
                 }
               } catch {
                 photoErrors.push(`Foto ${(file as File).name} gagal — cek koneksi`);

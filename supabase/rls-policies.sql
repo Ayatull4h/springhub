@@ -235,3 +235,41 @@ CREATE POLICY "Admin akses semua session" ON "OfflineSession" FOR ALL USING (aut
 
 DROP POLICY IF EXISTS "Admin akses semua tracking point" ON "TrackingPoint";
 CREATE POLICY "Admin akses semua tracking point" ON "TrackingPoint" FOR ALL USING (auth.role() = 'admin');
+
+-- ============================================================
+-- STORAGE POLICIES — Photos bucket
+-- ============================================================
+
+-- Ensure the "photos" bucket exists (public bucket for spring images)
+INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types)
+VALUES ('photos', 'photos', true, false, 10485760, '{image/jpeg,image/png,image/webp}')
+ON CONFLICT (id) DO NOTHING;
+
+-- Enable RLS on storage.objects (may already be enabled)
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+-- Publik: bisa baca semua file di bucket photos (public bucket)
+DROP POLICY IF EXISTS "Publik baca photos" ON storage.objects;
+CREATE POLICY "Publik baca photos" ON storage.objects
+  FOR SELECT USING (bucket_id = 'photos');
+
+-- Auth user & guest: bisa upload file ke bucket photos
+DROP POLICY IF EXISTS "User upload photos" ON storage.objects;
+CREATE POLICY "User upload photos" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'photos'
+    AND (auth.role() = 'authenticated' OR auth.role() = 'anon')
+  );
+
+-- User: bisa update/delete file miliknya sendiri di bucket photos
+DROP POLICY IF EXISTS "User update delete own photos" ON storage.objects;
+CREATE POLICY "User update delete own photos" ON storage.objects
+  FOR ALL USING (
+    bucket_id = 'photos'
+    AND (auth.uid()::text = owner_id OR owner_id IS NULL)
+  );
+
+-- Admin: bisa manage semua file di bucket photos
+DROP POLICY IF EXISTS "Admin semua photos" ON storage.objects;
+CREATE POLICY "Admin semua photos" ON storage.objects
+  FOR ALL USING (bucket_id = 'photos' AND auth.role() = 'authenticated');

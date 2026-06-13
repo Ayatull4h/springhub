@@ -83,7 +83,21 @@ export async function uploadPhoto(
       cacheControl: "31536000",
     });
 
-  if (error) throw new Error(`Upload gagal: ${error.message}`);
+  if (error) {
+    // Detect specific Supabase Storage errors
+    const msg = error.message || "";
+    if (msg.includes("Bucket not found") || msg.includes("bucket")) {
+      throw new Error(
+        'Bucket penyimpanan "photos" belum tersedia. Admin harus membuatnya di Supabase Dashboard → Storage.'
+      );
+    }
+    if (msg.includes("row-level security") || msg.includes("policy")) {
+      throw new Error(
+        "Izin upload ditolak oleh kebijakan keamanan. Pastikan SUPABASE_SERVICE_ROLE_KEY terisi di .env."
+      );
+    }
+    throw new Error(`Upload gagal: ${error.message}`);
+  }
 
   const { data: urlData } = supabase.storage.from("photos").getPublicUrl(filename);
 

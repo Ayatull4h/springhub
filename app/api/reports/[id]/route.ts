@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
+import { getGuestId } from "@/lib/guest";
 import { deletePhoto } from "@/lib/upload-photo";
 
 /**
@@ -16,6 +17,11 @@ export async function DELETE(
 ) {
   try {
     const session = await getSession();
+    const guestId = getGuestId();
+
+    if (!session?.userId && !guestId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const report = await prisma.report.findUnique({
       where: { id: params.id },
@@ -26,14 +32,13 @@ export async function DELETE(
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
-    // Only the owner can delete their report
-    if (session?.userId) {
-      if (report.userId !== session.userId) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-      }
-    } else {
-      // For guest: must have same guestId — skip if no session
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Ownership check: either authenticated user or guest who created the report
+    const isOwner =
+      (session?.userId && report.userId === session.userId) ||
+      (!session?.userId && guestId && report.guestId === guestId);
+
+    if (!isOwner) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Only allow deletion of pending (unreviewed) reports

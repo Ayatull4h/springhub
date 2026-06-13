@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
+import { getGuestId } from "@/lib/guest";
 import { uploadPhoto } from "@/lib/upload-photo";
 
 /**
@@ -13,6 +14,8 @@ import { uploadPhoto } from "@/lib/upload-photo";
  * - Compresses to 720p max dimension, JPEG quality 80
  * - Stores on Supabase Storage (bucket: photos)
  * - Records metadata in the ReportPhoto table
+ *
+ * Supports both authenticated users and guests (via guest_session_id cookie).
  */
 export async function POST(
   request: Request,
@@ -20,7 +23,9 @@ export async function POST(
 ) {
   try {
     const session = await getSession();
-    if (!session?.userId) {
+    const guestId = getGuestId();
+
+    if (!session?.userId && !guestId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -32,7 +37,12 @@ export async function POST(
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
-    if (report.userId !== session.userId) {
+    // Ownership check: either authenticated user or guest who created the report
+    const isOwner =
+      (session?.userId && report.userId === session.userId) ||
+      (!session?.userId && guestId && report.guestId === guestId);
+
+    if (!isOwner) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
