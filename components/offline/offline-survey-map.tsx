@@ -207,15 +207,15 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   // GPS tracking
   const [trackingPoints, setTrackingPoints] = useState<OfflineTrackingPoint[]>([]);
-  const [isTracking, setIsTracking] = useState(false);
+  const [isTracking, setIsTracking] = useState(true); // langsung true, user atur posisi manual
   const [currentPos, setCurrentPos] = useState<{ lat: number; lng: number } | null>(null);
   const [totalDistance, setTotalDistance] = useState(0);
   const watchIdRef = useRef<number | null>(null);
   const lastPointRef = useRef<OfflineTrackingPoint | null>(null);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
   const [gpsError, setGpsError] = useState<string | null>(null);
-  // GPS status: "idle" | "searching" | "active" | "error"
-  const [gpsStatus, setGpsStatus] = useState<"idle" | "searching" | "active" | "error">("idle");
+  // GPS status: langsung active — user set posisi manual via tap peta (GPS optional via LocateButton)
+  const [gpsStatus, setGpsStatus] = useState<"idle" | "searching" | "active" | "error">("active");
 
   // All markers (spring, tree, trench) — passed as `markers` to map
   const [markers, setMarkers] = useState<OfflineTrackingPoint[]>([]);
@@ -395,116 +395,12 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
     );
   };
 
-  // ── main entry: called by user tap ───────────────────────────────────
-  const startTracking = useCallback(() => {
-    if (!navigator.geolocation) {
-      setGpsStatus("error");
-      setGpsError("GPS tidak didukung browser ini.");
-      return;
-    }
+  // ── GPS start — optional, via LocateButton di map ────────────────────
+  // Tidak ada overlay lagi. User langsung lihat peta dan atur posisi manual via tap.
+  // GPS otomatis bisa dicoba melalui tombol kompas 🧭 di kiri atas peta.
 
-    console.log("[GPS] startTracking called");
-    setGpsError(null);
-    gpsStatusRef.current = "searching";
-    setGpsStatus("searching");
-
-    // ── Check permission state ──────────────────────────────────────────
-    if (navigator.permissions) {
-      navigator.permissions.query({ name: "geolocation" } as any).then((status) => {
-        console.log("[GPS] Permission state:", status.state);
-        if (status.state === "denied") {
-          gpsStatusRef.current = "error";
-          setGpsStatus("error");
-          setGpsError("Izin lokasi ditolak di pengaturan browser. Buka Settings → Privasi → Lokasi → Izinkan.");
-          return;
-        }
-      }).catch(() => {});
-    }
-
-    // ── Attempt 1: fast (low accuracy) ──────────────────────────────────
-    const attemptFast = () => {
-      console.log("[GPS] Attempt fast (low accuracy)");
-      try {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            console.log("[GPS] Fast fix success");
-            onGpsSuccessRef.current(pos);
-            startWatchFn();
-          },
-          (err) => {
-            console.warn("[GPS] Fast fix failed:", err.code, err.message);
-            // ── Attempt 2: slow (high accuracy) ──────────────────────────
-            console.log("[GPS] Attempt high-accuracy");
-            try {
-              navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                  console.log("[GPS] High-accuracy success");
-                  onGpsSuccessRef.current(pos);
-                  startWatchFn();
-                },
-                (err2) => {
-                  console.warn("[GPS] Both attempts failed:", err2.code, err2.message);
-                  gpsStatusRef.current = "error";
-                  setGpsStatus("error");
-                  const gpsMsg: Record<number, string> = {
-                    1: "Izin lokasi ditolak. Buka Settings → Privasi → Lokasi → Izinkan SpringHub.",
-                    2: "Sinyal GPS tidak tersedia. Pastikan GPS aktif & coba di luar ruangan.",
-                    3: "Waktu habis. Coba lagi di tempat terbuka.",
-                  };
-                  setGpsError(gpsMsg[err.code] || gpsMsg[err2.code] || "Gagal mengakses GPS.");
-                },
-                { enableHighAccuracy: true, timeout: 15000 }
-              );
-            } catch (e) {
-              console.error("[GPS] High-accuracy threw synchronously:", e);
-              gpsStatusRef.current = "error";
-              setGpsStatus("error");
-              setGpsError("GPS error: " + String(e));
-            }
-          },
-          { enableHighAccuracy: false, timeout: 10000 }
-        );
-      } catch (e) {
-        console.error("[GPS] Fast attempt threw synchronously:", e);
-        gpsStatusRef.current = "error";
-        setGpsStatus("error");
-        setGpsError("GPS error: " + String(e));
-      }
-    };
-
-    attemptFast();
-
-    // ── Safety net: polling fallback after 28s if still no fix ─────────
-    setTimeout(() => {
-      if (pollingRef.current) return;
-      if (!lastPointRef.current) {
-        console.log("[GPS] No position after 28s, starting polling");
-        startPollingRef.current();
-      }
-    }, 28000);
-
-    // ── Ultimate safety: auto-dismiss after 35s if still searching ─────
-    setTimeout(() => {
-      if (gpsStatusRef.current !== "searching") return;
-      console.log("[GPS] 35s timeout reached, forcing active mode");
-      gpsStatusRef.current = "active";
-      setGpsStatus("active");
-      setIsTracking(true);
-    }, 35000);
-  }, []); // empty deps — semua akses via ref
-
-  const stopTracking = useCallback(() => {
-    if (watchIdRef.current !== null) {
-      navigator.geolocation.clearWatch(watchIdRef.current);
-      watchIdRef.current = null;
-    }
-    if (pollingRef.current !== null) {
-      clearInterval(pollingRef.current);
-      pollingRef.current = null;
-    }
-    setIsTracking(false);
-    setGpsStatus("idle");
-  }, []);
+  // stopTracking tidak lagi dipanggil — user selalu dalam mode tracking
+  // GPS watch/polling tidak aktif (user set posisi manual via tap)
 
   // Cleanup on unmount
   useEffect(() => {
@@ -1005,85 +901,16 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               </div>
             </div>
 
-            {/* GPS overlay — status-based */}
-            {gpsStatus === "idle" && (
-              <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40">
-                <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-slate-800">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/30">
-                    <Navigation className="h-8 w-8 text-brand-600 dark:text-brand-400" />
-                  </div>
-                  <h3 className="mt-4 text-lg font-bold text-ink">
-                    {t("offline.survey.gpsStart") || "Mulai Tracking GPS"}
-                  </h3>
-                  <p className="mt-2 text-sm text-ink-muted">
-                    Aplikasi perlu mengakses lokasi untuk merekam rute perjalananmu.
-                    Pastikan GPS dan lokasi aktif.
-                  </p>
-                  <button
-                    onClick={startTracking}
-                    className="mt-4 w-full rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-brand-700 active:scale-95 transition"
-                  >
-                    <Navigation className="mr-2 inline-block h-5 w-5" />
-                    {"Aktifkan GPS & Mulai Survey"}
-                  </button>
-                  <p className="mt-3 text-[11px] text-ink-subtle">
-                    {`Tombol ini memicu izin lokasi browser. Pilih "Allow" atau "Izinkan" saat diminta.`}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {gpsStatus === "searching" && (
-              <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/50">
-                <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-slate-800">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-200 border-t-brand-600" />
-                  </div>
-                  <h3 className="mt-4 text-lg font-bold text-ink">{t("offline.survey.searchingGps") || "Mencari lokasi..."}</h3>
-                  <p className="mt-2 text-sm text-ink-muted">
-                    Pastikan GPS aktif dan Anda berada di luar ruangan.
-                  </p>
-                  <button
-                    onClick={() => { stopTracking(); setGpsStatus("idle"); }}
-                    className="mt-4 w-full rounded-xl bg-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300"
-                  >
-                    {"Batal"}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {gpsStatus === "error" && (
-              <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40">
-                <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-slate-800">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
-                    <Navigation className="h-8 w-8 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <h3 className="mt-4 text-lg font-bold text-ink">{"Lokasi tidak ditemukan"}</h3>
-                  {gpsError && (
-                    <div className="mt-3 rounded-md bg-amber-50 dark:bg-amber-900/30 p-3 text-xs text-amber-700 dark:text-amber-300 text-left">
-                      {gpsError}
-                    </div>
-                  )}
-                  <div className="mt-4 flex flex-col gap-2">
-                    <button
-                      onClick={startTracking}
-                      className="w-full rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-brand-700 active:scale-95 transition"
-                    >
-                      <Navigation className="mr-2 inline-block h-5 w-5" />
-                      {"Coba Lagi"}
-                    </button>
-                    <button
-                      onClick={() => { setIsTracking(true); setGpsStatus("active"); }}
-                      className="w-full rounded-xl bg-slate-100 px-6 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300"
-                    >
-                      {"Lanjutkan Tanpa GPS (geser peta)"}
-                    </button>
-                  </div>
-                  <p className="mt-3 text-[11px] text-ink-subtle">
-                    Anda tetap bisa menambahkan marker dengan mengetuk tombol di bawah.
-                  </p>
-                </div>
+            {/* Manual location prompt — shown when GPS not available */}
+            {!currentPos && (
+              <div className="absolute bottom-20 left-4 right-4 z-30 rounded-xl bg-amber-50 px-5 py-4 text-center shadow-lg dark:bg-amber-900/30">
+                <div className="text-lg">📍</div>
+                <p className="mt-1 text-sm font-semibold text-amber-700 dark:text-amber-300">
+                  {"Atur posisi kamu dengan mengetuk peta"}
+                </p>
+                <p className="mt-0.5 text-[11px] text-amber-600/70 dark:text-amber-400/70">
+                  Atau gunakan tombol kompas <span className="inline-block align-middle">🧭</span> di kiri atas peta untuk GPS otomatis
+                </p>
               </div>
             )}
           </div>
