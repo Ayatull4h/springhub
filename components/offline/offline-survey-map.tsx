@@ -865,6 +865,10 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 autoFollowPaused={autoFollowPaused}
                 onSetLocation={(lat: number, lng: number) => {
                   setCurrentPos({ lat, lng });
+                  // Pause auto-follow agar map tidak loncat setelah tap manual
+                  setAutoFollowPaused(true);
+                  if (autoFollowTimerRef.current) clearTimeout(autoFollowTimerRef.current);
+                  autoFollowTimerRef.current = setTimeout(() => setAutoFollowPaused(false), 8000);
                   const point: OfflineTrackingPoint = {
                     id: generateId(),
                     lat,

@@ -117,13 +117,13 @@ function LocateButton() {
 }
 
 /**
- * Map click handler — lets user tap on map to manually set location
- * when GPS is unavailable. Adds a prompt overlay when no GPS position.
+ * Map click handler — lets user tap on map to manually set/update location.
+ * Bekerja selalu (tanpa guard) agar user bisa fine-tune posisi.
  */
-function MapClickHandler({ onSetLocation, noGps }: { onSetLocation?: (lat: number, lng: number) => void; noGps: boolean }) {
+function MapClickHandler({ onSetLocation }: { onSetLocation?: (lat: number, lng: number) => void }) {
   useMapEvents({
     click(e) {
-      if (noGps && onSetLocation) {
+      if (onSetLocation) {
         onSetLocation(e.latlng.lat, e.latlng.lng);
       }
     },
@@ -257,7 +257,7 @@ export function SurveyLeafletMap({
         ))}
 
         {/* Map click handler — manual location set when GPS unavailable */}
-        <MapClickHandler onSetLocation={onSetLocation} noGps={isTracking && !currentPosition} />
+        <MapClickHandler onSetLocation={onSetLocation} />
 
         {/* Manual location prompt — shown when GPS not available */}
         {isTracking && !currentPosition && (
