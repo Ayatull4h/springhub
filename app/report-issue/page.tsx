@@ -20,7 +20,7 @@ export default function ReportIssuePage() {
   const { t } = useI18n();
 
   const [bugDescription, setBugDescription] = useState("");
-  const [screenshot, setScreenshot] = useState<File | null>(null);
+  const [screenshots, setScreenshots] = useState<File[]>([]);
 
   const [kritik, setKritik] = useState("");
   const [saran, setSaran] = useState("");
@@ -70,8 +70,8 @@ export default function ReportIssuePage() {
         saran: saran.trim() || undefined,
       };
 
-      if (screenshot) {
-        payload.bugScreenshot = await toBase64(screenshot);
+      if (screenshots.length > 0) {
+        payload.bugScreenshots = await Promise.all(screenshots.map(toBase64));
       }
 
       const res = await fetch("/api/feedback", {
@@ -90,7 +90,7 @@ export default function ReportIssuePage() {
 
       setSuccess(true);
       setBugDescription("");
-      setScreenshot(null);
+      setScreenshots([]);
       setKritik("");
       setSaran("");
     } catch (err) {
@@ -162,25 +162,46 @@ export default function ReportIssuePage() {
 
           <div>
             <label
-              htmlFor="screenshot"
+              htmlFor="screenshots"
               className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-ink-line bg-white px-4 py-2.5 text-sm font-medium text-ink-muted transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:hover:bg-slate-700"
             >
               {/* eslint-disable-next-line jsx-a11y/alt-text */}
               <Image className="h-4 w-4" />
-              {screenshot
-                ? screenshot.name
+              {screenshots.length > 0
+                ? `${screenshots.length} file`
                 : t("reportIssue.uploadScreenshot", "Upload Screenshot")}
             </label>
             <input
-              id="screenshot"
+              id="screenshots"
               type="file"
               accept="image/*"
+              capture="environment"
+              multiple
               className="hidden"
-              onChange={(e) => setScreenshot(e.target.files?.[0] ?? null)}
+              onChange={(e) => {
+                const files = e.target.files;
+                if (files) {
+                  setScreenshots((prev) => {
+                    const combined = [...prev, ...Array.from(files)].slice(0, 3);
+                    return combined;
+                  });
+                }
+                e.target.value = "";
+              }}
             />
             <p className="mt-1 text-xs text-ink-subtle">
-              {t("reportIssue.screenshotHint", "Format: JPG, PNG. Maks 5 MB.")}
+              {t("reportIssue.screenshotHint", "Kamera langsung, maks 3 foto. Format: JPG, PNG.")}
             </p>
+            {screenshots.length > 0 && (
+              <p className="mt-1 text-xs font-medium text-brand-600 dark:text-brand-400">
+                {screenshots.length}/3 foto
+              </p>
+            )}
+            {screenshots.length >= 3 && (
+              <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                Maksimal 3 foto sudah terpenuhi.
+              </p>
+            )}
           </div>
         </section>
 

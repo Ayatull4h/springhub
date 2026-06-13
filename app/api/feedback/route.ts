@@ -47,12 +47,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const { type, kritik, saran, bugDescription, bugScreenshot } = body as {
+    const { type, kritik, saran, bugDescription, bugScreenshot, bugScreenshots } = body as {
       type?: string;
       kritik?: string;
       saran?: string;
       bugDescription?: string;
       bugScreenshot?: string;
+      bugScreenshots?: string[];
     };
 
     if (!type || !VALID_TYPES.includes(type as (typeof VALID_TYPES)[number])) {
@@ -110,7 +111,13 @@ export async function POST(request: Request) {
       }
     }
 
-    const screenshot = typeof bugScreenshot === "string" && bugScreenshot.length > 0 ? bugScreenshot : "";
+    // Support both single screenshot (legacy) and array of screenshots
+    const screenshots: string[] = [];
+    if (Array.isArray(bugScreenshots)) {
+      screenshots.push(...bugScreenshots.slice(0, 3));
+    } else if (typeof bugScreenshot === "string" && bugScreenshot.length > 0) {
+      screenshots.push(bugScreenshot);
+    }
 
     const feedback = await prisma.feedback.create({
       data: {
@@ -118,7 +125,7 @@ export async function POST(request: Request) {
         kritik: (kritik ?? "").trim(),
         saran: (saran ?? "").trim(),
         bugDescription: (bugDescription ?? "").trim(),
-        bugScreenshot: screenshot,
+        bugScreenshot: screenshots.length > 0 ? screenshots[0] : "",
         userId: session?.userId ?? null,
         status: "open",
       },
