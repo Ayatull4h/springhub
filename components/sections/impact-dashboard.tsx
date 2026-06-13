@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Droplets, Sprout, Sparkles, Layers, TrendingUp, MapPin } from "lucide-react";
+import { Droplets, Sprout, Sparkles, Layers, TrendingUp } from "lucide-react";
 import {
   impactStats,
   monthlyProgress,
@@ -189,13 +188,6 @@ export function ImpactDashboard() {
 
       {/* Action Buttons */}
       <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
-        <Link
-          href="/springs"
-          className="inline-flex items-center gap-2 rounded-xl border-2 border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100 hover:shadow-md dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300 dark:hover:border-emerald-700 dark:hover:bg-emerald-900/40"
-        >
-          <MapPin className="h-5 w-5" />
-          {t("dashboard.springTimeline")}
-        </Link>
         <OfflineEntryButton />
       </div>
     </section>
