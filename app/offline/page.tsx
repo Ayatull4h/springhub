@@ -67,7 +67,7 @@ type OfflinePhase = "checking" | "not-logged-in" | "setup" | "survey" | "simple-
 function OfflinePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const mode = searchParams.get("mode") || "full";
+  const mode = searchParams.get("mode") || "save-only";
   const isFullMode = mode === "full";
 
   const [phase, setPhase] = useState<OfflinePhase>("checking");
@@ -169,13 +169,13 @@ function OfflinePageContent() {
             const sessionRes = await fetch("/api/offline/session");
             const sessionData = await sessionRes.json();
             if (sessionData.session?.isActive) {
-              // Resume existing session
-              setPhase("survey");
+              // Resume existing session — simple form mode, no map
+              setPhase("simple-form");
               return;
             }
           } catch {
             // Server may be offline — resume anyway
-            setPhase("survey");
+            setPhase("simple-form");
             return;
           }
         }
@@ -289,34 +289,10 @@ function OfflinePageContent() {
           </div>
         )}
 
-        {/* Mode selection */}
-        {!isFullMode && (
-          <div className="mb-4 grid gap-3 sm:grid-cols-2">
-            <button
-              onClick={() => setPhase("simple-form")}
-              className="card border-brand-300 bg-brand-50 text-left transition hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40"
-            >
-              <h3 className="font-semibold text-brand-700 dark:text-brand-300">📋 Mode Form Cepat</h3>
-              <p className="mt-1 text-xs text-ink-muted">
-                Pilih form → isi → simpan. Tanpa peta, tanpa setup rumit.
-              </p>
-            </button>
-            <button
-              onClick={() => {/* Ke setup full */}}
-              className="card text-left transition hover:border-brand-300"
-            >
-              <h3 className="font-semibold text-ink">🗺️ Mode Survey Lengkap</h3>
-              <p className="mt-1 text-xs text-ink-muted">
-                Dengan peta offline, GPS tracking, dan marker di lapangan.
-              </p>
-            </button>
-          </div>
-        )}
-
         <OfflineErrorBoundary>
           <OfflineSetup
             mode={isFullMode ? "full" : "save-only"}
-            onComplete={() => setPhase("survey")}
+            onComplete={() => setPhase(isFullMode ? "survey" : "simple-form")}
           />
         </OfflineErrorBoundary>
       </div>
