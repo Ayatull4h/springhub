@@ -372,6 +372,10 @@ export const offlineDB = {
     return getAllItems("tracking-points");
   },
 
+  deleteTrackingPoint(id: string) {
+    return deleteItem("tracking-points", id);
+  },
+
   trackingPointCount(): Promise<number> {
     return countItems("tracking-points");
   },

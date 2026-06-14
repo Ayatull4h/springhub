@@ -100,11 +100,11 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const baseUrl = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || "";
-    const bucket = process.env.S3_BUCKET || "springhub-photos";
-    const prefix = baseUrl
-      ? `${baseUrl}/`
-      : `${process.env.S3_ENDPOINT}/${bucket}/`;
+    // Gunakan Supabase Storage URL (fix: foto blank putih karena pake S3)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const prefix = supabaseUrl
+      ? `${supabaseUrl}/storage/v1/object/public/photos/`
+      : "/";
 
     const photos = await prisma.reportPhoto.findMany({
       where: { reportId: params.id },

@@ -5,10 +5,44 @@ import { useToast } from "@/components/toast";
 
 const MAX_RETRIES = 5;
 const POLL_INTERVAL_MS = 30_000;
+const STALE_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 hari
 
 export function QueueWorker() {
   const { toast } = useToast();
   const processingRef = useRef(false);
+
+  /** Hapus item stale yang lebih dari 7 hari dari semua store */
+  async function cleanupStale() {
+    try {
+      const cutoff = Date.now() - STALE_AGE_MS;
+
+      // Bersihin draft-reports lama
+      const drafts = await offlineDB.getAllDrafts();
+      for (const d of drafts) {
+        if (d.savedAt < cutoff) await offlineDB.deleteDraft(d.id);
+      }
+
+      // Bersihin pending-reports lama
+      const pending = await offlineDB.getAllReports();
+      for (const p of pending) {
+        if (p.createdAt < cutoff) await offlineDB.deleteReport(p.id);
+      }
+
+      // Bersihin tracking-points lama (GPS trails)
+      const tracks = await offlineDB.getAllTrackingPoints();
+      for (const t of tracks) {
+        if (t.recordedAt < cutoff) await offlineDB.deleteTrackingPoint(t.id);
+      }
+
+      // Bersihin submission-queue yang stuck >7 hari
+      const queue = await offlineDB.getAllQueued();
+      for (const q of queue) {
+        if (q.createdAt < cutoff) await offlineDB.deleteQueued(q.id);
+      }
+    } catch {
+      // Silent — cleanup gagal tidak kritis
+    }
+  }
 
   useEffect(() => {
     const processQueue = async () => {
@@ -85,6 +119,12 @@ export function QueueWorker() {
               await offlineDB.deleteQueued(item.id);
               successCount++;
 
+              // ── Bersihin data terkait dari store lain ──
+              try {
+                await offlineDB.deleteReport(item.id);
+                await offlineDB.deleteDraft(item.id);
+              } catch { /* non-critical */ }
+
               try {
                 await fetch("/api/notifications", {
                   method: "POST",
@@ -117,6 +157,20 @@ export function QueueWorker() {
         }
 
         if (successCount > 0) {
+          // Bersihin semua store pendukung setelah sukses
+          try {
+            const tracks = await offlineDB.getAllTrackingPoints();
+            if (tracks.length > 0) {
+              // Hapus tracking points yang sudah lama (lebih dari 24 jam)
+              const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+              for (const t of tracks) {
+                if (t.recordedAt < dayAgo) await offlineDB.deleteTrackingPoint(t.id);
+              }
+            }
+            // Bersihin tile-blobs lama (lebih dari 7 hari)
+            // tile-manifest dan tile-blobs tidak disentuh agar tidak re-download setiap kali
+          } catch { /* non-critical */ }
+
           toast(`${successCount} laporan offline berhasil dikirim!`, "success");
         }
       } catch {
@@ -126,7 +180,8 @@ export function QueueWorker() {
       }
     };
 
-    processQueue();
+    // Jalankan cleanup stale dulu, baru process queue
+    cleanupStale().finally(() => processQueue());
 
     const handleOnline = () => { processQueue(); };
     window.addEventListener("online", handleOnline);

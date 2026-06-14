@@ -99,7 +99,17 @@ export default function ReportFormPage() {
       .finally(() => setDbFormLoading(false));
   }, [slug]);
 
-  const activeForm = dbForm ?? form;
+  // Gabung field dari DB + statis, jangan replace total (fix: provinsi ilang)
+  const activeForm = (() => {
+    if (!dbForm) return form;
+    // Ambil field statis sebagai fallback untuk field yang tidak ada di DB
+    const staticForm = form;
+    if (!staticForm) return dbForm;
+    const dbFieldIds = new Set(dbForm.fields.map((f) => f.id));
+    const missingStaticFields = staticForm.fields.filter((f) => !dbFieldIds.has(f.id));
+    if (missingStaticFields.length === 0) return dbForm;
+    return { ...dbForm, fields: [...dbForm.fields, ...missingStaticFields] };
+  })();
 
   // Show loading while DB form is being fetched (only when static form not found)
   if (dbFormLoading && !form) {
