@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, HardHat, Heart, ThumbsUp, MessageSquare } from "lucide-react";
-import { featuredProjects } from "@/lib/data";
+import { featuredProjects as dummyProjects } from "@/lib/data";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 
@@ -123,12 +123,37 @@ export function FeaturedProjects() {
   const [page, setPage] = useState(1);
   const [likedProjects, setLikedProjects] = useState<Record<number, boolean>>({});
   const [commentText, setCommentText] = useState("");
-  const [currentComments, setCurrentComments] = useState(featuredProjects.map(p => p.comments));
+  const [currentComments, setCurrentComments] = useState(dummyProjects.map(p => p.comments));
   const [user, setUser] = useState<{ id: string; username: string } | null>(null);
   const [showComments, setShowComments] = useState(false);
   const [localComments, setLocalComments] = useState<Record<number, Array<{ user: string; text: string; time: string }>>>(loadPersistedComments);
   const [realComments, setRealComments] = useState<Record<number, Array<{user: string; text: string; time: string}>>>({});
   const [commentsLoading, setCommentsLoading] = useState(false);
+  const [allProjects, setAllProjects] = useState(dummyProjects);
+
+  // Fetch real projects from API, merge with dummy fallback
+  useEffect(() => {
+    fetch("/api/projects")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.projects?.length > 0) {
+          const mapped = data.projects.map((p: any) => ({
+            title: p.title,
+            region: p.region,
+            summary: p.summary,
+            raised: p.raisedAmount,
+            goal: p.goalAmount,
+            backers: p._count?.donations || 0,
+            typeId: p.typeId,
+            status: p.status,
+            likes: p.likes,
+            comments: p.comments,
+          }));
+          setAllProjects([...mapped, ...dummyProjects].slice(0, 10));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -162,9 +187,9 @@ export function FeaturedProjects() {
       .finally(() => setCommentsLoading(false));
   }, [showComments, page]);
 
-  if (!featuredProjects.length) return null;
+  if (!allProjects.length) return null;
 
-  const project = featuredProjects[page - 1] ?? featuredProjects[0];
+  const project = allProjects[page - 1] ?? allProjects[0];
   const pct = Math.min(100, Math.round((project.raised / project.goal) * 100));
 
   return (
@@ -213,14 +238,14 @@ export function FeaturedProjects() {
           </div>
 
           <div className="mt-4 flex items-center justify-center gap-2">
-            {featuredProjects.length > 1 && (
+            {allProjects.length > 1 && (
               <>
                 <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
                   className="rounded-md border border-ink-line px-3 py-1 text-xs disabled:opacity-30">
                   ←
                 </button>
-                <span className="text-xs text-ink-muted">{page}/{featuredProjects.length}</span>
-                <button onClick={() => setPage(p => p + 1)} disabled={page >= featuredProjects.length}
+                <span className="text-xs text-ink-muted">{page}/{allProjects.length}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={page >= allProjects.length}
                   className="rounded-md border border-ink-line px-3 py-1 text-xs disabled:opacity-30">
                   →
                 </button>

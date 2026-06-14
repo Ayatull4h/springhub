@@ -17,19 +17,38 @@ import {
 } from "lucide-react";
 import {
   PROJECT_PROPOSAL_THRESHOLD,
-  recentActivities,
+  recentActivities as dummyActivities,
 } from "@/lib/data";
 import { getForm } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins} menit lalu`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} jam lalu`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days} hari lalu`;
+  return `${Math.floor(days / 7)} minggu lalu`;
+}
 
+type ActivityItem = {
+  user: string;
+  action: string;
+  location: string;
+  when: string;
+  points: number;
+  formSlug: string;
+};
 
 export function VolunteerActivities() {
   const { t } = useI18n();
   const [userPoints, setUserPoints] = useState(0);
   const [showPoints, setShowPoints] = useState(false);
+  const [realActivities, setRealActivities] = useState<ActivityItem[]>([]);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -40,10 +59,41 @@ export function VolunteerActivities() {
       .catch(() => {});
   }, []);
 
+  // Fetch real activities from API, merge with dummy
+  useEffect(() => {
+    fetch("/api/reports?limit=10")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.reports?.length > 0) {
+          const mapped: ActivityItem[] = data.reports.map((r: any) => ({
+            user: r.user?.username || "Relawan",
+            action: r.formSlug === "spring-monitoring" ? "melakukan pemantauan mata air"
+                  : r.formSlug === "spring-restoration" ? "melakukan restorasi mata air"
+                  : r.formSlug === "tree-planting" ? "menanam pohon endemik"
+                  : r.formSlug === "trench-development" ? "membangun rorak"
+                  : r.formSlug === "seedling-stock" ? "melaporkan stok bibit"
+                  : `mengisi form ${r.formSlug}`,
+            location: r.user?.region || "Indonesia",
+            when: timeAgo(r.createdAt),
+            points: r.formSlug === "spring-restoration" ? 100
+                  : r.formSlug === "trench-development" ? 50
+                  : r.formSlug === "tree-planting" ? 50
+                  : r.formSlug === "seedling-stock" ? 15
+                  : 25,
+            formSlug: r.formSlug,
+          }));
+          // Merge: real data first, then dummy to fill slots
+          setRealActivities(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const allActivities = [...realActivities, ...dummyActivities].slice(0, 10);
   const [actPage, setActPage] = useState(1);
   const actPerPage = 2;
-  const totalActPages = Math.max(1, Math.ceil(recentActivities.length / actPerPage));
-  const visibleActs = recentActivities.slice(
+  const totalActPages = Math.max(1, Math.ceil(allActivities.length / actPerPage));
+  const visibleActs = allActivities.slice(
     (actPage - 1) * actPerPage,
     actPage * actPerPage
   );
