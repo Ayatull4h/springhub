@@ -321,6 +321,7 @@ export async function GET(request: Request) {
         status: true,
         snappedLat: true,
         snappedLng: true,
+        springId: true,
         createdAt: true,
         user: {
           select: { username: true, region: true },

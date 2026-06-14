@@ -68,6 +68,7 @@ type ReportItem = {
   formSlug: string;
   snappedLat: number | null;
   snappedLng: number | null;
+  springId: string | null;
   createdAt: string;
   user?: { username: string; region: string };
 };
