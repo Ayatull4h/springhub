@@ -38,27 +38,46 @@ export async function POST(
     });
 
     if (report.userId) {
-      await updateTrustScore(report.userId, false);
+      // Trust score: -10 only if user has been rejected >2 times before
+      try {
+        const rejectCount = await prisma.report.count({
+          where: { userId: report.userId, status: "rejected" },
+        });
+        // Count THIS rejection + past rejections
+        if (rejectCount >= 3) {
+          await updateTrustScore(report.userId, false);
+        }
+      } catch (e) {
+        console.error("Trust score update failed (non-blocking):", e);
+      }
 
-      await prisma.pointsLog.create({
-        data: {
-          userId: report.userId,
-          reportId: params.id,
-          amount: 0,
-          reason: `Laporan ${report.formSlug} ditolak`,
-          metadata: JSON.stringify({ status: "rejected" }),
-        },
-      });
+      try {
+        await prisma.pointsLog.create({
+          data: {
+            userId: report.userId,
+            reportId: params.id,
+            amount: 0,
+            reason: `Laporan ${report.formSlug} ditolak`,
+            metadata: JSON.stringify({ status: "rejected" }),
+          },
+        });
+      } catch (e) {
+        console.error("PointsLog create failed (non-blocking):", e);
+      }
 
-      await prisma.notification.create({
-        data: {
-          userId: report.userId,
-          type: "report-rejected",
-          title: `Laporan ${report.formSlug} ditolak`,
-          body: body.note || "Laporan Anda tidak memenuhi kriteria validasi.",
-          link: "/profile",
-        },
-      });
+      try {
+        await prisma.notification.create({
+          data: {
+            userId: report.userId,
+            type: "report-rejected",
+            title: `Laporan ${report.formSlug} ditolak`,
+            body: body.note || "Laporan Anda tidak memenuhi kriteria validasi.",
+            link: "/profile",
+          },
+        });
+      } catch (e) {
+        console.error("Notification create failed (non-blocking):", e);
+      }
     }
 
     return NextResponse.json({ success: true, status: "rejected" });

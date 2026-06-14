@@ -8,6 +8,7 @@ import { I18nProvider } from "@/lib/i18n";
 import { DarkModeProvider } from "@/lib/darkmode";
 import Watermark from "@/components/layout/watermark";
 import { QueueWorker } from "@/components/queue-worker";
+import { ToastProvider } from "@/components/toast";
 import { ErrorBoundary } from "@/lib/error-boundary";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -96,6 +97,7 @@ export default function RootLayout({
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white">
           Langsung ke konten utama
         </a>
+        <ToastProvider>
         <QueueWorker />
         <DarkModeProvider>
           <I18nProvider>
@@ -111,6 +113,7 @@ export default function RootLayout({
             <Watermark />
           </I18nProvider>
         </DarkModeProvider>
+        </ToastProvider>
         <Script
           id="register-sw"
           strategy="afterInteractive"

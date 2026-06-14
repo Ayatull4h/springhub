@@ -17,7 +17,7 @@ type ReportItem = {
   snappedLat: number | null;
   snappedLng: number | null;
   createdAt: string;
-  user: { username: string; email: string } | null;
+  submitter: { type: string; id: string | null; name: string | null; email: string | null } | null;
   reviewedBy: { username: string } | null;
 };
 
@@ -139,7 +139,7 @@ export default function AdminReportsPage() {
                 </span>
               </div>
               <div className="text-xs text-ink-muted">
-                {r.user?.username ?? `${t("common.guest")} (${r.guestId?.slice(0, 8)}...)`} · {new Date(r.createdAt).toLocaleDateString("id-ID")}
+                {r.submitter?.name ?? `${t("common.guest")} (${r.guestId?.slice(0, 8)}...)`} · {new Date(r.createdAt).toLocaleDateString("id-ID")}
               </div>
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 <button
@@ -189,7 +189,7 @@ export default function AdminReportsPage() {
               return (
                 <tr key={r.id} className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800">
                   <td className="py-3 pr-3 text-ink">{formLabels[r.formSlug] ?? r.formSlug}</td>
-                  <td className="py-3 pr-3 text-ink-muted">{r.user?.username ?? `${t("common.guest")} (${r.guestId?.slice(0, 8)}...)`}</td>
+                  <td className="py-3 pr-3 text-ink-muted">{r.submitter?.name ?? `${t("common.guest")} (${r.guestId?.slice(0, 8)}...)`}</td>
                   <td className="py-3 pr-3">
                     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}>
                       <StatusIcon className="h-3 w-3" />
