@@ -175,7 +175,6 @@ export default function ReportIssuePage() {
               id="screenshots"
               type="file"
               accept="image/*"
-              capture="environment"
               multiple
               className="hidden"
               onChange={(e) => {
@@ -190,7 +189,7 @@ export default function ReportIssuePage() {
               }}
             />
             <p className="mt-1 text-xs text-ink-subtle">
-              {t("reportIssue.screenshotHint", "Kamera langsung, maks 3 foto. Format: JPG, PNG.")}
+              {t("reportIssue.screenshotHint", "Dari galeri, maks 3 foto. Format: JPG, PNG.")}
             </p>
             {screenshots.length > 0 && (
               <p className="mt-1 text-xs font-medium text-brand-600 dark:text-brand-400">

@@ -68,7 +68,7 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
   const handlePhotoChange = useCallback((fieldId: string, files: FileList | null) => {
     if (!files) return;
     const current = photoFiles[fieldId] || [];
-    const remaining = 3 - current.length;
+    const remaining = 5 - current.length;
     const toAdd = Array.from(files).slice(0, remaining);
     setPhotoFiles(prev => ({ ...prev, [fieldId]: [...(prev[fieldId] || []), ...toAdd] }));
   }, [photoFiles]);
@@ -84,6 +84,17 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!selectedForm) return;
+
+    // ── Validasi: min 3 foto per field photo ─────────────────────────
+    for (const field of selectedForm.fields) {
+      if (field.type === "photo") {
+        const count = (photoFiles[field.id] || []).length;
+        if (count < 3) {
+          alert(`Minimal 3 foto untuk "${field.label || field.id}". Saat ini: ${count} foto.`);
+          return;
+        }
+      }
+    }
 
     const formEl = e.currentTarget;
     const fd = new FormData(formEl);
@@ -301,9 +312,12 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
               <div className="mt-1">
                 <div className="flex items-center gap-2 text-xs text-ink-muted">
                   <Camera className="h-3.5 w-3.5" />
-                  <span>{(photoFiles[field.id] || []).length} / 3 foto</span>
+                  <span>{(photoFiles[field.id] || []).length} / 5 foto</span>
+                  {(photoFiles[field.id] || []).length < 3 && (
+                    <span className="font-semibold text-amber-600">(minimal 3 foto)</span>
+                  )}
                 </div>
-                {(photoFiles[field.id] || []).length < 3 && (
+                {(photoFiles[field.id] || []).length < 5 && (
                   <input
                     type="file"
                     accept="image/*"
@@ -334,8 +348,8 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
                     ))}
                   </div>
                 )}
-                {(photoFiles[field.id] || []).length >= 3 && (
-                  <p className="mt-1 text-xs text-amber-600">Maksimal 3 foto. Hapus yang ada untuk mengganti.</p>
+                {(photoFiles[field.id] || []).length >= 5 && (
+                  <p className="mt-1 text-xs text-amber-600">Maksimal 5 foto. Hapus yang ada untuk mengganti.</p>
                 )}
               </div>
             ) : field.type === "location" ? (

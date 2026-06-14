@@ -13,7 +13,7 @@
  */
 
 const DB_NAME = "springhub-offline";
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 
 export type MarkerType = "spring" | "tree" | "trench" | "seedling";
 
@@ -102,6 +102,11 @@ type DBSchema = {
     value: QueuedSubmission;
     indexes: { "by-created": number };
   };
+  "session-cache": {
+    key: string;
+    value: CachedSession;
+    indexes: {};
+  };
 };
 
 export type PendingReport = {
@@ -121,6 +126,16 @@ export type PhotoBlob = {
   blob: Blob;
   fileName: string;
   mimeType: string;
+};
+
+/** Session user yang di-cache di IndexedDB agar PWA bisa offline tanpa login ulang */
+export type CachedSession = {
+  id: "user-session";
+  userId: string;
+  username: string;
+  role: string;
+  csrfToken: string;
+  cachedAt: number;
 };
 
 export type FormDefinition = {
@@ -198,6 +213,13 @@ function openDB(): Promise<IDBDatabase> {
         // tile-manifest
         if (!db.objectStoreNames.contains("tile-manifest")) {
           db.createObjectStore("tile-manifest", { keyPath: "url" });
+        }
+      }
+
+      // ── Version 5 — session-cache store ──
+      if (oldVersion < 5) {
+        if (!db.objectStoreNames.contains("session-cache")) {
+          db.createObjectStore("session-cache", { keyPath: "id" });
         }
       }
 
@@ -509,6 +531,19 @@ export const offlineDB = {
     return countItems("submission-queue");
   },
 
+  // ── Session Cache ──────────────────────────────────────────────────────
+  saveSession(session: CachedSession) {
+    return addItem("session-cache", session);
+  },
+
+  getSession(): Promise<CachedSession | undefined> {
+    return getItem("session-cache", "user-session");
+  },
+
+  clearSession() {
+    return deleteItem("session-cache", "user-session");
+  },
+
   // ── Bulk Clear ─────────────────────────────────────────────────────────
   async clearAll() {
     await clearStore("pending-reports");
@@ -520,10 +555,11 @@ export const offlineDB = {
     await clearStore("draft-reports");
     await clearStore("submission-queue");
     await deleteItem("offline-config", "session-config");
+    await deleteItem("session-cache", "user-session");
   },
 
   async getStats() {
-    const [reports, tracks, photos, forms, tiles, configs, drafts, queue] = await Promise.all([
+    const [reports, tracks, photos, forms, tiles, configs, drafts, queue, sessions] = await Promise.all([
       countItems("pending-reports"),
       countItems("tracking-points"),
       countItems("photo-blobs"),
@@ -533,8 +569,9 @@ export const offlineDB = {
       countItems("offline-config"),
       countItems("draft-reports"),
       countItems("submission-queue"),
+      countItems("session-cache"),
     ]);
-    return { reports, tracks, photos, forms, tiles, configs, drafts, queue };
+    return { reports, tracks, photos, forms, tiles, configs, drafts, queue, sessions };
   },
 
   // ── Storage check ───────────────────────────────────────────────────────

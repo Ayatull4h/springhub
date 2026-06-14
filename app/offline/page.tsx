@@ -75,7 +75,7 @@ function OfflinePageContent() {
   const [storageInfo, setStorageInfo] = useState("");
   const [isAndroid, setIsAndroid] = useState(false);
 
-  // ── Check prerequisites ────────────────────────────────────────────────
+  // ── Check prerequisites (offline-first) ─────────────────────────────
   useEffect(() => {
     async function check() {
       try {
@@ -86,7 +86,7 @@ function OfflinePageContent() {
           }
         } catch {}
 
-        // Check IndexedDB availability (iOS Chrome / private mode / Android Incognito sering blokir)
+        // Check IndexedDB availability
         const dbOk = await offlineDB.isAvailable();
         if (!dbOk) {
           setPhase("storage-error");
@@ -107,26 +107,28 @@ function OfflinePageContent() {
           return;
         }
 
-        // Check storage estimate
-        try {
-          const { used, quota } = await offlineDB.estimateUsage();
-          if (quota !== null && used !== null) {
-            const usedMB = Math.round(used / 1024 / 1024);
-            const quotaMB = Math.round(quota / 1024 / 1024);
-            if (usedMB > quotaMB * 0.8) {
-              setStorageInfo(`Peringatan: penyimpanan hampir penuh (${usedMB}/${quotaMB} MB). Hapus data lama untuk hasil terbaik.`);
-            }
-          }
-        } catch {}
+        // ═══ OFFLINE-FIRST: cek session dari IndexedDB dulu ═══
+        const cachedSession = await offlineDB.getSession();
+        const cachedForms = await offlineDB.getAllForms().catch(() => []);
 
-        // Check login
+        if (cachedSession && cachedForms.length > 0) {
+          // Session & forms sudah di-cache → langsung mode offline!
+          setPhase("simple-form");
+          return;
+        }
+
+        // ═══ ONLINE: cek auth via API + cache untuk offline nanti ═══
         let meData;
         try {
           const meRes = await fetch("/api/auth/me");
           meData = await meRes.json();
         } catch (fetchErr) {
           setPhase("not-logged-in");
-          setCheckError(`Gagal terhubung ke server: ${fetchErr instanceof Error ? fetchErr.message : "Network error"}. Pastikan kamu online untuk setup awal.`);
+          setCheckError(
+            `Gak ada koneksi & belum pernah setup offline. ` +
+            `Pastikan kamu online dulu untuk login dan setup awal, ` +
+            `setelah itu PWA bisa dipakai tanpa internet.`
+          );
           return;
         }
 
@@ -136,7 +138,17 @@ function OfflinePageContent() {
           return;
         }
 
-        // Check if PWA is installed — warn but don't block
+        // Cache session user ke IndexedDB untuk akses offline selanjutnya
+        await offlineDB.saveSession({
+          id: "user-session",
+          userId: meData.user.id || meData.user.email,
+          username: meData.user.username || "User",
+          role: meData.user.role || "volunteer",
+          csrfToken: meData.csrfToken || "",
+          cachedAt: Date.now(),
+        });
+
+        // Check PWA installed
         let isStandalone = false;
         try {
           if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
@@ -145,48 +157,25 @@ function OfflinePageContent() {
               window.matchMedia("(display-mode: fullscreen)").matches ||
               window.matchMedia("(display-mode: minimal-ui)").matches;
           }
-        } catch {
-          // matchMedia may not be available in all browsers
-        }
+        } catch {}
 
         if (!isStandalone) {
-          console.warn("Mode offline berfungsi optimal saat aplikasi terinstall.");
+          console.warn("Mode offline optimal saat aplikasi terinstall.");
         }
 
-        // Check if setup was already done (forms cached)
-        let forms;
-        try {
-          forms = await offlineDB.getAllForms();
-        } catch (dbErr) {
-          setCheckError(`Gagal membaca data offline: ${dbErr instanceof Error ? dbErr.message : "Unknown error"}. Coba refresh halaman.`);
-          setPhase("not-logged-in");
-          return;
+        // Check & cache forms
+        if (cachedForms.length > 0) {
+          // Forms sudah di-cache, langsung masuk
+          setPhase("simple-form");
+        } else {
+          // Butuh setup awal (cache forms)
+          setPhase("setup");
         }
-
-        if (forms.length > 0) {
-          // Check if there's an active session
-          try {
-            const sessionRes = await fetch("/api/offline/session");
-            const sessionData = await sessionRes.json();
-            if (sessionData.session?.isActive) {
-              // Resume existing session — simple form mode, no map
-              setPhase("simple-form");
-              return;
-            }
-          } catch {
-            // Server may be offline — resume anyway
-            setPhase("simple-form");
-            return;
-          }
-        }
-
-        // Need to go through setup
-        setPhase("setup");
       } catch (err) {
-        console.error("Offline prerequisite check failed:", err);
+        console.error("Offline check failed:", err);
         setPhase("not-logged-in");
         const msg = err instanceof Error ? err.message : "Unknown error";
-        setCheckError(`Gagal memeriksa status: ${msg}. Pastikan kamu online untuk setup awal.`);
+        setCheckError(`Gagal: ${msg}. Coba lagi.`);
       }
     }
 

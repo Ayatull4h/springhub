@@ -389,7 +389,20 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 
 ## Sesi Diskusi Terbaru
 
-### 8-9 Juni 2026 — Sesi 5: Audit Sprint + Final Push
+### 14 Juni 2026 — Sesi 6: Photo Limits + Offline-First Session
+- **Fokus**: Aturan foto min 3 / max 5, PWA offline-first session cache, Report Issue gallery mode
+- **Photo limits (min 3 / max 5)**:
+  - Semua form dengan field foto: minimal 3, maksimal 5 foto ✅
+  - `app/report/[slug]/page.tsx`: counter + validation 3→5, submit blocking < 3 ✅
+  - `components/offline/simple-offline-form.tsx`: counter + validation 3→5 ✅
+  - `components/offline/offline-survey-map.tsx`: counter + validation 3→5 ✅
+  - `app/report-issue/page.tsx`: tetap max 3, dari galeri (bukan kamera) ✅
+- **Offline-first session cache (PWA)**:
+  - `lib/offline-db.ts`: `getStats()` tambah `sessions` count ✅
+  - `app/offline/page.tsx`: cek session IndexedDB dulu → langsung mode offline ✅
+  - Session di-cache setelah API auth sukses ✅
+- **Status**: TypeScript zero errors. Semua perubahan siap push.
+- **Commit**: `Soon` — akan dipush ke `origin/master`
 - **Fokus**: Audit menyeluruh 91 isu, eksekusi 3 sprint, verifikasi Vercel
 - **Sprint 1** (🔴 17 critical): Foto error banner, newsletter CSRF, like auth, notif IDOR, global-error.tsx, ErrorBoundary, skip-link, aria-label
 - **Sprint 2** (🟠 6 high): Dark mode globals, spring-map loading states, `focus-visible`, `prefers-reduced-motion`, profile input class

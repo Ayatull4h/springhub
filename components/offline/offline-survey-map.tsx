@@ -470,16 +470,27 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
 
   const handlePhotoCapture = (fieldId: string, files: FileList | null) => {
     if (!files || files.length === 0) return;
-    const newFiles = Array.from(files).slice(0, 3); // max 3 photos
+    const newFiles = Array.from(files).slice(0, 5); // max 5 photos
     setFormPhotos((prev) => {
       const existing = prev[fieldId] || [];
-      const combined = [...existing, ...newFiles].slice(0, 3); // max 3 total
+      const combined = [...existing, ...newFiles].slice(0, 5); // max 5 total
       return { ...prev, [fieldId]: combined };
     });
   };
 
   const handleSubmitForm = async () => {
     if (!activeForm) return;
+
+    // ── Validasi: min 3 foto per field photo ─────────────────────────
+    for (const field of activeForm.fields) {
+      if (field.type === "photo") {
+        const count = (formPhotos[field.id] || []).length;
+        if (count < 3) {
+          alert(`Minimal 3 foto untuk "${field.label || field.id}". Saat ini: ${count} foto.`);
+          return;
+        }
+      }
+    }
 
     try {
       const report: PendingReport = {
@@ -743,6 +754,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                     </select>
                   ) : field.type === "photo" ? (
                     <div className="mt-1">
+                      {(formPhotos[field.id] || []).length < 5 && (
                       <input
                         type="file"
                         accept="image/*"
@@ -755,6 +767,10 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                         className="block w-full text-xs text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30 dark:file:text-brand-300"
                         title="Ambil foto dari kamera"
                       />
+                      )}
+                      {(formPhotos[field.id] || []).length >= 5 && (
+                        <p className="text-xs text-amber-600">Maksimal 5 foto.</p>
+                      )}
                       {formPhotos[field.id] && formPhotos[field.id].length > 0 && (
                         <div className="mt-1 flex flex-wrap gap-1">
                           {formPhotos[field.id].map((file, idx) => (
@@ -768,7 +784,10 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                             </div>
                           ))}
                           <span className="ml-1 self-center text-[10px] text-ink-muted">
-                            {formPhotos[field.id].length}/3
+                            {formPhotos[field.id].length}/5
+                            {formPhotos[field.id].length < 3 && (
+                              <span className="ml-1 font-semibold text-amber-600">(min 3)</span>
+                            )}
                           </span>
                         </div>
                       )}

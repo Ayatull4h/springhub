@@ -33,7 +33,7 @@ export default function ReportFormPage() {
     hour: "2-digit", minute: "2-digit",
   });
 
-  // Per-field photo count (max 3 per field)
+  // Per-field photo count (max 5 per field)
   const [photoCounts, setPhotoCounts] = useState<Record<string, number>>({});
 
   // ── Auto-Draft State ──────────────────────────────────────────────
@@ -141,6 +141,21 @@ export default function ReportFormPage() {
 
     const formEl = e.currentTarget;
     const formData = new FormData(formEl);
+
+    // ── Validasi: min 3 foto per field photo ─────────────────────────
+    const photoFieldIds = activeForm.fields
+      .filter((f: FormField) => f.type === "photo")
+      .map((f: FormField) => f.id);
+    for (const fieldId of photoFieldIds) {
+      const files = formData.getAll(fieldId).filter(
+        (f): f is File => f instanceof File && f.size > 0
+      );
+      if (files.length < 3) {
+        setError(`Minimal 3 foto untuk "${fieldId}". Saat ini: ${files.length} foto.`);
+        setLoading(false);
+        return;
+      }
+    }
 
     formData.set("form_slug", activeForm.slug);
     formData.set("_submit_time", pageLoadTime.toString());
@@ -586,16 +601,19 @@ function FieldRenderer({
       );
     case "photo":
       const currentCount = photoCounts?.[field.id] ?? 0;
-      const maxReached = currentCount >= 3;
+      const maxReached = currentCount >= 5;
       return (
         <div>
           {labelEl}
           {/* Photo count indicator */}
           <div className="mt-1 flex items-center gap-2 text-xs text-ink-muted">
             <Camera className="h-3.5 w-3.5" />
-            <span>{currentCount} / 3 foto</span>
+            <span>{currentCount} / 5 foto</span>
+            {currentCount < 3 && (
+              <span className="font-semibold text-amber-600">(minimal 3 foto)</span>
+            )}
             {maxReached && (
-              <span className="font-semibold text-amber-600">(maksimal 3 foto)</span>
+              <span className="font-semibold text-amber-600">(maksimal 5 foto)</span>
             )}
           </div>
           {/* Camera only — langsung kamera, bukan galeri */}
@@ -611,10 +629,10 @@ function FieldRenderer({
               onChange={(e) => {
                 const files = e.target.files;
                 if (files) {
-                  const newCount = Math.min(files.length + currentCount, 3);
+                  const newCount = Math.min(files.length + currentCount, 5);
                   setPhotoCounts?.((prev) => ({ ...prev, [field.id]: newCount }));
                   // If user selects more than remaining slots, trim
-                  const remaining = 3 - currentCount;
+                  const remaining = 5 - currentCount;
                   if (files.length > remaining) {
                     const dt = new DataTransfer();
                     for (let i = 0; i < remaining; i++) {
@@ -629,7 +647,7 @@ function FieldRenderer({
           )}
           {maxReached && (
             <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
-              Maksimal 3 foto. Hapus yang ada untuk mengganti.
+              Maksimal 5 foto. Hapus yang ada untuk mengganti.
             </p>
           )}
         </div>
