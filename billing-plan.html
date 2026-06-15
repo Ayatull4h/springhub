@@ -52,6 +52,8 @@
       border-collapse: collapse;
       margin: 15px 0;
       font-size: 10pt;
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
     table th, table td {
       border: 1px solid #333;
@@ -82,6 +84,7 @@
       border: 1px dashed #666;
       font-size: 9pt;
       color: #444;
+      break-inside: avoid;
     }
     .footer {
       margin-top: 40px;
@@ -98,6 +101,39 @@
     }
     .indent {
       padding-left: 20px;
+    }
+
+    /* ── Print-specific: cegah tabel/halaman terpotong ── */
+    @media print {
+      body {
+        padding: 0;
+        margin: 0;
+        max-width: none;
+      }
+      table {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      h2, h3 {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+      .note, .footer {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .grand-total {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      th {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
     }
   </style>
 </head>
@@ -374,9 +410,6 @@
       <td>AI Agent Lokal (Odysseus)</td>
       <td style="color:#c00;">❌ Belum</td>
       <td>Rencana setelah migrasi VPS &mdash; Ollama + RAG + agentic framework</td>
-    </tr>
-  </table>
-      <td>&nbsp;</td>
     </tr>
   </table>
 
