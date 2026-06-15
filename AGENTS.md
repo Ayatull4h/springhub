@@ -465,9 +465,9 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
   - **Penyebab**: `Comment` table dan migration belum diapply. API `/api/projects/[id]/comments` sudah benar pakai Prisma.
   - **Status**: ✅ Migration sudah diapply, Comment table sudah ada. Namun frontend belum ada komponen yang panggil API ini (comments belum diintegrasikan ke UI).
 - **Yang Belum Dikerjakan**:
-  1. **Xendit & Email keys real** — masih placeholder di .env
-  2. **Sentry DSN** — masih empty
-  3. **Supabase RLS** — apply policies dari `supabase/rls-policies.sql`
-  4. **Seed data** — ✅ SEKARANG SUDAH DIISI
-  5. **Migrasi ke VPS** — ditunda sampai web 100% stabil
-  6. **Deploy ke Vercel** — sudah push ke GitHub, Vercel auto-deploy dari master
+   1. **Xendit & Email keys real** — masih placeholder di .env
+   2. **Sentry DSN** — masih empty
+   3. ~~Supabase RLS — apply policies dari `supabase/rls-policies.sql`~~ ✅ **SUDAH DIAPPLY**
+   4. **Seed data** — ✅ SUDAH DIISI
+   5. **Migrasi ke VPS** — ditunda sampai web 100% stabil
+   6. **Deploy ke Vercel** — sudah push ke GitHub, Vercel auto-deploy dari master
