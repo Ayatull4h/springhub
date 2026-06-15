@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dokumen Perencanaan Billing & Infrastruktur Web</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 15mm;
+    }
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11pt;
+      line-height: 1.5;
+      color: #111;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #fff;
+    }
+    .header-line {
+      border: none;
+      border-top: 3px double #000;
+      margin: 20px 0;
+    }
+    h1 {
+      font-size: 14pt;
+      text-align: center;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 30px 0 10px;
+    }
+    h2 {
+      font-size: 12pt;
+      font-weight: bold;
+      margin: 25px 0 10px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 4px;
+    }
+    h3 {
+      font-size: 11pt;
+      font-weight: bold;
+      margin: 15px 0 8px;
+    }
+    .section-block {
+      margin: 15px 0;
+      padding-left: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 10pt;
+    }
+    table th, table td {
+      border: 1px solid #333;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    table th {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+    table td.num {
+      text-align: right;
+    }
+    .grand-total {
+      font-weight: bold;
+      background: #e8e8e8;
+    }
+    ol, ul {
+      margin: 5px 0 10px 20px;
+      padding: 0;
+    }
+    li {
+      margin: 4px 0;
+    }
+    .note {
+      margin-top: 25px;
+      padding: 10px;
+      border: 1px dashed #666;
+      font-size: 9pt;
+      color: #444;
+    }
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 9pt;
+      border-top: 1px solid #999;
+      padding-top: 10px;
+    }
+    .right {
+      text-align: right;
+    }
+    .center {
+      text-align: center;
+    }
+    .indent {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>DOKUMEN PERENCANAAN<br>BILLING &amp; INFRASTRUKTUR WEB</h1>
+
+  <hr class="header-line">
+
+  <!-- A. SPESIFIKASI INFRASTRUKTUR -->
+  <h2>A. SPESIFIKASI INFRASTRUKTUR <span style="font-weight:normal;font-size:10pt;">(DUMMY / DEVELOPMENT STAGE)</span></h2>
+
+  <table>
+    <tr><td style="width:35%"><strong>Penyedia Server</strong></td><td>Hostinger Indonesia</td></tr>
+    <tr><td><strong>Jenis Layanan</strong></td><td>Hosting VPS <em>(Kernel-based Virtual Machine)</em></td></tr>
+    <tr><td><strong>Nama Paket</strong></td><td>Paket KVM 4</td></tr>
+    <tr><td><strong>Durasi Kontrak</strong></td><td>24 Bulan (2 Tahun)</td></tr>
+    <tr><td><strong>Lokasi Server</strong></td><td>Indonesia &mdash; Latensi terbaik ~13&nbsp;ms</td></tr>
+    <tr><td><strong>Fasilitas Tambahan</strong></td><td>Gratis Domain 1 Tahun + Proteksi Privasi WHOIS</td></tr>
+  </table>
+
+  <!-- B. RINCIAN BIAYA & ALOKASI DANA -->
+  <h2>B. RINCIAN BIAYA &amp; ALOKASI DANA <span style="font-weight:normal;font-size:10pt;">(KUANTITATIF)</span></h2>
+
+  <h3>1. Pengeluaran Server <span style="font-weight:normal;">(Modal Awal)</span></h3>
+
+  <table>
+    <tr>
+      <th style="width:55%">Komponen</th>
+      <th style="width:25%" class="num">Nominal</th>
+      <th style="width:20%">Keterangan</th>
+    </tr>
+    <tr>
+      <td>Harga Paket + Pajak (24 bulan)</td>
+      <td class="num">Rp5.698.296</td>
+      <td>Dibayar di muka</td>
+    </tr>
+    <tr>
+      <td>Beban Riil Bulanan (Amortisasi)</td>
+      <td class="num">Rp237.429</td>
+      <td>Rp5.698.296 &divide; 24</td>
+    </tr>
+  </table>
+
+  <h3>2. Pengeluaran Operasional <span style="font-weight:normal;">(Gaji Pengelola)</span></h3>
+
+  <table>
+    <tr>
+      <th style="width:35%">Item</th>
+      <th style="width:25%" class="num">Nominal</th>
+      <th>Keterangan</th>
+    </tr>
+    <tr>
+      <td>Alokasi Gaji Bulanan</td>
+      <td class="num">Rp2.000.000</td>
+      <td>Pengelola &amp; Pengembang</td>
+    </tr>
+    <tr>
+      <td><span class="indent">Penerima</span></td>
+      <td colspan="2">Ayatullah Reza Chalid</td>
+    </tr>
+    <tr>
+      <td><span class="indent">Bank Tujuan</span></td>
+      <td colspan="2">BANK BRI</td>
+    </tr>
+    <tr>
+      <td><span class="indent">Nomor Rekening</span></td>
+      <td colspan="2">359001035332531</td>
+    </tr>
+  </table>
+
+  <h3>3. Cloudflare R2 <span style="font-weight:normal;">(Object Storage &mdash; Foto &amp; Aset)</span></h3>
+
+  <table>
+    <tr>
+      <th style="width:35%">Parameter</th>
+      <th style="width:25%" class="num">Nilai</th>
+      <th>Keterangan</th>
+    </tr>
+    <tr>
+      <td>Estimasi Penyimpanan</td>
+      <td class="num">5 GB</td>
+      <td>Foto kompresi 720p ~200 KB/file</td>
+    </tr>
+    <tr>
+      <td>Biaya Storage</td>
+      <td class="num">$0,075 / bln</td>
+      <td>$0,015/GB &times; 5 GB</td>
+    </tr>
+    <tr>
+      <td>Biaya Operasi (Baca/Tulis)</td>
+      <td class="num">$0 / bln</td>
+      <td>Dalam batas free tier</td>
+    </tr>
+    <tr>
+      <td>Biaya Egress (Transfer Out)</td>
+      <td class="num">$0 / bln</td>
+      <td>Gratis &mdash; tanpa biaya egress</td>
+    </tr>
+    <tr>
+      <td><strong>Total Estimasi R2</strong></td>
+      <td class="num"><strong>$0,075 / bln</strong></td>
+      <td><strong>~Rp1.200 / bulan</strong></td>
+    </tr>
+  </table>
+
+  <h3>4. Layanan API &amp; Utilitas <span style="font-weight:normal;">(Estimasi)</span></h3>
+
+  <table>
+    <tr>
+      <th style="width:45%">Layanan</th>
+      <th style="width:25%" class="num">Estimasi / Bulan</th>
+      <th>Catatan</th>
+    </tr>
+    <tr>
+      <td>AI API <em>(Claude Sonnet / OpenRouter)</em></td>
+      <td class="num">$5 &ndash; $20</td>
+      <td>Rp80.000 &ndash; Rp320.000</td>
+    </tr>
+    <tr>
+      <td>Cloudflare R2 <em>(Object Storage)</em></td>
+      <td class="num">~$0,075</td>
+      <td>~Rp1.200 &mdash; free tier cukup</td>
+    </tr>
+    <tr>
+      <td>Xendit <em>(Payment Gateway)</em></td>
+      <td class="num">Rp0</td>
+      <td>Fee per transaksi, tanpa biaya bulanan</td>
+    </tr>
+    <tr>
+      <td>Sentry <em>(Error Tracking &mdash; Opsional)</em></td>
+      <td class="num">Rp0</td>
+      <td>Free tier cukup untuk development</td>
+    </tr>
+  </table>
+
+  <!-- C. REKAPITULASI BULANAN -->
+  <h2>C. REKAPITULASI BIAYA BULANAN <span style="font-weight:normal;font-size:10pt;">(IDR)</span></h2>
+
+  <table>
+    <tr>
+      <th style="width:55%">Komponen</th>
+      <th style="width:25%" class="num">Per Bulan</th>
+      <th>Persentase</th>
+    </tr>
+    <tr>
+      <td>Server <em>(Amortisasi 24 bulan)</em></td>
+      <td class="num">Rp237.429</td>
+      <td class="num">~10%</td>
+    </tr>
+    <tr>
+      <td>Gaji Pengelola</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">~83%</td>
+    </tr>
+    <tr>
+      <td>AI API <em>(Estimasi tengah)</em></td>
+      <td class="num">Rp200.000</td>
+      <td class="num">~8%</td>
+    </tr>
+    <tr>
+      <td>Cloudflare R2 <em>(Object Storage)</em></td>
+      <td class="num">Rp1.200</td>
+      <td class="num">~0,05%</td>
+    </tr>
+    <tr class="grand-total">
+      <td><strong>Total Perkiraan Bulanan</strong></td>
+      <td class="num"><strong>Rp2.438.629</strong></td>
+      <td class="num">100%</td>
+    </tr>
+  </table>
+
+  <p><em>Catatan: Biaya server sudah dibayar di muka untuk 24 bulan. Angka amortisasi hanya untuk acuan arus kas bulanan.</em></p>
+
+  <!-- D. ARUS KAS TAHUN PERTAMA -->
+  <h2>D. ARUS KAS <span style="font-weight:normal;font-size:10pt;">(TAHUN PERTAMA)</span></h2>
+
+  <table>
+    <tr>
+      <th>Bulan Ke-</th>
+      <th class="num">Server</th>
+      <th class="num">Gaji</th>
+      <th class="num">R2</th>
+      <th class="num">AI API</th>
+      <th class="num">Total Keluar</th>
+      <th>Saldo Akhir</th>
+    </tr>
+    <tr>
+      <td>0 <em>(Awal)</em></td>
+      <td class="num">Rp5.698.296</td>
+      <td class="num">&mdash;</td>
+      <td class="num">&mdash;</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp5.698.296</td>
+      <td style="font-style:italic;">Modal dikeluarkan</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td class="num">&mdash;</td>
+      <td class="num">Rp2.000.000</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">Rp200.000</td>
+      <td class="num">Rp2.201.200</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr class="grand-total">
+      <td><strong>Total Tahun 1</strong></td>
+      <td class="num"><strong>Rp5.698.296</strong></td>
+      <td class="num"><strong>Rp24.000.000</strong></td>
+      <td class="num"><strong>Rp14.400</strong></td>
+      <td class="num"><strong>Rp2.400.000</strong></td>
+      <td class="num"><strong>Rp32.112.696</strong></td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+
+  <!-- E. CATATAN -->
+  <h2>E. CATATAN</h2>
+  <ol>
+    <li>Biaya server <strong>sudah dibayar di muka</strong> untuk 24 bulan &mdash; tidak ada beban bulanan berulang untuk infrastruktur.</li>
+    <li>Biaya <strong>AI API</strong> bersifat variatif tergantung volume penggunaan model <em>Claude Sonnet 4</em>.</li>
+    <li>Biaya domain tahun ke-3 dan seterusnya diperkirakan ~Rp200.000&ndash;300.000/tahun.</li>
+    <li>Belum termasuk biaya <strong>Xendit</strong> (fee per transaksi) dan <strong>Sentry</strong> (jika upgrade ke paid plan).</li>
+    <li>Dokumen ini bersifat <strong>perencanaan</strong> dan dapat berubah sesuai kebutuhan pengembangan.</li>
+  </ol>
+
+  <div class="note">
+    <strong>RINGKASAN EKSEKUTIF:</strong><br>
+    Total investasi tahun pertama: <strong>Rp32.112.696</strong><br>
+    Rata-rata biaya bulanan (termasuk amortisasi server): <strong>Rp2.676.058</strong><br>
+    Biaya server hanya 18% dari total &mdash; sisanya gaji pengelola (75%), AI API (7%), dan Cloudflare R2 (&lt;1%).
+  </div>
+
+  <div class="footer">
+    Dokumen ini dibuat pada 15 Juni 2026 &mdash; SpringHub oleh Jaga Semesta<br>
+    <em>Dicetak dari &lt;billing-plan.html&gt;</em>
+  </div>
+
+</body>
+</html>
