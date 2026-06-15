@@ -380,10 +380,12 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 | Points Engine | 100% | Base + bonus + milestone + streak + trust score ✅ |
 | PWA / SEO | 100% | Manifest, sitemap, OG image, service worker ✅ |
 | Anti-Spam | 100% | CSRF, rate limit, honey pot, time gate, daily limit ✅ |
-| Testing | 80% | 3 unit tests + 17 E2E specs + 5 k6 scenarios ✅ |
+| Testing | 85% | 3 unit tests + 17 E2E specs + 5 k6 scenarios + 80 UAT test cases ✅ |
 | Dark Mode | 95% | Semua halaman + komponen, minor touch-up mungkin ada |
 | Report Toggle | 100% | Admin bisa active/inactive report, form inactive auto hide ✅ |
-| **Total** | **~90%** | **10% tersisa untuk production hardening** |
+| Offline PWA | 95% | Offline-first session cache, QueueWorker, IndexedDB sync ✅ |
+| Photo Rules | 100% | Min 3 / max 5, validasi submit, Report Issue gallery exception ✅ |
+| **Total** | **~92%** | **8% tersisa untuk production hardening** |
 
 ---
 
@@ -402,7 +404,7 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
   - `app/offline/page.tsx`: cek session IndexedDB dulu → langsung mode offline ✅
   - Session di-cache setelah API auth sukses ✅
 - **Status**: TypeScript zero errors. Semua perubahan siap push.
-- **Commit**: `Soon` — akan dipush ke `origin/master`
+- **Commit**: `cbd9656` — terpush ke `origin/master` ✅
 - **Fokus**: Audit menyeluruh 91 isu, eksekusi 3 sprint, verifikasi Vercel
 - **Sprint 1** (🔴 17 critical): Foto error banner, newsletter CSRF, like auth, notif IDOR, global-error.tsx, ErrorBoundary, skip-link, aria-label
 - **Sprint 2** (🟠 6 high): Dark mode globals, spring-map loading states, `focus-visible`, `prefers-reduced-motion`, profile input class

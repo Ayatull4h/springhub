@@ -21,11 +21,13 @@
 | 1 | Both | Buka `/` tanpa login | Landing page render, map, dashboard, media, recent activities muncul | | |
 | 2 | Both | Klik "Lapor" atau buka `/report/spring-monitoring` | Form terbisa, semua field muncul termasuk **provinsi** (tidak hilang) | | Bug field hilang-timbul SUDAH FIX |
 | 3 | HP | Klik field foto `capture="environment"` | **Kamera langsung terbuka**, bukan galeri | | |
-| 4 | Both | Upload >3 foto | Maksimal 3, ada notif "Maksimal 3 foto" | | |
-| 5 | Both | Lihat preview foto sebelum submit | Thumbnail foto muncul, bisa dihapus (X) sebelum submit | | |
-| 6 | Both | Submit form dengan foto | Sukses, foto tersimpan di Supabase Storage | | |
-| 7 | Both | Coba submit >5x dalam sehari | Guest: error "Batas laporan harian (5)" | | |
-| 8 | Both | Cek cookie `guest_session_id` di browser | Ada cookie dengan random ID | | |
+| 4 | Both | Upload foto <3 | Submit **ditolak** — "Minimal 3 foto" | | Fitur baru min 3 |
+| 5 | Both | Upload 3-5 foto | Submit berhasil. Indikator `X/5` dengan label `(minimal 3 foto)` jika <3 | | Fitur baru min 3 / max 5 |
+| 6 | Both | Upload >5 foto | Hanya 5 foto terakhir yang diterima. Ada notif "Maksimal 5 foto" | | |
+| 7 | Both | Lihat preview foto sebelum submit | Thumbnail foto muncul, bisa dihapus (X) sebelum submit | | |
+| 8 | Both | Submit form dengan foto | Sukses, foto tersimpan di Supabase Storage | | |
+| 9 | Both | Coba submit >5x dalam sehari | Guest: error "Batas laporan harian (5)" | | |
+| 10 | Both | Cek cookie `guest_session_id` di browser | Ada cookie dengan random ID | | |
 
 ---
 
@@ -33,15 +35,15 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 9 | Both | Login dengan `volunteer@springhub.id` / `vol123` | Berhasil login, redirect ke halaman sebelumnya | | |
-| 10 | Both | Buka `/report/spring-monitoring` | Form render, field **provinsi** muncul (tidak hilang) | | Bug FIX: gabung field DB + statis |
-| 11 | HP | Klik field foto | Kamera langsung terbuka (bukan galeri) | | |
-| 12 | Both | Upload >3 foto | Maksimal 3, indikator `0/3`, `1/3`, dll | | |
-| 13 | Both | Submit form lengkap (isi semua + foto) | Sukses, muncul toast/notif "Laporan terkirim" | | |
-| 14 | Both | Submit form >5x sehari | Volunteer: **tetap bisa** (unlimited) | | |
-| 15 | Both | Cek poin di profile `/profile` | Poin bertambah setelah laporan di-approve admin | | |
-| 16 | Both | Cek **Recent Activities** di landing page | Activity real dari user muncul (bukan cuma dummy) | | Sudah connect ke API `/api/reports` |
-| 17 | Both | Scroll ke **Dashboard** | Angka real dari database (bukan hardcoded) | | Sudah connect ke `/api/dashboard` |
+| 11 | Both | Login dengan `volunteer@springhub.id` / `vol123` | Berhasil login, redirect ke halaman sebelumnya | | |
+| 12 | Both | Buka `/report/spring-monitoring` | Form render, field **provinsi** muncul (tidak hilang) | | Bug FIX: gabung field DB + statis |
+| 13 | HP | Klik field foto | Kamera langsung terbuka (bukan galeri) | | |
+| 14 | Both | Upload foto <3 | Submit **ditolak** — "Minimal 3 foto" | | Fitur baru min 3 |
+| 15 | Both | Upload 3-5 foto, submit form lengkap | Sukses, indikator counter `X/5`, muncul toast "Laporan terkirim" | | |
+| 16 | Both | Submit form >5x sehari | Volunteer: **tetap bisa** (unlimited) | | |
+| 17 | Both | Cek poin di profile `/profile` | Poin bertambah setelah laporan di-approve admin | | |
+| 18 | Both | Cek **Recent Activities** di landing page | Activity real dari user muncul (bukan cuma dummy) | | Sudah connect ke API `/api/reports` |
+| 19 | Both | Scroll ke **Dashboard** | Angka real dari database (bukan hardcoded) | | Sudah connect ke `/api/dashboard` |
 
 ---
 
@@ -49,15 +51,15 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 18 | Both | Login dengan `admin@springhub.id` / `admin123` | Berhasil login, link Admin muncul di header | | |
-| 19 | Both | Buka `/admin/users` | Lihat daftar user. Role dropdown cuma: User, Volunteer, Admin | | Field Lead SUDAH DIHAPUS |
-| 20 | Both | Buka `/admin/reports` | Lihat semua laporan + **submitter name benar** (bukan "Guest" semua) | | Bug FIX: mapping `submitter` diperbaiki |
-| 21 | Both | Buka `/admin/review` | Approve/reject laporan, **tidak error** | | Bug FIX: reject 500 sudah diperbaiki |
-| 22 | Both | Approve laporan volunteer | ✅ Poin otomatis nambah (+25 sd +100), ✅ Trust score +10, ✅ Notif terkirim | | |
-| 23 | Both | Reject laporan volunteer | ✅ Notif terkirim. Trust score -10 **hanya jika reject >3x** (tidak langsung -50) | | Bug FIX: logic trust score |
-| 24 | Both | Approve → laporan hilang dari queue | Setelah approve, laporan tidak muncul lagi di review queue | | |
-| 25 | Both | Buka Admin → **Trust Score Management** | Bisa lihat & atur trust score user | | Fitur baru |
-| 26 | Both | Toggle Active/Inactive form di `/admin/forms` | Form inactive hilang dari halaman publik | | |
+| 20 | Both | Login dengan `admin@springhub.id` / `admin123` | Berhasil login, link Admin muncul di header | | |
+| 21 | Both | Buka `/admin/users` | Lihat daftar user. Role dropdown cuma: User, Volunteer, Admin | | Field Lead SUDAH DIHAPUS |
+| 22 | Both | Buka `/admin/reports` | Lihat semua laporan + **submitter name benar** (bukan "Guest" semua) | | Bug FIX: mapping `submitter` diperbaiki |
+| 23 | Both | Buka `/admin/review` | Approve/reject laporan, **tidak error** | | Bug FIX: reject 500 sudah diperbaiki |
+| 24 | Both | Approve laporan volunteer | ✅ Poin otomatis nambah (+25 sd +100), ✅ Trust score +10, ✅ Notif terkirim | | |
+| 25 | Both | Reject laporan volunteer | ✅ Notif terkirim. Trust score -10 **hanya jika reject >3x** (tidak langsung -50) | | Bug FIX: logic trust score |
+| 26 | Both | Approve → laporan hilang dari queue | Setelah approve, laporan tidak muncul lagi di review queue | | |
+| 27 | Both | Buka Admin → **Trust Score Management** | Bisa lihat & atur trust score user | | Fitur baru |
+| 28 | Both | Toggle Active/Inactive form di `/admin/forms` | Form inactive hilang dari halaman publik | | |
 
 ---
 
@@ -65,13 +67,13 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 27 | Both | Buka landing page → map | Marker spring **tidak numpuk** — 1 marker per spring (bukan per laporan) | | |
-| 28 | Both | Klik marker spring di map | Navigasi ke `/springs/[id]` | | |
-| 29 | Both | Buka `/springs/[id]` | Halaman detail spring: nama, lokasi, stats (pemantauan, restorasi, pohon, rorak, bibit, foto) | | |
-| 30 | Both | Scroll ke **Timeline** | Semua laporan diurutkan dari terbaru, lengkap dengan foto thumbnail | | |
-| 31 | Both | Scroll ke **Gallery** | Semua foto dari semua laporan, bisa di-filter per tipe form | | |
-| 32 | Both | Klik foto di timeline/gallery | Foto tampil besar (modal), lihat info tanggal & pelapor | | |
-| 33 | Both | Cek **Mini Map** di halaman detail | Peta kecil menunjukkan posisi spring | | |
+| 29 | Both | Buka landing page → map | Marker spring **tidak numpuk** — 1 marker per spring (bukan per laporan) | | |
+| 30 | Both | Klik marker spring di map | Navigasi ke `/springs/[id]` | | |
+| 31 | Both | Buka `/springs/[id]` | Halaman detail spring: nama, lokasi, stats (pemantauan, restorasi, pohon, rorak, bibit, foto) | | |
+| 32 | Both | Scroll ke **Timeline** | Semua laporan diurutkan dari terbaru, lengkap dengan foto thumbnail | | |
+| 33 | Both | Scroll ke **Gallery** | Semua foto dari semua laporan, bisa di-filter per tipe form | | |
+| 34 | Both | Klik foto di timeline/gallery | Foto tampil besar (modal), lihat info tanggal & pelapor | | |
+| 35 | Both | Cek **Mini Map** di halaman detail | Peta kecil menunjukkan posisi spring | | |
 
 ---
 
@@ -79,27 +81,33 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 34 | HP | Install PWA dari Chrome | Bisa diakses offline | | |
-| 35 | HP | Buka `/offline` (online dulu) | Setup: pilih form → cache → siap | | |
-| 36 | HP | Setelah setup, matikan internet | Form list muncul (no map — mode sederhana) | | |
-| 37 | HP | Klik form, isi semua | GPS tetap dapet lokasi (satelit) | | |
-| 38 | HP | Ambil foto dari kamera | Kamera langsung terbuka, max 3 foto | | |
-| 39 | HP | Simpan form (offline) | Data masuk IndexedDB | | |
-| 40 | HP | Hidupkan internet | QueueWorker upload otomatis, **notif toast sukses** muncul | | Bug FIX: QueueWorker notif sudah diperbaiki |
-| 41 | HP | Cek IndexedDB setelah sukses upload | Data offline **terhapus otomatis** (gak numpuk) | | Bug FIX: cleanup IndexedDB |
-| 42 | Both | Buka PWA langsung ke `/offline` | PWA bisa akses offline tanpa internet | | Catatan: GPS & login state ikut |
+| 36 | HP | Install PWA dari Chrome | Bisa diakses offline | | |
+| 37 | HP | Login dulu (online), lalu matikan internet | Buka `/offline` → **langsung masuk mode form** (session di-cache di IndexedDB) | | Fitur baru: offline-first session cache |
+| 38 | HP | Buka `/offline` saat online pertama kali | Setup: pilih form → cache → siap | | |
+| 39 | HP | Setelah setup, matikan internet | Form list muncul (no map — mode sederhana) | | |
+| 40 | HP | Klik form, isi semua | GPS tetap dapet lokasi (satelit) | | |
+| 41 | HP | Ambil foto dari kamera | Kamera langsung terbuka, counter `X/5`, submit ditolak jika <3 | | Min 3 / max 5 |
+| 42 | HP | Simpan form (offline) | Data masuk IndexedDB | | |
+| 43 | HP | Hidupkan internet | QueueWorker upload otomatis, **notif toast sukses** muncul | | Bug FIX: QueueWorker notif sudah diperbaiki |
+| 44 | HP | Cek IndexedDB setelah sukses upload | Data offline **terhapus otomatis** (gak numpuk) | | Bug FIX: cleanup IndexedDB |
+| 45 | Both | Buka PWA langsung ke `/offline` | PWA bisa akses offline tanpa internet, session tetap terpakai | | Catatan: GPS & login state ikut |
+| 46 | Both | Matikan internet → buka `/offline` (belum pernah login) | Error: "Gak ada koneksi & belum pernah setup" | | Fitur baru |
 
 ---
 
-## 6. 📸 Aturan Foto (Semua Form)
+## 6. 📸 Aturan Foto (Min 3 / Max 5)
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 43 | HP | Report Issue `/report-issue` → upload screenshot | Kamera langsung, max 3 foto. **Boleh juga dari galeri** | | Khusus report issue |
-| 44 | HP | Volunteer form → foto | Kamera langsung, max 3 | | |
-| 45 | PC | Klik input foto di form mana pun | Hanya kamera (`capture="environment"`), bukan galeri | | |
-| 46 | Both | Submit form dengan foto | Foto terupload, **thumbnail muncul di admin** (bukan blank putih) | | Bug FIX: URL foto pakai Supabase bukan S3 |
-| 47 | Both | Admin review: lihat foto laporan | Foto tampil, bisa diklik untuk enlarged view | | |
+| 47 | HP | Report Issue `/report-issue` → upload screenshot | **Dari galeri** (bukan kamera), maks 3 foto | | Exception: report issue |
+| 48 | Both | Form monitoring/restorasi/tanaman/rorak/bibit → foto | Kamera langsung (`capture="environment"`), counter `X/5` | | |
+| 49 | Both | Upload <3 foto di form mana pun (online) | Submit **ditolak**, error "Minimal 3 foto" | | Fitur baru min 3 |
+| 50 | Both | Upload 3-5 foto → submit | Sukses, foto terupload | | |
+| 51 | Both | Upload >5 foto | Input hanya terima 5 foto terakhir | | |
+| 52 | Both | Submit form offline dengan <3 foto | Di dalam IndexedDB tetap tersimpan, di-notif waktu sync | | |
+| 53 | PC | Klik input foto di form mana pun | Hanya kamera (`capture="environment"`), bukan galeri | | |
+| 54 | Both | Submit form dengan foto | Foto terupload, **thumbnail muncul di admin** (bukan blank putih) | | Bug FIX: URL foto pakai Supabase bukan S3 |
+| 55 | Both | Admin review: lihat foto laporan | Foto tampil, bisa diklik untuk enlarged view | | |
 
 ---
 
@@ -107,8 +115,8 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 48 | Both | Buka form `/report/spring-monitoring` | Field tanggal otomatis terisi waktu buka, **read-only** | | |
-| 49 | Both | Coba edit field tanggal | Tidak bisa diubah (read-only/disabled) | | |
+| 56 | Both | Buka form `/report/spring-monitoring` | Field tanggal otomatis terisi waktu buka, **read-only** | | |
+| 57 | Both | Coba edit field tanggal | Tidak bisa diubah (read-only/disabled) | | |
 
 ---
 
@@ -116,8 +124,8 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 50 | Both | Admin → `/admin/users` | Dropdown role cuma: User / Volunteer / Admin | | Field Lead SUDAH DIHAPUS |
-| 51 | Both | Login biasa, cek role | Tidak ada menu/akses khusus "Field Lead" | | |
+| 58 | Both | Admin → `/admin/users` | Dropdown role cuma: User / Volunteer / Admin | | Field Lead SUDAH DIHAPUS |
+| 59 | Both | Login biasa, cek role | Tidak ada menu/akses khusus "Field Lead" | | |
 
 ---
 
@@ -125,12 +133,12 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 52 | Both | Scroll ke section Media di landing | 4 item: Video, Event, Publication, Press | | |
-| 53 | Both | Klik Video | Buka YouTube | | ✅ |
-| 54 | Both | Klik Event | Buka article Disway Mojokerto (bukan `/help`) | | ✅ Seed terbaru |
-| 55 | Both | Klik Publication | Buka YouTube Jaga Semesta (bukan `/help`) | | ✅ Seed terbaru |
-| 56 | Both | Klik Press | Buka Kompas.id interaktif (bukan `/help`) | | ✅ Seed terbaru |
-| 57 | Both | Cek thumbnail media | Video & Publication: thumbnail YouTube muncul. Event & Press: gradient fallback | | ✅ |
+| 60 | Both | Scroll ke section Media di landing | 4 item: Video, Event, Publication, Press | | |
+| 61 | Both | Klik Video | Buka YouTube | | ✅ |
+| 62 | Both | Klik Event | Buka article Disway Mojokerto (bukan `/help`) | | ✅ Seed terbaru |
+| 63 | Both | Klik Publication | Buka YouTube Jaga Semesta (bukan `/help`) | | ✅ Seed terbaru |
+| 64 | Both | Klik Press | Buka Kompas.id interaktif (bukan `/help`) | | ✅ Seed terbaru |
+| 65 | Both | Cek thumbnail media | Video & Publication: thumbnail YouTube muncul. Event & Press: gradient fallback | | ✅ |
 
 ---
 
@@ -138,10 +146,10 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 58 | Both | Tab dari atas halaman | Skip link "Lompat ke konten utama" muncul pertama | | ✅ |
-| 59 | Both | Admin panel → cek tombol Logout | Punya `aria-label="Logout"` | | ✅ |
-| 60 | Both | Modal Points Guide | Judul modal terbaca screen reader (`aria-labelledby` connected) | | ✅ |
-| 61 | Both | Tombol close/back di modal/admin | Punya `aria-label` | | ✅ |
+| 66 | Both | Tab dari atas halaman | Skip link "Lompat ke konten utama" muncul pertama | | ✅ |
+| 67 | Both | Admin panel → cek tombol Logout | Punya `aria-label="Logout"` | | ✅ |
+| 68 | Both | Modal Points Guide | Judul modal terbaca screen reader (`aria-labelledby` connected) | | ✅ |
+| 69 | Both | Tombol close/back di modal/admin | Punya `aria-label` | | ✅ |
 
 ---
 
@@ -149,10 +157,10 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 62 | Both | Buka landing page → Dashboard | Angka **real dari database** (total springs, restorasi, pohon, rorak) | | Sudah connect ke `/api/dashboard` |
-| 63 | Both | Top Regions | Muncul region dari data real reports | | |
-| 64 | Both | Top Volunteers | Muncul volunteer dengan poin terbanyak (real) | | |
-| 65 | Both | Monthly Progress | Progress bar real per kategori | | |
+| 70 | Both | Buka landing page → Dashboard | Angka **real dari database** (total springs, restorasi, pohon, rorak) | | Sudah connect ke `/api/dashboard` |
+| 71 | Both | Top Regions | Muncul region dari data real reports | | |
+| 72 | Both | Top Volunteers | Muncul volunteer dengan poin terbanyak (real) | | |
+| 73 | Both | Monthly Progress | Progress bar real per kategori | | |
 
 ---
 
@@ -160,10 +168,10 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 66 | Both | Admin → Trust Score page | Bisa lihat trust score semua user | | Fitur baru |
-| 67 | Both | Admin bisa set manual trust score | Tersedia input/edit | | |
-| 68 | Both | Approve laporan → trust score naik +10 | Otomatis | | ✅ |
-| 69 | Both | Reject >3x → trust score turun -10 | Otomatis (bukan -50 setiap reject) | | Bug FIX |
+| 74 | Both | Admin → Trust Score page | Bisa lihat trust score semua user | | Fitur baru |
+| 75 | Both | Admin bisa set manual trust score | Tersedia input/edit | | |
+| 76 | Both | Approve laporan → trust score naik +10 | Otomatis | | ✅ |
+| 77 | Both | Reject >3x → trust score turun -10 | Otomatis (bukan -50 setiap reject) | | Bug FIX |
 
 ---
 
@@ -171,9 +179,9 @@
 
 | # | Device | Aksi | Harapan | ✅/❌ | Catatan |
 |---|--------|------|---------|------|---------|
-| 70 | Both | "Start Monitoring" di hero | Ganti jadi "Start Volunteering" (juga translate ID) | | Sesuai catatan |
-| 71 | Both | Klik "Start Volunteering" | Langsung scroll ke **"Report Your Contribution"** section | | |
-| 72 | Both | Klik "Lapor" di form | Submit → sukses page/toast | | ✅ |
+| 78 | Both | "Start Monitoring" di hero | Ganti jadi "Start Volunteering" (juga translate ID) | | Sesuai catatan |
+| 79 | Both | Klik "Start Volunteering" | Langsung scroll ke **"Report Your Contribution"** section | | |
+| 80 | Both | Klik "Lapor" di form | Submit → sukses page/toast | | ✅ |
 
 ---
 
@@ -181,12 +189,12 @@
 
 | Area | Total Test | ✅ Lolos | ❌ Gagal |
 |------|-----------|----------|----------|
-| Guest Flow | 8 | | |
+| Guest Flow | 10 | | |
 | Volunteer/User | 9 | | |
 | Admin Flow | 9 | | |
 | Spring Detail Page | 7 | | |
-| Offline Mode | 9 | | |
-| Aturan Foto | 5 | | |
+| Offline Mode | 11 | | |
+| Aturan Foto | 9 | | |
 | Timestamp | 2 | | |
 | Field Lead | 2 | | |
 | Media Links | 6 | | |
@@ -194,7 +202,7 @@
 | Dashboard Real-time | 4 | | |
 | Trust Score | 4 | | |
 | Button & Navigasi | 3 | | |
-| **Total** | **72** | | |
+| **Total** | **80** | | |
 
 ---
 
@@ -202,6 +210,9 @@
 
 | Tanggal | Perbaikan | Status |
 |---------|-----------|--------|
+| 15 Jun | **Photo limits min 3 / max 5** — semua form foto minimal 3, maks 5. Submit ditolak jika <3 | ✅ Baru |
+| 15 Jun | **Offline-first session cache** — session user di-cache di IndexedDB, offline langsung masuk tanpa login ulang | ✅ Baru |
+| 15 Jun | **Report Issue gallery mode** — dari galeri (bukan kamera), max 3 foto | ✅ Baru |
 | 14 Jun | **Field provinsi hilang-timbul** — gabung field DB + statis, jangan replace total | ✅ Fixed |
 | 14 Jun | **Foto blank putih** — URL pakai Supabase Storage, bukan S3 | ✅ Fixed |
 | 14 Jun | **Dashboard masih hardcoded** — API `/api/dashboard` ambil data real dari DB | ✅ Fixed |
