@@ -55,7 +55,9 @@ CREATE POLICY "Volunteer update report sendiri" ON "Report"
 -- Admin: lihat semua
 DROP POLICY IF EXISTS "Admin semua report" ON "Report";
 CREATE POLICY "Admin semua report" ON "Report"
-  FOR ALL USING (auth.role() = 'admin');
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 -- ─── DONATIONS ───────────────────────────────────────────────
 -- Publik: lihat donor_name, amount, status (hanya paid)
@@ -205,46 +207,74 @@ CREATE POLICY "Volunteer delete tracking point sendiri" ON "TrackingPoint"
 -- ─── ADMIN OVERRIDES ──────────────────────────────────────────
 -- Admin bisa akses semua tabel
 DROP POLICY IF EXISTS "Admin akses semua profile" ON "Profile";
-CREATE POLICY "Admin akses semua profile" ON "Profile" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua profile" ON "Profile" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua report" ON "Report";
-CREATE POLICY "Admin akses semua report" ON "Report" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua report" ON "Report" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua donation" ON "Donation";
-CREATE POLICY "Admin akses semua donation" ON "Donation" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua donation" ON "Donation" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua project" ON "Project";
-CREATE POLICY "Admin akses semua project" ON "Project" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua project" ON "Project" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua points" ON "PointsLog";
-CREATE POLICY "Admin akses semua points" ON "PointsLog" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua points" ON "PointsLog" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua feedback" ON "Feedback";
-CREATE POLICY "Admin akses semua feedback" ON "Feedback" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua feedback" ON "Feedback" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua course" ON "Course";
-CREATE POLICY "Admin akses semua course" ON "Course" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua course" ON "Course" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua module" ON "CourseModule";
-CREATE POLICY "Admin akses semua module" ON "CourseModule" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua module" ON "CourseModule" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua progress" ON "CoursesProgress";
-CREATE POLICY "Admin akses semua progress" ON "CoursesProgress" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua progress" ON "CoursesProgress" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua form" ON "Form";
-CREATE POLICY "Admin akses semua form" ON "Form" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua form" ON "Form" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua field" ON "FormField";
-CREATE POLICY "Admin akses semua field" ON "FormField" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua field" ON "FormField" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua point rules" ON "PointRule";
-CREATE POLICY "Admin akses semua point rules" ON "PointRule" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua point rules" ON "PointRule" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua session" ON "OfflineSession";
-CREATE POLICY "Admin akses semua session" ON "OfflineSession" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua session" ON "OfflineSession" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 DROP POLICY IF EXISTS "Admin akses semua tracking point" ON "TrackingPoint";
-CREATE POLICY "Admin akses semua tracking point" ON "TrackingPoint" FOR ALL USING (auth.role() = 'admin');
+CREATE POLICY "Admin akses semua tracking point" ON "TrackingPoint" FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 -- ─── SPRING ─────────────────────────────────────────────────────
 -- Publik: lihat semua (hanya snapped location & nama)
