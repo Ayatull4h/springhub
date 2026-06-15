@@ -123,11 +123,21 @@ CREATE POLICY "Publik lihat point rules aktif" ON "PointRule"
 -- Guest (no auth): userId harus NULL
 -- Status: dipaksa 'open' — tidak bisa set read/resolved dari client
 DROP POLICY IF EXISTS "User insert feedback" ON "Feedback";
-CREATE POLICY "User insert feedback" ON "Feedback"
+
+DROP POLICY IF EXISTS "Auth insert feedback" ON "Feedback";
+CREATE POLICY "Auth insert feedback" ON "Feedback"
   FOR INSERT WITH CHECK (
-    ("userId" = auth.uid()::text AND "status" = 'open')
-    OR
-    (auth.uid() IS NULL AND "userId" IS NULL AND "status" = 'open')
+    auth.role() = 'authenticated'
+    AND "userId" = auth.uid()::text
+    AND "status" = 'open'
+  );
+
+DROP POLICY IF EXISTS "Anon insert feedback" ON "Feedback";
+CREATE POLICY "Anon insert feedback" ON "Feedback"
+  FOR INSERT WITH CHECK (
+    auth.role() = 'anon'
+    AND "userId" IS NULL
+    AND "status" = 'open'
   );
 
 -- ─── OFFLINE SESSION ─────────────────────────────────────────
@@ -235,6 +245,68 @@ CREATE POLICY "Admin akses semua session" ON "OfflineSession" FOR ALL USING (aut
 
 DROP POLICY IF EXISTS "Admin akses semua tracking point" ON "TrackingPoint";
 CREATE POLICY "Admin akses semua tracking point" ON "TrackingPoint" FOR ALL USING (auth.role() = 'admin');
+
+-- ─── SPRING ─────────────────────────────────────────────────────
+-- Publik: lihat semua (hanya snapped location & nama)
+ALTER TABLE "Spring" ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Publik lihat spring" ON "Spring";
+CREATE POLICY "Publik lihat spring" ON "Spring"
+  FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Volunteer insert spring" ON "Spring";
+CREATE POLICY "Volunteer insert spring" ON "Spring"
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Admin semua spring" ON "Spring";
+CREATE POLICY "Admin semua spring" ON "Spring"
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
+
+-- ─── NOTIFICATION ───────────────────────────────────────────────
+-- User: hanya lihat notifikasi miliknya sendiri
+ALTER TABLE "Notification" ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "User lihat notif sendiri" ON "Notification";
+CREATE POLICY "User lihat notif sendiri" ON "Notification"
+  FOR SELECT USING (auth.uid()::text = "userId");
+
+DROP POLICY IF EXISTS "User update notif sendiri" ON "Notification";
+CREATE POLICY "User update notif sendiri" ON "Notification"
+  FOR UPDATE USING (auth.uid()::text = "userId");
+
+DROP POLICY IF EXISTS "Admin semua notif" ON "Notification";
+CREATE POLICY "Admin semua notif" ON "Notification"
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
+
+-- ─── COMMENT ────────────────────────────────────────────────────
+-- Publik: lihat semua comment (terkait project publik)
+ALTER TABLE "Comment" ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Publik lihat comment" ON "Comment";
+CREATE POLICY "Publik lihat comment" ON "Comment"
+  FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "User insert comment" ON "Comment";
+CREATE POLICY "User insert comment" ON "Comment"
+  FOR INSERT WITH CHECK (auth.uid()::text = "userId");
+
+DROP POLICY IF EXISTS "User update comment sendiri" ON "Comment";
+CREATE POLICY "User update comment sendiri" ON "Comment"
+  FOR UPDATE USING (auth.uid()::text = "userId");
+
+DROP POLICY IF EXISTS "User delete comment sendiri" ON "Comment";
+CREATE POLICY "User delete comment sendiri" ON "Comment"
+  FOR DELETE USING (auth.uid()::text = "userId");
+
+DROP POLICY IF EXISTS "Admin semua comment" ON "Comment";
+CREATE POLICY "Admin semua comment" ON "Comment"
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM "Profile" WHERE id = auth.uid()::text AND role = 'admin')
+  );
 
 -- ============================================================
 -- STORAGE POLICIES — Photos bucket
