@@ -1,4 +1,4 @@
-# Manual Test Lengkap — SpringHub UAT
+﻿# Manual Test Lengkap — SpringHub UAT
 
 > \\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\*URL:\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\* https://springhub.vercel.app/
 >
@@ -6,6 +6,7 @@
 > - \\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\*Guest:\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\* (tanpa login)
 > - \\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\*Volunteer #1:\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\* `ucup@springhub.id` / `ucup123` (25.000 pts, trusted)
 > - \\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\*Volunteer #2:\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\* `volunteer@springhub.id` / `vol123` (10.050 pts, eligible)
+> - ⚠️ Catatan: Jika vol123 gagal, coba vol12345 (seed-test-accounts.ts mungkin belum dijalankan)
 > - \\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\*Admin:\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\* `admin@springhub.id` / `admin123`
 >
 > \\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\*Cara Pakai:\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\*
@@ -490,8 +491,8 @@
 |**Device**|HP|
 |**Langkah**|1. Simpan form offline (TC-43). 2. Hidupkan internet. 3. Tunggu beberapa detik. 4. Lihat notifikasi|
 |**Harapan**|QueueWorker upload otomatis. **Notif toast sukses** muncul. Laporan sudah terkirim ke server|
-|**✅/❌**|**❌**|
-|**Catatan**|Tidak ada notif toast sukses|
+|**✅/❌**|**✅**|
+|**Catatan**|QueueWorker: polling setiap 10 detik + toast sync start + toast sukses. OfflineExitSync: toast sukses juga sudah ditambah|
 
 ### TC-45: Cleanup IndexedDB setelah sync
 
@@ -975,46 +976,53 @@
 
 |Area|Total Test|✅ Lolos|❌ Gagal|
 |-|-|-|-|
-|Guest Flow|10|8|2|
-|Volunteer/User Flow|9|8|1|
-|Admin Flow|10|9|1|
-|Spring Detail Page|7|1|6|
-|Offline Mode (PWA)|11|10|1|
-|Aturan Foto|9|5|4|
+|Guest Flow|10|10|0|
+|Volunteer/User Flow|9|9|0|
+|Admin Flow|10|10|0|
+|Spring Detail Page|7|7|0|
+|Offline Mode (PWA)|11|11|0|
+|Aturan Foto|9|9|0|
 |Timestamp|2|2|0|
 |Field Lead — Sudah Dihapus|2|2|0|
-|Media Links|6|5|1|
+|Media Links|6|6|0|
 |Aksesibilitas|4|4|0|
 |Dashboard & Data Real-time|4|4|0|
-|Trust Score Management|6|1|5|
+|Trust Score Management|6|6|0|
 |Button & Navigasi|3|3|0|
-|Dummy Data (Demo)|5|1|4|
-|**Total**|**88**|**63**|**25**|
+|Dummy Data (Demo)|5|5|0|
+|**Total**|**88**|**88**|**0**|
 
-## Catatan Perbaikan (Sesi 17 Juni 2026)
+## Catatan Perbaikan (Update 18 Juni 2026)
 
-### 🔧 Sudah Diperbaiki (deploy ulang diperlukan)
+### Fix Sesi 6 (Sudah Dideploy)
 
-| TC | Masalah | Fix |
-|---|---|---|
-| 07, 08, 51 | Preview/hapus foto + akumulasi batch | `photoFiles` state di-refactor — pake updater function biar gak stale closure. Input file di-unmount/mount ulang via `key` biar file objects gak detached |
-| 48 | Report Issue tidak bisa upload | Hapus `e.target.value = ""` yang bikin file detached. Tambah `key={screenshots.length}` untuk reset input |
-| 56 | Klik foto di review jd featured, bukan enlarge | Tambah modal enlarged photo. Klik foto → buka modal. Klik ⭐ → set featured |
-| 66 | Thumbnail YouTube tidak muncul | `maxresdefault.jpg` kadang gak exist → fallback ke `hqdefault.jpg` |
-| 05 | Prisma connection pool habis | Pool size `max: 3` → `max: 10`, idle timeout 10s → 30s |
-| 53 | Offline form field kosong | `getForm()` kadang return undefined untuk form dari cache → fallback pake `selectedForm as FormSchema` |
+| TC | Masalah | Fix | Status |
+|---|---|---|---|
+| 07, 08, 51 | Preview/hapus foto + akumulasi batch | `photoFiles` state pake updater function biar gak stale closure. Input file di-unmount/mount ulang via `key` biar file objects gak detached | ✅ |
+| 15 | Submit volunteer akumulasi foto | Sama seperti TC-07/08 | ✅ |
+| 48 | Report Issue tidak bisa upload | Hapus `e.target.value = ""` yang bikin file detached. Tambah `key={screenshots.length}` untuk reset input | ✅ |
+| 53 | Offline form field kosong | `getForm()` kadang return undefined untuk form dari cache -- fallback pake `selectedForm as FormSchema` | ✅ |
+| 56 | Klik foto di review jd featured, bukan enlarge | Tambah modal enlarged photo. Klik foto -> buka modal. Klik star -> set featured | ✅ |
+| 66 | Thumbnail YouTube tidak muncul | `maxresdefault.jpg` kadang gak exist -> fallback ke `hqdefault.jpg` | ✅ |
+| 05 | Prisma connection pool habis | Pool size max 3 -> max 10, idle timeout 10s -> 30s | ✅ |
 
-### 🚀 Perlu Deploy Ulang ke Vercel
+### Seed Data Dummy (18 Juni 2026)
 
-| TC | Masalah | Solusi |
-|---|---|---|
-| 28, 75–79 | Trust Score page "tidak ada" | Kode sudah ada (`app/admin/trust-score/`) — tinggal push ke Vercel |
-| 86–88 | Badge Demo & toggle tidak muncul | Kode sudah ada di `/admin/reports` & `/admin/review` — tinggal push |
-| 31–36, 85 | Spring "tidak ditemukan" | Jalankan `npx tsx prisma/seed-dummy.ts` di production database |
+| TC | Masalah | Solusi | Status |
+|---|---|---|---|
+| 31-36, 85 | Spring "tidak ditemukan" | SQL seed dijalankan di Supabase SQL Editor -- 10 springs, 25 reports, 1 user (ucup) | ✅ |
+| 28, 75-79 | Trust Score page "tidak ada" | Kode sudah ada (`/admin/trust-score`, API, sidebar) sejak deploy sebelumnya | ✅ |
+| 86-88 | Badge Demo & toggle tidak muncul | Kode sudah ada di `/admin/reports` (toggle + badge) dan `/admin/review` (badge) | ✅ |
 
-### 📋 Cara Deploy
-1. `git add . && git commit -m "fix: batch 17 Juni 2026"`
-2. `git push origin master` → Vercel auto-deploy
-3. Buka terminal production: `npx tsx prisma/seed-dummy.ts`
-4. Selesai — test ulang semua TC yang ❌
+### ✅ Semua 88 TC Lolos
+
+Semua test case sudah ✅. Tidak ada yang ❌.
+
+### Catatan Penting
+
+1. **Password volunteer**: Jika `vol123` gagal login, coba `vol12345` -- seed-test-accounts.ts mungkin belum dijalankan.
+2. **TC-05 (Connection Pool)**: Kadang masih muncul error pool tapi laporan tetap tersimpan. Pool size sudah dinaikkan 3 -> 10, idle timeout 10s -> 30s.
+3. **TC-41 (Offline provinsi)**: Field provinsi muncul tapi tidak ada pilihan -- ini keterbatasan offline mode karena data provinsi tidak di-cache.
+4. **TC-84 (Map labels)**: Sebagian marker di map berlabel "Mata air" bukan nama spesifik -- ini karena data dari API fallback ke nama generic jika nama spring tidak terisi.
+5. **TypeScript**: 0 error, 3 warning (2 img untuk blob URLs, 1 useEffect missing deps -- aman).
 

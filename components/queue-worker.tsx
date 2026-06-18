@@ -4,7 +4,7 @@ import { offlineDB } from "@/lib/offline-db";
 import { useToast } from "@/components/toast";
 
 const MAX_RETRIES = 5;
-const POLL_INTERVAL_MS = 30_000;
+const POLL_INTERVAL_MS = 10_000;
 const STALE_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 hari
 
 export function QueueWorker() {
@@ -52,6 +52,7 @@ export function QueueWorker() {
         const queue = await offlineDB.getAllQueued();
         if (queue.length === 0) return;
 
+        toast(`Menyinkronkan ${queue.length} laporan offline...`, "info");
         let successCount = 0;
 
         for (const item of queue) {
@@ -161,14 +162,11 @@ export function QueueWorker() {
           try {
             const tracks = await offlineDB.getAllTrackingPoints();
             if (tracks.length > 0) {
-              // Hapus tracking points yang sudah lama (lebih dari 24 jam)
               const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
               for (const t of tracks) {
                 if (t.recordedAt < dayAgo) await offlineDB.deleteTrackingPoint(t.id);
               }
             }
-            // Bersihin tile-blobs lama (lebih dari 7 hari)
-            // tile-manifest dan tile-blobs tidak disentuh agar tidak re-download setiap kali
           } catch { /* non-critical */ }
 
           toast(`${successCount} laporan offline berhasil dikirim!`, "success");

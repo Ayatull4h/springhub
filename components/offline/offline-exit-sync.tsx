@@ -21,6 +21,7 @@ import {
 import { offlineDB, type OfflineTrackingPoint } from "@/lib/offline-db";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { useToast } from "@/components/toast";
 import dynamic from "next/dynamic";
 import html2canvas from "html2canvas";
 
@@ -92,6 +93,7 @@ function formatDistance(meters: number): string {
  */
 export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) {
   const { t, locale } = useI18n();
+  const { toast } = useToast();
   const [phase, setPhase] = useState<SyncPhase>("confirm");
   const [photoStatuses, setPhotoStatuses] = useState<PhotoStatus[]>([]);
   const [reportStatuses, setReportStatuses] = useState<ReportStatus[]>([]);
@@ -525,6 +527,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     } catch {}
     setProgress({ current: 3, total: 3 });
 
+    toast("Semua laporan offline berhasil dikirim!", "success");
     setPhase("done");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
