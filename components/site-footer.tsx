@@ -53,7 +53,7 @@ export function SiteFooter() {
       title: t("footer.about"),
       links: [
         { label: t("footer.ourMission"), href: "/#about" },
-        { label: t("footer.becomePartner"), href: "#donate" },
+        { label: t("footer.becomePartner"), href: "#community" },
         { label: t("footer.impactReport"), href: "#media" },
       ],
     },

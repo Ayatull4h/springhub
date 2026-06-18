@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { MapPin, CheckCircle2, Clock, XCircle, Eye, EyeOff, Download, ToggleLeft, ToggleRight } from "lucide-react";
+import { MapPin, CheckCircle2, Clock, XCircle, Eye, EyeOff, Download, ToggleLeft, ToggleRight, FlaskConical } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 type ReportItem = {
@@ -9,6 +9,7 @@ type ReportItem = {
   formSlug: string;
   status: string;
   isActive: boolean;
+  isDummy: boolean;
   fieldData: string;
   userId: string | null;
   guestId: string | null;
@@ -26,11 +27,15 @@ export default function AdminReportsPage() {
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showPrecise, setShowPrecise] = useState(false);
+  const [showDummy, setShowDummy] = useState(false);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
   const filteredReports = useMemo(() => {
     let result = reports;
+    if (!showDummy) {
+      result = result.filter(r => !r.isDummy);
+    }
     if (dateFrom) {
       const from = new Date(dateFrom);
       result = result.filter(r => new Date(r.createdAt) >= from);
@@ -41,7 +46,7 @@ export default function AdminReportsPage() {
       result = result.filter(r => new Date(r.createdAt) <= to);
     }
     return result;
-  }, [reports, dateFrom, dateTo]);
+  }, [reports, dateFrom, dateTo, showDummy]);
 
   const [toggling, setToggling] = useState<string | null>(null);
 
@@ -93,7 +98,7 @@ export default function AdminReportsPage() {
         <div>
           <h2 className="text-xl font-bold text-ink">{t("admin.reports.title")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
-            {t("admin.reports.count", { count: String(reports.length) })}
+            {t("admin.reports.count", { count: String(filteredReports.length) })} · {reports.filter(r => r.isDummy).length} demo
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -111,6 +116,15 @@ export default function AdminReportsPage() {
           >
             <Download className="h-4 w-4" />
             Export
+          </button>
+          <button
+            onClick={() => setShowDummy(!showDummy)}
+            className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 ${
+              showDummy ? "border-purple-400 bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300" : "border-ink-line text-ink-muted"
+            }`}
+          >
+            <FlaskConical className="h-4 w-4" />
+            Demo
           </button>
           <button
             onClick={() => setShowPrecise(!showPrecise)}
@@ -133,6 +147,11 @@ export default function AdminReportsPage() {
                 <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 text-xs">
                   {formLabels[r.formSlug] ?? r.formSlug}
                 </span>
+                {r.isDummy && (
+                  <span className="chip bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-[10px]">
+                    Demo
+                  </span>
+                )}
                 <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}>
                   <StatusIcon className="h-3 w-3" />
                   {status.label}
@@ -188,7 +207,12 @@ export default function AdminReportsPage() {
               const StatusIcon = status.icon;
               return (
                 <tr key={r.id} className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800">
-                  <td className="py-3 pr-3 text-ink">{formLabels[r.formSlug] ?? r.formSlug}</td>
+                  <td className="py-3 pr-3 text-ink">
+                    <span>{formLabels[r.formSlug] ?? r.formSlug}</span>
+                    {r.isDummy && (
+                      <span className="ml-1.5 chip bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-[10px]">Demo</span>
+                    )}
+                  </td>
                   <td className="py-3 pr-3 text-ink-muted">{r.submitter?.name ?? `${t("common.guest")} (${r.guestId?.slice(0, 8)}...)`}</td>
                   <td className="py-3 pr-3">
                     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}>

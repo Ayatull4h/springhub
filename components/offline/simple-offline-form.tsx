@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send } from "lucide-react";
 import { offlineDB } from "@/lib/offline-db";
-import { getForm, getFormTitle, type FormField } from "@/lib/forms";
+import { getForm, getFormTitle, type FormField, type FormSchema } from "@/lib/forms";
 
 /**
  * SimpleOfflineForm — Simplified PWA offline mode.
@@ -214,7 +214,7 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
   }
 
   // ── Form fill ────────────────────────────────────────────────
-  const formDef = getForm(selectedForm.slug);
+  const formDef = getForm(selectedForm.slug) || (selectedForm as FormSchema);
 
   return (
     <div className="container-page max-w-3xl py-8">

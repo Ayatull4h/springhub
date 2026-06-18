@@ -57,7 +57,6 @@ export function SiteHeader() {
     { label: t("nav.community"), href: "/#community" },
     { label: t("nav.learn"), href: "/#learn" },
     { label: t("nav.media"), href: "/#media" },
-    { label: t("nav.donate"), href: "/#donate" },
   ];
 
   return (

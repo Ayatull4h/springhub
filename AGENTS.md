@@ -440,6 +440,17 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
   - Global CSS: hover states, text-slate, shadows ✅
 - **Commit**: `a6a4dcf` — push ke `origin/master` ✅
 
+### 15 Juni 2026 — Sesi 5: MCP Fix + Code Audit
+- **Diskusi**: User minta review MANUAL-TEST-UAT.md dan seluruh kode
+- **Temuan MCP**: 2 server mati karena path masih `Y:\PC\Downloads\jaga semesta` tapi proyek pindah ke `C:\jaga semesta`
+- **Fix**: 
+  - `filesystem` path: `Y:\...` → `C:\jaga semesta` ✅
+  - `memory` path: `Y:\...` → `C:\jaga semesta` ✅
+  - `supabase` key: diisi dari `.env` ✅
+- **Code audit**: 92% progress, 23 temuan (8 HIGH, 8 MEDIUM, 7 LOW)
+- **Permintaan user**: Test results pakai "Ya"/"Tidak" bukan ✅/❌
+- **Catatan**: Restart opencode diperlukan agar MCP生效
+
 ### 6 Juni 2026 — Sesi 4: Database Audit & Perbaikan Critical
 - **Issue 1 — Database tidak sinkron**:
   - 5 dari 6 migration belum diapply: comments, notifications, likes/comments, isActive, featuredPhotoId ✅

@@ -108,7 +108,7 @@ function OfflinePageContent() {
         }
 
         // ═══ OFFLINE-FIRST: cek session dari IndexedDB dulu ═══
-        const cachedSession = await offlineDB.getSession();
+        const cachedSession = await offlineDB.getSession().catch(() => null);
         const cachedForms = await offlineDB.getAllForms().catch(() => []);
 
         if (cachedSession && cachedForms.length > 0) {

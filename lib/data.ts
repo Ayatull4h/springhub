@@ -5,13 +5,6 @@ import { snapToProtectionGrid, type LatLng } from "./geo";
 /** Volunteers must reach this many points before they can propose a project. */
 export const PROJECT_PROPOSAL_THRESHOLD = 20_000;
 
-/** Stand-in for the signed-in user shown in the eligibility gate. */
-export const currentUser = {
-  name: "Maya Putri",
-  region: "Yogyakarta",
-  points: 24168,
-};
-
 /**
  * The only four kinds of project SpringHub will fund / publicise. Project
  * proposals must pick one of these — keeps impact reporting consistent and

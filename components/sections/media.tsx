@@ -1,7 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -46,29 +46,37 @@ function getYoutubeThumb(url: string): string | null {
   return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : null;
 }
 
+function getYoutubeFallback(url: string): string | null {
+  if (!url) return null;
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null;
+}
+
 function MediaThumb({ item }: { item: MediaItem }) {
   const imgSrc = item.imageUrl || getYoutubeThumb(item.linkUrl);
-  const [imgError, setImgError] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(imgSrc);
   const style = mediaStyles[item.type] || mediaStyles.video;
 
-  if (item.imageUrl && !imgError) {
-    return <img
-      src={item.imageUrl}
-      alt={item.title}
-      className="h-full w-full object-cover transition group-hover:scale-105"
-      loading="lazy"
-      onError={() => setImgError(true)}
-    />;
-  }
+  useEffect(() => {
+    setUseFallback(false);
+    setCurrentSrc(imgSrc);
+  }, [imgSrc]);
 
-  const ytThumb = getYoutubeThumb(item.linkUrl);
-  if (ytThumb && !imgError) {
+  if (currentSrc && !useFallback) {
     return <img
-      src={ytThumb}
+      src={currentSrc}
       alt={item.title}
       className="h-full w-full object-cover transition group-hover:scale-105"
       loading="lazy"
-      onError={() => setImgError(true)}
+      onError={() => {
+        const fallback = getYoutubeFallback(item.linkUrl);
+        if (fallback && currentSrc !== fallback) {
+          setCurrentSrc(fallback);
+        } else {
+          setUseFallback(true);
+        }
+      }}
     />;
   }
 

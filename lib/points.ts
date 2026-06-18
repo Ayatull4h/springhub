@@ -201,7 +201,7 @@ export async function checkDailyStreak(userId: string) {
 /**
  * Update trust score user.
  * - Accepted → +10
- * - Rejected → -50
+ * - Rejected → -10 (setelah ≥3 rejections, lihat route reject)
  * Range: 0-100. Score 0 triggers warning.
  */
 export async function updateTrustScore(userId: string, accepted: boolean) {
@@ -211,7 +211,7 @@ export async function updateTrustScore(userId: string, accepted: boolean) {
   });
   if (!profile) return;
 
-  const delta = accepted ? 10 : -50;
+  const delta = accepted ? 10 : -10;
   const newScore = Math.max(0, Math.min(100, (profile.trustScore ?? 50) + delta));
 
   await prisma.profile.update({

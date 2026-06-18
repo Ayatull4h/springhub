@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 const sidebar = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Users", href: "/admin/users", icon: Users },
+  { label: "Trust Score", href: "/admin/trust-score", icon: ShieldCheck },
   { label: "Reports", href: "/admin/reports", icon: FileText },
   { label: "Forms", href: "/admin/forms", icon: ClipboardList },
   { label: "Donations", href: "/admin/donations", icon: Heart },

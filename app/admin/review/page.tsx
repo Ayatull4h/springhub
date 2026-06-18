@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, XCircle, Clock, MapPin, Sparkles } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, MapPin, Sparkles, X, Star } from "lucide-react";
 import Image from "next/image";
 import { useI18n } from "@/lib/i18n";
 
@@ -15,6 +15,7 @@ type ReportItem = {
   id: string;
   formSlug: string;
   status: string;
+  isDummy: boolean;
   fieldData: string;
   preciseLat: number | null;
   preciseLng: number | null;
@@ -35,6 +36,7 @@ export default function AdminReviewPage() {
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionMsg, setActionMsg] = useState("");
+  const [enlargedPhoto, setEnlargedPhoto] = useState<string | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState<Record<string, boolean>>({});
   const [featured, setFeatured] = useState<Record<string, string>>({}); // reportId → photoId
@@ -133,7 +135,7 @@ export default function AdminReviewPage() {
       <div>
         <h2 className="text-xl font-bold text-ink">{t("admin.reviews.title")}</h2>
         <p className="mt-1 text-sm text-ink-muted">
-          {t("admin.reviews.count", { count: String(reports.length) })}
+          {t("admin.reviews.count", { count: String(reports.length) })} · {reports.filter(r => r.isDummy).length} demo
         </p>
       </div>
 
@@ -160,6 +162,9 @@ export default function AdminReviewPage() {
                     <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                       {formLabels[r.formSlug] ?? r.formSlug}
                     </span>
+                    {r.isDummy && (
+                      <span className="ml-1 chip bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-[10px]">Demo</span>
+                    )}
                     <span className="ml-2 text-sm text-ink-muted">
                       {t("common.by")} {r.submitter?.name ?? t("common.guest")}
                     </span>
@@ -193,38 +198,46 @@ export default function AdminReviewPage() {
                     <p className="mb-1 text-xs font-medium text-ink-subtle">{t("common.photos", "Foto")}</p>
                     <div className="flex flex-wrap gap-2">
                       {photos[r.id].map((photo) => (
-                        <button
-                          key={photo.id}
-                          type="button"
-                          onClick={() =>
-                            setFeatured((f) => ({
-                              ...f,
-                              [r.id]: f[r.id] === photo.id ? "" : photo.id,
-                            }))
-                          }
-                          className={`relative h-16 w-16 overflow-hidden rounded-lg border-2 transition-all ${
-                            featured[r.id] === photo.id
-                              ? "border-brand-500 ring-2 ring-brand-500/30"
-                              : "border-ink-line hover:border-brand-300"
-                          }`}
-                        >
-                          <Image
-                            src={photo.url}
-                            alt=""
-                            width={64}
-                            height={64}
-                            className="h-full w-full object-cover"
-                          />
-                          {featured[r.id] === photo.id && (
-                            <span className="absolute inset-0 flex items-center justify-center bg-brand-500/40 text-white">
-                              <Sparkles className="h-4 w-4" />
-                            </span>
-                          )}
-                        </button>
+                        <div key={photo.id} className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setEnlargedPhoto(photo.url)}
+                            className={`h-16 w-16 overflow-hidden rounded-lg border-2 transition-all ${
+                              featured[r.id] === photo.id
+                                ? "border-brand-500 ring-2 ring-brand-500/30"
+                                : "border-ink-line hover:border-brand-300"
+                            }`}
+                          >
+                            <Image
+                              src={photo.url}
+                              alt=""
+                              width={64}
+                              height={64}
+                              className="h-full w-full object-cover"
+                            />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFeatured((f) => ({
+                                ...f,
+                                [r.id]: f[r.id] === photo.id ? "" : photo.id,
+                              }))
+                            }
+                            className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-white shadow ${
+                              featured[r.id] === photo.id
+                                ? "bg-brand-500"
+                                : "bg-slate-400 hover:bg-brand-400"
+                            }`}
+                            aria-label={featured[r.id] === photo.id ? "Hapus sebagai thumbnail" : "Jadikan thumbnail"}
+                          >
+                            <Star className="h-3 w-3" />
+                          </button>
+                        </div>
                       ))}
                     </div>
                     <p className="mt-1 text-[10px] text-ink-subtle">
-                      {featured[r.id] ? t("admin.reviews.featured", "Terpilih sebagai thumbnail") : t("admin.reviews.clickFeatured", "Klik foto untuk jadikan thumbnail")}
+                      {featured[r.id] ? t("admin.reviews.featured", "Terpilih sebagai thumbnail") : t("admin.reviews.selectFeatured", "Klik ⭐ untuk pilih thumbnail")}
                     </p>
                   </div>
                 )}
@@ -280,6 +293,31 @@ export default function AdminReviewPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {enlargedPhoto && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={() => setEnlargedPhoto(null)}
+        >
+          <div className="relative max-h-[90vh] max-w-[90vw]">
+            <button
+              type="button"
+              onClick={() => setEnlargedPhoto(null)}
+              className="absolute -right-3 -top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-700 shadow-lg hover:bg-slate-100"
+              aria-label="Tutup"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <Image
+              src={enlargedPhoto}
+              alt=""
+              width={1200}
+              height={800}
+              className="h-auto max-h-[85vh] w-auto max-w-[85vw] rounded-lg object-contain"
+            />
+          </div>
         </div>
       )}
     </div>

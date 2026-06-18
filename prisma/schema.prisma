@@ -96,6 +96,7 @@ model Spring {
   regency     String   @default("")
   village     String   @default("")
   subdistrict String   @default("")
+  isDummy     Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -112,6 +113,7 @@ model Report {
   formSlug        String
   status          ReportStatus @default(pending)
   isActive        Boolean      @default(true)
+  isDummy         Boolean      @default(false)
   fieldData       String // JSON string of form fields
   preciseLat      Float?
   preciseLng      Float?

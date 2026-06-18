@@ -21,8 +21,14 @@
     {
       "id": "session-4",
       "date": "2026-05-15",
-      "session": "Sesi 4 (current)",
+      "session": "Sesi 4",
       "content": "Memori pertama dibuat. User mengkonfirmasi setup SpringHub via batch file. Konteks harus terbawa antar sesi."
+    },
+    {
+      "id": "session-5",
+      "date": "2026-06-15",
+      "session": "Sesi 5 - MCP Fix + Code Audit",
+      "content": "User minta review MANUAL-TEST-UAT.md dan seluruh kode. Ditemukan 2 MCP mati karena path masih指向 drive Y: padahal proyek pindah ke C:. Fix: filesystem path, memory path, dan SUPABASE_SERVICE_ROLE_KEY diisi dari .env. Semua MCP enabled=true. Audit code selesai — 92% progress, 23 temuan."
     }
   ]
 }

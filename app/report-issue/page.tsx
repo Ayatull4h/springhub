@@ -177,6 +177,7 @@ export default function ReportIssuePage() {
               accept="image/*"
               multiple
               className="hidden"
+              key={screenshots.length}
               onChange={(e) => {
                 const files = e.target.files;
                 if (files) {
@@ -185,7 +186,6 @@ export default function ReportIssuePage() {
                     return combined;
                   });
                 }
-                e.target.value = "";
               }}
             />
             <p className="mt-1 text-xs text-ink-subtle">

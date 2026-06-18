@@ -33,8 +33,8 @@ export default function ReportFormPage() {
     hour: "2-digit", minute: "2-digit",
   });
 
-  // Per-field photo count (max 5 per field)
-  const [photoCounts, setPhotoCounts] = useState<Record<string, number>>({});
+  // Accumulated photo files per field (max 5 per field)
+  const [photoFiles, setPhotoFiles] = useState<Record<string, File[]>>({});
 
   // ── Auto-Draft State ──────────────────────────────────────────────
   const [fieldData, setFieldData] = useState<Record<string, unknown>>({});
@@ -42,6 +42,17 @@ export default function ReportFormPage() {
   const [queuedOffline, setQueuedOffline] = useState(false);
 
   useAutoSave(slug, fieldData, photoBlobs);
+
+  // Sync photoFiles → photoBlobs for auto-save (accumulated, not just last batch)
+  useEffect(() => {
+    const blobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }> = [];
+    for (const [fieldId, files] of Object.entries(photoFiles)) {
+      for (const file of files) {
+        blobs.push({ fieldId, blob: file, fileName: file.name, mimeType: file.type || "image/jpeg" });
+      }
+    }
+    setPhotoBlobs(blobs);
+  }, [photoFiles]);
 
   useEffect(() => {
     fetch("/api/csrf")
@@ -141,6 +152,15 @@ export default function ReportFormPage() {
 
     const formEl = e.currentTarget;
     const formData = new FormData(formEl);
+
+    // Override photo fields with accumulated files from photoFiles state
+    for (const [fieldId, files] of Object.entries(photoFiles)) {
+      if (files.length === 0) continue;
+      formData.delete(fieldId);
+      for (const file of files) {
+        formData.append(fieldId, file);
+      }
+    }
 
     // ── Validasi: min 3 foto per field photo ─────────────────────────
     const photoFieldIds = activeForm.fields
@@ -341,17 +361,7 @@ export default function ReportFormPage() {
           fd.forEach((value, key) => {
             if (key === "_website" || key === "form_slug" || key === "_submit_time") return;
             if (value instanceof File) {
-              if (value.size > 0) {
-                collected[key] = value.name;
-                // Capture photo blobs
-                setPhotoBlobs(prev => {
-                  const exists = prev.some(p => p.fieldId === key && p.fileName === value.name);
-                  if (!exists) {
-                    return [...prev, { fieldId: key, blob: value as Blob, fileName: value.name, mimeType: value.type }];
-                  }
-                  return prev;
-                });
-              }
+              if (value.size > 0) collected[key] = value.name;
               return;
             }
             collected[key] = value;
@@ -394,7 +404,7 @@ export default function ReportFormPage() {
               </div>
             ) : (
               <FieldWrapper key={field.id}>
-                <FieldRenderer field={field} capturedAtDisplay={capturedAtDisplay} photoCounts={photoCounts} setPhotoCounts={setPhotoCounts} />
+                <FieldRenderer field={field} capturedAtDisplay={capturedAtDisplay} photoFiles={photoFiles} setPhotoFiles={setPhotoFiles} />
               </FieldWrapper>
             )
           ))}
@@ -431,13 +441,13 @@ function FieldWrapper({ children }: { children: React.ReactNode }) {
 function FieldRenderer({
   field,
   capturedAtDisplay,
-  photoCounts,
-  setPhotoCounts,
+  photoFiles,
+  setPhotoFiles,
 }: {
   field: FormField;
   capturedAtDisplay?: string;
-  photoCounts?: Record<string, number>;
-  setPhotoCounts?: React.Dispatch<React.SetStateAction<Record<string, number>>>;
+  photoFiles?: Record<string, File[]>;
+  setPhotoFiles?: React.Dispatch<React.SetStateAction<Record<string, File[]>>>;
 }) {
   const { t } = useI18n();
   const required = field.required ? (
@@ -600,7 +610,8 @@ function FieldRenderer({
         </fieldset>
       );
     case "photo":
-      const currentCount = photoCounts?.[field.id] ?? 0;
+      const accumulated = photoFiles?.[field.id] ?? [];
+      const currentCount = accumulated.length;
       const maxReached = currentCount >= 5;
       return (
         <div>
@@ -616,9 +627,40 @@ function FieldRenderer({
               <span className="font-semibold text-amber-600">(maksimal 5 foto)</span>
             )}
           </div>
-          {/* Camera only — langsung kamera, bukan galeri */}
+
+          {/* Photo previews with delete button */}
+          {currentCount > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {accumulated.map((file, idx) => (
+                <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-700">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Foto ${idx + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPhotoFiles?.(prev => {
+                        const arr = [...(prev[field.id] || [])];
+                        arr.splice(idx, 1);
+                        return { ...prev, [field.id]: arr };
+                      });
+                    }}
+                    className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100"
+                    aria-label={`Hapus foto ${idx + 1}`}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* File input — tambah foto, akumulasi dengan existing */}
           {!maxReached && (
             <input
+              key={`${field.id}-${currentCount}`}
               id={field.id}
               name={field.id}
               type="file"
@@ -627,22 +669,17 @@ function FieldRenderer({
               multiple
               required={field.required && currentCount === 0}
               onChange={(e) => {
-                const files = e.target.files;
-                if (files) {
-                  const newCount = Math.min(files.length + currentCount, 5);
-                  setPhotoCounts?.((prev) => ({ ...prev, [field.id]: newCount }));
-                  // If user selects more than remaining slots, trim
-                  const remaining = 5 - currentCount;
-                  if (files.length > remaining) {
-                    const dt = new DataTransfer();
-                    for (let i = 0; i < remaining; i++) {
-                      dt.items.add(files[i]);
-                    }
-                    (e.target as HTMLInputElement).files = dt.files;
-                  }
+                const selectedFiles = e.target.files;
+                if (selectedFiles && selectedFiles.length > 0) {
+                  setPhotoFiles?.(prev => {
+                    const files = prev[field.id] || [];
+                    const remaining = 5 - files.length;
+                    const newFiles = Array.from(selectedFiles).slice(0, remaining);
+                    return { ...prev, [field.id]: [...files, ...newFiles] };
+                  });
                 }
               }}
-              className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30"
+              className="mt-2 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30"
             />
           )}
           {maxReached && (
