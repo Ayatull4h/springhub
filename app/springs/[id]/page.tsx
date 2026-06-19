@@ -193,19 +193,32 @@ function PhotoModal({
 // ─── Mini Map ─────────────────────────────────────────────────────────────
 
 function MiniMap({ lat, lng }: { lat: number; lng: number }) {
+  const [mapError, setMapError] = useState(false);
+  const osmUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=13&size=800x200&markers=${lat},${lng},red-pushpin`;
+
+  if (mapError) {
+    return (
+      <div className="flex aspect-[4/1] w-full items-center justify-center rounded-lg bg-slate-100 text-xs text-ink-muted dark:bg-slate-800">
+        <div className="text-center">
+          <MapPin className="mx-auto mb-1 h-5 w-5 text-ink-subtle" />
+          <p>Peta tidak dapat dimuat</p>
+          <p className="mt-1 text-xs text-ink-subtle">
+            {lat.toFixed(4)}, {lng.toFixed(4)}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="aspect-[4/1] w-full overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
       <Image
-        src={`https://api.mapbox.com/styles/v1/mapbox/light-v11/static/pin-s+2563eb(${lng},${lat})/${lng},${lat},13,0/800x200@2x?access_token=pk.eyJ1Ijoic3ByaW5naHViIiwiYSI6ImNsdmd4eHh4eDAiLCJfIjoiZGVmYXVsdCJ9.placeholder`}
+        src={osmUrl}
         alt="Peta lokasi"
         width={800}
         height={200}
         className="h-full w-full object-cover"
-        onError={(e) => {
-          // Fallback: OSM static map
-          const target = e.currentTarget;
-          target.src = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=13&size=800x200&markers=${lat},${lng},red-pushpin`;
-        }}
+        onError={() => setMapError(true)}
         unoptimized
       />
     </div>

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send } from "lucide-react";
 import { offlineDB } from "@/lib/offline-db";
 import { getForm, getFormTitle, type FormField, type FormSchema } from "@/lib/forms";
+import { INDONESIAN_PROVINCES } from "@/lib/provinces";
 
 /**
  * SimpleOfflineForm — Simplified PWA offline mode.
@@ -16,6 +17,8 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
   const [fieldData, setFieldData] = useState<Record<string, unknown>>({});
   const [photoFiles, setPhotoFiles] = useState<Record<string, File[]>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [gpsStatus, setGpsStatus] = useState<"idle" | "getting" | "got" | "error">("idle");
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
 
@@ -83,59 +86,69 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!selectedForm) return;
+    if (!selectedForm || submitting) return;
+    setSubmitError("");
 
     // ── Validasi: min 3 foto per field photo ─────────────────────────
     for (const field of selectedForm.fields) {
       if (field.type === "photo") {
         const count = (photoFiles[field.id] || []).length;
         if (count < 3) {
-          alert(`Minimal 3 foto untuk "${field.label || field.id}". Saat ini: ${count} foto.`);
+          setSubmitError(`Minimal 3 foto untuk "${field.label || field.id}". Saat ini: ${count} foto.`);
           return;
         }
       }
     }
 
-    const formEl = e.currentTarget;
-    const fd = new FormData(formEl);
-    const collected: Record<string, unknown> = {};
+    setSubmitting(true);
 
-    fd.forEach((value, key) => {
-      if (value instanceof File) return;
-      collected[key] = value;
-    });
+    try {
+      const formEl = e.currentTarget;
+      const fd = new FormData(formEl);
+      const collected: Record<string, unknown> = {};
 
-    // Include GPS coords
-    if (gpsCoords) {
-      collected.lat = gpsCoords.lat;
-      collected.lng = gpsCoords.lng;
-    }
-    collected._captured_at = capturedAt;
+      fd.forEach((value, key) => {
+        if (value instanceof File) return;
+        collected[key] = value;
+      });
 
-    // Build photo blobs
-    const photoBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }> = [];
-    for (const [fieldId, files] of Object.entries(photoFiles)) {
-      for (const file of files) {
-        photoBlobs.push({
-          fieldId,
-          blob: file,
-          fileName: file.name,
-          mimeType: file.type || "image/jpeg",
-        });
+      // Include GPS coords
+      if (gpsCoords) {
+        collected.lat = gpsCoords.lat;
+        collected.lng = gpsCoords.lng;
       }
+      collected._captured_at = capturedAt;
+
+      // Build photo blobs
+      const photoBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }> = [];
+      for (const [fieldId, files] of Object.entries(photoFiles)) {
+        for (const file of files) {
+          photoBlobs.push({
+            fieldId,
+            blob: file,
+            fileName: file.name,
+            mimeType: file.type || "image/jpeg",
+          });
+        }
+      }
+
+      await offlineDB.queueSubmission({
+        id: `offline-${selectedForm.slug}-${Date.now()}`,
+        formSlug: selectedForm.slug,
+        fieldData: collected,
+        photoBlobs,
+        csrfToken: "",
+        createdAt: Date.now(),
+        retryCount: 0,
+      });
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Offline save failed:", err);
+      setSubmitError("Gagal menyimpan. Pastikan penyimpanan perangkat tidak penuh, lalu coba lagi.");
+    } finally {
+      setSubmitting(false);
     }
-
-    await offlineDB.queueSubmission({
-      id: `offline-${selectedForm.slug}-${Date.now()}`,
-      formSlug: selectedForm.slug,
-      fieldData: collected,
-      photoBlobs,
-      csrfToken: "",
-      createdAt: Date.now(),
-      retryCount: 0,
-    });
-
-    setSubmitted(true);
   }
 
   // ── Loading ──────────────────────────────────────────────────
@@ -295,6 +308,17 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
                   <option key={opt} value={opt}>{opt}</option>
                 ))}
               </select>
+            ) : field.type === "province" ? (
+              <select
+                id={`offline-${field.id}`} name={field.id}
+                required={field.required}
+                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white"
+              >
+                <option value="">Pilih</option>
+                {INDONESIAN_PROVINCES.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
             ) : field.type === "multiselect" ? (
               <fieldset>
                 <div className="mt-2 space-y-1.5">
@@ -340,7 +364,8 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
                         <button
                           type="button"
                           onClick={() => removePhoto(field.id, idx)}
-                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white"
+                          className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-sm text-white shadow-sm"
+                          aria-label="Hapus foto"
                         >
                           ×
                         </button>
@@ -380,12 +405,20 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
           </div>
         ))}
 
+        {submitError && (
+          <div className="rounded-md bg-red-50 p-3 text-xs text-red-700 dark:bg-red-900/20 dark:text-red-300">
+            {submitError}
+          </div>
+        )}
+
         <div className="flex items-center justify-end gap-2 border-t border-ink-line pt-4">
-          <button type="button" onClick={() => setSelectedForm(null)} className="btn-secondary">
+          <button type="button" onClick={() => setSelectedForm(null)} className="btn-secondary" disabled={submitting}>
             Batal
           </button>
-          <button type="submit" disabled={gpsStatus === "getting"} className="btn-primary inline-flex items-center gap-2">
-            {gpsStatus === "getting" ? (
+          <button type="submit" disabled={submitting || gpsStatus === "getting"} className="btn-primary inline-flex items-center gap-2">
+            {submitting ? (
+              <><Loader2 className="h-4 w-4 animate-spin" /> Menyimpan...</>
+            ) : gpsStatus === "getting" ? (
               <><Loader2 className="h-4 w-4 animate-spin" /> Tunggu GPS...</>
             ) : "Simpan"}
           </button>

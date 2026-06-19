@@ -201,6 +201,27 @@ export default function ReportIssuePage() {
                 Maksimal 3 foto sudah terpenuhi.
               </p>
             )}
+            {screenshots.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {screenshots.map((file, idx) => (
+                  <div key={idx} className="group relative h-20 w-20 overflow-hidden rounded-lg border border-ink-line bg-slate-100 dark:bg-slate-700">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`Screenshot ${idx + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setScreenshots((prev) => prev.filter((_, i) => i !== idx))}
+                      className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-sm text-white opacity-0 shadow-sm transition-opacity group-hover:opacity-100"
+                      aria-label="Hapus screenshot"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

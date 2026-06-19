@@ -28,6 +28,7 @@ import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ErrorBoundary } from "./error-boundary";
 import { getForm, getFormTitle } from "@/lib/forms";
+import { INDONESIAN_PROVINCES } from "@/lib/provinces";
 
 // ─── Fallback map — saat Leaflet gagal load ──────────────────────────────────
 function MapFallback({ message = "Map tidak tersedia di perangkat ini" }: { message?: string }) {
@@ -742,6 +743,11 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                     >
                       <option value="">{t("common.select") || "Pilih..."}</option>
                       {(() => {
+                        if (field.type === "province") {
+                          return INDONESIAN_PROVINCES.map((p: string) => (
+                            <option key={p} value={p}>{p}</option>
+                          ));
+                        }
                         const formDef = getForm(activeForm?.slug);
                         const staticField = formDef?.fields.find(f => f.id === field.id);
                         const opts = field.options.length > 0 ? field.options : (staticField?.options || []);

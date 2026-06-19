@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Sparkles, AlertCircle, Loader2, CheckCircle2, WifiOff, Camera } from "lucide-react";
 import { FORMS, getForm, getFormTitle, type FormField } from "@/lib/forms";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
+import { INDONESIAN_PROVINCES } from "@/lib/provinces";
 import { useI18n } from "@/lib/i18n";
 import { LocationPicker } from "@/components/map/location-picker";
 import { useAutoSave } from "@/lib/use-auto-save";
@@ -110,16 +111,14 @@ export default function ReportFormPage() {
       .finally(() => setDbFormLoading(false));
   }, [slug]);
 
-  // Gabung field dari DB + statis, jangan replace total (fix: provinsi ilang)
+  // Gabung field dari DB + statis, urutkan sesuai static schema
   const activeForm = (() => {
     if (!dbForm) return form;
-    // Ambil field statis sebagai fallback untuk field yang tidak ada di DB
     const staticForm = form;
     if (!staticForm) return dbForm;
-    const dbFieldIds = new Set(dbForm.fields.map((f) => f.id));
-    const missingStaticFields = staticForm.fields.filter((f) => !dbFieldIds.has(f.id));
-    if (missingStaticFields.length === 0) return dbForm;
-    return { ...dbForm, fields: [...dbForm.fields, ...missingStaticFields] };
+    const dbFieldMap = new Map(dbForm.fields.map((f) => [f.id, f]));
+    const mergedFields = staticForm.fields.map((sf) => dbFieldMap.get(sf.id) || sf);
+    return { ...dbForm, fields: mergedFields };
   })();
 
   // Show loading while DB form is being fetched (only when static form not found)
@@ -558,19 +557,6 @@ function FieldRenderer({
         </div>
       );
     case "province":
-      const PROVINSI = [
-        "Aceh", "Sumatera Utara", "Sumatera Barat", "Riau", "Jambi",
-        "Sumatera Selatan", "Bengkulu", "Lampung", "Kepulauan Bangka Belitung",
-        "Kepulauan Riau", "DKI Jakarta", "Jawa Barat", "Jawa Tengah",
-        "DI Yogyakarta", "Jawa Timur", "Banten", "Bali",
-        "Nusa Tenggara Barat", "Nusa Tenggara Timur", "Kalimantan Barat",
-        "Kalimantan Tengah", "Kalimantan Selatan", "Kalimantan Timur",
-        "Kalimantan Utara", "Sulawesi Utara", "Sulawesi Tengah",
-        "Sulawesi Selatan", "Sulawesi Tenggara", "Gorontalo",
-        "Sulawesi Barat", "Maluku", "Maluku Utara", "Papua",
-        "Papua Barat", "Papua Selatan", "Papua Tengah", "Papua Pegunungan",
-        "Papua Barat Daya",
-      ];
       return (
         <div>
           {labelEl}
@@ -581,7 +567,7 @@ function FieldRenderer({
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           >
             <option value="">{t("form.select.placeholder")}</option>
-            {PROVINSI.map((p) => (
+            {INDONESIAN_PROVINCES.map((p) => (
               <option key={p} value={p}>{p}</option>
             ))}
           </select>
