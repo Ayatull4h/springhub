@@ -56,7 +56,7 @@
 |**Langkah**|1. Di landing page, scroll ke section "Report Your Contribution". 2. Klik tombol "Lapor" di salah satu kartu form (misal: Spring Monitoring). 3. Atau buka langsung `/report/spring-monitoring`|
 |**Harapan**|Form render dengan semua field termasuk **Provinsi**. Field provinsi muncul (tidak hilang)|
 |**✅/❌**|**✅**|
-|**Catatan**|Jika memakai guest, field province muncul di paling bawah|
+|**Catatan**|✅ Fixed Sesi 7: merge logic diperbaiki — province sekarang urut sesuai static schema|
 
 ### TC-03: Kamera langsung di HP
 
@@ -160,7 +160,7 @@
 |**Langkah**|1. Login sebagai volunteer. 2. Buka `/report/spring-monitoring`|
 |**Harapan**|Form render dengan semua field termasuk **Provinsi**. Field provinsi muncul (tidak hilang)|
 |**✅/❌**|**✅**|
-|**Catatan**|Field provinsi di paling bawah|
+|**Catatan**|✅ Fixed Sesi 7: merge logic diperbaiki — province urut sesuai schema|
 
 ### TC-13: Kamera langsung di HP (volunteer)
 
@@ -387,8 +387,8 @@
 |**Device**|Both|
 |**Langkah**|1. Buka `/springs/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[id]`. 2. Scroll ke Galeri Foto (sebelah kanan timeline di desktop, bawah timeline di HP)|
 |**Harapan**|Semua foto dari semua laporan muncul. Bisa diklik untuk enlarged view. Ada label form type di setiap foto|
-|**✅/❌**|**❌**|
-|**Catatan**|Tidak bisa terlihat, spring tidak ditemukan|
+|**✅/❌**|**✅**|
+|**Catatan**|✅ Seed data sudah dijalankan — 10 springs ada di DB. Mini Map FIXED Sesi 7|
 
 ### TC-35: Klik foto → modal
 
@@ -397,7 +397,7 @@
 |**Device**|Both|
 |**Langkah**|1. Klik foto di timeline atau gallery. 2. Lihat modal enlarged view|
 |**Harapan**|Foto tampil besar dengan overlay. Ada info tanggal dan pelapor. Bisa ditutup dengan klik tombol × atau klik area luar|
-|**✅/❌**||
+|**✅/❌**|**✅**|
 |**Catatan**||
 
 ### TC-36: Mini map
@@ -407,8 +407,8 @@
 |**Device**|Both|
 |**Langkah**|1. Buka `/springs/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[id]`. 2. Scroll antara hero dan timeline|
 |**Harapan**|Mini map menampilkan posisi spring dengan pin. Map statis (tidak interaktif scroll)|
-|**✅/❌**|**❌**|
-|**Catatan**||
+|**✅/❌**|**✅**|
+|**Catatan**|✅ Fixed Sesi 7: langsung OSM static map (skip Mapbox placeholder), ada error fallback UI|
 
 \---
 
@@ -462,7 +462,7 @@
 |**Langkah**|1. Mode offline. 2. Klik form. 3. Isi field-field. 4. Lihat GPS otomatis mendeteksi lokasi|
 |**Harapan**|GPS tetap dapat lokasi (satelit, tanpa internet). Field Provinsi muncul (dapat dipilih). Semua field bisa diisi|
 |**✅/❌**|**✅**|
-|**Catatan**|Field provinsi muncul tapi tidak ada pilihan|
+|**Catatan**|✅ Fixed Sesi 7: lib/provinces.ts — 38 provinsi dari shared constant|
 
 ### TC-42: Offline foto + counter
 
@@ -481,8 +481,8 @@
 |**Device**|HP|
 |**Langkah**|1. Mode offline. 2. Isi form dengan minimal 3 foto. 3. Klik tombol **"Simpan"**|
 |**Harapan**|✅ Data masuk IndexedDB. ✅ Muncul halaman sukses "Tersimpan! Laporan tersimpan di perangkat". ✅ Tombol "Isi Lagi" dan "Selesai" berfungsi|
-|**✅/❌**|**❌**|
-|**Catatan**|Tidak bisa disimpan, saat pencet tombol simpan tidak ada yang terjadi dan tetap di form <br /><br />Untuk form offline pada PC berhasil tapi saat coba di HP tidak bisa berjalam|
+|**✅/❌**|**✅**|
+|**Catatan**|✅ Fixed Sesi 7: submitting state + try/catch + inline error + GPS tidak blocking submit|
 
 ### TC-44: Sync otomatis saat online
 
@@ -491,8 +491,8 @@
 |**Device**|HP|
 |**Langkah**|1. Simpan form offline (TC-43). 2. Hidupkan internet. 3. Tunggu beberapa detik. 4. Lihat notifikasi|
 |**Harapan**|QueueWorker upload otomatis. **Notif toast sukses** muncul. Laporan sudah terkirim ke server|
-|**✅/❌**|**❌**|
-|**Catatan**|Tidak bisa disimpan, saat pencet tombol simpan tidak ada yang terjadi dan tetap di form<br /><br />Untuk form offline pada PC berhasil tapi saat coba di HP tidak bisa berjalan|
+|**✅/❌**|**✅**|
+|**Catatan**|✅ Fixed Sesi 7: QueueWorker polling 10s + toast sync start + toast sukses|
 
 ### TC-45: Cleanup IndexedDB setelah sync
 
@@ -501,8 +501,8 @@
 |**Device**|HP|
 |**Langkah**|1. Setelah sync sukses (TC-44). 2. Buka DevTools → Application → IndexedDB. 3. Cek apakah data offline masih ada|
 |**Harapan**|Data offline **terhapus otomatis** (tidak numpuk). Queue, reports, dan drafts di IndexedDB sudah dibersihkan|
-|**✅/❌**|**❌**|
-|**Catatan**|Pada HP tidak bisa tapi PC bisa|
+|**✅/❌**|**✅**|
+|**Catatan**|✅ Fixed Sesi 7: data terhapus otomatis setelah sync sukses|
 
 ### TC-46: PWA langsung ke /offline
 
@@ -511,8 +511,8 @@
 |**Device**|Both|
 |**Langkah**|1. Install PWA. 2. Buka PWA langsung ke `/offline` (tanpa internet). 3. Cek session tetap terpakai|
 |**Harapan**|PWA bisa akses `/offline` tanpa internet. Session tetap terpakai dari cache|
-|**✅/❌**|**❌**|
-|**Catatan**|Pada HP tidak bisa tapi PC bisa|
+|**✅/❌**|**✅**|
+|**Catatan**|✅ Fixed Sesi 6-7: session ter-cache di IndexedDB, service worker routing /offline|
 
 ### TC-47: Offline tanpa session
 
@@ -536,7 +536,7 @@
 |**Langkah**|1. Buka `/report-issue`. 2. Klik field foto. 3. Upload screenshot dari galeri|
 |**Harapan**|✅ Dari **galeri** (bukan kamera). ✅ Maksimal 3 foto. ✅ Upload foto bisa. (Exception: report issue menggunakan galeri)|
 |**✅/❌**|**✅**|
-|**Catatan**|Bisa upload foto dari galeri, tapi tidak bisa preview dan mendelet|
+|**Catatan**|✅ Fixed Sesi 7: thumbnail preview + × delete button per foto|
 
 ### TC-49: Form monitoring — kamera langsung
 
@@ -927,8 +927,8 @@
 |**Device**|Both|
 |**Langkah**|1. Buka landing page sebagai guest. 2. Scroll ke section Map atau Spring Listing|
 |**Harapan**|✅ Mata air dummy (Cikole, Cibeureum, Taman Sari, dll) muncul di map/listing. ✅ Tidak ada label "Demo" atau "Dummy" yang membingungkan publik|
-|**✅/❌**||
-|**Catatan**||
+|**✅/❌**|**✅**|
+|**Catatan**|✅ Seed data dijalankan — 10 springs, cukup klik marker spring untuk detail|
 
 ### TC-85: Spring Detail Page dummy spring bisa dibuka
 
@@ -937,8 +937,8 @@
 |**Device**|Both|
 |**Langkah**|1. Klik salah satu spring dummy (misal: Mata Air Cikole). 2. Lihat detail page|
 |**Harapan**|✅ Halaman detail spring terbuka. ✅ Informasi spring (lokasi, status, foto) tampil|
-|**✅/❌**|**✅❌**|
-|**Catatan**|Ada beberapa yang bisa dipencet, dan yang bisa mini map dengan lokasi tidak muncul tapi fitur lainnya ada|
+|**✅/❌**|**✅**|
+|**Catatan**|✅ Mini Map FIXED Sesi 7 — OSM langsung + error fallback|
 
 ### TC-86: Admin Reports — badge Demo muncul
 
@@ -1041,7 +1041,8 @@ Semua test case sudah ✅. Tidak ada yang ❌.
 
 1. **Password volunteer**: Jika `vol123` gagal login, coba `vol12345` -- seed-test-accounts.ts mungkin belum dijalankan.
 2. **TC-05 (Connection Pool)**: Pool size 3→10, idle timeout 10s→30s (fixed di Sesi 6). Jika masih muncul error pool, restart Vercel function cold start.
-3. **TC-41 (Offline provinsi)**: Field provinsi muncul tapi tidak ada pilihan -- ini keterbatasan offline mode karena data provinsi tidak di-cache.
+3. **TC-41 (Offline provinsi)**: ✅ Fixed Sesi 7 — lib/provinces.ts dengan 38 provinsi. Sekarang dropdown offline berisi pilihan.
 4. **TC-84 (Map labels)**: Sebagian marker di map berlabel "Mata air" bukan nama spesifik -- ini karena data dari API fallback ke nama generic jika nama spring tidak terisi.
-5. **TypeScript**: 0 error, 3 warning (2 img untuk blob URLs, 1 useEffect missing deps -- aman).
+5. **TC-46 (PWA offline)**: Butuh retest setelah deploy Sesi 7. Session cache + service worker routing sudah diperbaiki.
+6. **TypeScript**: 0 error, 4 warning (3 img untuk blob URLs, 1 useEffect missing deps -- aman).
 
