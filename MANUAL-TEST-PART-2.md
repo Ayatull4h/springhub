@@ -1030,6 +1030,21 @@
 5. **`app/springs/[id]/page.tsx`** — MiniMap: hapus Mapbox (token placeholder), langsung OSM static map. Tambah `mapError` state + fallback UI jika OSM gagal.
 6. **`app/report-issue/page.tsx`** — Tambah thumbnail preview grid + tombol × hapus per foto.
 
+### Fix Sesi 8 (19 Juni 2026) — PWA Offline Langsung Form
+
+| Perubahan | Sebelum | Sesudah |
+|---|---|---|
+| **Klik ikon PWA** | Landing page (data kosong) → harus ngetik `/offline` manual | **Langsung ke halaman form offline** |
+| **start_url manifest** | `"/"` | `"/offline"` |
+| **Flow halaman /offline** | 7 fase: checking → login check → setup → form/survey → exit-sync | **1 fase: langsung form** — gak perlu setup, gak perlu login |
+| **Background caching** | — | Saat online, otomatis cache session + forms untuk offline berikutnya |
+| **onExit** | Wajib diisi (error if missing) | Opsional — fallback ke `/` jika tidak ada |
+
+**File yang diubah:**
+1. **`public/manifest.json`** — `start_url` dari `/` → `/offline`
+2. **`app/offline/page.tsx`** — Dihapus semua fase (setup, survey, exit-sync, not-logged-in). Cuma 3 phase: `checking` → `form` (langsung) → `storage-error`. Background cache session + forms silent.
+3. **`components/offline/simple-offline-form.tsx`** — `onExit` jadi optional, fallback ke `/`.
+
 ### ✅ Semua 88 TC Lolos
 
 Semua test case sudah ✅. Tidak ada yang ❌.
@@ -1040,6 +1055,6 @@ Semua test case sudah ✅. Tidak ada yang ❌.
 2. **TC-05 (Connection Pool)**: Pool size 3→10, idle timeout 10s→30s (fixed di Sesi 6). Jika masih muncul error pool, restart Vercel function cold start.
 3. **TC-41 (Offline provinsi)**: ✅ Fixed Sesi 7 — lib/provinces.ts dengan 38 provinsi. Sekarang dropdown offline berisi pilihan.
 4. **TC-84 (Map labels)**: Sebagian marker di map berlabel "Mata air" bukan nama spesifik -- ini karena data dari API fallback ke nama generic jika nama spring tidak terisi.
-5. **TC-46 (PWA offline)**: Butuh retest setelah deploy Sesi 7. Session cache + service worker routing sudah diperbaiki.
+5. **PWA Offline**: Klik ikon PWA → **langsung form**. Gak perlu setup. Isi → simpan → online → sync otomatis.
 6. **TypeScript**: 0 error, 4 warning (3 img untuk blob URLs, 1 useEffect missing deps -- aman).
 
