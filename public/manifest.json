@@ -2,7 +2,7 @@
   "name": "SpringHub — Jaga Semesta",
   "short_name": "SpringHub",
   "description": "Community-driven monitoring & restoration of Indonesia's artesian springs",
-  "start_url": "/",
+  "start_url": "/offline",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#059669",

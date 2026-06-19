@@ -10,7 +10,7 @@ import { INDONESIAN_PROVINCES } from "@/lib/provinces";
  * SimpleOfflineForm — Simplified PWA offline mode.
  * No map, no tiles, no wizard. Just form + GPS + camera.
  */
-export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
+export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
   const [forms, setForms] = useState<any[]>([]);
   const [selectedForm, setSelectedForm] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +21,8 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
   const [submitError, setSubmitError] = useState("");
   const [gpsStatus, setGpsStatus] = useState<"idle" | "getting" | "got" | "error">("idle");
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
+
+  const handleExit = onExit || (() => { if (typeof window !== "undefined") window.location.href = "/"; });
 
   // Real-time timestamp (captured saat komponen mount)
   const [capturedAt] = useState(() => new Date().toISOString());
@@ -179,7 +181,7 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
             <button onClick={() => { setSubmitted(false); setSelectedForm(null); setFieldData({}); setPhotoFiles({}); }} className="btn-primary">
               Isi Lagi
             </button>
-            <button onClick={onExit} className="btn-secondary">
+            <button onClick={handleExit} className="btn-secondary">
               Selesai
             </button>
           </div>
@@ -192,8 +194,8 @@ export function SimpleOfflineForm({ onExit }: { onExit: () => void }) {
   if (!selectedForm) {
     return (
       <div className="container-page max-w-2xl py-8">
-        <button onClick={onExit} className="mb-4 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
-          <ArrowLeft className="h-4 w-4" /> Kembali
+        <button onClick={handleExit} className="mb-4 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
+          <ArrowLeft className="h-4 w-4" /> Beranda
         </button>
 
         <h1 className="text-2xl font-extrabold text-ink">Mode Offline</h1>
