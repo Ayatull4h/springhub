@@ -6,16 +6,21 @@ export const dynamic = "force-dynamic";
 
 // GET /api/notifications — list notifications for current user
 export async function GET() {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await getSession();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const notifications = await prisma.notification.findMany({
-    where: { userId: session.userId },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-  });
+    const notifications = await prisma.notification.findMany({
+      where: { userId: session.userId },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
 
-  return NextResponse.json({ notifications });
+    return NextResponse.json({ notifications });
+  } catch (err) {
+    console.error("[Notifications GET]", err);
+    return NextResponse.json({ notifications: [], error: "Gagal memuat notifikasi" }, { status: 200 });
+  }
 }
 
 // POST /api/notifications — create notification (admin or system use)
