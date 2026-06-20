@@ -4,24 +4,29 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ user: null });
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ user: null });
+    }
+
+    const profile = await prisma.profile.findUnique({
+      where: { id: session.userId },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        role: true,
+        region: true,
+        points: true,
+        trustScore: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json({ user: profile });
+  } catch (err) {
+    console.error("[Auth Me GET]", err);
+    return NextResponse.json({ user: null }, { status: 200 });
   }
-
-  const profile = await prisma.profile.findUnique({
-    where: { id: session.userId },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      role: true,
-      region: true,
-      points: true,
-      trustScore: true,
-      createdAt: true,
-    },
-  });
-
-  return NextResponse.json({ user: profile });
 }

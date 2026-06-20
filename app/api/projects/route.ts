@@ -18,16 +18,21 @@ const projectSchema = z.object({
 });
 
 export async function GET() {
-  const projects = await prisma.project.findMany({
-    where: { status: { in: ["approved", "under_review"] } },
-    orderBy: { createdAt: "desc" },
-    include: {
-      user: { select: { username: true } },
-      _count: { select: { donations: true } },
-    },
-  });
+  try {
+    const projects = await prisma.project.findMany({
+      where: { status: { in: ["approved", "under_review"] } },
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: { select: { username: true } },
+        _count: { select: { donations: true } },
+      },
+    });
 
-  return NextResponse.json({ projects });
+    return NextResponse.json({ projects });
+  } catch (err) {
+    console.error("[Projects GET]", err);
+    return NextResponse.json({ projects: [] }, { status: 200 });
+  }
 }
 
 export async function POST(request: Request) {

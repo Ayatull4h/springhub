@@ -13,54 +13,59 @@ const updateSchema = z.object({
 });
 
 export async function GET() {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const profile = await prisma.profile.findUnique({
+      where: { id: session.userId },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        role: true,
+        phone: true,
+        region: true,
+        points: true,
+        trustScore: true,
+        createdAt: true,
+      },
+    });
+
+    if (!profile) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    const reports = await prisma.report.findMany({
+      where: { userId: session.userId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        formSlug: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+
+    const pointsLogs = await prisma.pointsLog.findMany({
+      where: { userId: session.userId },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+      select: {
+        id: true,
+        amount: true,
+        reason: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json({ profile, reports, pointsLogs });
+  } catch (err) {
+    console.error("[User Profile GET]", err);
+    return NextResponse.json({ error: "Gagal memuat profil" }, { status: 200 });
   }
-
-  const profile = await prisma.profile.findUnique({
-    where: { id: session.userId },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      role: true,
-      phone: true,
-      region: true,
-      points: true,
-      trustScore: true,
-      createdAt: true,
-    },
-  });
-
-  if (!profile) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-
-  const reports = await prisma.report.findMany({
-    where: { userId: session.userId },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      formSlug: true,
-      status: true,
-      createdAt: true,
-    },
-  });
-
-  const pointsLogs = await prisma.pointsLog.findMany({
-    where: { userId: session.userId },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-    select: {
-      id: true,
-      amount: true,
-      reason: true,
-      createdAt: true,
-    },
-  });
-
-  return NextResponse.json({ profile, reports, pointsLogs });
 }
 
 export async function PUT(request: Request) {
