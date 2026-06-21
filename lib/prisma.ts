@@ -9,8 +9,14 @@ const globalForPrisma = globalThis as unknown as {
 
 function getPool(): pg.Pool {
   if (!globalForPrisma.pool) {
+    // Ensure PgBouncer transaction mode params are always present
+    let dbUrl = process.env.DATABASE_URL || "";
+    if (!dbUrl.includes("pgbouncer=true")) {
+      const sep = dbUrl.includes("?") ? "&" : "?";
+      dbUrl += `${sep}pgbouncer=true&connection_limit=3`;
+    }
     globalForPrisma.pool = new pg.Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: dbUrl,
       max: 3,
       idleTimeoutMillis: 10000,
       connectionTimeoutMillis: 5000,

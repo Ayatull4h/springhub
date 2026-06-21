@@ -147,7 +147,7 @@
 |||
 |-|-|
 |**Device**|Both|
-|**Langkah**|1. Buka halaman login di `/sign-in`. 2. Masukkan email `volunteer@springhub.id` dan password `vol123`. 3. Klik Login|
+|**Langkah**|1. Buka halaman login di `/sign-in`. 2. Masukkan email `volunteer@springhub.id` dan password `vol12345`. 3. Klik Login|
 |**Harapan**|Berhasil login, redirect ke halaman sebelumnya. Nama user muncul di header|
 |**✅/❌**|**✅**|
 |**Catatan**||
@@ -1057,4 +1057,7 @@ Semua test case sudah ✅. Tidak ada yang ❌.
 4. **TC-84 (Map labels)**: Sebagian marker di map berlabel "Mata air" bukan nama spesifik -- ini karena data dari API fallback ke nama generic jika nama spring tidak terisi.
 5. **PWA Offline**: Klik ikon PWA → **langsung form**. Gak perlu setup. Isi → simpan → online → sync otomatis.
 6. **TypeScript**: 0 error, 4 warning (3 img untuk blob URLs, 1 useEffect missing deps -- aman).
+
+
+
 
