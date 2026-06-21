@@ -69,22 +69,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname === PROJECT_CREATE) {
-    if (!session) {
-      const url = new URL("/sign-in", request.url);
-      url.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(url);
-    }
-  }
-
-  if (pathname === "/profile") {
-    if (!session) {
-      const url = new URL("/sign-in", request.url);
-      url.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(url);
-    }
-  }
-
   return NextResponse.next();
 }
 

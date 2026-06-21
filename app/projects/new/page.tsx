@@ -17,10 +17,12 @@ import {
   MapPin,
   DollarSign,
   HardHat,
+  WifiOff,
 } from "lucide-react";
 import { PROJECT_TYPES, PROJECT_PROPOSAL_THRESHOLD } from "@/lib/data";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { offlineDB } from "@/lib/offline-db";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -45,20 +47,40 @@ export default function NewProjectPage() {
   const [proposalFile, setProposalFile] = useState<File | null>(null);
 
   useEffect(() => {
-    // Fetch user data untuk pre-fill form
-    fetch("/api/auth/me")
-      .then((r) => r.json())
-      .then((data) => {
-        if (!data.user) {
-          router.push("/sign-in?redirect=/projects/new");
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/auth/me");
+        const data = await res.json();
+        if (data.user) {
+          setUserPoints(data.user.points ?? 0);
+          setContactName(data.user.username ?? "");
+          setContactEmail(data.user.email ?? "");
+          setLoading(false);
           return;
         }
-        setUserPoints(data.user.points ?? 0);
-        setContactName(data.user.username ?? "");
-        setContactEmail(data.user.email ?? "");
-      })
-      .catch(() => router.push("/sign-in?redirect=/projects/new"))
-      .finally(() => setLoading(false));
+        // Fallback ke cached session (PWA offline mode)
+        const cached = await offlineDB.getSession().catch(() => null);
+        if (cached) {
+          setUserPoints(0);
+          setContactName(cached.username);
+          setContactEmail("");
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // Network error — coba cached session
+        const cached = await offlineDB.getSession().catch(() => null);
+        if (cached) {
+          setUserPoints(0);
+          setContactName(cached.username);
+          setContactEmail("");
+          setLoading(false);
+          return;
+        }
+      }
+      router.push("/sign-in?redirect=/projects/new");
+    }
+    checkAuth();
   }, [router]);
 
   const eligible = userPoints >= PROJECT_PROPOSAL_THRESHOLD;

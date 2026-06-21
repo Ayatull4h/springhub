@@ -7,12 +7,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useDarkMode } from "@/lib/darkmode";
+import { fetchAndCacheSession } from "@/lib/session-cache";
 
 type UserInfo = {
   id: string;
   username: string;
   role: string;
-  points: number;
+  points?: number;
 } | null;
 
 export function SiteHeader() {
@@ -36,10 +37,11 @@ export function SiteHeader() {
   }, [user]);
 
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) setUser(data.user);
+    fetchAndCacheSession()
+      .then((result) => {
+        if (result.user) {
+          setUser(result.user);
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));

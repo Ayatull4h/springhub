@@ -6,6 +6,7 @@ import { Loader2, AlertCircle, ChevronDown, Smartphone, Monitor } from "lucide-r
 import { SimpleOfflineForm } from "@/components/offline/simple-offline-form";
 import PwaInstallGuide from "@/components/pwa-install-guide";
 import { offlineDB } from "@/lib/offline-db";
+import { fetchAndCacheSession } from "@/lib/session-cache";
 
 /**
  * OfflinePage — Simplified PWA offline mode.
@@ -52,23 +53,8 @@ function OfflinePageContent() {
       // 2. Langsung ke form — tanpa blocking
       setPhase("form");
 
-      // 3. Background: coba cache session + forms (silent fail)
-      try {
-        const meRes = await fetch("/api/auth/me");
-        if (meRes.ok) {
-          const meData = await meRes.json();
-          if (meData.user) {
-            await offlineDB.saveSession({
-              id: "user-session",
-              userId: meData.user.id || meData.user.email,
-              username: meData.user.username || "User",
-              role: meData.user.role || "volunteer",
-              csrfToken: meData.csrfToken || "",
-              cachedAt: Date.now(),
-            });
-          }
-        }
-      } catch {}
+      // 3. Background: cache session + forms (silent fail)
+      fetchAndCacheSession().catch(() => {});
 
       try {
         const formsRes = await fetch("/api/forms");

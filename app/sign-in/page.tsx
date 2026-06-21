@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, LogIn, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { useI18n } from "@/lib/i18n";
+import { offlineDB } from "@/lib/offline-db";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -37,6 +38,22 @@ export default function SignInPage() {
             : t("auth.signIn.error")
         );
         return;
+      }
+
+      // Cache session ke IndexedDB untuk PWA fallback
+      if (data.user) {
+        try {
+          await offlineDB.saveSession({
+            id: "user-session",
+            userId: data.user.id,
+            username: data.user.username,
+            role: data.user.role,
+            csrfToken: "",
+            cachedAt: Date.now(),
+          });
+        } catch {
+          // Non-critical — SiteHeader akan nge-cache ulang via API
+        }
       }
 
       // Redirect to home or the page they came from

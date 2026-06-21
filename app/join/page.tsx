@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, UserPlus, Mail, Lock, User, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { useI18n } from "@/lib/i18n";
+import { offlineDB } from "@/lib/offline-db";
 
 export default function JoinPage() {
   const { t } = useI18n();
@@ -38,6 +39,22 @@ export default function JoinPage() {
               : t("auth.join.error");
         setError(errMsg);
         return;
+      }
+
+      // Cache session ke IndexedDB untuk PWA fallback
+      if (data.user) {
+        try {
+          await offlineDB.saveSession({
+            id: "user-session",
+            userId: data.user.id,
+            username: data.user.username,
+            role: data.user.role,
+            csrfToken: "",
+            cachedAt: Date.now(),
+          });
+        } catch {
+          // Non-critical — SiteHeader akan nge-cache ulang via API
+        }
       }
 
       window.location.href = "/";

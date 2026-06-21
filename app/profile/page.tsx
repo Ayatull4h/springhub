@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { User, Mail, MapPin, Sparkles, Shield, FileText, LogOut, ArrowLeft, Pencil, X, Check, Eye, EyeOff, Loader2, Bell, CheckCircle2, XCircle } from "lucide-react";
+import { User, Mail, MapPin, Sparkles, Shield, FileText, LogOut, ArrowLeft, Pencil, X, Check, Eye, EyeOff, Loader2, Bell, CheckCircle2, XCircle, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
+import { offlineDB } from "@/lib/offline-db";
+import { fetchAndCacheSession } from "@/lib/session-cache";
 
 type ProfileData = {
   id: string;
@@ -53,6 +55,7 @@ export default function ProfilePage() {
   const [claiming, setClaiming] = useState(false);
   const [claimError, setClaimError] = useState("");
   const [claimTried, setClaimTried] = useState(false);
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -87,6 +90,24 @@ export default function ProfilePage() {
     try {
       const res = await fetch("/api/user/profile");
       if (res.status === 401) {
+        // Fallback: cek cached session untuk PWA/offline
+        const cached = await offlineDB.getSession().catch(() => null);
+        if (cached) {
+          setIsOfflineMode(true);
+          setProfile({
+            id: cached.userId,
+            username: cached.username,
+            email: "",
+            role: cached.role,
+            phone: "",
+            region: "",
+            points: 0,
+            trustScore: 0,
+            createdAt: new Date(cached.cachedAt).toISOString(),
+          });
+          setLoading(false);
+          return;
+        }
         router.push("/sign-in?redirect=/profile");
         return;
       }
@@ -218,6 +239,14 @@ export default function ProfilePage() {
         <div className="mt-6 flex items-center gap-2 rounded-md bg-brand-50 p-4 text-sm text-brand-700 ring-1 ring-brand-200 dark:bg-brand-900/30 dark:text-brand-300 dark:ring-brand-700">
           <div className="h-4 w-4 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
           {t("profile.claiming")}
+        </div>
+      )}
+
+      {/* Offline mode banner */}
+      {isOfflineMode && (
+        <div className="mt-6 flex items-center gap-2 rounded-md bg-amber-50 p-4 text-sm text-amber-700 ring-1 ring-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:ring-amber-700">
+          <WifiOff className="h-4 w-4 shrink-0" />
+          <span>Mode offline — data terbatas. Beberapa fitur mungkin tidak tersedia.</span>
         </div>
       )}
 
