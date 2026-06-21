@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 /**
@@ -61,7 +61,10 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("[OfflineSync] POST error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("[OfflineSync] POST error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

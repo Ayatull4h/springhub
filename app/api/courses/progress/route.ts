@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 
@@ -16,8 +16,11 @@ export async function GET() {
     });
     return NextResponse.json({ progress });
   } catch (error) {
-    console.error("Progress fetch error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Progress fetch error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }
 
@@ -78,7 +81,10 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ progress, pointsAwarded });
   } catch (error) {
-    console.error("Progress update error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Progress update error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

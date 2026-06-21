@@ -5,7 +5,7 @@ import {
   formSchemaMap,
   getForm,
 } from "@/lib/forms";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { snapToProtectionGrid } from "@/lib/geo";
 import { verifyCsrfToken } from "@/lib/csrf";
@@ -292,10 +292,10 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Report submission error:", error);
+    console.error("Report submission error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
     );
   }
 }
@@ -343,10 +343,10 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ reports, stats: { total, healthy, restoration, degraded } });
   } catch (error) {
-    console.error("Reports fetch error:", error);
+    console.error("Reports fetch error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
     );
   }
 }

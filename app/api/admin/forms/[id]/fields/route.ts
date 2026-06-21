@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 
@@ -62,7 +62,10 @@ export async function POST(
 
     return NextResponse.json({ field }, { status: 201 });
   } catch (error) {
-    console.error("Create field error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Create field error::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal menambah data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export async function GET(
@@ -118,7 +118,10 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Spring detail error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Spring detail error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

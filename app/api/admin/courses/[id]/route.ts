@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 
@@ -26,8 +26,11 @@ export async function GET(
     }
     return NextResponse.json({ course });
   } catch (error) {
-    console.error("Admin course fetch error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Admin course fetch error::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal memuat data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }
 
@@ -102,8 +105,11 @@ export async function PUT(
 
     return NextResponse.json({ course: updated });
   } catch (error) {
-    console.error("Admin course update error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Admin course update error::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal mengupdate data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }
 
@@ -122,7 +128,10 @@ export async function DELETE(
     });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Admin course delete error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Admin course delete error::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal menghapus data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

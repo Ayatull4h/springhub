@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { getGuestId } from "@/lib/guest";
@@ -68,10 +68,10 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Report delete error:", error);
+    console.error("Report delete error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
     );
   }
 }

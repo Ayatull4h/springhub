@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 
 /**
  * POST /api/offline/session
@@ -34,8 +34,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ session: offlineSession });
   } catch (error) {
-    console.error("[OfflineSession] POST error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("[OfflineSession] POST error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }
 
@@ -57,8 +60,11 @@ export async function GET() {
 
     return NextResponse.json({ session: activeSession });
   } catch (error) {
-    console.error("[OfflineSession] GET error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("[OfflineSession] GET error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }
 
@@ -80,7 +86,10 @@ export async function DELETE() {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[OfflineSession] DELETE error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("[OfflineSession] DELETE error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

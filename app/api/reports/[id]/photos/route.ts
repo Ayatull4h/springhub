@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { getGuestId } from "@/lib/guest";
@@ -75,18 +75,17 @@ export async function POST(
       { status: 201 }
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
     console.error("Photo upload error:", {
-      message,
+      message: error instanceof Error ? error.message : error,
       stack: error instanceof Error ? error.stack : undefined,
       reportId: params.id,
     });
     return NextResponse.json(
       {
-        error: message,
+        error: getErrorMessage(error, "Terjadi kesalahan."),
         reportId: params.id,
       },
-      { status: 500 }
+      { status: isDatabaseError(error) ? 503 : 500 }
     );
   }
 }
@@ -127,10 +126,10 @@ export async function GET(
 
     return NextResponse.json({ photos: photosWithUrls });
   } catch (error) {
-    console.error("Photo fetch error:", error);
+    console.error("Photo fetch error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
     );
   }
 }

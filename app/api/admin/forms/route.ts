@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 
@@ -35,8 +35,11 @@ export async function GET(request: Request) {
     });
     return NextResponse.json({ forms });
   } catch (error) {
-    console.error("Admin forms fetch error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Admin forms fetch error::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal memuat data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }
 
@@ -104,7 +107,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ form }, { status: 201 });
   } catch (error) {
-    console.error("Admin form create error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Admin form create error::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal menambah data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

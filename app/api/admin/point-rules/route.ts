@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -15,8 +15,11 @@ export async function GET() {
     });
     return NextResponse.json({ rules });
   } catch (error) {
-    console.error("Failed to fetch point rules:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Failed to fetch point rules::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal memuat data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }
 
@@ -51,7 +54,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ rule }, { status: 201 });
   } catch (error) {
-    console.error("Failed to create point rule:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Failed to create point rule::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal menambah data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

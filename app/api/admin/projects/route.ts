@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -20,7 +20,10 @@ export async function GET() {
 
     return NextResponse.json({ projects });
   } catch (error) {
-    console.error("GET /api/admin/projects error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("GET /api/admin/projects error::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal memuat data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { getGuestId } from "@/lib/guest";
@@ -136,10 +136,10 @@ export async function POST(request: Request) {
       id: feedback.id,
     });
   } catch (error) {
-    console.error("Feedback submission error:", error);
+    console.error("Feedback submission error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
     );
   }
 }

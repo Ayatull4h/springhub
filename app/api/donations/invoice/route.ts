@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { createInvoice } from "@/lib/xendit";
 import { getSession } from "@/lib/auth";
@@ -98,11 +98,11 @@ export async function POST(request: Request) {
       },
       invoiceUrl: invoice.invoiceUrl,
     });
-  } catch (error: any) {
-    console.error("Invoice creation error:", error);
+  } catch (error: unknown) {
+    console.error("Invoice creation error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
-      { status: 500 }
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
     );
   }
 }
