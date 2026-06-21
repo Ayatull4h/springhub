@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getExistingGuestId } from "@/lib/guest";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export async function POST() {
@@ -28,7 +28,10 @@ export async function POST() {
 
     return NextResponse.json({ claimed: result.count });
   } catch (err) {
-    console.error("[Claim Guest POST]", err);
-    return NextResponse.json({ error: "Gagal klaim guest" }, { status: 500 });
+    console.error("[Claim Guest POST]", err instanceof Error ? err.message : err);
+    return NextResponse.json(
+      { error: getErrorMessage(err, "Gagal klaim guest.") },
+      { status: isDatabaseError(err) ? 503 : 500 }
+    );
   }
 }

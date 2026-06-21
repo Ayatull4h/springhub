@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { SignJWT, type JWTPayload } from "jose";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 import { getJwtSecret } from "@/lib/jwt";
 import { sendEmail, buildResetPasswordEmail } from "@/lib/email";
 import { authLimiter } from "@/lib/rate-limit";
@@ -54,7 +54,10 @@ export async function POST(request: Request) {
       message: genericMessage,
     });
   } catch (error) {
-    console.error("Forgot password error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Forgot password error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal memproses reset password.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

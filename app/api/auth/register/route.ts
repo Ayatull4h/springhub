@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { hashPassword, createSession, getSession } from "@/lib/auth";
 import { getExistingGuestId } from "@/lib/guest";
@@ -93,10 +93,10 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Register error:", error);
+    console.error("Register error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: getErrorMessage(error, "Gagal mendaftar. Silakan coba lagi.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
     );
   }
 }

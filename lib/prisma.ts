@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 
@@ -30,3 +30,45 @@ function getPrisma(): PrismaClient {
 }
 
 export const prisma: PrismaClient = getPrisma();
+
+/**
+ * Get a user-friendly error message from an unknown error.
+ * Handles Prisma, JWT, Zod, and generic errors gracefully.
+ */
+export function getErrorMessage(error: unknown, fallback = "Terjadi kesalahan. Silakan coba lagi."): string {
+  if (typeof error === "string") return error;
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error.code === "P1001") return "Database tidak tersedia. Silakan coba lagi.";
+    if (error.code === "P1002") return "Koneksi database timed out. Silakan refresh.";
+    if (error.code === "P1017") return "Koneksi database terputus.";
+    if (error.code === "P2002") return "Data sudah ada.";
+    if (error.code === "P2025") return "Data tidak ditemukan.";
+    return "Gangguan database. Silakan coba lagi.";
+  }
+  if (error instanceof Prisma.PrismaClientInitializationError) {
+    return "Gagal terhubung ke database.";
+  }
+  if (error instanceof Prisma.PrismaClientRustPanicError) {
+    return "Database error fatal.";
+  }
+  if (error instanceof Prisma.PrismaClientValidationError) {
+    return "Data yang dikirim tidak valid.";
+  }
+  if (error instanceof SyntaxError) {
+    return "Format request tidak valid.";
+  }
+  if (error instanceof Error) return error.message;
+  return fallback;
+}
+
+/**
+ * Check if an error is a database-related error (Prisma errors).
+ */
+export function isDatabaseError(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError ||
+    error instanceof Prisma.PrismaClientInitializationError ||
+    error instanceof Prisma.PrismaClientRustPanicError ||
+    error instanceof Prisma.PrismaClientValidationError
+  );
+}

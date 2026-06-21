@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { jwtVerify, type JWTPayload } from "jose";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 import { getJwtSecret } from "@/lib/jwt";
 import { hashPassword } from "@/lib/auth";
 import { authLimiter } from "@/lib/rate-limit";
@@ -53,7 +53,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, message: "Password berhasil diubah. Silakan login." });
   } catch (error) {
-    console.error("Reset password error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Reset password error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal mereset password.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }
