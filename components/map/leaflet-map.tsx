@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MapContainer, TileLayer, CircleMarker, Tooltip, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -58,13 +58,74 @@ const formIcons: Record<string, string> = {
 
 function FitBounds({ data }: { data: (ReportData | SpringGroup)[] }) {
   const map = useMap();
+  const hasInteracted = useRef(false);
+  const prevFingerprint = useRef<string>("");
+
   useEffect(() => {
     if (data.length === 0) return;
-    const valid = data.filter((r) => r.snappedLat && r.snappedLng);
+
+    const valid = data.filter(
+      (r): r is (ReportData | SpringGroup) & { snappedLat: number; snappedLng: number } =>
+        r.snappedLat !== null && r.snappedLng !== null
+    );
     if (valid.length === 0) return;
-    const bounds = valid.map((r) => [r.snappedLat!, r.snappedLng!] as [number, number]);
+
+    // Compute a fingerprint of marker IDs to detect when markers actually change
+    // (filter toggle = new set of IDs, data re-fetch = same IDs)
+    const fingerprint = valid
+      .map((r) => ("id" in r ? r.id : "") + ("springId" in r ? r.springId ?? "" : ""))
+      .sort()
+      .join(",");
+
+    // Same markers and user already dragged = skip (prevent snap-back on polling)
+    if (fingerprint === prevFingerprint.current && hasInteracted.current) return;
+
+    // Reset interaction flag on filter change so map refits
+    if (fingerprint !== prevFingerprint.current) {
+      hasInteracted.current = false;
+    }
+    prevFingerprint.current = fingerprint;
+
+    // Calculate weighted center — markers with more reports get more weight
+    let totalWeight = 0;
+    let latSum = 0;
+    let lngSum = 0;
+
+    for (const item of valid) {
+      const reportCount = "reports" in item ? item.reports.length : 1;
+      const weight = Math.max(1, reportCount);
+      latSum += item.snappedLat * weight;
+      lngSum += item.snappedLng * weight;
+      totalWeight += weight;
+    }
+
+    const centerLat = latSum / totalWeight;
+    const centerLng = lngSum / totalWeight;
+
+    // Fit bounds to show all markers
+    const bounds = valid.map((r) => [r.snappedLat, r.snappedLng] as [number, number]);
     map.fitBounds(bounds, { padding: [50, 50] });
+
+    // If bounds span across most of Indonesia, zoom in to the busiest area
+    const bs = map.getBounds();
+    const latDiff = bs.getNorth() - bs.getSouth();
+    const lngDiff = bs.getEast() - bs.getWest();
+    if (latDiff > 8 || lngDiff > 8) {
+      map.setView([centerLat, centerLng], Math.max(6, Math.min(8, Math.round(12 - Math.max(latDiff, lngDiff) / 2))));
+    }
   }, [data, map]);
+
+  // Mark as interacted when user drags or zooms manually
+  useEffect(() => {
+    const onStart = () => { hasInteracted.current = true; };
+    map.on("dragstart", onStart);
+    map.on("zoomstart", onStart);
+    return () => {
+      map.off("dragstart", onStart);
+      map.off("zoomstart", onStart);
+    };
+  }, [map]);
+
   return null;
 }
 
