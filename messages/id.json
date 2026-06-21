@@ -489,6 +489,23 @@
   "donate.customOption": "Custom — IDR",
   "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Kartu • Virtual Account",
 
+  "pwa.guide.title": "Install SpringHub untuk akses cepat dari layar utama",
+  "pwa.guide.androidTitle": "Android — Chrome",
+  "pwa.guide.androidStep1": "Buka <strong>springhub.vercel.app</strong> di Chrome",
+  "pwa.guide.androidStep2": "Tap ikon <strong>⋮</strong> (3 titik) di pojok kanan atas",
+  "pwa.guide.androidStep3": "Tap <strong>&quot;Add to Home Screen&quot;</strong> (atau &quot;Install app&quot;)",
+  "pwa.guide.androidStep4": "Tap <strong>&quot;Install&quot;</strong>",
+  "pwa.guide.androidStep5": "Ikon SpringHub muncul di home screen — tap untuk buka seperti aplikasi",
+  "pwa.guide.iosTitle": "iPhone/iPad — Safari",
+  "pwa.guide.iosStep1": "Buka <strong>springhub.vercel.app</strong> di Safari",
+  "pwa.guide.iosStep2": "Tap ikon <strong>📤</strong> (Share) di menu bawah",
+  "pwa.guide.iosStep3": "Scroll ke bawah, tap <strong>&quot;Add to Home Screen&quot;</strong>",
+  "pwa.guide.iosStep4": "Tap <strong>&quot;Add&quot;</strong> di pojok kanan atas",
+  "pwa.guide.iosStep5": "Ikon SpringHub muncul di home screen — tap untuk buka seperti aplikasi",
+  "pwa.guide.otherAndroid": "Tap ⋮ → &quot;Add to Home Screen&quot; → &quot;Install&quot;",
+  "pwa.guide.otherIos": "Tap 📤 → &quot;Add to Home Screen&quot; → &quot;Add&quot;",
+  "pwa.guide.pcNote": "PC/Laptop: buka langsung di browser. Mode offline tetap bisa diakses via ikon PWA setelah di-install.",
+
   "locale.en": "EN",
   "locale.id": "ID",
 

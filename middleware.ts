@@ -15,6 +15,18 @@ const PROJECT_CREATE = "/projects/new";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // API routes: prevent CDN caching so data always fresh
+  if (pathname.startsWith("/api/")) {
+    const response = NextResponse.next();
+    response.headers.set(
+      "Cache-Control",
+      "no-cache, no-store, must-revalidate"
+    );
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+    return response;
+  }
+
   const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
   let session: { userId: string; role: string } | null = null;
 

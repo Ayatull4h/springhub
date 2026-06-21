@@ -489,6 +489,23 @@
   "donate.customOption": "Custom — IDR",
   "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Card • Virtual Account",
 
+  "pwa.guide.title": "Install SpringHub for quick access from your home screen",
+  "pwa.guide.androidTitle": "Android — Chrome",
+  "pwa.guide.androidStep1": "Open <strong>springhub.vercel.app</strong> in Chrome",
+  "pwa.guide.androidStep2": "Tap the <strong>⋮</strong> menu (3 dots) in the top-right corner",
+  "pwa.guide.androidStep3": "Tap <strong>&quot;Add to Home Screen&quot;</strong> (or &quot;Install app&quot;)",
+  "pwa.guide.androidStep4": "Tap <strong>&quot;Install&quot;</strong>",
+  "pwa.guide.androidStep5": "SpringHub icon appears on your home screen — tap to open like an app",
+  "pwa.guide.iosTitle": "iPhone/iPad — Safari",
+  "pwa.guide.iosStep1": "Open <strong>springhub.vercel.app</strong> in Safari",
+  "pwa.guide.iosStep2": "Tap the <strong>📤</strong> (Share) icon in the bottom menu",
+  "pwa.guide.iosStep3": "Scroll down and tap <strong>&quot;Add to Home Screen&quot;</strong>",
+  "pwa.guide.iosStep4": "Tap <strong>&quot;Add&quot;</strong> in the top-right corner",
+  "pwa.guide.iosStep5": "SpringHub icon appears on your home screen — tap to open like an app",
+  "pwa.guide.otherAndroid": "Tap ⋮ → &quot;Add to Home Screen&quot; → &quot;Install&quot;",
+  "pwa.guide.otherIos": "Tap 📤 → &quot;Add to Home Screen&quot; → &quot;Add&quot;",
+  "pwa.guide.pcNote": "PC/Laptop: open directly in browser. Offline mode is available via the PWA icon once installed.",
+
   "locale.en": "EN",
   "locale.id": "ID",
 
