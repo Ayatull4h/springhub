@@ -2,8 +2,9 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, ChevronDown, Smartphone, Monitor } from "lucide-react";
 import { SimpleOfflineForm } from "@/components/offline/simple-offline-form";
+import PwaInstallGuide from "@/components/pwa-install-guide";
 import { offlineDB } from "@/lib/offline-db";
 
 /**
@@ -116,7 +117,12 @@ function OfflinePageContent() {
   }
 
   // ── Langsung tampilkan daftar form ──────────────────────────────────
-  return <SimpleOfflineForm />;
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-6">
+      <PwaInstallGuide />
+      <SimpleOfflineForm />
+    </div>
+  );
 }
 
 export default function OfflinePage() {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { updateTrustScore } from "@/lib/points";
@@ -38,12 +38,11 @@ export async function POST(
     });
 
     if (report.userId) {
-      // Trust score: -10 only if user has been rejected >2 times before
+      // Trust score: -50 only if user has been rejected >2 times before
       try {
         const rejectCount = await prisma.report.count({
           where: { userId: report.userId, status: "rejected" },
         });
-        // Count THIS rejection + past rejections
         if (rejectCount >= 3) {
           await updateTrustScore(report.userId, false);
         }
@@ -82,7 +81,10 @@ export async function POST(
 
     return NextResponse.json({ success: true, status: "rejected" });
   } catch (error) {
-    console.error("Reject error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Reject error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal menolak laporan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

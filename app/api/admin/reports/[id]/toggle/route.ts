@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
-  const session = await getSession();
-  if (!session || session.role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
-
   try {
+    const session = await getSession();
+    if (!session || session.role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
     const report = await prisma.report.findUnique({ where: { id: params.id } });
     if (!report) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
@@ -21,7 +21,10 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     return NextResponse.json({ isActive: updated.isActive });
   } catch (error) {
-    console.error("Toggle report error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Toggle report error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal toggle laporan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

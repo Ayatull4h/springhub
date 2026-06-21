@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { awardReportPoints, checkDailyStreak, updateTrustScore } from "@/lib/points";
@@ -87,7 +87,10 @@ export async function POST(
 
     return NextResponse.json({ success: true, status: "approved" });
   } catch (error) {
-    console.error("Approve error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Approve error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal approve laporan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }
