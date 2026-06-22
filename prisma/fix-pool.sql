@@ -26,14 +26,14 @@ WHERE usename = 'postgres'
   AND state = 'idle'
   AND pid <> pg_backend_pid();
 
--- 4. Set pooler config di level database (optional)
-ALTER DATABASE postgres SET pool_size = 10;
-ALTER DATABASE postgres SET max_connections = 25;
+-- 4. CATATAN: pool_size dan max_connections tidak bisa di-set via SQL di
+--    Supabase (bukan parameter PostgreSQL standar). Konfigurasi pool
+--    dilakukan via Dashboard > Database > Connection pool.
 
 -- =====================================================================
 --  AFTER RUNNING:
---  1. Redeploy Vercel (cold start) — force koneksi baru
+--  1. Jika masih muncul EMAXCONNSESSION, restart pool dari Dashboard:
+--     Settings > Database > Reset connection pool (tunggu 1-2 menit)
 --  2. Pastikan .env pakai ?pgbouncer=true
---  3. Jika masih muncul error, restart dari Supabase Dashboard:
---     Settings > Database > Reset connection pool
+--  3. Redeploy Vercel (cold start) — force koneksi baru
 -- =====================================================================

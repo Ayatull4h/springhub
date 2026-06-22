@@ -3,7 +3,7 @@
 
 -- Password: ucup12345 (hash bcrypt cost 12, valid)
 -- Hash generated via: node -e "require('bcryptjs').hash('ucup12345',12).then(console.log)"
-INSERT INTO "Profile" (id, email, "passwordHash", username, role, points, "trustScore", region, "createdAt")
+INSERT INTO "Profile" (id, email, "passwordHash", username, role, points, "trustScore", region, "createdAt", "updatedAt")
 VALUES (
   gen_random_uuid(),
   'ucup@springhub.id',
@@ -13,6 +13,7 @@ VALUES (
   20168,
   50,
   'Jawa Timur',
+  NOW(),
   NOW()
 )
 ON CONFLICT ("email") DO UPDATE SET
@@ -20,4 +21,5 @@ ON CONFLICT ("email") DO UPDATE SET
   points = 20168,
   username = 'Ucup',
   role = 'volunteer',
-  region = 'Jawa Timur';
+  region = 'Jawa Timur',
+  "updatedAt" = NOW();
