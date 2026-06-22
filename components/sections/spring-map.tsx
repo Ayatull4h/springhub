@@ -11,12 +11,14 @@ import {
   Sparkles,
   Droplets,
   Loader2,
+  WifiOff,
 } from "lucide-react";
 import { type SpringStatus } from "@/lib/data";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
 import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { useDataSaver } from "@/lib/use-data-saver";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
@@ -75,6 +77,7 @@ type ReportItem = {
 
 export function SpringMap() {
   const { t } = useI18n();
+  const { isEnabled: dataSaver } = useDataSaver();
   const [showMonitoring, setShowMonitoring] = useState(true);
   const [showTreePlanting, setShowTreePlanting] = useState(true);
   const [showSeedling, setShowSeedling] = useState(true);
@@ -221,7 +224,17 @@ export function SpringMap() {
           </div>
         </div>
         <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
-          <LeafletMap reports={visible} />
+          {dataSaver ? (
+            <div className="flex h-full w-full items-center justify-center rounded-xl bg-ink/5 dark:bg-ink/10 text-center p-8">
+              <div>
+                <WifiOff className="mx-auto h-8 w-8 text-ink-muted" />
+                <p className="mt-2 text-sm text-ink-muted">Mode hemat data aktif.</p>
+                <p className="text-xs text-ink-subtle">Matikan data saver untuk melihat peta interaktif.</p>
+              </div>
+            </div>
+          ) : (
+            <LeafletMap reports={visible} />
+          )}
         </div>
       </div>
 

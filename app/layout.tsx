@@ -10,6 +10,7 @@ import Watermark from "@/components/layout/watermark";
 import { QueueWorker } from "@/components/queue-worker";
 import { ToastProvider } from "@/components/toast";
 import { ErrorBoundary } from "@/lib/error-boundary";
+import { DataSaverProvider } from "@/lib/use-data-saver";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -101,16 +102,18 @@ export default function RootLayout({
         <QueueWorker />
         <DarkModeProvider>
           <I18nProvider>
-            <ErrorBoundary>
-              <SiteHeader />
-            </ErrorBoundary>
-            <ErrorBoundary>
-              <main id="main-content">{children}</main>
-            </ErrorBoundary>
-            <ErrorBoundary>
-              <SiteFooter />
-            </ErrorBoundary>
-            <Watermark />
+            <DataSaverProvider>
+              <ErrorBoundary>
+                <SiteHeader />
+              </ErrorBoundary>
+              <ErrorBoundary>
+                <main id="main-content">{children}</main>
+              </ErrorBoundary>
+              <ErrorBoundary>
+                <SiteFooter />
+              </ErrorBoundary>
+              <Watermark />
+            </DataSaverProvider>
           </I18nProvider>
         </DarkModeProvider>
         </ToastProvider>

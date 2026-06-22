@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Globe, User, LayoutDashboard, LogOut, Sun, Moon, Bell, Menu, X } from "lucide-react";
+import { Globe, User, LayoutDashboard, LogOut, Sun, Moon, Bell, Menu, X, Wifi, WifiOff } from "lucide-react";
 import { Logo } from "./logo";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useDarkMode } from "@/lib/darkmode";
+import { useDataSaver } from "@/lib/use-data-saver";
 import { fetchAndCacheSession } from "@/lib/session-cache";
 
 type UserInfo = {
@@ -20,6 +21,7 @@ export function SiteHeader() {
   const router = useRouter();
   const { t, locale, setLocale } = useI18n();
   const { dark, toggle: toggleDark } = useDarkMode();
+  const { isEnabled, setOverride } = useDataSaver();
   const [user, setUser] = useState<UserInfo>(null);
   const [loading, setLoading] = useState(true);
   const [notifCount, setNotifCount] = useState(0);
@@ -97,6 +99,16 @@ export function SiteHeader() {
           >
             <Globe className="h-4 w-4" />
             {locale === "en" ? "ID" : "EN"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setOverride(isEnabled ? null : true)}
+            className="rounded-md p-2 text-ink-muted hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+            aria-label={isEnabled ? "Data saver aktif" : "Aktifkan data saver"}
+            title={isEnabled ? "Data saver aktif" : "Aktifkan data saver"}
+          >
+            {isEnabled ? <WifiOff className="h-4 w-4" /> : <Wifi className="h-4 w-4" />}
           </button>
 
           <button

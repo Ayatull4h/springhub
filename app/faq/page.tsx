@@ -38,13 +38,13 @@ const faqs = [
 
 export default function FAQPage() {
   return (
-    <div className="container-page py-16">
-      <h1 className="text-3xl font-bold text-ink">Frequently Asked Questions</h1>
+    <div className="container-page py-16 dark:text-slate-300">
+      <h1 className="text-3xl font-bold text-ink dark:text-white">Frequently Asked Questions</h1>
       <div className="mt-8 space-y-6">
         {faqs.map((faq) => (
-          <section key={faq.q}>
-            <h2 className="text-xl font-semibold text-ink">{faq.q}</h2>
-            <p className="mt-2 text-ink-muted">{faq.a}</p>
+          <section key={faq.q} className="rounded-xl border border-line bg-white dark:border-slate-700 dark:bg-slate-900 p-6">
+            <h2 className="text-xl font-semibold text-ink dark:text-white">{faq.q}</h2>
+            <p className="mt-2 text-ink-muted dark:text-slate-400">{faq.a}</p>
           </section>
         ))}
       </div>

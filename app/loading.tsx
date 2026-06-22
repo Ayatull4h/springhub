@@ -1,10 +1,14 @@
-export default function Loading() {
+import { HeroSkeleton, ImpactDashboardSkeleton, SpringMapSkeleton, VolunteerActivitiesSkeleton, LearningHubSkeleton, MediaSectionSkeleton } from "@/components/skeleton";
+
+export default function HomeLoading() {
   return (
-    <div className="flex min-h-[60vh] items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
-        <p className="text-sm text-ink-muted">Loading...</p>
-      </div>
-    </div>
+    <>
+      <HeroSkeleton />
+      <ImpactDashboardSkeleton />
+      <SpringMapSkeleton />
+      <VolunteerActivitiesSkeleton />
+      <LearningHubSkeleton />
+      <MediaSectionSkeleton />
+    </>
   );
 }
