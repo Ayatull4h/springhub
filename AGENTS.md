@@ -365,6 +365,14 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 | `/api/auth/*` (7 routes) | ✅ Siap | Login, register, logout, me, forgot/reset, claim-guest |
 | `/api/admin/*` (19 routes) | ✅ Siap | All admin CRUD + export |
 
+### 📦 New Files (Sesi 9)
+- `components/ui/skeleton.tsx` — base skeleton UI component
+- `components/skeleton/sections.tsx` — 14 layout-specific skeletons
+- `components/skeleton/index.ts` — barrel export
+- `lib/use-data-saver.tsx` — data saver hook + context/provider
+- `prisma/fix-ui.sql` — tambah manual test UI items
+- `prisma/fix-ucup.sql` — (fixed) akun ucup + updatedAt
+
 ### 📈 Progres Per Layer (Updated 1 Juni 2026)
 
 | Layer | % | Catatan |
@@ -381,11 +389,13 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 | PWA / SEO | 100% | Manifest, sitemap, OG image, service worker ✅ |
 | Anti-Spam | 100% | CSRF, rate limit, honey pot, time gate, daily limit ✅ |
 | Testing | 85% | 3 unit tests + 17 E2E specs + 5 k6 scenarios + 80 UAT test cases ✅ |
-| Dark Mode | 95% | Semua halaman + komponen, minor touch-up mungkin ada |
+| Dark Mode | 100% | Semua halaman + komponen + static pages ✅ |
+| Skeleton Loading | 100% | 14 layout-specific skeleton, semua loading.tsx ✅ |
+| Data Saver Mode | 100% | Hook + context + toggle header + map placeholder ✅ |
 | Report Toggle | 100% | Admin bisa active/inactive report, form inactive auto hide ✅ |
 | Offline PWA | 95% | Offline-first session cache, QueueWorker, IndexedDB sync ✅ |
 | Photo Rules | 100% | Min 3 / max 5, validasi submit, Report Issue gallery exception ✅ |
-| **Total** | **~92%** | **8% tersisa untuk production hardening** |
+| **Total** | **~94%** | **6% tersisa untuk production hardening + VPS migration** |
 
 ---
 
@@ -439,6 +449,34 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
   - Form inputs: donate form dark mode ✅
   - Global CSS: hover states, text-slate, shadows ✅
 - **Commit**: `a6a4dcf` — push ke `origin/master` ✅
+
+### 22 Juni 2026 — Sesi 9: Polish + Security Discussion
+- **Fokus**: Skeleton loading states, data saver mode, static pages dark mode, diskusi keamanan
+- **Skeleton loading**:
+  - `components/ui/skeleton.tsx` — base + helpers (Skeleton, SkeletonText, SkeletonCard, SkeletonStatCard, SkeletonMap, SkeletonAvatar) ✅
+  - `components/skeleton/sections.tsx` — 14 layout-specific skeleton (Hero, ImpactDashboard, SpringMap, VolunteerActivities, LearningHub, MediaSection, SpringDetail, AdminDashboard, Profile, ProjectsList, Form, Learn, Notifications) ✅
+  - Semua `loading.tsx` di-update: landing page (6 sections), profile, learn, notifications, admin, projects, projects/new, report/[slug] ✅
+- **Data Saver Mode**:
+  - `lib/use-data-saver.tsx` — hook + context provider ✅
+  - Deteksi otomatis `navigator.connection.saveData` ✅
+  - Manual override via localStorage + toggle di header (Wifi/WifiOff) ✅
+  - Integrasi di spring-map.tsx — placeholder "Mode hemat data" saat aktif ✅
+- **Static pages dark mode**:
+  - Help, FAQ, Privacy, Terms — card layout + dark mode classes ✅
+  - Typo fix: "exercice" → "melaksanakan" ✅
+- **SQL fixes**:
+  - `fix-ucup.sql`: tambah `updatedAt` + `NOW()` — perbaiki error "null value in column updatedAt" ✅
+  - `fix-pool.sql`: hapus `ALTER DATABASE pool_size` (tidak valid di Supabase) — ganti instruksi reset pool via Dashboard ✅
+- **Manual test**: 104 TC (88 existing + 8 Sesi 8 + 8 Sesi 9) ✅
+- **Diskusi keamanan**:
+  - 7 threat model khusus donasi: invoice manipulation, webhook spoofing, XSS, API key leak, donor data leakage, refund fraud, social engineering
+  - Prioritas: `XENDIT_SECRET_KEY` aman (rotasi, env var, 2FA) — lainnya follow-up
+  - VPS migration: Cloudflare WAF, Nginx hardening, PostgreSQL RLS manual, Docker isolation, fail2ban
+- **Commit**:
+  - `e417d49` — polish (skeleton, data saver, static pages)
+  - `286edee` — fix SQL (updatedAt, pool)
+  - `6bc049f` — manual test update
+  - `87150c3` — save PART-2, create MANUAL-TEST-PART-3.txt
 
 ### 22 Juni 2026 — Sesi 8: Consistency Pass + Bugfix Batch
 - **Fokus**: Perbaiki semua inkonsistensi dari manual test UAT
