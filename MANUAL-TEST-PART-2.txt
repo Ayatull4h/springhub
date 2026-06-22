@@ -4,7 +4,7 @@
 
 URL    : https://springhub.vercel.app/
 Tanggal: 22 Juni 2026
-Total  : 96 Test Case (88 existing + 8 baru Sesi 8)
+Total  : 104 Test Case (88 existing + 8 Sesi 8 + 8 baru Sesi 9)
 
 CARA PAKAI:
   [x] = Lolos
@@ -803,7 +803,95 @@ AKUN TEST:
               coba
     Catatan : -
 
-======================================================================
+=====================================================================
+   17. POLISH — SKELETON LOADING  ❇️ BARU (Sesi 9)
+=====================================================================
+
+[ ] TC-97 Landing page skeleton
+    Device  : Both
+    Langkah : 1. Buka incognito / hard refresh 2. Perhatikan loading
+              3. Lihat transisi
+    Harapan : Loading menampilkan skeleton hero, dashboard (4 stat
+              cards), map, activities, learning hub, media. Bukan
+              spinner "Loading..." doang. Transisi mulus ke konten
+              asli.
+    Catatan : Sesi 9: components/skeleton/sections.tsx — 6 skeleton
+              komponen untuk landing page. loading.tsx di-root.
+
+[ ] TC-98 Profile / Admin / Projects / Learn / Notifications skeleton
+    Device  : Both
+    Langkah : 1. Hard refresh di /profile  2. /admin  3. /projects
+              4. /learn  5. /notifications
+    Harapan : Masing-masing punya skeleton sesuai layout. Profile:
+              avatar + stat cards + activity list. Admin: header +
+              6 stat cards + table rows. Learn: 3 course cards.
+    Catatan : Sesi 9: setiap page punya loading.tsx sendiri dengan
+              layout-specific skeleton.
+
+[ ] TC-99 Form skeleton (report & project new)
+    Device  : Both
+    Langkah : 1. Hard refresh /report/spring-monitoring
+              2. /projects/new
+    Harapan : Form skeleton: 6 baris input field + submit button.
+              Bukan spinner doang.
+    Catatan : Sesi 9: FormSkeleton di report/[slug]/loading.tsx &
+              projects/new/loading.tsx
+
+=====================================================================
+   18. POLISH — DATA SAVER MODE  ❇️ BARU (Sesi 9)
+=====================================================================
+
+[ ] TC-100 Data saver toggle di header
+    Device  : Both
+    Langkah : 1. Lihat header kanan  2. Cari ikon Wifi (tidak
+              dicoret)  3. Klik  4. Lihat perubahan
+    Harapan : Ikon berubah jadi WifiOff (dicoret). Warna
+              berubah. Klik lagi kembali ke Wifi.
+    Catatan : Sesi 9: lib/use-data-saver.tsx — toggle via
+              setOverride(). Ikon Wifi / WifiOff dari lucide.
+
+[ ] TC-101 Data saver → map placeholder
+    Device  : Both
+    Langkah : 1. Aktifkan data saver  2. Scroll ke peta di landing
+              3. Cek tampilan
+    Harapan : Peta interaktif diganti placeholder: ikon WifiOff +
+              "Mode hemat data aktif. Matikan data saver untuk
+              melihat peta interaktif."
+    Catatan : Sesi 9: spring-map.tsx — conditional render based on
+              useDataSaver()
+
+[ ] TC-102 Data saver localStorage persistence
+    Device  : Both
+    Langkah : 1. Klik toggle data saver (on)  2. Refresh halaman
+              3. Cek ikon
+    Harapan : Setelah refresh, data saver tetap aktif (ikon
+              WifiOff). localStorage key "springhub:dataSaverOverride"
+              = "true"
+    Catatan : Sesi 9: use-data-saver.tsx — localStorage persistence
+              + deteksi navigator.connection.saveData otomatis
+
+=====================================================================
+   19. POLISH — STATIC PAGES DARK MODE  ❇️ BARU (Sesi 9)
+=====================================================================
+
+[ ] TC-103 Help & FAQ dark mode
+    Device  : Both
+    Langkah : 1. Aktifkan dark mode  2. Buka /help  3. /faq
+    Harapan : Semua teks terbaca (putih/abu-abu terang di background
+              gelap). Card layout dengan border. Tidak ada teks
+              tersembunyi di background gelap.
+    Catatan : Sesi 9: help/page.tsx & faq/page.tsx — dark:text-slate
+              classes + border + bg-slate-900
+
+[ ] TC-104 Privacy & Terms dark mode
+    Device  : Both
+    Langkah : 1. Aktifkan dark mode  2. Buka /privacy  3. /terms
+    Harapan : Sama seperti Help/FAQ. Card layout. Teks jelas. Typo
+              "exercice" sudah diganti "melaksanakan".
+    Catatan : Sesi 9: privacy/page.tsx & terms/page.tsx — + typo fix
+              "exercice" → "melaksanakan"
+
+=====================================================================
   RINGKASAN
 ======================================================================
 
@@ -825,9 +913,13 @@ Button & Navigasi                3        3        0        0
 Dummy Data (Demo)                5        5        0        0
 PWA Session Consistency          5        5        0        0
 Offline Photo Counter            3        0        0        3
+Skeleton Loading (Sesi 9)        3        0        0        3
+Data Saver Mode (Sesi 9)         3        0        0        3
+Static Pages Dark (Sesi 9)       2        0        0        2
 ----                          -----    -----    -----    -----
-TOTAL                           96       90        0        6
-* 6 TC perlu retest: TC-44,45,46 (PWA), TC-94,95,96 (photo)
+TOTAL                          104       90        0       14
+* 14 TC baru perlu test: TC-97 s/d TC-104
+* 6 TC retest: TC-44,45,46 (PWA), TC-94,95,96 (photo)
 * TC-32,36,42,43 sudah fixed Sesi 8, mark ulang jika lolos
 
 ======================================================================
@@ -885,5 +977,33 @@ TOTAL                           96       90        0        6
 12. ucup account (Sesi 8): Password "ucup12345" (8 char, tidak ditolak
     Zod). Points 20.168 (≥ threshold 20K untuk submit project). Update
     via seed (`prisma/seed.ts`) atau SQL (`prisma/fix-ucup.sql`).
+
+13. Skeleton loading (Sesi 9): `components/ui/skeleton.tsx` — base +
+    helpers. `components/skeleton/sections.tsx` — 14 layout-specific
+    skeleton. Setiap page utama punya loading.tsx sendiri. Landing
+    page render 6 skeleton sections (hero, dashboard, map, activities,
+    learning hub, media).
+
+14. fix-ucup.sql (Sesi 9 — fixed): Tambah "updatedAt" + NOW() di ON
+    CONFLICT UPDATE. Sebelumnya error "null value in column updatedAt".
+    Jalanin ulang jika sebelumnya error.
+
+15. Data Saver Mode (Sesi 9): `lib/use-data-saver.tsx` — hook + context.
+    Deteksi otomatis `navigator.connection.saveData`. Manual override via
+    localStorage. Tombol di header (Wifi/WifiOff). Saat aktif, map
+    interaktif diganti placeholder. Bisa juga dipakai di komponen lain
+    untuk skip gambar berat / animasi.
+
+16. Static pages dark mode (Sesi 9): Help, FAQ, Privacy, Terms
+    di-upgrade dengan card layout + dark mode classes. Typo "exercice"
+    di privacy page → "melaksanakan". Semua konten terbaca di dark
+    mode.
+
+17. Pool Supabase (Sesi 9): Size max 3→5, idle timeout 10s→30s,
+    connection timeout 5s→10s. SQL fix di `prisma/fix-pool.sql` —
+    jalanin di Supabase Dashboard untuk terminate idle connections.
+    JANGAN jalankan ALTER DATABASE (sudah dihapus — tidak valid di
+    Supabase). Jika masih EMAXCONNSESSION: Dashboard > Database >
+    Reset connection pool.
 
 ======================================================================
