@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send } from "lucide-react";
 import { offlineDB } from "@/lib/offline-db";
 import { getForm, getFormTitle, type FormField, type FormSchema } from "@/lib/forms";
@@ -69,21 +69,6 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       );
     }
   }, [selectedForm]);
-
-  // Gunakan ref untuk menghindari stale closure pada handlePhotoChange
-  const photoFilesRef = useRef(photoFiles);
-  photoFilesRef.current = photoFiles;
-
-  function handlePhotoChange(fieldId: string, files: FileList | null, inputEl?: HTMLInputElement) {
-    if (!files || files.length === 0) return;
-    const current = photoFilesRef.current[fieldId] || [];
-    const remaining = 5 - current.length;
-    const toAdd = Array.from(files).slice(0, remaining);
-    if (toAdd.length === 0) return;
-    setPhotoFiles(prev => ({ ...prev, [fieldId]: [...(prev[fieldId] || []), ...toAdd] }));
-    // Reset nilai input agar onChange tetap terpanggil untuk file berikutnya (mobile)
-    if (inputEl) inputEl.value = "";
-  }
 
   function removePhoto(fieldId: string, index: number) {
     setPhotoFiles(prev => {
@@ -352,11 +337,22 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 </div>
                 {(photoFiles[field.id] || []).length < 5 && (
                   <input
+                    key={`${field.id}-${(photoFiles[field.id] || []).length}`}
                     type="file"
                     accept="image/*"
                     capture="environment"
                     multiple
-                    onChange={(e) => handlePhotoChange(field.id, e.target.files, e.currentTarget)}
+                    onChange={(e) => {
+                      const files = e.target.files;
+                      if (files && files.length > 0) {
+                        setPhotoFiles(prev => {
+                          const current = prev[field.id] || [];
+                          const remaining = 5 - current.length;
+                          const toAdd = Array.from(files).slice(0, remaining);
+                          return { ...prev, [field.id]: [...current, ...toAdd] };
+                        });
+                      }
+                    }}
                     className="mt-1 block w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700"
                   />
                 )}

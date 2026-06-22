@@ -13,7 +13,7 @@ CARA PAKAI:
 
 AKUN TEST:
   - Guest      : (tanpa login)
-  - Volunteer 1: ucup@springhub.id / ucup123
+  - Volunteer 1: ucup@springhub.id / ucup12345 (Sesi 8: password fix 8 char + 20.168 pts)
   - Volunteer 2: volunteer@springhub.id / vol12345
   - Admin      : admin@springhub.id / admin123
 
@@ -250,8 +250,9 @@ AKUN TEST:
     Device  : Both
     Langkah : 1. /springs/[id]  2. Scroll halaman
     Harapan : Nama spring, lokasi, stats, mini map, timeline, galeri
-    Catatan : Jika "spring tidak ditemukan" → seed data mungkin belum
-              ada
+    Catatan : Fixed Sesi 8: ganti staticmap.openstreetmap.de →
+              Leaflet dynamic import. Mini map pake tile OSM langsung.
+              Tidak lagi "Peta tidak dapat dimuat".
 
 [x] TC-33 Timeline
     Device  : Both
@@ -277,8 +278,9 @@ AKUN TEST:
 [x] TC-36 Mini map
     Device  : Both
     Langkah : 1. /springs/[id]  2. Scroll antara hero dan timeline
-    Harapan : Mini map dengan pin. Map statis
-    Catatan : Fixed Sesi 7: OSM langsung (skip Mapbox)
+    Harapan : Mini map dengan pin. Map interaktif (Leaflet)
+    Catatan : Fixed Sesi 8: ganti staticmap → Leaflet dynamic import.
+              Zoom & drag nonaktif (hanya tampilan). Tile OSM resmi.
 
 ======================================================================
   5. OFFLINE MODE (PWA)
@@ -345,15 +347,17 @@ AKUN TEST:
               6. Submit <3 foto
     Harapan : Kamera langsung. Counter X/5 naik tiap upload.
               Submit ditolak <3 foto. Submit sukses >=3 foto.
-    Catatan : Fixed Sesi 8: stale closure di handlePhotoChange —
-              ganti useCallback → function + useRef + input.value reset
+    Catatan : Fixed Sesi 8 (v2): samakan approach dgn online form —
+              key re-mount + inline setPhotoFiles(prev => ...).
+              Tidak pakai useRef / input.value reset lagi.
 
 [x] TC-43 Simpan form offline
     Device  : HP
     Langkah : 1. Mode offline  2. Isi form 3+ foto  3. Klik Simpan
     Harapan : Data masuk IndexedDB. Halaman sukses. Tombol "Isi
               Lagi" dan "Selesai"
-    Catatan : Fixed Sesi 7: submitting state + try/catch + error
+    Catatan : Sebelumnya terblokir TC-42 (foto 0). Fixed Sesi 8 (v2):
+              key re-mount. Perlu retest.
 
 [x] TC-44 Sync otomatis saat online
     Device  : HP
@@ -816,17 +820,22 @@ Dashboard & Data Real-time       4        4        0
 Trust Score Management           6        6        0
 Button & Navigasi                3        3        0
 Dummy Data (Demo)                5        5        0
-PWA Session Consistency          5        0        0  ❇️ BARU
-Offline Photo Counter            3        0        0  ❇️ BARU
+PWA Session Consistency          5        0        0  ❇️ BARU (Sesi 8)
+Offline Photo Counter            3        0        0  ❇️ BARU (Sesi 8)
 ----                          -----    -----    -----
-TOTAL                           96       88        0  +8 test case
+TOTAL                           96       88        0  8 TC baru perlu retest
+                                 3 bug fix perlu retest (TC-32,36,42)
 
 ======================================================================
   CATATAN PENTING
 ======================================================================
 
-1. Password volunteer: Jika vol123 gagal, coba vol12345 — seed
-   mungkin belum jalan.
+1. Akun test:
+   - ucup@springhub.id / ucup12345 (Sesi 8: password min 8 char + 20.168 pts)
+   - volunteer@springhub.id / vol12345
+   - admin@springhub.id / admin123
+   - Jalankan `prisma/fix-ucup.sql` di Supabase SQL Editor jika seed belum
+     diupdate, atau re-run `npx prisma db seed`.
 
 2. Connection pool: Pool size 3→10, idle timeout 10s→30s (fix Sesi 6).
    Jika masih muncul error pool, restart Vercel cold start.
@@ -850,9 +859,11 @@ TOTAL                           96       88        0  +8 test case
    gak dikirim di PWA, fallback ke IndexedDB. Session di-cache saat:
    login, register, dan tiap SiteHeader mount.
 
-8. Offline photo counter (Sesi 8): Fix stale closure — ganti useCallback
-   + photoFiles dependency → useRef + function biasa + input.value reset
-   setelah tiap upload. Sekarang counter selalu naik dengan benar.
+8. Offline photo counter (Sesi 8 v2): Samakan approach dengan online form
+   — key re-mount (`key={`${field.id}-${count}`}`) + inline functional
+   updater `setPhotoFiles(prev => ...)`. Tidak pakai useRef / reset value
+   lagi. Terbukti work di online form (TC-51 ✅), sekarang offline juga
+   pakai pattern yang sama.
 
 9. Middleware (Sesi 8): Tidak lagi redirect /profile dan /projects/new.
    Proteksi hanya di /admin. Pages handle auth sendiri client-side
@@ -861,5 +872,14 @@ TOTAL                           96       88        0  +8 test case
 10. Build: backup/ di-exclude dari tsconfig. Backup .ts file di-rename
     ke .ts.skip agar build Vercel tidak error. Build lulus dengan
     zero TypeScript errors.
+
+11. Mini map (Sesi 8): Ganti staticmap.openstreetmap.de (sering error)
+    dengan Leaflet dynamic import (`components/map/mini-map.tsx`).
+    Tile pake {s}.tile.openstreetmap.org resmi. zoomControl & dragging
+    nonaktif biar kaya gambar statis.
+
+12. ucup account (Sesi 8): Password "ucup12345" (8 char, tidak ditolak
+    Zod). Points 20.168 (≥ threshold 20K untuk submit project). Update
+    via seed (`prisma/seed.ts`) atau SQL (`prisma/fix-ucup.sql`).
 
 ======================================================================

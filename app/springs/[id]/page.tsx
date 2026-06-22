@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   ArrowLeft,
   Droplets,
@@ -22,6 +23,17 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { formatNumber } from "@/lib/utils";
+
+// MiniMap — dynamic import agar react-leaflet tidak di-render di server
+const MiniMap = dynamic(() => import("@/components/map/mini-map"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex aspect-[4/1] w-full items-center justify-center rounded-lg bg-slate-100 text-xs text-ink-muted dark:bg-slate-800">
+      <MapPin className="mx-auto h-5 w-5 text-ink-subtle" />
+      <p className="ml-2">Memuat peta...</p>
+    </div>
+  ),
+});
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
@@ -191,39 +203,8 @@ function PhotoModal({
 }
 
 // ─── Mini Map ─────────────────────────────────────────────────────────────
-
-function MiniMap({ lat, lng }: { lat: number; lng: number }) {
-  const [mapError, setMapError] = useState(false);
-  const osmUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=13&size=800x200&markers=${lat},${lng},red-pushpin`;
-
-  if (mapError) {
-    return (
-      <div className="flex aspect-[4/1] w-full items-center justify-center rounded-lg bg-slate-100 text-xs text-ink-muted dark:bg-slate-800">
-        <div className="text-center">
-          <MapPin className="mx-auto mb-1 h-5 w-5 text-ink-subtle" />
-          <p>Peta tidak dapat dimuat</p>
-          <p className="mt-1 text-xs text-ink-subtle">
-            {lat.toFixed(4)}, {lng.toFixed(4)}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="aspect-[4/1] w-full overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
-      <Image
-        src={osmUrl}
-        alt="Peta lokasi"
-        width={800}
-        height={200}
-        className="h-full w-full object-cover"
-        onError={() => setMapError(true)}
-        unoptimized
-      />
-    </div>
-  );
-}
+// Diganti dengan Leaflet (dynamic import) — lebih stabil dari static map image.
+// Lihat dynamic import di atas.
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────
 

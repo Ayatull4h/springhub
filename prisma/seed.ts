@@ -17,6 +17,7 @@ async function main() {
   // ── 1. Create test users ───────────────────────────────────────────────
   const adminPw = await bcrypt.hash("admin123", 12);
   const volunteerPw = await bcrypt.hash("vol12345", 12);
+  const ucupPw = await bcrypt.hash("ucup12345", 12); // min 8 char
 
   const admin = await prisma.profile.upsert({
     where: { email: "admin@springhub.id" },
@@ -45,7 +46,21 @@ async function main() {
     },
   });
 
-  console.log(`   ✅ Users: admin@springhub.id, volunteer@springhub.id`);
+  const ucup = await prisma.profile.upsert({
+    where: { email: "ucup@springhub.id" },
+    update: { passwordHash: ucupPw },
+    create: {
+      email: "ucup@springhub.id",
+      passwordHash: ucupPw,
+      username: "Ucup",
+      role: "volunteer",
+      points: 20168,
+      trustScore: 50,
+      region: "Jawa Timur",
+    },
+  });
+
+  console.log(`   ✅ Users: admin@springhub.id, volunteer@springhub.id, ucup@springhub.id`);
 
   // ── 2. Create courses with educational content ─────────────────────────
   const courses = [
