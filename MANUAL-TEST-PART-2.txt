@@ -3,7 +3,7 @@
 ======================================================================
 
 URL    : https://springhub.vercel.app/
-Tanggal: 21 Juni 2026
+Tanggal: 22 Juni 2026
 Total  : 96 Test Case (88 existing + 8 baru Sesi 8)
 
 CARA PAKAI:
@@ -359,26 +359,29 @@ AKUN TEST:
     Catatan : Sebelumnya terblokir TC-42 (foto 0). Fixed Sesi 8 (v2):
               key re-mount. Perlu retest.
 
-[x] TC-44 Sync otomatis saat online
+[ ] TC-44 Sync otomatis saat online
     Device  : HP
     Langkah : 1. Simpan offline  2. Hidupkan internet  3. Tunggu
               4. Lihat notif
     Harapan : QueueWorker upload otomatis. Toast sukses
-    Catatan : Fixed Sesi 7: QueueWorker polling 10s + toast
+    Catatan : Sebelumnya blokir TC-42. Sesi 8 TC-42 fixed. Perlu
+              retest.
 
-[x] TC-45 Cleanup IndexedDB setelah sync
+[ ] TC-45 Cleanup IndexedDB setelah sync
     Device  : HP
     Langkah : 1. Sync sukses  2. DevTools > IndexedDB  3. Cek data
     Harapan : Data offline terhapus otomatis
-    Catatan : Fixed Sesi 7: data terhapus setelah sync sukses
+    Catatan : Sebelumnya blokir TC-42. Sesi 8 TC-42 fixed. Perlu
+              retest.
 
-[x] TC-46 PWA langsung ke /offline
+[ ] TC-46 PWA langsung ke /offline
     Device  : Both
     Langkah : 1. Install PWA  2. Buka PWA langsung (tanpa internet)
               3. Cek session
     Harapan : PWA bisa akses /offline tanpa internet. Session cache
               dari IndexedDB
-    Catatan : Fixed Sesi 6-8
+    Catatan : Sebelumnya blokir TC-42. Sesi 8 TC-42 fixed. Perlu
+              retest.
 
 [x] TC-47 Offline tanpa session
     Device  : Both
@@ -804,27 +807,28 @@ AKUN TEST:
   RINGKASAN
 ======================================================================
 
-Area                          Total    Lolos    Gagal
-----                          -----    -----    -----
-Guest Flow                      10       10        0
-Volunteer/User Flow              9        9        0
-Admin Flow                      10       10        0
-Spring Detail Page               7        7        0
-Offline Mode (PWA)              11       11        0
-Aturan Foto                      9        9        0
-Timestamp                        2        2        0
-Field Lead — Sudah Dihapus       2        2        0
-Media Links                      6        6        0
-Aksesibilitas                    4        4        0
-Dashboard & Data Real-time       4        4        0
-Trust Score Management           6        6        0
-Button & Navigasi                3        3        0
-Dummy Data (Demo)                5        5        0
-PWA Session Consistency          5        0        0  ❇️ BARU (Sesi 8)
-Offline Photo Counter            3        0        0  ❇️ BARU (Sesi 8)
-----                          -----    -----    -----
-TOTAL                           96       88        0  8 TC baru perlu retest
-                                 3 bug fix perlu retest (TC-32,36,42)
+Area                          Total    Lolos    Gagal    Belum
+----                          -----    -----    -----    -----
+Guest Flow                      10       10        0        0
+Volunteer/User Flow              9        9        0        0
+Admin Flow                      10       10        0        0
+Spring Detail Page               7        7        0        0
+Offline Mode (PWA)              11        8        0        3
+Aturan Foto                      9        9        0        0
+Timestamp                        2        2        0        0
+Field Lead — Sudah Dihapus       2        2        0        0
+Media Links                      6        6        0        0
+Aksesibilitas                    4        4        0        0
+Dashboard & Data Real-time       4        4        0        0
+Trust Score Management           6        6        0        0
+Button & Navigasi                3        3        0        0
+Dummy Data (Demo)                5        5        0        0
+PWA Session Consistency          5        5        0        0
+Offline Photo Counter            3        0        0        3
+----                          -----    -----    -----    -----
+TOTAL                           96       90        0        6
+* 6 TC perlu retest: TC-44,45,46 (PWA), TC-94,95,96 (photo)
+* TC-32,36,42,43 sudah fixed Sesi 8, mark ulang jika lolos
 
 ======================================================================
   CATATAN PENTING
