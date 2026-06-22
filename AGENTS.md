@@ -440,6 +440,17 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
   - Global CSS: hover states, text-slate, shadows ✅
 - **Commit**: `a6a4dcf` — push ke `origin/master` ✅
 
+### 22 Juni 2026 — Sesi 8: Consistency Pass + Bugfix Batch
+- **Fokus**: Perbaiki semua inkonsistensi dari manual test UAT
+- **Fix 1 — Offline Photo Counter (TC-42)**: Stale closure di `handlePhotoChange`. Ganti `useCallback` + `useRef` + `input.value = ""` dengan **key re-mount** + **inline functional updater** (sama persis dgn online form). Terbukti work di online form, sekarang offline juga pakai pattern yang sama.
+- **Fix 2 — Mini Map (TC-32/36)**: `staticmap.openstreetmap.de` sering error "Peta tidak dapat dimuat". Ganti dengan **Leaflet dynamic import** (`components/map/mini-map.tsx`). Tile OSM resmi, stabil.
+- **Fix 3 — PWA Session**: `lib/session-cache.ts` — utility `fetchAndCacheSession()`. Urutan: API → IndexedDB. Fallback ke cache jika cookie gak dikirim di PWA standalone.
+- **Fix 4 — Middleware**: Hapus redirect `/profile` dan `/projects/new` dari middleware. Biarkan client-side handle auth dgn fallback IndexedDB.
+- **Fix 5 — ucup account**: Password `ucup123` (7 char) ditolak Zod → ganti `ucup12345` (8 char). Points 20.168 (≥20K untuk submit project). Seed + SQL migration.
+- **Fix 6 — Build**: Rename backup `.ts` → `.ts.skip`, tambah `backup` ke `tsconfig.exclude`. Build sekarang lulus.
+- **Catatan**: User test pake Safari Apple iOS, bukan Chrome Android. Pool Supabase kadang masih EMAXCONNSESSION.
+- **Manual test**: 96 TC (88 existing + 8 baru). Ringkasan di `MANUAL-TEST-PART-2.txt`.
+
 ### 15 Juni 2026 — Sesi 5: MCP Fix + Code Audit
 - **Diskusi**: User minta review MANUAL-TEST-UAT.md dan seluruh kode
 - **Temuan MCP**: 2 server mati karena path masih `Y:\PC\Downloads\jaga semesta` tapi proyek pindah ke `C:\jaga semesta`
