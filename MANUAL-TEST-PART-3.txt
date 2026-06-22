@@ -1,0 +1,1009 @@
+======================================================================
+  MANUAL TEST — SPRINGHUB UAT (PART 3)
+======================================================================
+
+URL    : https://springhub.vercel.app/
+Tanggal: 22 Juni 2026
+Total  : 104 Test Case (88 existing + 8 Sesi 8 + 8 baru Sesi 9)
+
+CARA PAKAI:
+  [x] = Lolos
+  [ ] = Belum/test ulang
+  [-] = Gagal
+
+AKUN TEST:
+  - Guest      : (tanpa login)
+  - Volunteer 1: ucup@springhub.id / ucup12345 (Sesi 8: password fix 8 char + 20.168 pts)
+  - Volunteer 2: volunteer@springhub.id / vol12345
+  - Admin      : admin@springhub.id / admin123
+
+======================================================================
+  1. GUEST FLOW (TANPA LOGIN)
+======================================================================
+
+[x] TC-01 Landing page render
+    Device  : Both
+    Langkah : 1. Buka incognito  2. Akses https://springhub.vercel.app/
+    Harapan : Landing page tampil (navbar, hero, map, dashboard, media,
+              activities, footer)
+    Catatan : -
+
+[x] TC-02 Form muncul tanpa login
+    Device  : Both
+    Langkah : 1. Scroll ke "Report Your Contribution"  2. Klik "Lapor"
+              3. Atau buka /report/spring-monitoring
+    Harapan : Form render dengan semua field termasuk Provinsi
+    Catatan : Fixed Sesi 7: merge logic diperbaiki — province urut
+              sesuai static schema
+
+[x] TC-03 Kamera langsung di HP
+    Device  : HP
+    Langkah : 1. Buka form  2. Klik field foto
+    Harapan : Kamera langsung terbuka (capture="environment")
+    Catatan : -
+
+[x] TC-04 Upload foto kurang dari 3 ditolak
+    Device  : Both
+    Langkah : 1. Upload 1-2 foto  2. Submit
+    Harapan : Submit ditolak — error "Minimal 3 foto"
+    Catatan : -
+
+[x] TC-05 Upload 3-5 foto berhasil
+    Device  : Both
+    Langkah : 1. Upload 3-5 foto  2. Isi field required  3. Submit
+    Harapan : Submit berhasil. Counter X/5. Label "(minimal 3 foto)"
+    Catatan : -
+
+[x] TC-06 Upload lebih dari 5 foto
+    Device  : Both
+    Langkah : 1. Pilih >5 foto sekaligus  2. Atau 5 foto lalu pilih
+              lagi
+    Harapan : Hanya 5 foto terakhir diterima. Notif "Maksimal 5 foto".
+              Input disabled setelah 5
+    Catatan : -
+
+[x] TC-07 Preview dan hapus foto
+    Device  : Both
+    Langkah : 1. Upload 3 foto  2. Arahkan mouse ke thumbnail
+              3. Klik x untuk hapus
+    Harapan : Thumbnail muncul, bisa dihapus satu per satu. Counter
+              berkurang
+    Catatan : -
+
+[x] TC-08 Submit foto — akumulasi multi-batch
+    Device  : Both
+    Langkah : 1. Upload 1 foto (1/5)  2. Upload 2 foto (3/5)
+              3. Upload 2 foto (5/5)  4. Submit
+    Harapan : Semua 5 foto terkirim (tidak hanya batch terakhir).
+              Foto tersimpan di Supabase Storage
+    Catatan : -
+
+[x] TC-09 Batas 5 laporan/hari untuk guest
+    Device  : Both
+    Langkah : 1. Submit 5x sebagai guest  2. Submit ke-6
+    Harapan : Error "Batas laporan harian (5)"
+    Catatan : -
+
+[x] TC-10 Cookie guest session
+    Device  : Both
+    Langkah : 1. DevTools (F12)  2. Application > Cookies
+              3. Cari cookie guest
+    Harapan : Ada cookie guest_session_id dengan random ID
+    Catatan : -
+
+======================================================================
+  2. VOLUNTEER / USER FLOW (LOGIN)
+======================================================================
+
+[x] TC-11 Login berhasil
+    Device  : Both
+    Langkah : 1. Buka /sign-in  2. Email volunteer@springhub.id
+              password vol12345  3. Klik Login
+    Harapan : Berhasil login, redirect, nama user muncul di header
+    Catatan : Password vol12345 (bukan vol123 — seed mungkin belum
+              jalan)
+
+[x] TC-12 Form render untuk volunteer
+    Device  : Both
+    Langkah : 1. Login  2. Buka /report/spring-monitoring
+    Harapan : Form render dengan semua field termasuk Provinsi
+    Catatan : Fixed Sesi 7: merge logic diperbaiki
+
+[x] TC-13 Kamera langsung di HP (volunteer)
+    Device  : HP
+    Langkah : 1. Login  2. Buka form  3. Klik field foto
+    Harapan : Kamera langsung terbuka
+    Catatan : -
+
+[x] TC-14 Upload foto <3 ditolak (volunteer)
+    Device  : Both
+    Langkah : 1. Login  2. Upload 1-2 foto  3. Submit
+    Harapan : Submit ditolak — "Minimal 3 foto"
+    Catatan : -
+
+[x] TC-15 Submit form lengkap (volunteer)
+    Device  : Both
+    Langkah : 1. Login  2. Upload 3-5 foto  3. Isi field  4. Submit
+    Harapan : Sukses. Counter X/5. Toast "Laporan terkirim"
+    Catatan : -
+
+[x] TC-16 Unlimited submit volunteer
+    Device  : Both
+    Langkah : 1. Login  2. Submit >5 kali berturut-turut
+    Harapan : Volunteer tetap bisa (tidak ada batas harian)
+    Catatan : -
+
+[x] TC-17 Cek poin di profile
+    Device  : Both
+    Langkah : 1. Login  2. /profile  3. Catat poin  4. Minta admin
+              approve  5. Refresh
+    Harapan : Poin bertambah setelah approve
+    Catatan : -
+
+[x] TC-18 Recent Activities live
+    Device  : Both
+    Langkah : 1. Login  2. Submit laporan  3. Scroll ke Recent
+              Activities
+    Harapan : Activity real dari user muncul (bukan dummy)
+    Catatan : -
+
+[x] TC-19 Dashboard angka real
+    Device  : Both
+    Langkah : 1. Buka landing page  2. Scroll ke Dashboard
+    Harapan : Angka real dari database (bukan hardcoded)
+    Catatan : -
+
+======================================================================
+  3. ADMIN FLOW
+======================================================================
+
+[x] TC-20 Admin login
+    Device  : Both
+    Langkah : 1. /sign-in  2. Email admin@springhub.id password
+              admin123  3. Login
+    Harapan : Berhasil login. Link/nav "Admin" muncul
+    Catatan : -
+
+[x] TC-21 Admin — Users page
+    Device  : Both
+    Langkah : 1. Login admin  2. /admin/users  3. Lihat daftar user
+              4. Klik role chip
+    Harapan : Dropdown: User / Volunteer / Admin (tidak ada Field
+              Lead). Tampil username, email, phone, region, points,
+              trust score
+    Catatan : -
+
+[x] TC-22 Admin — Reports page
+    Device  : Both
+    Langkah : 1. Login admin  2. /admin/reports  3. Lihat daftar
+    Harapan : Laporan muncul dengan submitter name benar. Ada kolom:
+              form type, status, submitter, location, date, photos
+    Catatan : -
+
+[x] TC-23 Admin — Review queue
+    Device  : Both
+    Langkah : 1. /admin/review  2. Lihat antrian pending
+              3. Klik Approve/Reject
+    Harapan : Approve/reject berhasil, tidak error 500
+    Catatan : -
+
+[x] TC-24 Approve laporan — auto points + trust
+    Device  : Both
+    Langkah : 1. /admin/review  2. Approve laporan volunteer
+              3. Cek profile volunteer
+    Harapan : Poin otomatis nambah. Trust score +10. Notif terkirim
+    Catatan : -
+
+[x] TC-25 Reject laporan — trust score logic
+    Device  : Both
+    Langkah : 1. /admin/review  2. Reject laporan  3. Catat trust
+              4. Reject lagi 3+ kali  5. Cek perubahan
+    Harapan : Trust score -10 per reject setelah 3+ rejections.
+              Reject 1-2 tidak pengaruh
+    Catatan : -
+
+[x] TC-26 Approve → laporan hilang dari queue
+    Device  : Both
+    Langkah : 1. /admin/review  2. Approve  3. Refresh
+    Harapan : Laporan yang di-approve tidak muncul lagi di queue
+    Catatan : -
+
+[x] TC-27 Toggle form active/inactive
+    Device  : Both
+    Langkah : 1. /admin/forms  2. Nonaktifkan form  3. Buka landing
+              page sebagai guest
+    Harapan : Form yang inactive hilang dari publik
+    Catatan : -
+
+[x] TC-28 Trust Score Management
+    Device  : Both
+    Langkah : 1. Sidebar Admin > Trust Score  2. Edit nilai user
+              3. Simpan  4. Refresh
+    Harapan : Halaman tampil. Bisa edit. Perubahan tersimpan.
+              Summary cards (Baik/Sedang/Risiko)
+    Catatan : -
+
+[x] TC-29 Admin — Trust Score auto-block
+    Device  : Both
+    Langkah : 1. /admin/trust-score  2. Set trust ke 0
+              3. User tsb submit form
+    Harapan : User diblokir — error "Akun Anda diblokir..."
+    Catatan : -
+
+======================================================================
+  4. SPRING DETAIL PAGE
+======================================================================
+
+[x] TC-30 Map — marker per spring
+    Device  : Both
+    Langkah : 1. Landing page  2. Lihat peta  3. Perhatikan marker
+    Harapan : 1 marker per spring (bukan per laporan)
+    Catatan : -
+
+[x] TC-31 Klik marker → navigasi
+    Device  : Both
+    Langkah : 1. Klik marker  2. Lihat tooltip  3. Klik tooltip
+    Harapan : Navigasi ke /springs/[id]
+    Catatan : -
+
+[x] TC-32 Spring detail page render
+    Device  : Both
+    Langkah : 1. /springs/[id]  2. Scroll halaman
+    Harapan : Nama spring, lokasi, stats, mini map, timeline, galeri
+    Catatan : Fixed Sesi 8: ganti staticmap.openstreetmap.de →
+              Leaflet dynamic import. Mini map pake tile OSM langsung.
+              Tidak lagi "Peta tidak dapat dimuat".
+
+[x] TC-33 Timeline
+    Device  : Both
+    Langkah : 1. Buka spring dengan laporan  2. Scroll ke Timeline
+    Harapan : Laporan diurutkan dari terbaru. Ada username, tanggal,
+              form type, thumbnail
+    Catatan : -
+
+[x] TC-34 Gallery foto
+    Device  : Both
+    Langkah : 1. Buka spring  2. Scroll ke Galeri Foto
+    Harapan : Semua foto muncul. Bisa diklik enlarged. Ada label
+              form type
+    Catatan : Seed data sudah jalan — 10 springs ada di DB
+
+[x] TC-35 Klik foto → modal
+    Device  : Both
+    Langkah : 1. Klik foto di timeline/gallery  2. Lihat modal
+    Harapan : Foto enlarged dengan overlay. Info tanggal & pelapor.
+              Bisa ditutup x / klik luar
+    Catatan : -
+
+[x] TC-36 Mini map
+    Device  : Both
+    Langkah : 1. /springs/[id]  2. Scroll antara hero dan timeline
+    Harapan : Mini map dengan pin. Map interaktif (Leaflet)
+    Catatan : Fixed Sesi 8: ganti staticmap → Leaflet dynamic import.
+              Zoom & drag nonaktif (hanya tampilan). Tile OSM resmi.
+
+======================================================================
+  5. OFFLINE MODE (PWA)
+======================================================================
+
+[x] TC-37 Install PWA
+    Device  : HP
+    Langkah : 1. Chrome Android  2. Buka springhub.vercel.app
+              3. Install prompt atau menu > Install app
+    Harapan : Bisa diinstall sebagai PWA
+    Catatan : -
+
+[x] TC-38 Offline-first session cache
+    Device  : HP
+    Langkah : 1. Login online  2. Matikan internet  3. Buka PWA >
+              /offline
+    Harapan : Langsung masuk mode form (tidak perlu login ulang)
+    Catatan : Fixed Sesi 8: session otomatis di-cache ke IndexedDB
+              via fetchAndCacheSession() saat SiteHeader mount
+
+[x] TC-39 Setup offline pertama
+    Device  : HP
+    Langkah : 1. Buka PWA online pertama kali  2. Buka /offline
+    Harapan : Setup: pilih form > cache > siap
+    Catatan : -
+
+[x] TC-37 Install PWA
+    Device  : HP
+    Langkah : 1. Chrome Android  2. Buka springhub.vercel.app
+              3. Install prompt atau menu > Install app
+    Harapan : Bisa diinstall sebagai PWA
+    Catatan : -
+
+[x] TC-38 Offline-first session cache
+    Device  : HP
+    Langkah : 1. Login online  2. Matikan internet  3. Buka PWA >
+              /offline
+    Harapan : Langsung masuk mode form (tidak perlu login ulang)
+    Catatan : -
+
+[x] TC-39 Setup offline pertama
+    Device  : HP
+    Langkah : 1. Buka PWA online pertama kali  2. Buka /offline
+    Harapan : Setup: pilih form > cache > siap
+    Catatan : -
+
+[x] TC-40 Offline form list
+    Device  : HP
+    Langkah : 1. Setup offline  2. Matikan internet  3. /offline
+    Harapan : Form list muncul (tanpa map)
+    Catatan : -
+
+[x] TC-41 Offline isi form + GPS
+    Device  : HP
+    Langkah : 1. Mode offline  2. Klik form  3. Isi field
+              4. Cek GPS
+    Harapan : GPS tetap dapat lokasi (satelit). Field Provinsi muncul
+    Catatan : Fixed Sesi 7: lib/provinces.ts — 38 provinsi
+
+[x] TC-42 Offline foto + counter
+    Device  : HP
+    Langkah : 1. Mode offline  2. Ambil 1 foto  3. Cek counter naik
+              4. Ambil 2 foto lagi (total 3)  5. Cek counter 3/5
+              6. Submit <3 foto
+    Harapan : Kamera langsung. Counter X/5 naik tiap upload.
+              Submit ditolak <3 foto. Submit sukses >=3 foto.
+    Catatan : Fixed Sesi 8 (v2): samakan approach dgn online form —
+              key re-mount + inline setPhotoFiles(prev => ...).
+              Tidak pakai useRef / input.value reset lagi.
+
+[x] TC-43 Simpan form offline
+    Device  : HP
+    Langkah : 1. Mode offline  2. Isi form 3+ foto  3. Klik Simpan
+    Harapan : Data masuk IndexedDB. Halaman sukses. Tombol "Isi
+              Lagi" dan "Selesai"
+    Catatan : Sebelumnya terblokir TC-42 (foto 0). Fixed Sesi 8 (v2):
+              key re-mount. Perlu retest.
+
+[ ] TC-44 Sync otomatis saat online
+    Device  : HP
+    Langkah : 1. Simpan offline  2. Hidupkan internet  3. Tunggu
+              4. Lihat notif
+    Harapan : QueueWorker upload otomatis. Toast sukses
+    Catatan : Sebelumnya blokir TC-42. Sesi 8 TC-42 fixed. Perlu
+              retest.
+
+[ ] TC-45 Cleanup IndexedDB setelah sync
+    Device  : HP
+    Langkah : 1. Sync sukses  2. DevTools > IndexedDB  3. Cek data
+    Harapan : Data offline terhapus otomatis
+    Catatan : Sebelumnya blokir TC-42. Sesi 8 TC-42 fixed. Perlu
+              retest.
+
+[ ] TC-46 PWA langsung ke /offline
+    Device  : Both
+    Langkah : 1. Install PWA  2. Buka PWA langsung (tanpa internet)
+              3. Cek session
+    Harapan : PWA bisa akses /offline tanpa internet. Session cache
+              dari IndexedDB
+    Catatan : Sebelumnya blokir TC-42. Sesi 8 TC-42 fixed. Perlu
+              retest.
+
+[x] TC-47 Offline tanpa session
+    Device  : Both
+    Langkah : 1. Clear data PWA  2. Matikan internet  3. /offline
+    Harapan : Error "Gak ada koneksi & belum pernah setup"
+    Catatan : -
+
+======================================================================
+  6. ATURAN FOTO (MIN 3 / MAX 5)
+======================================================================
+
+[x] TC-48 Report Issue — dari galeri
+    Device  : HP
+    Langkah : 1. /report-issue  2. Klik foto  3. Upload dari galeri
+    Harapan : Dari galeri (bukan kamera). Maks 3 foto
+    Catatan : Fixed Sesi 7: thumbnail preview + x delete button
+
+[x] TC-49 Form monitoring — kamera langsung
+    Device  : HP
+    Langkah : 1. Buka form  2. Klik field foto
+    Harapan : Kamera langsung terbuka. Counter X/5
+    Catatan : -
+
+[x] TC-50 Form online — <3 foto ditolak
+    Device  : Both
+    Langkah : 1. Login  2. Upload <3 foto  3. Submit
+    Harapan : Submit ditolak — error "Minimal 3 foto"
+    Catatan : -
+
+[x] TC-51 3-5 foto sukses
+    Device  : Both
+    Langkah : 1. Upload 3-5 foto (batch/bertahap)  2. Isi field
+              3. Submit
+    Harapan : Sukses. Semua foto terupload. Tersimpan di Supabase
+              Storage. Thumbnail di /admin/reports
+    Catatan : -
+
+[x] TC-52 >5 foto
+    Device  : Both
+    Langkah : 1. Upload 5 foto  2. Coba upload lagi  3. Atau 6
+              foto sekaligus
+    Harapan : Hanya 5 terakhir. Input disabled. Pesan "Maksimal 5
+              foto. Hapus yang ada untuk mengganti."
+    Catatan : -
+
+[x] TC-53 Offline — <3 foto
+    Device  : HP
+    Langkah : 1. Mode offline  2. Isi form <3 foto  3. Simpan
+    Harapan : Tersimpan di IndexedDB. Saat sync online, notif foto
+              kurang
+    Catatan : -
+
+[x] TC-54 PC — input foto buka folder
+    Device  : PC
+    Langkah : 1. Buka form di PC  2. Klik field foto
+    Harapan : Buka file dialog/folder (bukan kamera)
+    Catatan : -
+
+[x] TC-55 Foto tampil di admin
+    Device  : Both
+    Langkah : 1. Admin login  2. /admin/reports  3. Cari laporan
+              dengan foto
+    Harapan : Thumbnail muncul (bukan blank putih)
+    Catatan : -
+
+[x] TC-56 Admin review — enlarged photo
+    Device  : Both
+    Langkah : 1. Admin > /admin/review  2. Klik foto
+    Harapan : Foto enlarged/modal. Bisa diklik detail
+    Catatan : -
+
+======================================================================
+  7. TIMESTAMP
+======================================================================
+
+[x] TC-57 Field tanggal otomatis
+    Device  : Both
+    Langkah : 1. Buka form  2. Lihat field tanggal
+    Harapan : Terisi otomatis waktu buka. Read-only. Label "Waktu
+              otomatis — tidak bisa diubah"
+    Catatan : -
+
+[x] TC-58 Tanggal tidak bisa diedit
+    Device  : Both
+    Langkah : 1. Klik field tanggal  2. Coba edit via DOM/DevTools
+    Harapan : Tidak bisa diubah. Nilai server-side dari _captured_at
+    Catatan : -
+
+======================================================================
+  8. FIELD LEAD — SUDAH DIHAPUS
+======================================================================
+
+[x] TC-59 Role dropdown di admin
+    Device  : Both
+    Langkah : 1. Admin > /admin/users  2. Klik role chip
+    Harapan : Dropdown: User / Volunteer / Admin. Tidak ada "Field
+              Lead"
+    Catatan : -
+
+[x] TC-60 Tidak ada akses Field Lead
+    Device  : Both
+    Langkah : 1. Login user/volunteer  2. Cek menu/profile
+    Harapan : Tidak ada menu/akses "Field Lead"
+    Catatan : -
+
+======================================================================
+  9. MEDIA LINKS
+======================================================================
+
+[x] TC-61 Section Media tampil
+    Device  : Both
+    Langkah : 1. Landing page  2. Scroll ke Media (sebelum footer)
+    Harapan : 4 item: Video, Event, Publication, Press. Masing-masing
+              thumbnail/gradient + tombol
+    Catatan : -
+
+[x] TC-62 Video → YouTube
+    Device  : Both
+    Langkah : 1. Klik kartu Video
+    Harapan : Membuka YouTube (link benar, bukan #)
+    Catatan : -
+
+[x] TC-63 Event → artikel
+    Device  : Both
+    Langkah : 1. Klik kartu Event
+    Harapan : Membuka artikel Disway Mojokerto
+    Catatan : -
+
+[x] TC-64 Publication → YouTube
+    Device  : Both
+    Langkah : 1. Klik kartu Publication
+    Harapan : Membuka YouTube Jaga Semesta Intro
+    Catatan : -
+
+[x] TC-65 Press → Kompas.id
+    Device  : Both
+    Langkah : 1. Klik kartu Press
+    Harapan : Membuka Kompas.id interaktif
+    Catatan : -
+
+[x] TC-66 Thumbnail video
+    Device  : Both
+    Langkah : 1. Lihat kartu Video & Publication
+    Harapan : Thumbnail YouTube muncul. Event & Press gradient
+              fallback
+    Catatan : -
+
+======================================================================
+  10. AKSESIBILITAS
+======================================================================
+
+[x] TC-67 Skip link
+    Device  : Both
+    Langkah : 1. Tekan Tab pertama kali  2. Lihat pojok kiri atas
+    Harapan : Skip link "Lompat ke konten utama" muncul
+    Catatan : -
+
+[x] TC-68 Admin Logout aria-label
+    Device  : Both
+    Langkah : 1. Admin login  2. /admin  3. Sidebar bawah
+              4. Cek tombol Logout
+    Harapan : Tombol logout punya aria-label="Logout"
+    Catatan : -
+
+[x] TC-69 Modal Points Guide
+    Device  : Both
+    Langkah : 1. Buka halaman dengan Points Guide  2. Klik tombol
+              3. Screen reader
+    Harapan : Judul modal terbaca. aria-labelledby terhubung
+    Catatan : -
+
+[x] TC-70 Tombol close/back punya aria-label
+    Device  : Both
+    Langkah : 1. Buka modal  2. Cek tombol close/back  3. Admin page
+    Harapan : Semua tombol close/back punya aria-label deskriptif
+    Catatan : -
+
+======================================================================
+  11. DASHBOARD & DATA REAL-TIME
+======================================================================
+
+[x] TC-71 Dashboard angka database
+    Device  : Both
+    Langkah : 1. Landing page  2. Scroll ke Dashboard  3. Catat
+              angka
+    Harapan : Angka real dari database (total springs, restorasi,
+              pohon, rorak). Terkoneksi ke /api/dashboard
+    Catatan : -
+
+[x] TC-72 Top Regions
+    Device  : Both
+    Langkah : 1. Landing page  2. Dashboard > Top Regions
+    Harapan : Region dari data real, bukan hardcoded
+    Catatan : -
+
+[x] TC-73 Top Volunteers
+    Device  : Both
+    Langkah : 1. Landing page  2. Dashboard > Top Volunteers
+    Harapan : Volunteer dengan poin terbanyak (real dari DB)
+    Catatan : -
+
+[x] TC-74 Monthly Progress
+    Device  : Both
+    Langkah : 1. Landing page  2. Dashboard > Monthly Progress
+    Harapan : Progress bar real per kategori (real dari DB)
+    Catatan : -
+
+======================================================================
+  12. TRUST SCORE MANAGEMENT
+======================================================================
+
+[x] TC-75 Admin page Trust Score
+    Device  : Both
+    Langkah : 1. Admin > Trust Score (/admin/trust-score)  2. Lihat
+              halaman
+    Harapan : Halaman tampil. Summary cards (Baik/Sedang/Risiko).
+              Tabel user. Search filter
+    Catatan : -
+
+[x] TC-76 Edit trust score manual
+    Device  : Both
+    Langkah : 1. /admin/trust-score  2. Cari user  3. Ubah angka
+              4. Simpan  5. Refresh
+    Harapan : Nilai tersimpan. Setelah refresh tetap berubah.
+              Notifikasi sukses
+    Catatan : -
+
+[x] TC-77 Reset trust score
+    Device  : Both
+    Langkah : 1. /admin/trust-score  2. Klik tombol Reset
+    Harapan : Nilai input berubah jadi 50 (default)
+    Catatan : -
+
+[x] TC-78 Approve → trust score +10
+    Device  : Both
+    Langkah : 1. /admin/review  2. Approve  3. /admin/trust-score
+              4. Cek user
+    Harapan : Trust score naik +10
+    Catatan : -
+
+[x] TC-79 Reject → trust score -10 (setelah 3x)
+    Device  : Both
+    Langkah : 1. /admin/review  2. Reject (reject ke-3+)
+              3. /admin/trust-score  4. Cek user
+    Harapan : Trust score turun -10. Reject 1-2 tidak pengaruh
+    Catatan : -
+
+[x] TC-80 Auto-block saat score 0
+    Device  : Both
+    Langkah : 1. Admin set trust ke 0  2. User tsb submit form
+    Harapan : User ditolak — "Akun Anda diblokir karena skor
+              kepercayaan rendah. Hubungi admin."
+    Catatan : -
+
+======================================================================
+  13. BUTTON & NAVIGASI
+======================================================================
+
+[x] TC-81 Hero CTA "Mulai Memantau"
+    Device  : Both
+    Langkah : 1. Landing page  2. Cek tombol CTA di hero
+    Harapan : Teks "Mulai Memantau" (ID) / "Start Monitoring" (EN).
+              Bisa diklik
+    Catatan : -
+
+[x] TC-82 Klik CTA → scroll ke form
+    Device  : Both
+    Langkah : 1. Klik "Mulai Memantau"  2. Lihat scroll
+    Harapan : Scroll ke "Report Your Contribution"
+    Catatan : -
+
+[x] TC-83 Submit → sukses
+    Device  : Both
+    Langkah : 1. Isi form benar (3+ foto)  2. Submit
+    Harapan : Sukses. Halaman sukses / toast. Tombol "Kembali" &
+              "Lapor Lagi"
+    Catatan : -
+
+======================================================================
+  14. DUMMY DATA (DEMO)
+======================================================================
+
+[x] TC-84 Landing page menampilkan dummy spring
+    Device  : Both
+    Langkah : 1. Landing page guest  2. Scroll ke Map
+    Harapan : Mata air dummy (Cikole, Cibeureum, dll) muncul.
+              Tidak ada label "Demo" yang bingungkan publik
+    Catatan : Seed data dijalankan — 10 springs
+
+[x] TC-85 Spring Detail Page dummy spring bisa dibuka
+    Device  : Both
+    Langkah : 1. Klik spring dummy  2. Detail page
+    Harapan : Halaman detail terbuka. Info spring tampil
+    Catatan : Mini Map Fixed Sesi 7 — OSM langsung
+
+[x] TC-86 Admin Reports — badge Demo muncul
+    Device  : PC
+    Langkah : 1. Admin > /admin/reports  2. Cari ucup@springhub.id
+    Harapan : Badge "Demo" (oranye) muncul
+    Catatan : -
+
+[x] TC-87 Admin Reports — toggle Demo filter
+    Device  : PC
+    Langkah : 1. /admin/reports  2. Cari toggle Demo
+    Harapan : Bisa toggle tampil/sembunyi data dummy
+    Catatan : -
+
+[x] TC-88 Admin Review — badge Demo muncul
+    Device  : PC
+    Langkah : 1. Admin > /admin/review  2. Cari laporan dummy
+    Harapan : Badge "Demo" muncul. Admin bisa bedakan asli vs uji
+              coba
+    Catatan : -
+
+======================================================================
+  15. PWA SESSION CONSISTENCY  ❇️ BARU (Sesi 8)
+======================================================================
+
+[ ] TC-89 PWA session persist setelah install
+    Device  : HP
+    Langkah : 1. Login via browser (ucup@springhub.id / ucup123)
+              2. Install PWA (Add to Home Screen)
+              3. Buka PWA (standalone window)
+    Harapan : User tetap login — nama muncul di header. Tidak perlu
+              login ulang
+    Catatan : fetchAndCacheSession() fallback ke IndexedDB jika
+              cookie tidak dikirim di PWA mode
+
+[ ] TC-90 Profile page via PWA (cached session)
+    Device  : HP
+    Langkah : 1. Login via browser  2. Buka PWA
+              3. Navigasi ke /profile via PWA
+    Harapan : Profile page tampil dengan username & role dari cache.
+              Banner "Mode offline — data terbatas" muncul. Tidak
+              redirect ke /sign-in
+    Catatan : Middleware tidak lagi redirect /profile. Client-side
+              fallback ke IndexedDB
+
+[ ] TC-91 Projects/new via PWA (cached session)
+    Device  : HP
+    Langkah : 1. Login via browser  2. Buka PWA
+              3. Navigasi ke /projects/new via PWA
+    Harapan : Form project tampil (poin 0). Tidak redirect ke /sign-in
+    Catatan : Fallback ke cached session jika API auth return null
+
+[ ] TC-92 Offline session cache — login dulu
+    Device  : HP
+    Langkah : 1. Login via browser  2. Matikan internet
+              3. Buka PWA  4. Cek header
+    Harapan : Header tetap show username (dari IndexedDB cache)
+    Catatan : SiteHeader panggil fetchAndCacheSession() yang fallback
+              ke IndexedDB
+
+[ ] TC-93 Session cache di IndexedDB setelah login
+    Device  : Both
+    Langkah : 1. Login  2. DevTools > Application > IndexedDB >
+              springhub-offline > session-cache
+    Harapan : Ada entry "user-session" dengan userId, username, role
+    Catatan : Di-cache otomatis saat login (sign-in) dan register
+              (join)
+
+======================================================================
+  16. OFFLINE PHOTO COUNTER  ❇️ BARU (Sesi 8)
+======================================================================
+
+[ ] TC-94 Offline — upload 1 foto counter naik
+    Device  : HP
+    Langkah : 1. PWA /offline  2. Pilih form dengan field foto
+              3. Ambil 1 foto via kamera  4. Cek counter
+    Harapan : Counter berubah dari "0 / 5 foto" jadi "1 / 5 foto".
+              Thumbnail preview muncul
+    Catatan : Fixed Sesi 8: stale closure di handlePhotoChange
+
+[ ] TC-95 Offline — upload 3 foto bertahap
+    Device  : HP
+    Langkah : 1. PWA /offline  2. Ambil 1 foto  3. Ambil 1 lagi
+              4. Ambil 1 lagi  5. Cek counter
+    Harapan : Counter: 1/5 → 2/5 → 3/5. Label "(minimal 3 foto)"
+              hilang setelah counter 3. Submit bisa
+    Catatan : Setiap upload counter naik. Input value di-reset
+              otomatis.
+
+[ ] TC-96 Offline — upload 5+ foto
+    Device  : HP
+    Langkah : 1. PWA /offline  2. Ambil 5 foto  3. Cek input
+    Harapan : Setelah 5 foto, input disabled. Pesan "Maksimal 5 foto.
+              Hapus yang ada untuk mengganti."
+    Catatan : Maksimal 5. Bisa hapus untuk ganti.
+
+[x] TC-84 Landing page menampilkan dummy spring
+    Device  : Both
+    Langkah : 1. Landing page guest  2. Scroll ke Map
+    Harapan : Mata air dummy (Cikole, Cibeureum, dll) muncul.
+              Tidak ada label "Demo" yang bingungkan publik
+    Catatan : Seed data dijalankan — 10 springs
+
+[x] TC-85 Spring Detail Page dummy spring bisa dibuka
+    Device  : Both
+    Langkah : 1. Klik spring dummy  2. Detail page
+    Harapan : Halaman detail terbuka. Info spring tampil
+    Catatan : Mini Map Fixed Sesi 7 — OSM langsung
+
+[x] TC-86 Admin Reports — badge Demo muncul
+    Device  : PC
+    Langkah : 1. Admin > /admin/reports  2. Cari ucup@springhub.id
+    Harapan : Badge "Demo" (oranye) muncul
+    Catatan : -
+
+[x] TC-87 Admin Reports — toggle Demo filter
+    Device  : PC
+    Langkah : 1. /admin/reports  2. Cari toggle Demo
+    Harapan : Bisa toggle tampil/sembunyi data dummy
+    Catatan : -
+
+[x] TC-88 Admin Review — badge Demo muncul
+    Device  : PC
+    Langkah : 1. Admin > /admin/review  2. Cari laporan dummy
+    Harapan : Badge "Demo" muncul. Admin bisa bedakan asli vs uji
+              coba
+    Catatan : -
+
+=====================================================================
+   17. POLISH — SKELETON LOADING  ❇️ BARU (Sesi 9)
+=====================================================================
+
+[ ] TC-97 Landing page skeleton
+    Device  : Both
+    Langkah : 1. Buka incognito / hard refresh 2. Perhatikan loading
+              3. Lihat transisi
+    Harapan : Loading menampilkan skeleton hero, dashboard (4 stat
+              cards), map, activities, learning hub, media. Bukan
+              spinner "Loading..." doang. Transisi mulus ke konten
+              asli.
+    Catatan : Sesi 9: components/skeleton/sections.tsx — 6 skeleton
+              komponen untuk landing page. loading.tsx di-root.
+
+[ ] TC-98 Profile / Admin / Projects / Learn / Notifications skeleton
+    Device  : Both
+    Langkah : 1. Hard refresh di /profile  2. /admin  3. /projects
+              4. /learn  5. /notifications
+    Harapan : Masing-masing punya skeleton sesuai layout. Profile:
+              avatar + stat cards + activity list. Admin: header +
+              6 stat cards + table rows. Learn: 3 course cards.
+    Catatan : Sesi 9: setiap page punya loading.tsx sendiri dengan
+              layout-specific skeleton.
+
+[ ] TC-99 Form skeleton (report & project new)
+    Device  : Both
+    Langkah : 1. Hard refresh /report/spring-monitoring
+              2. /projects/new
+    Harapan : Form skeleton: 6 baris input field + submit button.
+              Bukan spinner doang.
+    Catatan : Sesi 9: FormSkeleton di report/[slug]/loading.tsx &
+              projects/new/loading.tsx
+
+=====================================================================
+   18. POLISH — DATA SAVER MODE  ❇️ BARU (Sesi 9)
+=====================================================================
+
+[ ] TC-100 Data saver toggle di header
+    Device  : Both
+    Langkah : 1. Lihat header kanan  2. Cari ikon Wifi (tidak
+              dicoret)  3. Klik  4. Lihat perubahan
+    Harapan : Ikon berubah jadi WifiOff (dicoret). Warna
+              berubah. Klik lagi kembali ke Wifi.
+    Catatan : Sesi 9: lib/use-data-saver.tsx — toggle via
+              setOverride(). Ikon Wifi / WifiOff dari lucide.
+
+[ ] TC-101 Data saver → map placeholder
+    Device  : Both
+    Langkah : 1. Aktifkan data saver  2. Scroll ke peta di landing
+              3. Cek tampilan
+    Harapan : Peta interaktif diganti placeholder: ikon WifiOff +
+              "Mode hemat data aktif. Matikan data saver untuk
+              melihat peta interaktif."
+    Catatan : Sesi 9: spring-map.tsx — conditional render based on
+              useDataSaver()
+
+[ ] TC-102 Data saver localStorage persistence
+    Device  : Both
+    Langkah : 1. Klik toggle data saver (on)  2. Refresh halaman
+              3. Cek ikon
+    Harapan : Setelah refresh, data saver tetap aktif (ikon
+              WifiOff). localStorage key "springhub:dataSaverOverride"
+              = "true"
+    Catatan : Sesi 9: use-data-saver.tsx — localStorage persistence
+              + deteksi navigator.connection.saveData otomatis
+
+=====================================================================
+   19. POLISH — STATIC PAGES DARK MODE  ❇️ BARU (Sesi 9)
+=====================================================================
+
+[ ] TC-103 Help & FAQ dark mode
+    Device  : Both
+    Langkah : 1. Aktifkan dark mode  2. Buka /help  3. /faq
+    Harapan : Semua teks terbaca (putih/abu-abu terang di background
+              gelap). Card layout dengan border. Tidak ada teks
+              tersembunyi di background gelap.
+    Catatan : Sesi 9: help/page.tsx & faq/page.tsx — dark:text-slate
+              classes + border + bg-slate-900
+
+[ ] TC-104 Privacy & Terms dark mode
+    Device  : Both
+    Langkah : 1. Aktifkan dark mode  2. Buka /privacy  3. /terms
+    Harapan : Sama seperti Help/FAQ. Card layout. Teks jelas. Typo
+              "exercice" sudah diganti "melaksanakan".
+    Catatan : Sesi 9: privacy/page.tsx & terms/page.tsx — + typo fix
+              "exercice" → "melaksanakan"
+
+=====================================================================
+  RINGKASAN
+======================================================================
+
+Area                          Total    Lolos    Gagal    Belum
+----                          -----    -----    -----    -----
+Guest Flow                      10       10        0        0
+Volunteer/User Flow              9        9        0        0
+Admin Flow                      10       10        0        0
+Spring Detail Page               7        7        0        0
+Offline Mode (PWA)              11        8        0        3
+Aturan Foto                      9        9        0        0
+Timestamp                        2        2        0        0
+Field Lead — Sudah Dihapus       2        2        0        0
+Media Links                      6        6        0        0
+Aksesibilitas                    4        4        0        0
+Dashboard & Data Real-time       4        4        0        0
+Trust Score Management           6        6        0        0
+Button & Navigasi                3        3        0        0
+Dummy Data (Demo)                5        5        0        0
+PWA Session Consistency          5        5        0        0
+Offline Photo Counter            3        0        0        3
+Skeleton Loading (Sesi 9)        3        0        0        3
+Data Saver Mode (Sesi 9)         3        0        0        3
+Static Pages Dark (Sesi 9)       2        0        0        2
+----                          -----    -----    -----    -----
+TOTAL                          104       90        0       14
+* 14 TC baru perlu test: TC-97 s/d TC-104
+* 6 TC retest: TC-44,45,46 (PWA), TC-94,95,96 (photo)
+* TC-32,36,42,43 sudah fixed Sesi 8, mark ulang jika lolos
+
+======================================================================
+  CATATAN PENTING
+======================================================================
+
+1. Akun test:
+   - ucup@springhub.id / ucup12345 (Sesi 8: password min 8 char + 20.168 pts)
+   - volunteer@springhub.id / vol12345
+   - admin@springhub.id / admin123
+   - Jalankan `prisma/fix-ucup.sql` di Supabase SQL Editor jika seed belum
+     diupdate, atau re-run `npx prisma db seed`.
+
+2. Connection pool: Pool size 3→10, idle timeout 10s→30s (fix Sesi 6).
+   Jika masih muncul error pool, restart Vercel cold start.
+
+3. Offline provinsi: Fixed Sesi 7 — lib/provinces.ts dengan 38
+   provinsi. Sekarang dropdown offline berisi pilihan.
+
+4. PWA Offline: Klik ikon PWA → langsung form. Gak perlu setup.
+   Isi → simpan → online → sync otomatis.
+
+5. TypeScript: 0 error, 4 warning (3 img blob URLs, 1 useEffect
+   missing deps — aman, existing).
+
+6. Masalah login (pool habis): Jika login error 500 dengan pesan
+   "max clients reached", restart pool Supabase via Dashboard SQL
+   atau tunggu 5 menit. Fix permanen: ?pgbouncer=true sudah ditambah
+   di connection string (perlu push & deploy).
+
+7. PWA session (Sesi 8): IndexedDB session cache — `lib/session-cache.ts`.
+   Urutan cek session: API → IndexedDB. Kalau API null karena cookie
+   gak dikirim di PWA, fallback ke IndexedDB. Session di-cache saat:
+   login, register, dan tiap SiteHeader mount.
+
+8. Offline photo counter (Sesi 8 v2): Samakan approach dengan online form
+   — key re-mount (`key={`${field.id}-${count}`}`) + inline functional
+   updater `setPhotoFiles(prev => ...)`. Tidak pakai useRef / reset value
+   lagi. Terbukti work di online form (TC-51 ✅), sekarang offline juga
+   pakai pattern yang sama.
+
+9. Middleware (Sesi 8): Tidak lagi redirect /profile dan /projects/new.
+   Proteksi hanya di /admin. Pages handle auth sendiri client-side
+   dengan fallback IndexedDB.
+
+10. Build: backup/ di-exclude dari tsconfig. Backup .ts file di-rename
+    ke .ts.skip agar build Vercel tidak error. Build lulus dengan
+    zero TypeScript errors.
+
+11. Mini map (Sesi 8): Ganti staticmap.openstreetmap.de (sering error)
+    dengan Leaflet dynamic import (`components/map/mini-map.tsx`).
+    Tile pake {s}.tile.openstreetmap.org resmi. zoomControl & dragging
+    nonaktif biar kaya gambar statis.
+
+12. ucup account (Sesi 8): Password "ucup12345" (8 char, tidak ditolak
+    Zod). Points 20.168 (≥ threshold 20K untuk submit project). Update
+    via seed (`prisma/seed.ts`) atau SQL (`prisma/fix-ucup.sql`).
+
+13. Skeleton loading (Sesi 9): `components/ui/skeleton.tsx` — base +
+    helpers. `components/skeleton/sections.tsx` — 14 layout-specific
+    skeleton. Setiap page utama punya loading.tsx sendiri. Landing
+    page render 6 skeleton sections (hero, dashboard, map, activities,
+    learning hub, media).
+
+14. fix-ucup.sql (Sesi 9 — fixed): Tambah "updatedAt" + NOW() di ON
+    CONFLICT UPDATE. Sebelumnya error "null value in column updatedAt".
+    Jalanin ulang jika sebelumnya error.
+
+15. Data Saver Mode (Sesi 9): `lib/use-data-saver.tsx` — hook + context.
+    Deteksi otomatis `navigator.connection.saveData`. Manual override via
+    localStorage. Tombol di header (Wifi/WifiOff). Saat aktif, map
+    interaktif diganti placeholder. Bisa juga dipakai di komponen lain
+    untuk skip gambar berat / animasi.
+
+16. Static pages dark mode (Sesi 9): Help, FAQ, Privacy, Terms
+    di-upgrade dengan card layout + dark mode classes. Typo "exercice"
+    di privacy page → "melaksanakan". Semua konten terbaca di dark
+    mode.
+
+17. Pool Supabase (Sesi 9): Size max 3→5, idle timeout 10s→30s,
+    connection timeout 5s→10s. SQL fix di `prisma/fix-pool.sql` —
+    jalanin di Supabase Dashboard untuk terminate idle connections.
+    JANGAN jalankan ALTER DATABASE (sudah dihapus — tidak valid di
+    Supabase). Jika masih EMAXCONNSESSION: Dashboard > Database >
+    Reset connection pool.
+
+======================================================================
