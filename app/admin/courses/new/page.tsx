@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/lib/i18n";
 import {
   BookOpen,
   Plus,
@@ -32,6 +33,7 @@ export default function AdminNewCoursePage() {
     duration: "30 min",
     icon: "BookOpen",
   });
+  const { t } = useI18n();
   const [modules, setModules] = useState<ModuleForm[]>([
     { title: "", content: "" },
   ]);
@@ -71,18 +73,18 @@ export default function AdminNewCoursePage() {
 
     // Validate
     if (!form.title.trim()) {
-      setError("Title is required");
+      setError(t("admin.courseEditor.titleRequired"));
       return;
     }
     const slug = form.slug || generateSlug(form.title);
     if (!slug) {
-      setError("Slug is required");
+      setError(t("admin.courseEditor.slugRequired"));
       return;
     }
 
     const validModules = modules.filter((m) => m.title.trim());
     if (validModules.length === 0) {
-      setError("At least one module with a title is required");
+      setError(t("admin.courseEditor.moduleRequired"));
       return;
     }
 
@@ -100,13 +102,13 @@ export default function AdminNewCoursePage() {
 
       const data = await res.json();
       if (res.ok) {
-        setSuccess(`Course "${data.course.title}" created successfully!`);
+        setSuccess(t("admin.courseEditor.createSuccess", { title: data.course.title }));
         setTimeout(() => router.push("/admin/courses"), 1500);
       } else {
-        setError(data.error || "Failed to create course");
+        setError(data.error || t("admin.courseEditor.failedCreate"));
       }
     } catch {
-      setError("Network error. Please try again.");
+      setError(t("admin.courseEditor.networkError"));
     } finally {
       setSaving(false);
     }
@@ -122,9 +124,9 @@ export default function AdminNewCoursePage() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h2 className="text-xl font-bold text-ink">New Course</h2>
+          <h2 className="text-xl font-bold text-ink">{t("admin.courseEditor.newCourse")}</h2>
           <p className="mt-0.5 text-sm text-ink-muted">
-            Create a new learning course with modules
+            {t("admin.courseEditor.newCourseDesc")}
           </p>
         </div>
       </div>
@@ -146,12 +148,12 @@ export default function AdminNewCoursePage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
         <div className="card space-y-4">
-          <h3 className="text-sm font-semibold text-ink">Basic Information</h3>
+          <h3 className="text-sm font-semibold text-ink">{t("admin.courseEditor.basicInfo")}</h3>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Title <span className="text-red-500">*</span>
+                {t("admin.courseEditor.title")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -162,7 +164,7 @@ export default function AdminNewCoursePage() {
                     updateForm("slug", generateSlug(e.target.value));
                   }
                 }}
-                placeholder="Spring Conservation Basics"
+                placeholder={t("admin.courseEditor.placeholderTitle")}
                 className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 required
               />
@@ -170,13 +172,13 @@ export default function AdminNewCoursePage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Slug
+                {t("admin.courseEditor.slug")}
               </label>
               <input
                 type="text"
                 value={form.slug}
                 onChange={(e) => updateForm("slug", e.target.value)}
-                placeholder="spring-conservation-basics"
+                placeholder={t("admin.courseEditor.placeholderSlug")}
                 className="w-full rounded-md border border-ink-line px-3 py-2 text-sm font-mono focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
               />
             </div>
@@ -184,12 +186,12 @@ export default function AdminNewCoursePage() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-ink-muted">
-              Description
+              {t("admin.courseEditor.description")}
             </label>
             <textarea
               value={form.description}
               onChange={(e) => updateForm("description", e.target.value)}
-              placeholder="Learn the fundamentals of spring ecosystems..."
+              placeholder={t("admin.courseEditor.placeholderDescription")}
               rows={3}
               className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             />
@@ -198,7 +200,7 @@ export default function AdminNewCoursePage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Level
+                {t("admin.courseEditor.level")}
               </label>
               <select
                 value={form.level}
@@ -213,20 +215,20 @@ export default function AdminNewCoursePage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Duration
+                {t("admin.courseEditor.duration")}
               </label>
               <input
                 type="text"
                 value={form.duration}
                 onChange={(e) => updateForm("duration", e.target.value)}
-                placeholder="45 min"
+                placeholder={t("admin.courseEditor.placeholderDuration")}
                 className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
               />
             </div>
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Icon
+                {t("admin.courseEditor.icon")}
               </label>
               <select
                 value={form.icon}
@@ -248,7 +250,7 @@ export default function AdminNewCoursePage() {
         <div className="card space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
-              Modules ({modules.length})
+              {t("admin.courseEditor.modules", { count: String(modules.length) })}
             </h3>
             <button
               type="button"
@@ -256,7 +258,7 @@ export default function AdminNewCoursePage() {
               className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100"
             >
               <Plus className="h-3.5 w-3.5" />
-              Add Module
+              {t("admin.courseEditor.addModule")}
             </button>
           </div>
 
@@ -268,7 +270,7 @@ export default function AdminNewCoursePage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-ink-muted">
-                    Module {index + 1}
+                    {t("admin.courseEditor.moduleNumber", { number: String(index + 1) })}
                   </span>
                   {modules.length > 1 && (
                     <button
@@ -288,7 +290,7 @@ export default function AdminNewCoursePage() {
                     onChange={(e) =>
                       updateModule(index, "title", e.target.value)
                     }
-                    placeholder="Module title"
+                    placeholder={t("admin.courseEditor.moduleTitlePlaceholder")}
                     className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                   />
                   <textarea
@@ -296,12 +298,12 @@ export default function AdminNewCoursePage() {
                     onChange={(e) =>
                       updateModule(index, "content", e.target.value)
                     }
-                    placeholder="Module content (HTML or markdown supported)"
+                    placeholder={t("admin.courseEditor.moduleContentPlaceholder")}
                     rows={3}
                     className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                   />
                   <div>
-                    <label className="text-xs text-ink-muted">File Materi (PDF opsional)</label>
+                    <label className="text-xs text-ink-muted">{t("admin.courseEditor.materialFileLabel")}</label>
                     <input type="file" accept=".pdf" onChange={e => {
                       const file = e.target.files?.[0];
                       if (file) updateModule(index, 'content', file.name);
@@ -319,7 +321,7 @@ export default function AdminNewCoursePage() {
             href="/admin/courses"
             className="rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100"
           >
-            Cancel
+            {t("common.cancel")}
           </Link>
           <button
             type="submit"
@@ -329,12 +331,12 @@ export default function AdminNewCoursePage() {
             {saving ? (
               <>
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Saving...
+                {t("admin.courseEditor.saving")}
               </>
             ) : (
               <>
                 <Save className="h-4 w-4" />
-                Save Course
+                {t("admin.courseEditor.saveCourse")}
               </>
             )}
           </button>

@@ -12,6 +12,7 @@ import {
   Layers,
   AlertCircle,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 type FormField = {
   id: string;
@@ -42,6 +43,7 @@ export default function AdminFormsPage() {
   const [filter, setFilter] = useState<"all" | "active" | "inactive">("all");
   const [deleting, setDeleting] = useState<string | null>(null);
   const [toggling, setToggling] = useState<string | null>(null);
+  const { t } = useI18n();
 
   const fetchForms = () => {
     setLoading(true);
@@ -59,8 +61,8 @@ export default function AdminFormsPage() {
   async function handleDelete(id: string, title: string) {
     const hasReports = forms.find((f) => f.id === id)?._count?.reports ?? 0;
     const msg = hasReports > 0
-      ? `Form "${title}" memiliki ${hasReports} laporan. Form akan dinonaktifkan (bukan dihapus). Lanjutkan?`
-      : `Hapus form "${title}"? Tindakan ini tidak bisa dibatalkan.`;
+      ? t("admin.forms.confirmDeleteWithReports", { title, count: String(hasReports) })
+      : t("admin.forms.confirmDelete", { title });
     if (!confirm(msg)) return;
     setDeleting(id);
     try {
@@ -80,10 +82,10 @@ export default function AdminFormsPage() {
           setForms((prev) => prev.filter((f) => f.id !== id));
         }
       } else {
-        alert(data.error || "Gagal menghapus");
+        alert(data.error || t("admin.forms.failedDelete"));
       }
     } catch {
-      alert("Gagal menghapus form");
+      alert(t("admin.forms.failedDelete"));
     } finally {
       setDeleting(null);
     }
@@ -105,7 +107,7 @@ export default function AdminFormsPage() {
         );
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to toggle status");
+        alert(data.error || t("admin.forms.failedToggle"));
       }
     } catch {
       alert("Failed to toggle form status");
@@ -133,9 +135,9 @@ export default function AdminFormsPage() {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-ink">Forms</h2>
+          <h2 className="text-xl font-bold text-ink">{t("admin.forms.title")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
-            {forms.length} form{forms.length !== 1 ? "s" : ""} total
+            {t("admin.forms.total", { count: String(forms.length), plural: forms.length !== 1 ? "s" : "" })}
           </p>
         </div>
         <Link
@@ -143,7 +145,7 @@ export default function AdminFormsPage() {
           className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           <Plus className="h-4 w-4" />
-          Create New Form
+          {t("admin.forms.createNew")}
         </Link>
       </div>
 
@@ -174,13 +176,13 @@ export default function AdminFormsPage() {
       {filtered.length === 0 ? (
         <div className="card py-12 text-center">
           <ClipboardList className="mx-auto h-8 w-8 text-slate-300" />
-          <p className="mt-2 text-sm text-ink-muted">No forms found</p>
+          <p className="mt-2 text-sm text-ink-muted">{t("admin.forms.noForms")}</p>
           {filter !== "all" && (
             <button
               onClick={() => setFilter("all")}
               className="mt-2 text-xs text-brand-600 hover:underline"
             >
-              Show all forms
+              {t("admin.forms.showAll")}
             </button>
           )}
         </div>
@@ -201,14 +203,14 @@ export default function AdminFormsPage() {
                 <div className="flex items-center gap-1">
                   {!form.isActive && (
                     <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">
-                      Inactive
+                      {t("admin.forms.inactive")}
                     </span>
                   )}
                   <button
                     onClick={() => handleToggleActive(form)}
                     disabled={toggling === form.id}
                     className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 hover:text-ink disabled:opacity-50"
-                    title={form.isActive ? "Deactivate" : "Activate"}
+                    title={form.isActive ? t("admin.forms.deactivate") : t("admin.forms.activate")}
                   >
                     {form.isActive ? (
                       <EyeOff className="h-3.5 w-3.5" />
@@ -236,7 +238,7 @@ export default function AdminFormsPage() {
                 {form.title}
               </h3>
               <p className="mt-1 line-clamp-2 text-xs text-ink-muted">
-                {form.description || "No description"}
+                {form.description || t("admin.forms.noDescription")}
               </p>
 
               <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-ink-muted">
@@ -248,15 +250,13 @@ export default function AdminFormsPage() {
                 </span>
                 <span className="inline-flex items-center gap-1">
                   <Layers className="h-3 w-3" />
-                  {form.fields.length} field
-                  {form.fields.length !== 1 ? "s" : ""}
+                  {t("admin.forms.fields", { count: String(form.fields.length), plural: form.fields.length !== 1 ? "s" : "" })}
                 </span>
               </div>
 
               <div className="mt-auto flex items-center justify-between border-t border-ink-line pt-3">
                 <span className="text-xs text-ink-subtle">
-                  {form._count.reports} report
-                  {form._count.reports !== 1 ? "s" : ""}
+                  {t("admin.forms.reports", { count: String(form._count.reports), plural: form._count.reports !== 1 ? "s" : "" })}
                 </span>
                 <span className="font-mono text-[10px] text-ink-subtle">
                   {form.slug}

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n";
 import {
   ClipboardList,
   Plus,
@@ -102,6 +103,7 @@ export default function AdminEditFormPage() {
     options: "",
   });
   const [addingField, setAddingField] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     fetchForm();
@@ -131,7 +133,7 @@ export default function AdminEditFormPage() {
         }));
         setFields(parsed);
       })
-      .catch(() => setError("Gagal memuat form"))
+      .catch(() => setError(t("admin.formBuilder.failedLoadForm")))
       .finally(() => setLoading(false));
   }
 
@@ -143,7 +145,7 @@ export default function AdminEditFormPage() {
     setError("");
     setSuccess("");
     if (!meta.title.trim()) {
-      setError("Judul wajib diisi");
+      setError(t("admin.formBuilder.titleRequired"));
       return;
     }
     setSaving(true);
@@ -155,12 +157,12 @@ export default function AdminEditFormPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Form berhasil diperbarui");
+        setSuccess(t("admin.formBuilder.updateSuccess"));
       } else {
-        setError(data.error || "Gagal menyimpan form");
+        setError(data.error || t("admin.formBuilder.failedSaveForm"));
       }
     } catch {
-      setError("Kesalahan jaringan");
+      setError(t("admin.formBuilder.networkError"));
     } finally {
       setSaving(false);
     }
@@ -185,7 +187,7 @@ export default function AdminEditFormPage() {
     setError("");
     setSuccess("");
     if (!newField.label.trim()) {
-      setError("Label field wajib diisi");
+      setError(t("admin.formBuilder.fieldLabelRequired"));
       return;
     }
     const finalFieldId = newField.fieldId || generateFieldId(newField.label);
@@ -204,7 +206,7 @@ export default function AdminEditFormPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Field berhasil ditambahkan");
+        setSuccess(t("admin.formBuilder.fieldAddSuccess"));
         setNewField({
           fieldId: "",
           label: "",
@@ -216,17 +218,17 @@ export default function AdminEditFormPage() {
         });
         fetchForm();
       } else {
-        setError(data.error || "Gagal menambah field");
+        setError(data.error || t("admin.formBuilder.failedAddField"));
       }
     } catch {
-      setError("Kesalahan jaringan");
+      setError(t("admin.formBuilder.networkError"));
     } finally {
       setAddingField(false);
     }
   }
 
   async function handleDeleteField(fieldId: string, label: string) {
-    if (!confirm(`Hapus field "${label}"? Tindakan ini tidak bisa dibatalkan.`)) return;
+    if (!confirm(t("admin.formBuilder.confirmDeleteField", { label }))) return;
     setError("");
     setSuccess("");
     try {
@@ -234,14 +236,14 @@ export default function AdminEditFormPage() {
         method: "DELETE",
       });
       if (res.ok) {
-        setSuccess("Field berhasil dihapus");
+        setSuccess(t("admin.formBuilder.fieldDeleteSuccess"));
         fetchForm();
       } else {
         const data = await res.json();
-        setError(data.error || "Gagal menghapus field");
+        setError(data.error || t("admin.formBuilder.failedDeleteField"));
       }
     } catch {
-      setError("Kesalahan jaringan");
+      setError(t("admin.formBuilder.networkError"));
     }
   }
 
@@ -254,7 +256,7 @@ export default function AdminEditFormPage() {
       });
       fetchForm();
     } catch {
-      setError("Gagal mengubah required");
+      setError(t("admin.formBuilder.failedToggleRequired"));
     }
   }
 
@@ -277,7 +279,7 @@ export default function AdminEditFormPage() {
       });
       fetchForm();
     } catch {
-      setError("Gagal mengubah urutan");
+      setError(t("admin.formBuilder.failedReorder"));
     }
   }
 
@@ -303,7 +305,7 @@ export default function AdminEditFormPage() {
 
     async function handleSave() {
       onError("");
-      if (!label.trim()) { onError("Label wajib diisi"); return; }
+      if (!label.trim()) { onError(t("admin.formBuilder.labelRequired")); return; }
       setSaving(true);
       try {
         const body: Record<string, unknown> = {
@@ -321,54 +323,54 @@ export default function AdminEditFormPage() {
           body: JSON.stringify(body),
         });
         if (res.ok) onSaved();
-        else { const d = await res.json(); onError(d.error || "Gagal menyimpan"); }
-      } catch { onError("Kesalahan jaringan"); }
+        else { const d = await res.json(); onError(d.error || t("admin.formBuilder.failedSave")); }
+      } catch { onError(t("admin.formBuilder.networkError")); }
       finally { setSaving(false); }
     }
 
     return (
       <div className="border-t border-ink-line bg-slate-50 px-6 py-4 dark:bg-slate-800/50">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-semibold text-ink">Edit Field: {field.fieldId}</span>
+          <span className="text-xs font-semibold text-ink">{t("admin.formBuilder.editFieldTitle", { fieldId: field.fieldId })}</span>
           <button onClick={onClose} className="rounded p-1 text-ink-muted hover:bg-slate-200"><X className="h-3.5 w-3.5" /></button>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1">
-            <label className="text-[10px] font-medium text-ink-muted">Label</label>
+            <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.fieldLabel")}</label>
             <input type="text" value={label} onChange={e => setLabel(e.target.value)}
               className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-medium text-ink-muted">Tipe</label>
+            <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.fieldType")}</label>
             <select value={type} onChange={e => setType(e.target.value)}
               className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none">
               {FIELD_TYPES.map(ft => <option key={ft.value} value={ft.value}>{ft.label}</option>)}
             </select>
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-medium text-ink-muted">Placeholder</label>
+            <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.fieldPlaceholder")}</label>
             <input type="text" value={placeholder} onChange={e => setPlaceholder(e.target.value)}
               className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-medium text-ink-muted">Teks Bantuan</label>
+            <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.fieldHelpText")}</label>
             <input type="text" value={helpText} onChange={e => setHelpText(e.target.value)}
               className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
           </div>
         </div>
         {(type === "select" || type === "multiselect") && (
           <div className="mt-3 space-y-1">
-            <label className="text-[10px] font-medium text-ink-muted">Opsi (satu per baris)</label>
+            <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.optionsOnePerLine")}</label>
             <textarea value={optionsText} onChange={e => setOptionsText(e.target.value)} rows={3}
               className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
           </div>
         )}
         <div className="mt-3 flex justify-end gap-2">
-          <button onClick={onClose} className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100">Batal</button>
+          <button onClick={onClose} className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100">{t("common.cancel")}</button>
           <button onClick={handleSave} disabled={saving}
             className="inline-flex items-center gap-1 rounded-md bg-brand-600 px-3 py-1 text-xs font-medium text-white hover:bg-brand-700 disabled:opacity-50">
             {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
-            Simpan
+            {t("common.save")}
           </button>
         </div>
       </div>
@@ -393,9 +395,9 @@ export default function AdminEditFormPage() {
           <ArrowUp className="h-5 w-5 rotate-[-90deg]" />
         </Link>
         <div>
-          <h2 className="text-xl font-bold text-ink">Edit Form</h2>
+          <h2 className="text-xl font-bold text-ink">{t("admin.formBuilder.editForm")}</h2>
           <p className="mt-0.5 text-sm text-ink-muted">
-            {meta.title || "Memuat..."}
+            {meta.title || t("admin.formBuilder.loading")}
           </p>
         </div>
       </div>
@@ -424,7 +426,7 @@ export default function AdminEditFormPage() {
               : "text-ink-muted hover:bg-slate-100"
           }`}
         >
-          Metadata Form
+          {t("admin.formBuilder.metadataTab")}
         </button>
         <button
           onClick={() => setActiveTab("fields")}
@@ -434,7 +436,7 @@ export default function AdminEditFormPage() {
               : "text-ink-muted hover:bg-slate-100"
           }`}
         >
-          Field Builder ({fields.length})
+          {t("admin.formBuilder.fieldBuilderTab", { count: String(fields.length) })}
         </button>
       </div>
 
@@ -442,12 +444,12 @@ export default function AdminEditFormPage() {
         <div className="card space-y-4">
           <div className="flex items-center gap-2">
             <ClipboardList className="h-5 w-5 text-brand-600" />
-            <h3 className="text-sm font-semibold text-ink">Informasi Form</h3>
+            <h3 className="text-sm font-semibold text-ink">{t("admin.formBuilder.formInformation")}</h3>
           </div>
 
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-ink-muted">
-              Judul <span className="text-red-500">*</span>
+              {t("admin.formBuilder.formTitle")} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -459,7 +461,7 @@ export default function AdminEditFormPage() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-ink-muted">
-              Deskripsi
+              {t("admin.formBuilder.formDescription")}
             </label>
             <textarea
               value={meta.description}
@@ -472,7 +474,7 @@ export default function AdminEditFormPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Poin per Submit
+                {t("admin.formBuilder.pointsPerSubmit")}
               </label>
               <input
                 type="number"
@@ -487,7 +489,7 @@ export default function AdminEditFormPage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Tipe Kontribusi
+                {t("admin.formBuilder.contributionType")}
               </label>
               <select
                 value={meta.contributionType}
@@ -504,7 +506,7 @@ export default function AdminEditFormPage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Urutan
+                {t("admin.formBuilder.sortOrder")}
               </label>
               <input
                 type="number"
@@ -527,12 +529,12 @@ export default function AdminEditFormPage() {
               {saving ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Menyimpan...
+                  {t("admin.formBuilder.saving")}
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  Simpan Metadata
+                  {t("admin.formBuilder.saveMetadata")}
                 </>
               )}
             </button>
@@ -547,14 +549,14 @@ export default function AdminEditFormPage() {
             <div className="card py-12 text-center">
               <ClipboardList className="mx-auto h-8 w-8 text-slate-300" />
               <p className="mt-2 text-sm text-ink-muted">
-                Belum ada field. Tambahkan field pertama.
+                {t("admin.formBuilder.noFields")}
               </p>
             </div>
           ) : (
             <div className="card divide-y divide-ink-line">
               <div className="flex items-center justify-between px-4 py-3">
                 <h3 className="text-sm font-semibold text-ink">
-                  Field ({fields.length})
+                  {t("admin.formBuilder.fieldsCount", { count: String(fields.length) })}
                 </h3>
               </div>
               {fields.map((field) => (
@@ -565,14 +567,14 @@ export default function AdminEditFormPage() {
                       <button
                         onClick={() => handleMoveField(field, "up")}
                         className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 hover:text-ink"
-                        title="Naik"
+                        title={t("admin.formBuilder.moveUp")}
                       >
                         <ArrowUp className="h-3 w-3" />
                       </button>
                       <button
                         onClick={() => handleMoveField(field, "down")}
                         className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 hover:text-ink"
-                        title="Turun"
+                        title={t("admin.formBuilder.moveDown")}
                       >
                         <ArrowDown className="h-3 w-3" />
                       </button>
@@ -610,7 +612,7 @@ export default function AdminEditFormPage() {
                           onChange={() => handleToggleRequired(field)}
                           className="h-3.5 w-3.5 rounded border-ink-line text-brand-600 focus:ring-brand-500"
                         />
-                        Required
+                        {t("admin.formBuilder.required")}
                       </label>
                       <button
                         onClick={() =>
@@ -619,14 +621,14 @@ export default function AdminEditFormPage() {
                           )
                         }
                         className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 hover:text-brand-600"
-                        title="Edit"
+                        title={t("common.edit")}
                       >
                         <Pencil className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={() => handleDeleteField(field.fieldId, field.label)}
                         className="rounded-md p-1.5 text-ink-muted hover:bg-red-50 hover:text-red-600"
-                        title="Hapus"
+                        title={t("common.delete")}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
@@ -651,26 +653,26 @@ export default function AdminEditFormPage() {
             <div className="flex items-center gap-2">
               <Plus className="h-5 w-5 text-brand-600" />
               <h3 className="text-sm font-semibold text-ink">
-                Tambah Field Baru
+                {t("admin.formBuilder.addNewField")}
               </h3>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-ink-muted">
-                  Label <span className="text-red-500">*</span>
+                  {t("admin.formBuilder.fieldLabel")} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={newField.label}
                   onChange={(e) => handleNewFieldLabel(e.target.value)}
-                  placeholder="Nama Mata Air"
+                  placeholder={t("admin.formBuilder.placeholderSpringName")}
                   className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-ink-muted">
-                  Field ID
+                  {t("admin.formBuilder.fieldId")}
                 </label>
                 <input
                   type="text"
@@ -681,7 +683,7 @@ export default function AdminEditFormPage() {
                       fieldId: e.target.value,
                     }))
                   }
-                  placeholder="nama_mata_air"
+                  placeholder={t("admin.formBuilder.placeholderFieldId")}
                   className="w-full rounded-md border border-ink-line px-3 py-2 text-sm font-mono focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 />
               </div>
@@ -689,7 +691,7 @@ export default function AdminEditFormPage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Tipe Field
+                {t("admin.formBuilder.fieldType")}
               </label>
               <div className="flex flex-wrap gap-1">
                 {FIELD_TYPES.map(ft => (
@@ -717,7 +719,7 @@ export default function AdminEditFormPage() {
                     }
                     className="h-4 w-4 rounded border-ink-line text-brand-600 focus:ring-brand-500"
                   />
-                  Required (wajib diisi)
+                  {t("admin.formBuilder.requiredLabel")}
                 </label>
               </div>
             </div>
@@ -725,7 +727,7 @@ export default function AdminEditFormPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-ink-muted">
-                  Placeholder
+                  {t("admin.formBuilder.fieldPlaceholder")}
                 </label>
                 <input
                   type="text"
@@ -736,13 +738,13 @@ export default function AdminEditFormPage() {
                       placeholder: e.target.value,
                     }))
                   }
-                  placeholder="Masukkan nama mata air"
+                  placeholder={t("admin.formBuilder.placeholderPlaceholder")}
                   className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-ink-muted">
-                  Teks Bantuan
+                  {t("admin.formBuilder.fieldHelpText")}
                 </label>
                 <input
                   type="text"
@@ -753,7 +755,7 @@ export default function AdminEditFormPage() {
                       helpText: e.target.value,
                     }))
                   }
-                  placeholder="Petunjuk untuk relawan"
+                  placeholder={t("admin.formBuilder.placeholderHelpText")}
                   className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 />
               </div>
@@ -763,7 +765,7 @@ export default function AdminEditFormPage() {
               newField.type === "multiselect") && (
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-ink-muted">
-                  Opsi (satu per baris)
+                  {t("admin.formBuilder.optionsOnePerLine")}
                 </label>
                 <textarea
                   value={newField.options}
@@ -773,12 +775,12 @@ export default function AdminEditFormPage() {
                       options: e.target.value,
                     }))
                   }
-                  placeholder={`Pilihan 1\nPilihan 2\nPilihan 3`}
+                  placeholder={t("admin.formBuilder.placeholderOptions")}
                   rows={4}
                   className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 />
                 <p className="text-[10px] text-ink-subtle">
-                  Tulis setiap opsi pada baris terpisah
+                  {t("admin.formBuilder.optionsHint")}
                 </p>
               </div>
             )}
@@ -792,12 +794,12 @@ export default function AdminEditFormPage() {
                 {addingField ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Menambahkan...
+                    {t("admin.formBuilder.addingField")}
                   </>
                 ) : (
                   <>
                     <Plus className="h-4 w-4" />
-                    Tambah Field
+                    {t("admin.formBuilder.addField")}
                   </>
                 )}
               </button>

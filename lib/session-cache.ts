@@ -34,13 +34,25 @@ export async function fetchAndCacheSession(): Promise<{
     if (res.ok) {
       const data = await res.json();
       if (data.user) {
+        // Ambil CSRF token untuk PWA offline fallback
+        let csrfToken = "";
+        try {
+          const csrfRes = await fetch("/api/csrf");
+          if (csrfRes.ok) {
+            const csrfData = await csrfRes.json();
+            csrfToken = csrfData.token || "";
+          }
+        } catch {
+          // Non-critical
+        }
+
         // Cache ke IndexedDB untuk PWA offline fallback
         const session: CachedSession = {
           id: "user-session",
           userId: data.user.id || data.user.email,
           username: data.user.username || "User",
           role: data.user.role || "volunteer",
-          csrfToken: "",
+          csrfToken,
           cachedAt: Date.now(),
         };
         try {

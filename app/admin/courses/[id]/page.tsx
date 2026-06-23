@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useI18n } from "@/lib/i18n";
 import {
   BookOpen,
   Plus,
@@ -54,6 +55,7 @@ export default function AdminEditCoursePage() {
     sortOrder: 0,
   });
   const [modules, setModules] = useState<ModuleForm[]>([]);
+  const { t } = useI18n();
 
   useEffect(() => {
     fetch(`/api/admin/courses/${courseId}`)
@@ -81,7 +83,7 @@ export default function AdminEditCoursePage() {
           })) || []
         );
       })
-      .catch(() => setError("Failed to load course"))
+      .catch(() => setError(t("admin.courseEditor.failedLoad")))
       .finally(() => setLoading(false));
   }, [courseId]);
 
@@ -112,7 +114,7 @@ export default function AdminEditCoursePage() {
     setSuccess("");
 
     if (!form.title.trim()) {
-      setError("Title is required");
+      setError(t("admin.courseEditor.titleRequired"));
       return;
     }
 
@@ -129,13 +131,13 @@ export default function AdminEditCoursePage() {
 
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Course updated successfully!");
+        setSuccess(t("admin.courseEditor.updateSuccess"));
         setTimeout(() => router.push("/admin/courses"), 1500);
       } else {
-        setError(data.error || "Failed to update course");
+        setError(data.error || t("admin.courseEditor.failedUpdate"));
       }
     } catch {
-      setError("Network error. Please try again.");
+      setError(t("admin.courseEditor.networkError"));
     } finally {
       setSaving(false);
     }
@@ -159,9 +161,9 @@ export default function AdminEditCoursePage() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h2 className="text-xl font-bold text-ink">Edit Course</h2>
+          <h2 className="text-xl font-bold text-ink">{t("admin.courseEditor.editCourse")}</h2>
           <p className="mt-0.5 text-sm text-ink-muted">
-            Update course details and modules
+            {t("admin.courseEditor.editDesc")}
           </p>
         </div>
       </div>
@@ -183,12 +185,12 @@ export default function AdminEditCoursePage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
         <div className="card space-y-4">
-          <h3 className="text-sm font-semibold text-ink">Basic Information</h3>
+          <h3 className="text-sm font-semibold text-ink">{t("admin.courseEditor.basicInfo")}</h3>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Title <span className="text-red-500">*</span>
+                {t("admin.courseEditor.title")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -201,7 +203,7 @@ export default function AdminEditCoursePage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Slug
+                {t("admin.courseEditor.slug")}
               </label>
               <input
                 type="text"
@@ -214,7 +216,7 @@ export default function AdminEditCoursePage() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-ink-muted">
-              Description
+              {t("admin.courseEditor.description")}
             </label>
             <textarea
               value={form.description}
@@ -227,7 +229,7 @@ export default function AdminEditCoursePage() {
           <div className="grid gap-4 sm:grid-cols-4">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Level
+                {t("admin.courseEditor.level")}
               </label>
               <select
                 value={form.level}
@@ -242,7 +244,7 @@ export default function AdminEditCoursePage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Duration
+                {t("admin.courseEditor.duration")}
               </label>
               <input
                 type="text"
@@ -254,7 +256,7 @@ export default function AdminEditCoursePage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Icon
+                {t("admin.courseEditor.icon")}
               </label>
               <select
                 value={form.icon}
@@ -272,7 +274,7 @@ export default function AdminEditCoursePage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-ink-muted">
-                Sort Order
+                {t("admin.courseEditor.sortOrder")}
               </label>
               <input
                 type="number"
@@ -302,12 +304,12 @@ export default function AdminEditCoursePage() {
             </button>
             <div>
               <div className="text-sm font-medium text-ink">
-                {form.isActive ? "Active" : "Inactive"}
+                {form.isActive ? t("admin.courseEditor.active") : t("admin.courseEditor.inactive")}
               </div>
               <div className="text-xs text-ink-muted">
                 {form.isActive
-                  ? "Course is visible to users"
-                  : "Course is hidden from users"}
+                  ? t("admin.courseEditor.activeHint")
+                  : t("admin.courseEditor.inactiveHint")}
               </div>
             </div>
           </div>
@@ -317,7 +319,7 @@ export default function AdminEditCoursePage() {
         <div className="card space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
-              Modules ({modules.length})
+              {t("admin.courseEditor.modules", { count: String(modules.length) })}
             </h3>
             <button
               type="button"
@@ -325,7 +327,7 @@ export default function AdminEditCoursePage() {
               className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100"
             >
               <Plus className="h-3.5 w-3.5" />
-              Add Module
+              {t("admin.courseEditor.addModule")}
             </button>
           </div>
 
@@ -337,7 +339,7 @@ export default function AdminEditCoursePage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-ink-muted">
-                    Module {index + 1}
+                    {t("admin.courseEditor.moduleNumber", { number: String(index + 1) })}
                   </span>
                   {modules.length > 1 && (
                     <button
@@ -357,7 +359,7 @@ export default function AdminEditCoursePage() {
                     onChange={(e) =>
                       updateModule(index, "title", e.target.value)
                     }
-                    placeholder="Module title"
+                    placeholder={t("admin.courseEditor.moduleTitlePlaceholder")}
                     className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                   />
                   <textarea
@@ -365,7 +367,7 @@ export default function AdminEditCoursePage() {
                     onChange={(e) =>
                       updateModule(index, "content", e.target.value)
                     }
-                    placeholder="Module content (HTML or markdown supported)"
+                    placeholder={t("admin.courseEditor.moduleContentPlaceholder")}
                     rows={4}
                     className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                   />
@@ -381,7 +383,7 @@ export default function AdminEditCoursePage() {
             href="/admin/courses"
             className="rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100"
           >
-            Cancel
+            {t("common.cancel")}
           </Link>
           <button
             type="submit"
@@ -391,12 +393,12 @@ export default function AdminEditCoursePage() {
             {saving ? (
               <>
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Saving...
+                {t("admin.courseEditor.saving")}
               </>
             ) : (
               <>
                 <Save className="h-4 w-4" />
-                Update Course
+                {t("admin.courseEditor.updateCourse")}
               </>
             )}
           </button>

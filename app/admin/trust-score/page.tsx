@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Search, Shield, ShieldAlert, ShieldCheck, RotateCcw, Save, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 type TrustUser = {
   id: string;
@@ -25,6 +26,7 @@ export default function AdminTrustScorePage() {
   const [editValues, setEditValues] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  const { t } = useI18n();
 
   const fetchUsers = () => {
     setLoading(true);
@@ -59,7 +61,7 @@ export default function AdminTrustScorePage() {
   const handleSave = async (userId: string) => {
     const val = parseInt(editValues[userId], 10);
     if (isNaN(val) || val < 0 || val > 100) {
-      showMsg("Nilai harus antara 0–100");
+      showMsg(t("admin.trustScore.invalidValue"));
       return;
     }
     setSaving(userId);
@@ -70,14 +72,14 @@ export default function AdminTrustScorePage() {
         body: JSON.stringify({ trustScore: val }),
       });
       if (res.ok) {
-        showMsg("Trust score berhasil diperbarui");
+        showMsg(t("admin.trustScore.updated"));
         fetchUsers();
       } else {
         const err = await res.json();
-        showMsg(err.error || "Gagal memperbarui");
+        showMsg(err.error || t("admin.trustScore.updateFailed"));
       }
     } catch {
-      showMsg("Gagal menyimpan");
+      showMsg(t("admin.trustScore.saveFailed"));
     } finally {
       setSaving(null);
     }
@@ -118,18 +120,16 @@ export default function AdminTrustScorePage() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-ink">Trust Score Management</h2>
+<h2 className="text-xl font-bold text-ink">{t("admin.trustScore.title")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
-            {users.length} user ·{" "}
-            {users.filter((u) => u.trustScore < 30).length} risiko rendah ·{" "}
-            {users.filter((u) => u.trustScore <= 0).length} terblokir
+            {t("admin.trustScore.summary", { count: String(users.length), low: String(users.filter(u => u.trustScore < 30).length), blocked: String(users.filter(u => u.trustScore <= 0).length) })}
           </p>
         </div>
         <div className="relative self-start sm:self-auto">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
           <input
             type="text"
-            placeholder="Cari user..."
+            placeholder={t("admin.trustScore.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-56 rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
@@ -152,7 +152,7 @@ export default function AdminTrustScorePage() {
             <div className="text-2xl font-bold text-ink">
               {users.filter((u) => u.trustScore >= 70).length}
             </div>
-            <div className="text-xs text-ink-muted">Trust Score Baik (&ge;70)</div>
+            <div className="text-xs text-ink-muted">{t("admin.trustScore.good")}</div>
           </div>
         </div>
         <div className="card flex items-center gap-3 p-4">
@@ -161,7 +161,7 @@ export default function AdminTrustScorePage() {
             <div className="text-2xl font-bold text-ink">
               {users.filter((u) => u.trustScore >= 30 && u.trustScore < 70).length}
             </div>
-            <div className="text-xs text-ink-muted">Sedang (30–69)</div>
+            <div className="text-xs text-ink-muted">{t("admin.trustScore.medium")}</div>
           </div>
         </div>
         <div className="card flex items-center gap-3 p-4">
@@ -170,7 +170,7 @@ export default function AdminTrustScorePage() {
             <div className="text-2xl font-bold text-ink">
               {users.filter((u) => u.trustScore < 30).length}
             </div>
-            <div className="text-xs text-ink-muted">Risiko Rendah (&lt;30)</div>
+            <div className="text-xs text-ink-muted">{t("admin.trustScore.low")}</div>
           </div>
         </div>
       </div>
@@ -195,7 +195,7 @@ export default function AdminTrustScorePage() {
               </div>
               <div className="flex items-center gap-3 text-xs text-ink-muted">
                 <span className="chip capitalize">{u.role}</span>
-                <span><Sparkles className="inline h-3 w-3" /> {u.points.toLocaleString("id-ID")} pts</span>
+                <span><Sparkles className="inline h-3 w-3" /> {u.points.toLocaleString("id-ID")} {t("admin.trustScore.pts")}</span>
                 <span>Rejected: {u._count.reports}x</span>
               </div>
               <div className="flex items-center gap-2">
@@ -219,12 +219,12 @@ export default function AdminTrustScorePage() {
                   ) : (
                     <Save className="h-3 w-3" />
                   )}
-                  Simpan
+                  {t("admin.trustScore.save")}
                 </button>
                 <button
                   onClick={() => handleReset(u.id)}
                   className="rounded-md p-1.5 text-ink-muted hover:text-ink"
-                  title="Reset ke 50"
+                  title={t("admin.trustScore.reset")}
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                 </button>
@@ -240,14 +240,14 @@ export default function AdminTrustScorePage() {
           <table className="w-full text-left text-sm whitespace-nowrap">
             <thead>
               <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
-                <th className="pb-3 pr-4">User</th>
-                <th className="pb-3 pr-4">Role</th>
-                <th className="pb-3 pr-4">Region</th>
-                <th className="pb-3 pr-4">Points</th>
-                <th className="pb-3 pr-4">Rejected</th>
-                <th className="pb-3 pr-4">Trust Score</th>
-                <th className="pb-3 pr-4">Set Value</th>
-                <th className="pb-3">Action</th>
+                <th className="pb-3 pr-4">{t("admin.trustScore.user")}</th>
+                <th className="pb-3 pr-4">{t("admin.trustScore.role")}</th>
+                <th className="pb-3 pr-4">{t("admin.trustScore.region")}</th>
+                <th className="pb-3 pr-4">{t("admin.trustScore.points")}</th>
+                <th className="pb-3 pr-4">{t("admin.trustScore.rejected")}</th>
+                <th className="pb-3 pr-4">{t("admin.trustScore.trustScore")}</th>
+                <th className="pb-3 pr-4">{t("admin.trustScore.setValue")}</th>
+                <th className="pb-3">{t("admin.trustScore.action")}</th>
               </tr>
             </thead>
             <tbody>
@@ -301,12 +301,12 @@ export default function AdminTrustScorePage() {
                           ) : (
                             <Save className="h-3 w-3" />
                           )}
-                          Simpan
+                          {t("admin.trustScore.save")}
                         </button>
                         <button
                           onClick={() => handleReset(u.id)}
                           className="rounded-md p-1.5 text-ink-muted hover:text-ink"
-                          title="Reset ke 50"
+                          title={t("admin.trustScore.reset")}
                         >
                           <RotateCcw className="h-3.5 w-3.5" />
                         </button>
@@ -318,7 +318,7 @@ export default function AdminTrustScorePage() {
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-sm text-ink-muted">
-                    Tidak ada user ditemukan
+                    {t("admin.trustScore.noUsers")}
                   </td>
                 </tr>
               )}

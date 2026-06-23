@@ -16,6 +16,7 @@ import {
   Lock,
 } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { useI18n } from "@/lib/i18n";
 
 type Module = {
   id: string;
@@ -51,6 +52,7 @@ export default function LearnModulePage() {
   const [user, setUser] = useState<{ userId?: string } | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userMessage, setUserMessage] = useState("");
+  const { t } = useI18n();
 
   useEffect(() => {
     // Check auth
@@ -76,10 +78,10 @@ export default function LearnModulePage() {
           setModule(mod);
           setCurrentIndex(data.course.modules.indexOf(mod));
         } else {
-          setError("Module not found");
+          setError(t("learn.course.notFound"));
         }
       })
-      .catch(() => setError("Course not found"))
+      .catch(() => setError(t("learn.course.notFound")))
       .finally(() => setLoading(false));
   }, [slug, moduleId]);
 
@@ -108,7 +110,7 @@ export default function LearnModulePage() {
 
   async function handleComplete() {
     if (!user?.userId || !course || !module) {
-      setUserMessage("Please sign in to track your progress");
+      setUserMessage(t("learn.course.signInPrompt") || "Please sign in to track your progress");
       return;
     }
 
@@ -141,12 +143,12 @@ export default function LearnModulePage() {
         if (data.pointsAwarded > 0) {
           setPointsEarned(data.pointsAwarded);
         }
-        setUserMessage("Module completed!");
+        setUserMessage(t("learn.course.moduleCompleted"));
       } else {
-        setUserMessage(data.error || "Failed to update progress");
+        setUserMessage(data.error || t("learn.course.failedUpdate"));
       }
     } catch {
-      setUserMessage("Network error. Please try again.");
+      setUserMessage(t("learn.course.networkError"));
     } finally {
       setSaving(false);
     }
@@ -164,12 +166,12 @@ export default function LearnModulePage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 dark:bg-slate-900">
         <AlertCircle className="h-12 w-12 text-slate-300 dark:text-slate-500" />
-        <p className="text-sm text-ink-muted">{error || "Module not found"}</p>
+        <p className="text-sm text-ink-muted">{error || t("learn.course.notFound")}</p>
         <Link
           href={`/learn/${slug}`}
           className="text-sm font-medium text-brand-600 hover:underline"
         >
-          Back to course
+          {t("learn.course.backToCourse")}
         </Link>
       </div>
     );
@@ -191,12 +193,12 @@ export default function LearnModulePage() {
           <div className="mt-3">
             <div className="flex items-center gap-2">
               <span className="text-xs text-ink-muted">
-                Module {currentIndex + 1} of {course.modules.length}
+                {t("learn.course.moduleOfLabel", { current: String(currentIndex + 1), total: String(course.modules.length) })}
               </span>
               {isCompletedModule && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
                   <CheckCircle2 className="h-3 w-3" />
-                  Completed
+                  {t("learn.course.completed")}
                 </span>
               )}
             </div>
@@ -220,13 +222,13 @@ export default function LearnModulePage() {
                 <div>
                   <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
                     {user
-                      ? "Complete previous modules first"
-                      : "Sign in to track your progress"}
+                      ? t("learn.course.lockPrevModules")
+                      : t("learn.course.lockSignIn")}
                   </p>
                   <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
                     {user
-                      ? "This module is locked until you complete the previous ones in this course."
-                      : "Create an account or sign in to save your progress, earn points, and unlock all modules."}
+                      ? t("learn.course.lockPrevDesc")
+                      : t("learn.course.lockSignInDesc")}
                   </p>
                   {!user && (
                     <div className="mt-3 flex gap-2">
@@ -234,13 +236,13 @@ export default function LearnModulePage() {
                         href="/sign-in"
                         className="rounded-md bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700"
                       >
-                        Sign In
+                        {t("learn.course.signIn")}
                       </Link>
                       <Link
                         href="/join"
                         className="rounded-md border border-ink-line bg-white px-3 py-1.5 text-xs font-medium text-ink hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                       >
-                        Create Account
+                        {t("learn.course.createAccount")}
                       </Link>
                     </div>
                   )}
@@ -260,7 +262,7 @@ export default function LearnModulePage() {
               <div className="flex flex-col items-center py-8 text-center">
                 <BookOpen className="h-10 w-10 text-slate-300 dark:text-slate-500" />
                 <p className="mt-2 text-sm text-ink-muted">
-                  Content coming soon
+                  {t("learn.course.contentComing")}
                 </p>
               </div>
             )}
@@ -270,7 +272,7 @@ export default function LearnModulePage() {
           {pointsEarned > 0 && (
             <div className="mt-4 flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
               <Sparkles className="h-4 w-4" />
-              You earned {pointsEarned} points for completing this course!
+              {t("learn.course.pointsEarned", { points: String(pointsEarned) })}
             </div>
           )}
 
@@ -291,7 +293,7 @@ export default function LearnModulePage() {
                   className="inline-flex items-center gap-1 rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  Previous
+                  {t("learn.course.previous")}
                 </Link>
               )}
             </div>
@@ -306,12 +308,12 @@ export default function LearnModulePage() {
                   {saving ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Saving...
+                      {t("learn.course.saving")}
                     </>
                   ) : (
                     <>
                       <CheckCircle2 className="h-4 w-4" />
-                      Mark as Complete
+                      {t("learn.course.markComplete")}
                     </>
                   )}
                 </button>
@@ -323,7 +325,7 @@ export default function LearnModulePage() {
                   className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700"
                 >
                   <Award className="h-4 w-4" />
-                  View Course
+                  {t("learn.course.viewCourse")}
                 </Link>
               )}
 
@@ -332,7 +334,7 @@ export default function LearnModulePage() {
                   href={`/learn/${slug}/${nextModule.id}`}
                   className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2 text-sm font-medium text-white hover:bg-brand-700"
                 >
-                  Next
+                  {t("learn.course.next")}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               )}

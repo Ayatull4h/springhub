@@ -13,11 +13,11 @@ function getPool(): pg.Pool {
     let dbUrl = process.env.DATABASE_URL || "";
     if (!dbUrl.includes("pgbouncer=true")) {
       const sep = dbUrl.includes("?") ? "&" : "?";
-      dbUrl += `${sep}pgbouncer=true&connection_limit=5`;
+      dbUrl += `${sep}pgbouncer=true&connection_limit=3`;
     }
     globalForPrisma.pool = new pg.Pool({
       connectionString: dbUrl,
-      max: 5,
+      max: 3,
       idleTimeoutMillis: 30000,  // 30s — biar ga ganti-ganti terus pas traffic normal
       connectionTimeoutMillis: 10000, // 10s — kasih waktu lebih buat cold start
     });

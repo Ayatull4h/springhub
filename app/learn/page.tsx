@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Sparkles, Loader2, GraduationCap } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 type Module = {
   id: string;
@@ -72,6 +73,7 @@ const DUMMY_COURSES: Course[] = [
 export default function LearnPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useI18n();
 
   useEffect(() => {
     fetch("/api/courses")
@@ -93,10 +95,10 @@ export default function LearnPage() {
         <div className="container-page text-center">
           <GraduationCap className="mx-auto h-12 w-12 text-brand-600 dark:text-brand-400" />
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight md:text-5xl">
-            Learning Hub
+            <span>{t("learn.title")}</span> <span>{t("learn.titleAccent")}</span>
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-lg text-ink-muted">
-            Tingkatkan pengetahuanmu tentang konservasi mata air melalui kursus-kursus interaktif
+            {t("learn.page.subtitle")}
           </p>
         </div>
       </section>
@@ -125,7 +127,7 @@ export default function LearnPage() {
                   </span>
                   <span className="inline-flex items-center gap-1">
                     <Layers className="h-3.5 w-3.5" />
-                    {c.modules.length} modul
+                    {c.modules.length} {t("learn.course.modules", { count: String(c.modules.length) })}
                   </span>
                 </div>
                 <Link
@@ -133,7 +135,7 @@ export default function LearnPage() {
                   className="btn-primary mt-5 inline-flex items-center justify-center gap-1.5"
                 >
                   <BookOpen className="h-4 w-4" />
-                  Mulai Belajar
+                  {t("learn.course.start")}
                 </Link>
               </article>
             ))}

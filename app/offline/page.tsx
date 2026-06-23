@@ -33,8 +33,10 @@ function OfflinePageContent() {
       const dbOk = await offlineDB.isAvailable().catch(() => false);
       if (!dbOk) {
         setPhase("storage-error");
-        const isChrome = typeof navigator !== "undefined" && /Chrome|CriOS/i.test(navigator.userAgent);
-        const isAndroid = typeof navigator !== "undefined" && /Android/i.test(navigator.userAgent);
+        const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+        const isChrome = /Chrome|CriOS/i.test(ua);
+        const isAndroid = /Android/i.test(ua);
+        const isSafari = /^((?!chrome|android).)*safari/i.test(ua) || /iPad|iPhone|iPod/i.test(ua);
         if (isAndroid && isChrome) {
           setErrorMsg(
             "Penyimpanan lokal (IndexedDB) tidak tersedia.\n\n" +
@@ -43,6 +45,16 @@ function OfflinePageContent() {
             "1. Buka Chrome tab biasa (bukan Incognito)\n" +
             "2. Pastikan storage HP tidak penuh\n" +
             "3. Chrome Settings > Site Settings > Storage > Hapus data"
+          );
+        } else if (isSafari) {
+          setErrorMsg(
+            "Penyimpanan lokal (IndexedDB) tidak tersedia.\n\n" +
+            "Safari di mode Private/Incognito mungkin membatasi IndexedDB.\n" +
+            "Solusi:\n" +
+            "1. Buka Safari tab biasa (bukan Private)\n" +
+            "2. Pastikan storage perangkat tidak penuh\n" +
+            "3. Pengaturan > Safari > Hapus Data Website\n" +
+            "4. iOS 17+ seharusnya support IndexedDB di Private mode"
           );
         } else {
           setErrorMsg("Penyimpanan lokal tidak tersedia. Gunakan non-private browsing.");

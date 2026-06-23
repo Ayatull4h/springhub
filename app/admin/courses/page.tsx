@@ -12,6 +12,7 @@ import {
   AlertCircle,
   Users,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 type CourseModule = {
   id: string;
@@ -40,13 +41,14 @@ export default function AdminCoursesPage() {
   const [error, setError] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "inactive">("all");
   const [deleting, setDeleting] = useState<string | null>(null);
+  const { t } = useI18n();
 
   const fetchCourses = () => {
     setLoading(true);
     fetch("/api/admin/courses")
       .then((r) => r.json())
       .then((data) => setCourses(data.courses ?? []))
-      .catch(() => setError("Failed to load courses"))
+      .catch(() => setError(t("admin.courses.failedLoad")))
       .finally(() => setLoading(false));
   };
 
@@ -55,7 +57,7 @@ export default function AdminCoursesPage() {
   }, []);
 
   async function handleDelete(id: string, title: string) {
-    if (!confirm(`Delete course "${title}"? This action cannot be undone.`))
+    if (!confirm(t("admin.courses.confirmDelete", { title })))
       return;
     setDeleting(id);
     try {
@@ -66,7 +68,7 @@ export default function AdminCoursesPage() {
         setCourses((prev) => prev.filter((c) => c.id !== id));
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to delete");
+        alert(data.error || t("admin.courses.failedDelete"));
       }
     } catch {
       alert("Failed to delete course");
@@ -94,9 +96,9 @@ export default function AdminCoursesPage() {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-ink">Courses</h2>
+          <h2 className="text-xl font-bold text-ink">{t("admin.courses.title")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
-            {courses.length} course{courses.length !== 1 ? "s" : ""} total
+            {t("admin.courses.total", { count: String(courses.length), plural: courses.length !== 1 ? "s" : "" })}
           </p>
         </div>
         <Link
@@ -104,7 +106,7 @@ export default function AdminCoursesPage() {
           className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           <Plus className="h-4 w-4" />
-          New Course
+          {t("admin.courses.new")}
         </Link>
       </div>
 
@@ -135,13 +137,13 @@ export default function AdminCoursesPage() {
       {filtered.length === 0 ? (
         <div className="card py-12 text-center">
           <BookOpen className="mx-auto h-8 w-8 text-slate-300" />
-          <p className="mt-2 text-sm text-ink-muted">No courses found</p>
+          <p className="mt-2 text-sm text-ink-muted">{t("admin.courses.noCourses")}</p>
           {filter !== "all" && (
             <button
               onClick={() => setFilter("all")}
               className="mt-2 text-xs text-brand-600 hover:underline"
             >
-              Show all courses
+              {t("admin.courses.showAll")}
             </button>
           )}
         </div>
@@ -165,7 +167,7 @@ export default function AdminCoursesPage() {
                 <div className="flex items-center gap-1">
                   {!course.isActive && (
                     <span className="rounded-md bg-slate-100 dark:bg-slate-700 px-2 py-0.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">
-                      Inactive
+                      {t("admin.courses.inactive")}
                     </span>
                   )}
                   <Link
@@ -188,7 +190,7 @@ export default function AdminCoursesPage() {
                 {course.title}
               </h3>
               <p className="mt-1 line-clamp-2 text-xs text-ink-muted">
-                {course.description || "No description"}
+                {course.description || t("admin.courses.noDescription")}
               </p>
 
               <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-ink-muted">
@@ -201,15 +203,14 @@ export default function AdminCoursesPage() {
                 </span>
                 <span className="inline-flex items-center gap-1">
                   <Layers className="h-3 w-3" />
-                  {course.modules.length} module
-                  {course.modules.length !== 1 ? "s" : ""}
+                  {t("admin.courses.modules", { count: String(course.modules.length), plural: course.modules.length !== 1 ? "s" : "" })}
                 </span>
               </div>
 
               <div className="mt-auto flex items-center justify-between border-t border-ink-line pt-3">
                 <span className="inline-flex items-center gap-1 text-xs text-ink-subtle">
                   <Users className="h-3 w-3" />
-                  {course._count.progress} enrolled
+                  {t("admin.courses.enrolled", { count: String(course._count.progress) })}
                 </span>
                 <span className="font-mono text-[10px] text-ink-subtle">
                   {course.slug}

@@ -11,7 +11,9 @@ import {
   Users,
   Calendar,
   Loader2,
+  MessageSquare,
 } from "lucide-react";
+import { CommentsSection } from "@/components/projects/CommentsSection";
 import { formatNumber } from "@/lib/utils";
 
 type ProjectDetail = {
@@ -236,6 +238,11 @@ export default function ProjectDetailPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Comments section */}
+      <section className="container-page py-8 border-t border-ink-line">
+        <CommentsSection projectId={project.id} />
       </section>
     </main>
   );

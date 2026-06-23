@@ -12,6 +12,7 @@ import {
   ArrowLeft,
   Award,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 type Module = {
   id: string;
@@ -48,6 +49,7 @@ export default function LearnCoursePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [user, setUser] = useState<{ userId?: string } | null>(null);
+  const { t } = useI18n();
 
   useEffect(() => {
     // Check auth
@@ -94,12 +96,12 @@ export default function LearnCoursePage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 dark:bg-slate-900">
         <BookOpen className="h-12 w-12 text-slate-300 dark:text-slate-500" />
-        <p className="text-sm text-ink-muted">{error || "Course not found"}</p>
+        <p className="text-sm text-ink-muted">{error || t("learn.course.notFound")}</p>
         <Link
           href="/#learn"
           className="text-sm font-medium text-brand-600 hover:underline"
         >
-          Back to courses
+          {t("learn.course.back")}
         </Link>
       </div>
     );
@@ -119,7 +121,7 @@ export default function LearnCoursePage() {
             className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-ink"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            Back to Learning Hub
+            {t("learn.course.back")}
           </Link>
 
           <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
@@ -145,7 +147,7 @@ export default function LearnCoursePage() {
               <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-4 py-2 dark:bg-emerald-900/30 dark:text-emerald-300">
                 <Award className="h-5 w-5 text-emerald-600" />
                 <span className="text-sm font-medium text-emerald-700">
-                  Completed!
+                  {t("learn.course.completed")}
                 </span>
               </div>
             )}
@@ -163,7 +165,7 @@ export default function LearnCoursePage() {
                 />
               </div>
               <span className="text-xs text-ink-muted">
-                {completedCount}/{totalModules} modules
+                {t("learn.course.progress", { completed: String(completedCount), total: String(totalModules) })}
               </span>
             </div>
           )}
@@ -173,13 +175,13 @@ export default function LearnCoursePage() {
       {/* Module list */}
       <div className="container-page py-8">
         <div className="mx-auto max-w-2xl space-y-3">
-          <h2 className="text-sm font-semibold text-ink">Course Modules</h2>
+          <h2 className="text-sm font-semibold text-ink">{t("learn.course.modulesLabel")}</h2>
 
           {course.modules.length === 0 ? (
             <div className="card py-8 text-center">
               <Layers className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-500" />
               <p className="mt-2 text-sm text-ink-muted">
-                No modules available yet
+                {t("learn.course.noModules")}
               </p>
             </div>
           ) : (
@@ -202,7 +204,7 @@ export default function LearnCoursePage() {
                       {mod.title || `Module ${index + 1}`}
                     </h3>
                     <p className="mt-0.5 text-xs text-ink-muted">
-                      Module {index + 1} of {totalModules}
+                      {t("learn.course.moduleOf", { current: String(index + 1), total: String(totalModules) })}
                     </p>
                   </div>
                   <span
@@ -215,10 +217,10 @@ export default function LearnCoursePage() {
                     }`}
                   >
                     {isCompletedModule
-                      ? "Review"
+                      ? t("learn.course.review")
                       : isCurrentModule
-                        ? "Start"
-                        : "Locked"}
+                        ? t("learn.course.startModule")
+                        : t("learn.course.locked")}
                   </span>
                 </>
               );

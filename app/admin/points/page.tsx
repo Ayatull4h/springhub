@@ -27,6 +27,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -95,6 +96,7 @@ function RuleFormModal({
   const [icon, setIcon] = useState("Star");
   const [sortOrder, setSortOrder] = useState(0);
   const [saving, setSaving] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     if (!open) return;
@@ -131,7 +133,7 @@ function RuleFormModal({
       <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-ink">
-            {mode === "create" ? "Tambah Aturan" : "Edit Aturan"}
+            {mode === "create" ? t("admin.points.addTitle") : t("admin.points.editTitle")}
           </h3>
           <button onClick={onClose} className="text-ink-muted hover:text-ink">
             <X className="h-5 w-5" />
@@ -140,31 +142,31 @@ function RuleFormModal({
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-ink">Nama Aturan</label>
+            <label className="block text-sm font-medium text-ink">{t("admin.points.nameLabel")}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
               className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-              placeholder="Spring Monitoring"
+              placeholder={t("admin.points.namePlaceholder")}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-ink">Deskripsi</label>
+            <label className="block text-sm font-medium text-ink">{t("admin.points.descLabel")}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
               className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-              placeholder="Melaporkan kondisi mata air"
+              placeholder={t("admin.points.descPlaceholder")}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-ink">Poin</label>
+              <label className="block text-sm font-medium text-ink">{t("admin.points.pointsLabel")}</label>
               <input
                 type="number"
                 value={points}
@@ -175,7 +177,7 @@ function RuleFormModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-ink">Urutan</label>
+              <label className="block text-sm font-medium text-ink">{t("admin.points.sortLabel")}</label>
               <input
                 type="number"
                 value={sortOrder}
@@ -188,7 +190,7 @@ function RuleFormModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-ink">Kategori</label>
+              <label className="block text-sm font-medium text-ink">{t("admin.points.categoryLabel")}</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -200,7 +202,7 @@ function RuleFormModal({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-ink">Ikon</label>
+              <label className="block text-sm font-medium text-ink">{t("admin.points.iconLabel")}</label>
               <div className="mt-1 flex flex-wrap gap-1.5">
                 {iconOptions.slice(0, 8).map((opt) => {
                   const Icon = opt.icon;
@@ -222,7 +224,7 @@ function RuleFormModal({
                   );
                 })}
                 <span className="text-xs text-ink-muted self-center ml-1">
-                  +{iconOptions.length - 8} more
+                  {t("admin.points.moreIcons", { count: String(iconOptions.length - 8) })}
                 </span>
               </div>
             </div>
@@ -234,14 +236,14 @@ function RuleFormModal({
               onClick={onClose}
               className="rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink hover:bg-slate-50 dark:hover:bg-slate-800"
             >
-              Batal
+              {t("admin.points.cancel")}
             </button>
             <button
               type="submit"
               disabled={saving || !name.trim() || points < 1}
               className="btn-primary"
             >
-              {saving ? "Menyimpan..." : mode === "create" ? "Tambah" : "Simpan"}
+              {saving ? t("admin.points.saving") : mode === "create" ? t("admin.points.add") : t("admin.points.save")}
             </button>
           </div>
         </form>
@@ -264,6 +266,7 @@ function DeleteConfirmModal({
   ruleName: string;
 }) {
   const [deleting, setDeleting] = useState(false);
+  const { t } = useI18n();
 
   async function handleDelete() {
     setDeleting(true);
@@ -277,23 +280,23 @@ function DeleteConfirmModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
       <div className="w-full max-w-sm max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-lg font-bold text-ink">Hapus Aturan</h3>
+        <h3 className="text-lg font-bold text-ink">{t("admin.points.delete")}</h3>
         <p className="mt-2 text-sm text-ink-muted">
-          Apakah kamu yakin ingin menghapus <strong>{ruleName}</strong>? Tindakan ini tidak bisa dibatalkan.
+          {t("admin.points.deleteConfirm", { name: ruleName })}
         </p>
         <div className="mt-4 flex justify-end gap-2">
           <button
             onClick={onClose}
             className="rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink hover:bg-slate-50"
           >
-            Batal
+            {t("admin.points.cancel")}
           </button>
           <button
             onClick={handleDelete}
             disabled={deleting}
             className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
           >
-            {deleting ? "Menghapus..." : "Hapus"}
+            {deleting ? t("admin.points.deleting") : t("admin.points.deleteBtn")}
           </button>
         </div>
       </div>
@@ -310,6 +313,7 @@ export default function AdminPointsPage() {
   const [editingRule, setEditingRule] = useState<PointRule | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<PointRule | null>(null);
   const [actionMsg, setActionMsg] = useState("");
+  const { t } = useI18n();
 
   const fetchRules = useCallback(() => {
     setLoading(true);
@@ -402,10 +406,9 @@ export default function AdminPointsPage() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-ink">Point Rules</h2>
+<h2 className="text-xl font-bold text-ink">{t("admin.points.title")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
-            {rules.length} aturan poin ·{' '}
-            {rules.filter((r) => r.isActive).length} aktif
+            {t("admin.points.total", { count: String(rules.length), active: String(rules.filter(r => r.isActive).length) })}
           </p>
         </div>
         <button
@@ -416,7 +419,7 @@ export default function AdminPointsPage() {
           className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           <Plus className="h-4 w-4" />
-          Tambah Aturan
+          {t("admin.points.addRule")}
         </button>
       </div>
 
@@ -432,21 +435,21 @@ export default function AdminPointsPage() {
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-ink-line bg-slate-50 dark:bg-slate-900 text-xs font-medium text-ink-subtle">
-              <th className="w-10 pb-3 pl-4 pr-2">No</th>
-              <th className="pb-3 pr-3">Ikon</th>
-              <th className="pb-3 pr-3">Nama</th>
-              <th className="pb-3 pr-3 max-md:hidden">Deskripsi</th>
-              <th className="pb-3 pr-3">Poin</th>
-              <th className="pb-3 pr-3">Kategori</th>
-              <th className="pb-3 pr-3">Status</th>
-              <th className="pb-3 pr-4">Actions</th>
+              <th className="w-10 pb-3 pl-4 pr-2">{t("admin.points.tableNo")}</th>
+              <th className="pb-3 pr-3">{t("admin.points.tableIcon")}</th>
+              <th className="pb-3 pr-3">{t("admin.points.tableName")}</th>
+              <th className="pb-3 pr-3 max-md:hidden">{t("admin.points.tableDesc")}</th>
+              <th className="pb-3 pr-3">{t("admin.points.tablePoints")}</th>
+              <th className="pb-3 pr-3">{t("admin.points.tableCategory")}</th>
+              <th className="pb-3 pr-3">{t("admin.points.tableStatus")}</th>
+              <th className="pb-3 pr-4">{t("admin.points.tableActions")}</th>
             </tr>
           </thead>
           <tbody>
             {rules.length === 0 ? (
               <tr>
                 <td colSpan={8} className="py-12 text-center text-sm text-ink-muted">
-                  Belum ada aturan poin. Klik &quot;Tambah Aturan&quot; untuk membuat yang pertama.
+                  {t("admin.points.noRules")}
                 </td>
               </tr>
             ) : (

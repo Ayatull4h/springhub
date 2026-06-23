@@ -22,20 +22,21 @@ import {
   Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 const sidebar = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Users", href: "/admin/users", icon: Users },
-  { label: "Trust Score", href: "/admin/trust-score", icon: ShieldCheck },
-  { label: "Reports", href: "/admin/reports", icon: FileText },
-  { label: "Forms", href: "/admin/forms", icon: ClipboardList },
-  { label: "Donations", href: "/admin/donations", icon: Heart },
-  { label: "Points", href: "/admin/points", icon: Award },
-  { label: "Courses", href: "/admin/courses", icon: BookOpen },
-  { label: "Feedback", href: "/admin/feedback", icon: MessageSquare },
-  { label: "Review Queue", href: "/admin/review", icon: ShieldCheck },
-  { label: "Projects", href: "/admin/projects", icon: FolderKanban },
-  { label: "Content", href: "/admin/content", icon: Image },
+  { label: "admin.sidebar.dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "admin.sidebar.users", href: "/admin/users", icon: Users },
+  { label: "admin.sidebar.trustScore", href: "/admin/trust-score", icon: ShieldCheck },
+  { label: "admin.sidebar.reports", href: "/admin/reports", icon: FileText },
+  { label: "admin.sidebar.forms", href: "/admin/forms", icon: ClipboardList },
+  { label: "admin.sidebar.donations", href: "/admin/donations", icon: Heart },
+  { label: "admin.sidebar.points", href: "/admin/points", icon: Award },
+  { label: "admin.sidebar.courses", href: "/admin/courses", icon: BookOpen },
+  { label: "admin.sidebar.feedback", href: "/admin/feedback", icon: MessageSquare },
+  { label: "admin.sidebar.reviewQueue", href: "/admin/review", icon: ShieldCheck },
+  { label: "admin.sidebar.projects", href: "/admin/projects", icon: FolderKanban },
+  { label: "admin.sidebar.content", href: "/admin/content", icon: Image },
 ];
 
 export default function AdminLayout({
@@ -48,6 +49,7 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<{ username: string; email: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useI18n();
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -93,7 +95,7 @@ export default function AdminLayout({
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">
             S
           </div>
-          <span className="text-sm font-bold text-ink">SpringHub Admin</span>
+          <span className="text-sm font-bold text-ink">{t("admin.sidebar.springhubAdmin")}</span>
         </div>
 
         <nav className="flex-1 space-y-0.5 p-3">
@@ -114,7 +116,7 @@ export default function AdminLayout({
                 )}
               >
                 <Icon className="h-4 w-4" />
-                {item.label}
+                {t(item.label)}
               </Link>
             );
           })}
@@ -129,7 +131,7 @@ export default function AdminLayout({
               <div className="text-sm font-medium text-ink">{user?.username}</div>
               <div className="text-xs text-ink-subtle">{user?.email}</div>
             </div>
-            <button onClick={handleLogout} className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label="Logout">
+            <button onClick={handleLogout} className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label={t("admin.sidebar.logout")}>
               <LogOut className="h-4 w-4" />
             </button>
           </div>
@@ -142,20 +144,20 @@ export default function AdminLayout({
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="rounded-md p-2 text-ink-muted hover:bg-slate-100 md:hidden dark:hover:bg-slate-700"
-              aria-label="Toggle menu"
+              aria-label={t("admin.sidebar.toggleMenu")}
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
             <h1 className="text-base font-semibold text-ink">
-              {sidebar.find((s) => s.href === pathname)?.label ?? "Admin"}
+              {t(sidebar.find((s) => s.href === pathname)?.label ?? "") || "Admin"}
             </h1>
           </div>
           <div className="flex items-center gap-3">
             <span className="hidden text-xs text-ink-subtle sm:inline">
-              Live data from Postgres
+              {t("admin.sidebar.liveData")}
             </span>
             <div className="flex items-center gap-2 rounded-lg border border-ink-line px-3 py-1.5 text-sm text-ink-muted dark:border-slate-700">
-              <span className="hidden sm:inline">SpringHub / Local</span>
+              <span className="hidden sm:inline">{t("admin.sidebar.environment")}</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </div>
           </div>
@@ -175,8 +177,8 @@ export default function AdminLayout({
             onClick={e => e.stopPropagation()}
           >
             <div className="flex h-16 items-center justify-between border-b border-ink-line px-5 dark:border-slate-700">
-              <span className="text-sm font-bold text-ink dark:text-white">SpringHub Admin</span>
-              <button onClick={() => setSidebarOpen(false)} className="rounded-md p-1 text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white" aria-label="Tutup menu">
+              <span className="text-sm font-bold text-ink dark:text-white">{t("admin.sidebar.springhubAdmin")}</span>
+              <button onClick={() => setSidebarOpen(false)} className="rounded-md p-1 text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white" aria-label={t("admin.sidebar.closeMenu")}>
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -196,7 +198,7 @@ export default function AdminLayout({
                     )}
                   >
                     <Icon className="h-4 w-4" />
-                    {item.label}
+                    {t(item.label)}
                   </Link>
                 );
               })}
@@ -210,7 +212,7 @@ export default function AdminLayout({
                   <div className="text-sm font-medium text-ink dark:text-white">{user?.username}</div>
                   <div className="text-xs text-ink-subtle dark:text-slate-400">{user?.email}</div>
                 </div>
-                <button onClick={handleLogout} className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label="Logout">
+                <button onClick={handleLogout} className="rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label={t("admin.sidebar.logout")}>
                   <LogOut className="h-4 w-4" />
                 </button>
               </div>

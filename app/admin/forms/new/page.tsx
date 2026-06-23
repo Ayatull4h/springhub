@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n";
 import { ClipboardList, Plus, Trash2, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 
 const FIELD_TYPES = [
@@ -45,6 +46,7 @@ export default function AdminNewFormPage() {
   const [slug, setSlug] = useState("");
   const [autoSlug, setAutoSlug] = useState(true);
 
+  const { t } = useI18n();
   const [meta, setMeta] = useState({
     title: "",
     description: "",
@@ -89,9 +91,9 @@ export default function AdminNewFormPage() {
     e.preventDefault();
     setError("");
 
-    if (!meta.title.trim()) { setError("Judul form wajib diisi"); return; }
+    if (!meta.title.trim()) { setError(t("admin.formBuilder.titleRequired")); return; }
     const finalSlug = slug || generateSlug(meta.title);
-    if (!finalSlug) { setError("Slug wajib diisi"); return; }
+    if (!finalSlug) { setError(t("admin.formBuilder.slugRequired")); return; }
 
     setSaving(true);
     try {
@@ -108,7 +110,7 @@ export default function AdminNewFormPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) { setError(data.error || "Gagal membuat form"); setSaving(false); return; }
+      if (!res.ok) { setError(data.error || t("admin.formBuilder.failedCreateForm")); setSaving(false); return; }
 
       for (const field of fields) {
         if (!field.label.trim()) continue;
@@ -132,7 +134,7 @@ export default function AdminNewFormPage() {
 
       router.push(`/admin/forms/${data.form.id}`);
     } catch {
-      setError("Kesalahan jaringan");
+      setError(t("admin.formBuilder.networkError"));
     } finally { setSaving(false); }
   }
 
@@ -143,8 +145,8 @@ export default function AdminNewFormPage() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h2 className="text-xl font-bold text-ink">Form Baru</h2>
-          <p className="mt-0.5 text-sm text-ink-muted">Buat form laporan baru untuk relawan</p>
+          <h2 className="text-xl font-bold text-ink">{t("admin.formBuilder.newForm")}</h2>
+          <p className="mt-0.5 text-sm text-ink-muted">{t("admin.formBuilder.newFormDesc")}</p>
         </div>
       </div>
 
@@ -159,32 +161,32 @@ export default function AdminNewFormPage() {
         <div className="card space-y-4">
           <div className="flex items-center gap-2">
             <ClipboardList className="h-5 w-5 text-brand-600" />
-            <h3 className="text-sm font-semibold text-ink">Informasi Form</h3>
+            <h3 className="text-sm font-semibold text-ink">{t("admin.formBuilder.formInformation")}</h3>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-ink-muted">Judul <span className="text-red-500">*</span></label>
-              <input type="text" value={meta.title} onChange={e => handleTitleChange(e.target.value)} placeholder="Monitoring Mata Air" className="w-full rounded-md border border-ink-line px-3 py-2 text-sm" required />
+              <label className="text-xs font-medium text-ink-muted">{t("admin.formBuilder.formTitle")} <span className="text-red-500">*</span></label>
+              <input type="text" value={meta.title} onChange={e => handleTitleChange(e.target.value)} placeholder={t("admin.formBuilder.placeholderTitle")} className="w-full rounded-md border border-ink-line px-3 py-2 text-sm" required />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-ink-muted">Slug</label>
-              <input type="text" value={slug} onChange={e => { setSlug(e.target.value); setAutoSlug(false); }} placeholder="monitoring-mata-air" className="w-full rounded-md border border-ink-line px-3 py-2 text-sm font-mono" />
+              <label className="text-xs font-medium text-ink-muted">{t("admin.formBuilder.slug")}</label>
+              <input type="text" value={slug} onChange={e => { setSlug(e.target.value); setAutoSlug(false); }} placeholder={t("admin.formBuilder.placeholderSlug")} className="w-full rounded-md border border-ink-line px-3 py-2 text-sm font-mono" />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-ink-muted">Deskripsi</label>
+            <label className="text-xs font-medium text-ink-muted">{t("admin.formBuilder.formDescription")}</label>
             <textarea value={meta.description} onChange={e => setMeta(prev => ({ ...prev, description: e.target.value }))} rows={2} className="w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-ink-muted">Poin per Submit</label>
+              <label className="text-xs font-medium text-ink-muted">{t("admin.formBuilder.pointsPerSubmit")}</label>
               <input type="number" value={meta.pointsOnSubmit} onChange={e => setMeta(prev => ({ ...prev, pointsOnSubmit: parseInt(e.target.value) || 0 }))} min={0} className="w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-ink-muted">Tipe Kontribusi</label>
+              <label className="text-xs font-medium text-ink-muted">{t("admin.formBuilder.contributionType")}</label>
               <select value={meta.contributionType} onChange={e => setMeta(prev => ({ ...prev, contributionType: e.target.value }))} className="w-full rounded-md border border-ink-line px-3 py-2 text-sm">
                 {CONTRIBUTION_TYPES.map(ct => <option key={ct.value} value={ct.value}>{ct.label}</option>)}
               </select>
@@ -195,7 +197,7 @@ export default function AdminNewFormPage() {
         {/* Fields builder - flexible like new report */}
         <div className="card space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-ink">Fields ({fields.length})</h3>
+            <h3 className="text-sm font-semibold text-ink">{t("admin.formBuilder.fieldsCount", { count: String(fields.length) })}</h3>
             <div className="flex flex-wrap gap-1">
               {FIELD_TYPES.map(ft => (
                 <button key={ft.value} type="button" onClick={() => addField(ft.value)}
@@ -207,13 +209,13 @@ export default function AdminNewFormPage() {
           </div>
 
           {fields.length === 0 ? (
-            <div className="py-8 text-center text-sm text-ink-muted">Belum ada field. Klik tombol di atas untuk menambahkan.</div>
+            <div className="py-8 text-center text-sm text-ink-muted">{t("admin.formBuilder.noFields")}</div>
           ) : (
             <div className="space-y-3">
               {fields.map((field, idx) => (
                 <div key={field.id} className="rounded-lg border border-ink-line bg-slate-50 p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-ink-subtle">Field {idx + 1}</span>
+                    <span className="text-xs font-medium text-ink-subtle">{t("admin.formBuilder.fieldNumber", { number: String(idx + 1) })}</span>
                     <div className="flex items-center gap-2">
                       <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">{field.type}</span>
                       <button type="button" onClick={() => removeField(field.id)} className="rounded-md p-1 text-ink-muted hover:bg-red-50 hover:text-red-600">
@@ -223,20 +225,20 @@ export default function AdminNewFormPage() {
                   </div>
 
                   <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                    <input type="text" value={field.label} onChange={e => updateField(field.id, { label: e.target.value })} placeholder="Label field" className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
+                    <input type="text" value={field.label} onChange={e => updateField(field.id, { label: e.target.value })} placeholder={t("admin.formBuilder.placeholderLabel")} className="w-full rounded-md border border-ink-line px-3 py-1.5 text-sm" />
                     <div className="flex items-center gap-2">
                       <label className="flex items-center gap-1 text-xs text-ink-muted">
                         <input type="checkbox" checked={field.required} onChange={e => updateField(field.id, { required: e.target.checked })} className="h-3 w-3" />
-                        Wajib
+                        {t("admin.formBuilder.required")}
                       </label>
-                      <input type="text" value={field.placeholder} onChange={e => updateField(field.id, { placeholder: e.target.value })} placeholder="Placeholder" className="flex-1 rounded-md border border-ink-line px-2 py-1 text-xs" />
+                      <input type="text" value={field.placeholder} onChange={e => updateField(field.id, { placeholder: e.target.value })} placeholder={t("admin.formBuilder.fieldPlaceholder")} className="flex-1 rounded-md border border-ink-line px-2 py-1 text-xs" />
                     </div>
                   </div>
 
                   {(field.type === "select" || field.type === "multiselect") && (
                     <textarea value={field.options === "[]" ? "" : (() => { try { return JSON.parse(field.options).join("\n"); } catch { return field.options; } })()}
                       onChange={e => updateField(field.id, { options: JSON.stringify(e.target.value.split("\n").filter(o => o.trim())) })}
-                      rows={3} placeholder="Opsi (satu per baris)" className="mt-2 w-full rounded-md border border-ink-line px-2 py-1 text-xs" />
+                      rows={3} placeholder={t("admin.formBuilder.optionsOnePerLine")} className="mt-2 w-full rounded-md border border-ink-line px-2 py-1 text-xs" />
                   )}
                 </div>
               ))}
@@ -245,10 +247,10 @@ export default function AdminNewFormPage() {
         </div>
 
         <div className="flex justify-end gap-3">
-          <Link href="/admin/forms" className="rounded-md border border-ink-line px-4 py-2 text-sm text-ink-muted hover:bg-slate-100">Batal</Link>
+          <Link href="/admin/forms" className="rounded-md border border-ink-line px-4 py-2 text-sm text-ink-muted hover:bg-slate-100">{t("common.cancel")}</Link>
           <button type="submit" disabled={saving} className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-            {saving ? "Menyimpan..." : "Buat Form"}
+            {saving ? t("admin.formBuilder.saving") : t("admin.formBuilder.createForm")}
           </button>
         </div>
       </form>

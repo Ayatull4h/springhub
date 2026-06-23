@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, Image, ExternalLink, Video, FileText, Calendar } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 type ContentItem = {
   id: string;
@@ -31,6 +32,7 @@ export default function AdminContentPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<ContentItem | null>(null);
+  const { t } = useI18n();
   const [form, setForm] = useState({
     section: "media",
     type: "video",
@@ -80,26 +82,26 @@ export default function AdminContentPage() {
         fetchItems();
       } else {
         const data = await res.json();
-        setSaveError(data.error || "Gagal menyimpan");
+        setSaveError(data.error || t("admin.content.failedSave"));
       }
     } catch {
-      setSaveError("Gagal menyimpan");
+      setSaveError(t("admin.content.failedSave"));
     } finally {
       setSaving(false);
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Hapus item ini?")) return;
+    if (!confirm(t("admin.content.confirmDelete"))) return;
     try {
       const res = await fetch(`/api/admin/content/${id}`, { method: "DELETE" });
       if (res.ok) {
         fetchItems();
       } else {
-        alert("Gagal menghapus");
+        alert(t("admin.content.failedDelete"));
       }
     } catch {
-      alert("Gagal menghapus");
+      alert(t("admin.content.failedDelete"));
     }
   }
 
@@ -130,12 +132,12 @@ export default function AdminContentPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-xl font-bold text-ink">Content Manager</h2>
+        <h2 className="text-xl font-bold text-ink">{t("admin.content.title")}</h2>
         <button
           onClick={() => { setEditing(null); resetForm(); setShowForm(true); }}
           className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
-          <Plus className="h-4 w-4" /> Add {activeSection}
+          <Plus className="h-4 w-4" /> {t("admin.content.add", { section: activeSection })}
         </button>
       </div>
 
@@ -163,8 +165,8 @@ export default function AdminContentPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="card py-12 text-center">
-          <p className="text-ink-muted">No {activeSection} items yet.</p>
-          <p className="text-xs text-ink-subtle mt-1">Click &ldquo;Add {activeSection}&rdquo; to create one.</p>
+          <p className="text-ink-muted">{t("admin.content.noItems", { section: activeSection })}</p>
+          <p className="text-xs text-ink-subtle mt-1">{t("admin.content.addHint", { section: activeSection })}</p>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -195,11 +197,11 @@ export default function AdminContentPage() {
                 {item.subtitle && <p className="text-xs text-ink-muted">{item.subtitle}</p>}
                 {item.linkUrl && (
                   <a href={item.linkUrl} target="_blank" className="mt-2 inline-flex items-center gap-1 text-xs text-brand-600 hover:underline">
-                    {item.linkLabel || "Open link"} <ExternalLink className="h-3 w-3" />
+                    {item.linkLabel || t("admin.content.openLink")} <ExternalLink className="h-3 w-3" />
                   </a>
                 )}
                 <div className="mt-auto pt-3 text-[10px] text-ink-subtle">
-                  Sort: {item.sortOrder}
+                  {t("admin.content.sort", { order: String(item.sortOrder) })}
                 </div>
               </div>
             );
@@ -211,10 +213,10 @@ export default function AdminContentPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowForm(false)}>
           <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-ink">{editing ? "Edit" : "Add"} {activeSection}</h3>
+            <h3 className="text-lg font-bold text-ink">{editing ? t("admin.content.edit") : t("admin.content.addTitle")} {activeSection}</h3>
             <form onSubmit={handleSave} className="mt-4 space-y-3">
               <div>
-                <label className="text-xs font-medium text-ink-muted">Type</label>
+                <label className="text-xs font-medium text-ink-muted">{t("admin.content.type")}</label>
                 <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white">
                   {sections.find(s => s.id === activeSection)?.types.map(t => (
                     <option key={t} value={t}>{t}</option>
@@ -222,38 +224,38 @@ export default function AdminContentPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-ink-muted">Title *</label>
+                <label className="text-xs font-medium text-ink-muted">{t("admin.content.titleLabel")}</label>
                 <input required value={form.title} onChange={e => setForm({...form, title: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
               </div>
               <div>
-                <label className="text-xs font-medium text-ink-muted">Subtitle / Date</label>
+                <label className="text-xs font-medium text-ink-muted">{t("admin.content.subtitle")}</label>
                 <input value={form.subtitle} onChange={e => setForm({...form, subtitle: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder="e.g. Apr 2026 · 200 volunteers" />
               </div>
               <div>
-                <label className="text-xs font-medium text-ink-muted">Description</label>
+                <label className="text-xs font-medium text-ink-muted">{t("admin.content.description")}</label>
                 <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={2} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
               </div>
               <div>
-                <label className="text-xs font-medium text-ink-muted">Image URL (YouTube thumbnail or photo)</label>
-                <input value={form.imageUrl} onChange={e => setForm({...form, imageUrl: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder="https://images.unsplash.com/..." />
+                <label className="text-xs font-medium text-ink-muted">{t("admin.content.imageUrl")}</label>
+                <input value={form.imageUrl} onChange={e => setForm({...form, imageUrl: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder={t("admin.content.imageUrl")} />
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">Link URL (YouTube or article)</label>
-                <input value={form.linkUrl} onChange={e => setForm({...form, linkUrl: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder="https://youtube.com/watch?v=..." />
+                <input value={form.linkUrl} onChange={e => setForm({...form, linkUrl: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder={t("admin.content.linkUrl")} />
               </div>
               <div>
-                <label className="text-xs font-medium text-ink-muted">Link Label</label>
+                <label className="text-xs font-medium text-ink-muted">{t("admin.content.linkLabel")}</label>
                 <input value={form.linkLabel} onChange={e => setForm({...form, linkLabel: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder="Watch on YouTube" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-ink-muted">Sort Order</label>
+                  <label className="text-xs font-medium text-ink-muted">{t("admin.content.sortOrder")}</label>
                   <input type="number" value={form.sortOrder} onChange={e => setForm({...form, sortOrder: parseInt(e.target.value) || 0})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} className="rounded-md border border-ink-line px-4 py-2 text-sm text-ink hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
-                <button type="submit" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">Save</button>
+                <button type="button" onClick={() => setShowForm(false)} className="rounded-md border border-ink-line px-4 py-2 text-sm text-ink hover:bg-slate-50 dark:hover:bg-slate-800">{t("admin.content.cancel")}</button>
+                <button type="submit" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">{t("admin.content.save")}</button>
               </div>
             </form>
           </div>

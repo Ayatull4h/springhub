@@ -23,6 +23,19 @@ const CACHE_NAMES = {
 
 const ALL_CACHES = Object.values(CACHE_NAMES);
 
+// ─── HELPER: Quota check ─────────────────────────────────────────────────────
+async function isStorageQuotaOk(minBytes) {
+  try {
+    const est = await navigator.storage.estimate();
+    const quota = est.quota || 0;
+    const usage = est.usage || 0;
+    const available = quota - usage;
+    return available >= minBytes;
+  } catch {
+    return true; // Assume OK if we can't check
+  }
+}
+
 // ─── INSTALL ───────────────────────────────────────────────────────────────
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -215,6 +228,14 @@ self.addEventListener("message", (event) => {
 
 /** Pre-cache a batch of tile URLs (sent from offline-setup.tsx) */
 async function precacheTiles(tileUrls) {
+  // Safari 50MB limit — check quota first (tiles ~20KB each)
+  const ONE_TILE_BYTES = 20 * 1024;
+  const needed = tileUrls.length * ONE_TILE_BYTES;
+  if (!(await isStorageQuotaOk(needed))) {
+    console.warn("[SW] Insufficient storage quota for tiles, skipping cache");
+    return;
+  }
+
   const cache = await caches.open(CACHE_NAMES.TILES);
 
   // Process in batches of 20 to avoid overwhelming the network
