@@ -168,29 +168,30 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
     return { groups, noSpring };
   }, [reports, springNames]);
 
-  // Fetch spring names for grouped markers
+  // Fetch spring names for grouped markers — uses bulk API to avoid N+1 problem
   useEffect(() => {
     const ids = springs.groups
       .filter((g) => !springNames[g.id])
       .map((g) => g.id)
-      .slice(0, 20);
+      .slice(0, 50);
 
     if (ids.length === 0) return;
 
     const fetchNames = async () => {
-      const results: Record<string, string> = {};
-      await Promise.all(
-        ids.map(async (id) => {
-          try {
-            const res = await fetch(`/api/springs/${id}`);
-            const data = await res.json();
-            if (data?.spring?.name) results[id] = data.spring.name;
-          } catch { /* ignore */ }
-        })
-      );
-      if (Object.keys(results).length > 0) {
-        setSpringNames((prev) => ({ ...prev, ...results }));
-      }
+      try {
+        const res = await fetch(`/api/springs/bulk?ids=${ids.join(",")}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data?.springs?.length) return;
+
+        const results: Record<string, string> = {};
+        for (const s of data.springs) {
+          if (s.id && s.name) results[s.id] = s.name;
+        }
+        if (Object.keys(results).length > 0) {
+          setSpringNames((prev) => ({ ...prev, ...results }));
+        }
+      } catch { /* ignore */ }
     };
     fetchNames();
   }, [springs.groups, springNames]);

@@ -4,36 +4,64 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    // ── impactStats ──────────────────────────────────────────────────────
-    const totalReports = await prisma.report.count({ where: { isActive: true } });
-    const approvedReports = await prisma.report.count({
-      where: { status: "approved", isActive: true },
-    });
-    const treeReports = await prisma.report.count({
-      where: { formSlug: "tree_planting", isActive: true },
-    });
-    const trenchReports = await prisma.report.count({
-      where: { formSlug: "trench_development", isActive: true },
-    });
-
-    // This month stats for delta
     const firstOfMonth = new Date();
     firstOfMonth.setDate(1);
     firstOfMonth.setHours(0, 0, 0, 0);
 
-    const reportsThisMonth = await prisma.report.count({
-      where: { createdAt: { gte: firstOfMonth }, isActive: true },
-    });
-    const approvedThisMonth = await prisma.report.count({
-      where: { createdAt: { gte: firstOfMonth }, status: "approved", isActive: true },
-    });
-    const treeThisMonth = await prisma.report.count({
-      where: { createdAt: { gte: firstOfMonth }, formSlug: "tree_planting", isActive: true },
-    });
-    const trenchThisMonth = await prisma.report.count({
-      where: { createdAt: { gte: firstOfMonth }, formSlug: "trench_development", isActive: true },
-    });
+    // ── Run ALL independent queries in parallel ──────────────────────
+    // This cuts total wall-clock time from sum-of-sequential to max-of-parallel.
+    const [
+      totalReports,
+      approvedReports,
+      treeReports,
+      trenchReports,
+      reportsThisMonth,
+      approvedThisMonth,
+      treeThisMonth,
+      trenchThisMonth,
+      totalUsers,
+      totalProjects,
+      totalCoursesCompleted,
+      totalDonations,
+      restoredReports,
+      seedlingReports,
+      topVolunteers,
+    ] = await Promise.all([
+      // impactStats — total counts
+      prisma.report.count({ where: { isActive: true } }),
+      prisma.report.count({ where: { status: "approved", isActive: true } }),
+      prisma.report.count({ where: { formSlug: "tree_planting", isActive: true } }),
+      prisma.report.count({ where: { formSlug: "trench_development", isActive: true } }),
 
+      // impactStats — this month counts
+      prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, isActive: true } }),
+      prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, status: "approved", isActive: true } }),
+      prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, formSlug: "tree_planting", isActive: true } }),
+      prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, formSlug: "trench_development", isActive: true } }),
+
+      // monthlyProgress — user, project, course, donation
+      prisma.profile.count(),
+      prisma.project.count(),
+      prisma.coursesProgress.count({ where: { completed: true } }),
+      prisma.donation.aggregate({
+        _sum: { amountIdr: true },
+        where: { status: "paid" },
+      }),
+
+      // monthlyProgress — form-slug counts
+      prisma.report.count({ where: { formSlug: "spring_restoration", isActive: true } }),
+      prisma.report.count({ where: { formSlug: "seedling_stock", isActive: true } }),
+
+      // topVolunteers
+      prisma.profile.findMany({
+        where: { role: { in: ["volunteer", "admin"] }, points: { gt: 0 } },
+        orderBy: { points: "desc" },
+        take: 5,
+        select: { username: true, region: true, points: true },
+      }),
+    ]);
+
+    // ── impactStats ──────────────────────────────────────────────────
     const impactStats = [
       {
         label: "Monitored Springs",
@@ -69,25 +97,7 @@ export async function GET() {
       },
     ];
 
-    // ── monthlyProgress ──────────────────────────────────────────────────
-    // Real monthly data
-    const totalUsers = await prisma.profile.count();
-    const totalProjects = await prisma.project.count();
-    const totalCoursesCompleted = await prisma.coursesProgress.count({
-      where: { completed: true },
-    });
-    const totalDonations = await prisma.donation.aggregate({
-      _sum: { amountIdr: true },
-      where: { status: "paid" },
-    });
-    const restoredReports = await prisma.report.count({
-      where: { formSlug: "spring_restoration", isActive: true },
-    });
-    const seedlingReports = await prisma.report.count({
-      where: { formSlug: "seedling_stock", isActive: true },
-    });
-
-    // Use 25% growth heuristic for "total" values (this month count x 4 for estimated annual)
+    // ── monthlyProgress ──────────────────────────────────────────────
     const monthlyProgress = [
       { label: "Tree Planting", value: treeThisMonth, total: Math.max(treeThisMonth * 4, 100), suffix: "now" },
       { label: "Spring Monitoring", value: reportsThisMonth, total: Math.max(reportsThisMonth * 4, 100), suffix: "now" },
@@ -98,42 +108,54 @@ export async function GET() {
       { label: "Projects Submitted", value: totalProjects, total: Math.max(totalProjects * 2, 15), suffix: "now" },
       { label: "Courses Completed", value: totalCoursesCompleted, total: Math.max(totalCoursesCompleted * 2, 100), suffix: "joined" },
       { label: "Total Donations (IDR)", value: totalDonations._sum.amountIdr || 0, total: Math.max((totalDonations._sum.amountIdr || 0) * 2, 50000000), suffix: "now" },
-      { label: "Kawasan Terlindungi (Ha)", value: 0, total: 100, suffix: "now" }, // Not tracked yet
+      { label: "Kawasan Terlindungi (Ha)", value: 0, total: 100, suffix: "now" },
     ];
 
-    // ── topRegions ───────────────────────────────────────────────────────
-    const reportsByRegion = await prisma.report.groupBy({
-      by: ["fieldData"],
-      where: { isActive: true },
-    });
-
-    // Parse fieldData JSON and extract region/province info
-    const regionMap = new Map<string, { reports: number; trees: number; trenches: number }>();
-
-    const allReports = await prisma.report.findMany({
+    // ── topRegions ───────────────────────────────────────────────────
+    // Instead of loading ALL reports + groupBy on JSON string (no index),
+    // we query at most 500 recent active reports and extract region from
+    // their JSON fieldData. This is a pragmatic trade-off: the "top 5"
+    // regions will converge with just a few hundred reports.
+    const recentReports = await prisma.report.findMany({
       where: { isActive: true },
       select: {
         fieldData: true,
         formSlug: true,
+        spring: { select: { province: true, regency: true } },
       },
+      orderBy: { createdAt: "desc" },
+      take: 500,
     });
 
-    for (const rpt of allReports) {
-      try {
-        const data = JSON.parse(rpt.fieldData);
-        const region = data.province || data.region || "Unknown";
-        const entry = regionMap.get(region) || { reports: 0, trees: 0, trenches: 0 };
-        entry.reports += 1;
-        if (rpt.formSlug === "tree_planting") entry.trees += 1;
-        if (rpt.formSlug === "trench_development") entry.trenches += 1;
-        regionMap.set(region, entry);
-      } catch {
-        // Skip invalid JSON
+    const regionMap = new Map<string, { reports: number; trees: number; trenches: number }>();
+
+    for (const rpt of recentReports) {
+      let region: string | null = null;
+
+      // Prefer the spring's own province/regency fields (no parsing needed)
+      if (rpt.spring?.province) {
+        region = rpt.spring.province;
+      } else {
+        // Fallback: parse JSON fieldData
+        try {
+          const data = JSON.parse(rpt.fieldData);
+          region = data.province || data.region || null;
+        } catch {
+          // ignore
+        }
       }
+
+      if (!region) region = "Unknown";
+
+      const entry = regionMap.get(region) || { reports: 0, trees: 0, trenches: 0 };
+      entry.reports += 1;
+      if (rpt.formSlug === "tree_planting") entry.trees += 1;
+      if (rpt.formSlug === "trench_development") entry.trenches += 1;
+      regionMap.set(region, entry);
     }
 
-    // Fallback to profiles.region if no report data
-    if (regionMap.size === 0) {
+    // Fallback: profiles.region if no report data
+    if (regionMap.size <= 1) {
       const profilesByRegion = await prisma.profile.groupBy({
         by: ["region"],
         where: { region: { not: "" } },
@@ -155,22 +177,8 @@ export async function GET() {
       .slice(0, 5)
       .map((item, idx) => ({ ...item, rank: idx + 1 }));
 
-    // ── topVolunteers ────────────────────────────────────────────────────
-    const volunteers = await prisma.profile.findMany({
-      where: {
-        role: { in: ["volunteer", "admin"] },
-        points: { gt: 0 },
-      },
-      orderBy: { points: "desc" },
-      take: 5,
-      select: {
-        username: true,
-        region: true,
-        points: true,
-      },
-    });
-
-    const topVolunteers = volunteers.map((v, idx) => ({
+    // ── topVolunteers ────────────────────────────────────────────────
+    const topVolunteersFormatted = topVolunteers.map((v, idx) => ({
       rank: idx + 1,
       name: v.username || "Anonymous",
       region: v.region || "Unknown",
@@ -181,7 +189,7 @@ export async function GET() {
       impactStats,
       monthlyProgress,
       topRegions,
-      topVolunteers,
+      topVolunteers: topVolunteersFormatted,
     });
   } catch (error) {
     console.error("Dashboard API error:", error);
