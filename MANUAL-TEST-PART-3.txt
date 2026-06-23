@@ -3,8 +3,8 @@
 ======================================================================
 
 URL    : https://springhub.vercel.app/
-Tanggal: 22 Juni 2026
-Total  : 104 Test Case (88 existing + 8 Sesi 8 + 8 baru Sesi 9)
+Tanggal: 23 Juni 2026
+Total  : 122 Test Case (104 existing + 18 baru Sesi 10)
 
 CARA PAKAI:
   [x] = Lolos
@@ -1005,5 +1005,188 @@ TOTAL                          104       90        0       14
     JANGAN jalankan ALTER DATABASE (sudah dihapus — tidak valid di
     Supabase). Jika masih EMAXCONNSESSION: Dashboard > Database >
     Reset connection pool.
+
+======================================================================
+  20. SESI 10 — COMMENTS UI + I18N + PWA SAFARI  ❇️ BARU
+======================================================================
+
+[ ] TC-105 Comments — tampil di project detail
+    Device  : Both
+    Langkah : 1. Buka /projects/[id]  2. Scroll ke bawah
+    Harapan : Section "Komentar" muncul dengan judul. Ada form input
+              jika sudah login, atau "Masuk untuk berkomentar" jika
+              guest
+    Catatan : Sesi 10: components/projects/CommentsSection.tsx
+
+[ ] TC-106 Comments — post komentar (login)
+    Device  : Both
+    Langkah : 1. Login volunteer  2. Buka /projects/[id]
+              3. Scroll ke komentar  4. Ketik teks  5. Klik Kirim
+    Harapan : Komentar muncul secara optimistic. Real comment
+              menggantikan setelah response API. Hitungan bertambah
+    Catatan : Sesi 10: optimistic UI + fire-and-forget
+
+[ ] TC-107 Comments — tanpa login
+    Device  : Both
+    Langkah : 1. Guest (incognito)  2. Buka /projects/[id]
+              3. Scroll ke komentar
+    Harapan : Tidak ada form input. Ada teks "Masuk untuk berkomentar"
+              dengan link ke /sign-in
+    Catatan : Sesi 10: auth gate
+
+[ ] TC-108 Comments — loading state
+    Device  : Both
+    Langkah : 1. Slow network (DevTools throttling)  2. Buka
+              /projects/[id]  3. Scroll ke komentar
+    Harapan : Spinner loading muncul saat fetch. List kosong teks
+              jika tidak ada komentar
+    Catatan : Sesi 10: loading + empty state
+
+[ ] TC-109 Comments — error handling
+    Device  : Both
+    Langkah : 1. Login  2. Matikan internet  3. Ketik komentar
+              4. Klik Kirim
+    Harapan : Error "Gagal mengirim komentar" muncul. Optimistic
+              comment di-rollback (hilang dari list)
+    Catatan : Sesi 10: error state + rollback optimistic
+
+[ ] TC-110 i18n — EN/ID toggle admin
+    Device  : Both
+    Langkah : 1. Login admin  2. /admin  3. Klik EN/ID toggle
+              4. Cek sidebar
+    Harapan : Sidebar Labels berubah: "Dashboard" → "Dashboard",
+              "Users" → "Pengguna", "Reports" → "Laporan",
+              "Forms" → "Formulir"
+    Catatan : Sesi 10: admin.sidebar.* keys
+
+[ ] TC-111 i18n — Admin Forms page
+    Device  : Both
+    Langkah : 1. Login admin  2. Klik EN/ID toggle  3. /admin/forms
+    Harapan : Title "Forms" → "Formulir". Tombol "Create New Form" →
+              "Buat Form Baru". Filter tabs berubah. Badge status
+              "Inactive" → "Nonaktif"
+    Catatan : Sesi 10: admin.forms.* keys
+
+[ ] TC-112 i18n — Admin Courses page
+    Device  : Both
+    Langkah : 1. Login admin  2. Klik EN/ID toggle  3. /admin/courses
+    Harapan : Title "Courses" → "Kursus". Tombol "New Course" →
+              "Kursus Baru". "No courses found" → "Tidak ada kursus"
+    Catatan : Sesi 10: admin.courses.* keys
+
+[ ] TC-113 i18n — Admin Points page
+    Device  : Both
+    Langkah : 1. Login admin  2. Klik EN/ID toggle  3. /admin/points
+    Harapan : Title "Point Rules" → "Aturan Poin". Table headers
+              berubah: "Name" → "Nama", "Points" → "Poin",
+              "Category" → "Kategori". Modal tambah: "Nama Aturan",
+              "Deskripsi", dll.
+    Catatan : Sesi 10: admin.points.* keys
+
+[ ] TC-114 i18n — Admin Content Manager
+    Device  : Both
+    Langkah : 1. Login admin  2. Klik EN/ID toggle  3. /admin/content
+    Harapan : Title "Content Manager" → "Manajemen Konten".
+              "Add media" → "Tambah media". Form labels berubah
+    Catatan : Sesi 10: admin.content.* keys
+
+[ ] TC-115 i18n — Admin Trust Score
+    Device  : Both
+    Langkah : 1. Login admin  2. Klik EN/ID toggle
+              3. /admin/trust-score
+    Harapan : Title "Trust Score Management" → "Manajemen Trust
+              Score". Summary card labels berubah. Table headers
+              berubah. "Search users" → "Cari pengguna..."
+    Catatan : Sesi 10: admin.trustScore.* keys
+
+[ ] TC-116 i18n — Learning Hub page
+    Device  : Both
+    Langkah : 1. Klik EN/ID toggle  2. Buka /learn
+    Harapan : Title berubah. Subtitle course description berubah.
+              "Mulai Belajar" ↔ "Start Course" berubah
+    Catatan : Sesi 10: learn.* keys
+
+[ ] TC-117 i18n — Course Detail page
+    Device  : Both
+    Langkah : 1. Klik EN/ID toggle  2. Buka /learn/[slug]
+    Harapan : "Course Modules" ↔ "Modul Kursus". "Back to Learning
+              Hub" ↔ "Kembali ke Learning Hub". Module status
+              (Completed/Start/Locked) berubah bahasa
+    Catatan : Sesi 10: learn.course.* keys
+
+[ ] TC-118 i18n — Module page
+    Device  : Both
+    Langkah : 1. Klik EN/ID toggle  2. Buka /learn/[slug]/[moduleId]
+    Harapan : "Module X of Y" berubah. "Previous", "Mark as Complete",
+              "Next", "Back to course" semua berubah sesuai bahasa
+    Catatan : Sesi 10: learn.course.* keys
+
+[ ] TC-119 PWA Safari — CSRF sameSite lax
+    Device  : iOS
+    Langkah : 1. Buka Safari mode normal  2. Login admin
+              3. DevTools > Cookies
+    Harapan : Cookie CSRF punya SameSite="Lax" (bukan "Strict").
+              Form submit tetap work di PWA standalone
+    Catatan : Sesi 10: lib/csrf.ts — sameSite changed from "strict"
+              to "lax"
+
+[ ] TC-120 PWA Safari — session CSRF token
+    Device  : iOS
+    Langkah : 1. Login via Safari  2. Buka DevTools > IndexedDB
+              3. Cek session-cache
+    Harapan : Entry "user-session" punya csrfToken terisi (bukan
+              string kosong). Token valid
+    Catatan : Sesi 10: lib/session-cache.ts — fetch /api/csrf
+
+[ ] TC-121 PWA Safari — offline error message
+    Device  : iOS
+    Langkah : 1. Safari Private mode  2. Buka /offline
+    Harapan : Error spesifik Safari muncul: "Safari di mode
+              Private/Incognito mungkin membatasi IndexedDB" dengan
+              solusi langkah-langkah
+    Catatan : Sesi 10: app/offline/page.tsx — platform detection
+
+[ ] TC-122 Pool config — deploy verification
+    Device  : Both
+    Langkah : 1. Cek Vercel deploy log  2. Pastikan deploy sukses
+              3. Buka web  4. Submit form 3x berturut-turut
+    Harapan : Build sukses. Form submit tidak error "max clients
+              reached". Pool size 3 cukup untuk concurrent requests
+    Catatan : Sesi 10: lib/prisma.ts max=3, connection_limit=3
+
+=====================================================================
+  RINGKASAN
+======================================================================
+
+Area                          Total    Lolos    Gagal    Belum
+----                          -----    -----    -----    -----
+Guest Flow                      10       10        0        0
+Volunteer/User Flow              9        9        0        0
+Admin Flow                      10       10        0        0
+Spring Detail Page               7        7        0        0
+Offline Mode (PWA)              11        8        0        3
+Aturan Foto                      9        9        0        0
+Timestamp                        2        2        0        0
+Field Lead — Sudah Dihapus       2        2        0        0
+Media Links                      6        6        0        0
+Aksesibilitas                    4        4        0        0
+Dashboard & Data Real-time       4        4        0        0
+Trust Score Management           6        6        0        0
+Button & Navigasi                3        3        0        0
+Dummy Data (Demo)                5        5        0        0
+PWA Session Consistency          5        5        0        0
+Offline Photo Counter            3        0        0        3
+Skeleton Loading (Sesi 9)        3        0        0        3
+Data Saver Mode (Sesi 9)         3        0        0        3
+Static Pages Dark (Sesi 9)       2        0        0        2
+Comments UI (Sesi 10)            5        0        0        5
+i18n EN/ID (Sesi 10)             9        0        0        9
+PWA Safari (Sesi 10)             3        0        0        3
+Pool Config (Sesi 10)            1        0        0        1
+----                          -----    -----    -----    -----
+TOTAL                          122       90        0       32
+* 18 TC baru: TC-105 s/d TC-122 (Sesi 10)
+* 14 TC perlu test: TC-97 s/d TC-104 (Sesi 9)
+* 6 TC retest: TC-44,45,46 (PWA), TC-94,95,96 (photo)
 
 ======================================================================
