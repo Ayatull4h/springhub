@@ -54,8 +54,7 @@ dev-server.pid
 test-results/
 e2e-report/
 
-# opencode
-.opencode/
+# vercel
 .vercel
 
 # playwright-mcp
@@ -65,8 +64,13 @@ e2e-report/
 *credentials*
 *credential*
 
-# local backups
+# opencode chat history (contains API keys in conversations)
+.opencode/history/
+
+# backup files (contains API keys & SSH keys in copies)
 backup/
+
+# local temp files
 MANUAL-TEST-PART-2*.md
 *.csv
 *.pdf
