@@ -106,10 +106,10 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         collected[key] = value;
       });
 
-      // Include GPS coords
+      // Include GPS coords — gunakan nama field yang sesuai (location_lat / location_lng)
       if (gpsCoords) {
-        collected.lat = gpsCoords.lat;
-        collected.lng = gpsCoords.lng;
+        collected.location_lat = String(gpsCoords.lat);
+        collected.location_lng = String(gpsCoords.lng);
       }
       collected._captured_at = capturedAt;
 

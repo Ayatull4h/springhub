@@ -44,11 +44,30 @@ export function QueueWorker() {
     }
   }
 
+  /** Helper: fetch CSRF token */
+  async function getCsrfToken(): Promise<string> {
+    try {
+      const res = await fetch("/api/csrf");
+      const data = await res.json();
+      return data.token || "";
+    } catch {
+      return "";
+    }
+  }
+
   useEffect(() => {
     const processQueue = async () => {
       if (processingRef.current) return;
       processingRef.current = true;
       try {
+        // ── Ambil CSRF token fresh ────────────────────────────────
+        const freshCsrfToken = await getCsrfToken();
+        if (!freshCsrfToken) {
+          // CSRF token not available, retry later
+          processingRef.current = false;
+          return;
+        }
+
         const queue = await offlineDB.getAllQueued();
         if (queue.length === 0) return;
 
@@ -74,7 +93,7 @@ export function QueueWorker() {
 
             const res = await fetch("/api/reports", {
               method: "POST",
-              headers: item.csrfToken ? { "x-csrf-token": item.csrfToken } : {},
+              headers: { "x-csrf-token": freshCsrfToken },
               body: formData,
             });
 
