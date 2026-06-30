@@ -161,5 +161,48 @@
 
 ---
 
-**Total Test: 11 kategori, ~70 test case**  
+## ✅ Test 12 — Fix 30 Juni 2026
+
+| # | Test | Langkah | Hasil |
+|---|---|---|---|
+| 12.1 | Foto field muncul | Buka `/report/spring-monitoring` → scroll ke "Foto mata air" | ✅ ada input file + counter 0/5 |
+| 12.2 | Province dropdown | Buka `/report/spring-monitoring` → field "Provinsi" | ✅ dropdown 38 provinsi |
+| 12.3 | Flow condition select | Buka `/report/spring-monitoring` → "Kondisi debit" | ✅ dropdown (Deras/Sedang/Kecil/Mampus) |
+| 12.4 | Submit form sukses | Isi form + 3 foto → submit → muncul "Laporan terkirim" | ✅ status `pending` |
+| 12.5 | Submit form gagal (foto < 3) | Isi form + 0-2 foto → submit → error "Minimal 3 foto" | ✅ |
+| 12.6 | CSRF token sync | Buka web → submit form → liat Network tab | ✅ x-csrf-token terkirim |
+| 12.7 | Review queue | Login admin → `/admin/review` → liat laporan baru | ✅ muncul pending |
+| 12.8 | API direct submit | `curl POST /api/reports` (HTTPS + cookies) | ✅ `{"success":true}` |
+
+### Cara test via terminal:
+```bash
+# 1. Login
+curl -k -c /tmp/springhub.txt -b /tmp/springhub.txt \
+  -X POST https://www.springhub.id/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@springhub.id","password":"demo12345"}'
+
+# 2. Ambil CSRF token
+CSRF=$(curl -s -k -b /tmp/springhub.txt \
+  https://www.springhub.id/api/csrf | python3 -c \
+  "import json,sys; print(json.load(sys.stdin).get('token',''))")
+
+# 3. Submit form (submit_time harus >3 detik dari sekarang)
+curl -k -b /tmp/springhub.txt \
+  -X POST https://www.springhub.id/api/reports \
+  -H "x-csrf-token: $CSRF" \
+  -F "form_slug=spring-monitoring" \
+  -F "spring_name=Mata Air Test" \
+  -F "province=Jawa Barat" -F "regency=Bandung" \
+  -F "date=$(date +%Y-%m-%d)" \
+  -F "flow_condition=Sedang" \
+  -F "water_quality=Jernih" \
+  -F "cleanliness=Bersih" \
+  -F "_submit_time=$(echo $(date +%s)000 - 15000 | bc)" \
+  -F "_website=" -F "notes=Test manual"
+```
+
+---
+
+**Total Test: 12 kategori, ~78 test case**  
 **Status: ✅✅✅ ALL PASSED**
