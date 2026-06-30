@@ -79,16 +79,11 @@ export function QueueWorker() {
             const formData = new FormData();
             formData.set("form_slug", item.formSlug);
             formData.set("_captured_at", (item.fieldData._captured_at as string) || new Date().toISOString());
+            formData.set("_submit_time", String(Date.now()));
+            formData.set("_website", "");
             for (const [key, value] of Object.entries(item.fieldData)) {
               if (key === "_captured_at") continue;
               formData.set(key, String(value ?? ""));
-            }
-
-            if (item.photoBlobs && item.photoBlobs.length > 0) {
-              for (const pb of item.photoBlobs) {
-                const blob = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
-                formData.append(pb.fieldId, blob, pb.fileName || `photo-${Date.now()}.jpg`);
-              }
             }
 
             const res = await fetch("/api/reports", {
@@ -100,9 +95,10 @@ export function QueueWorker() {
             if (res.ok) {
               const data = await res.json();
 
+              // ── Upload photos AFTER report sukses ───────────────
               if (data.report?.id && item.photoBlobs && item.photoBlobs.length > 0) {
                 const reportId = data.report.id;
-                const photoErrors: string[] = [];
+                let photoFailedCount = 0;
 
                 for (const pb of item.photoBlobs) {
                   try {
@@ -113,38 +109,30 @@ export function QueueWorker() {
 
                     const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
                       method: "POST",
+                      headers: { "x-csrf-token": freshCsrfToken },
                       body: photoPayload,
                     });
 
-                    if (!photoRes.ok) {
-                      photoErrors.push(`Foto ${pb.fileName || "unknown"} gagal`);
-                    }
+                    if (!photoRes.ok) photoFailedCount++;
                   } catch {
-                    photoErrors.push(`Foto ${pb.fileName || "unknown"} gagal — cek koneksi`);
+                    photoFailedCount++;
                   }
                 }
 
-                if (photoErrors.length > 0 && photoErrors.length === item.photoBlobs.length) {
-                  item.retryCount = (item.retryCount || 0) + 1;
-                  if (item.retryCount < MAX_RETRIES) {
-                    await offlineDB.queueSubmission(item);
-                    await offlineDB.deleteQueued(item.id);
-                    continue;
-                  }
-                  await offlineDB.deleteQueued(item.id);
-                  continue;
+                if (photoFailedCount > 0) {
+                  console.warn(`[QueueWorker] ${photoFailedCount}/${item.photoBlobs.length} foto gagal diupload untuk report ${reportId}`);
                 }
               }
 
+              // Hapus queue item — report sudah di server
               await offlineDB.deleteQueued(item.id);
               successCount++;
 
-              // ── Bersihin data terkait dari store lain ──
-              try {
-                await offlineDB.deleteReport(item.id);
-                await offlineDB.deleteDraft(item.id);
-              } catch { /* non-critical */ }
+              // Bersihin pending-reports / drafts yg mungkin tersisa
+              try { await offlineDB.deleteReport(item.id); } catch {}
+              try { await offlineDB.deleteDraft(item.id); } catch {}
 
+              // Notif sukses (silent fail jika endpoint notif error)
               try {
                 await fetch("/api/notifications", {
                   method: "POST",
@@ -155,13 +143,12 @@ export function QueueWorker() {
                     body: `Laporan ${item.formSlug} berhasil dikirim.`,
                   }),
                 });
-              } catch { /* ignore notification errors */ }
+              } catch {}
             } else {
+              // Report gagal — retry nanti
               item.retryCount = (item.retryCount || 0) + 1;
               if (item.retryCount < MAX_RETRIES) {
                 await offlineDB.queueSubmission(item);
-                await offlineDB.deleteQueued(item.id);
-                continue;
               }
               await offlineDB.deleteQueued(item.id);
             }
@@ -169,8 +156,6 @@ export function QueueWorker() {
             item.retryCount = (item.retryCount || 0) + 1;
             if (item.retryCount < MAX_RETRIES) {
               await offlineDB.queueSubmission(item);
-              await offlineDB.deleteQueued(item.id);
-              continue;
             }
             await offlineDB.deleteQueued(item.id);
           }

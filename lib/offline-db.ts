@@ -558,8 +558,34 @@ export const offlineDB = {
     await deleteItem("session-cache", "user-session");
   },
 
+  /**
+   * Hapus data sesi survey tanpa menyentuh submission-queue atau draft-reports.
+   * Dipanggil setelah exit sync selesai — QueueWorker yang urus submission-queue.
+   */
+  async clearSessionData() {
+    await clearStore("pending-reports");
+    await clearStore("tracking-points");
+    await clearStore("photo-blobs");
+    await clearStore("tile-manifest");
+    await clearStore("tile-blobs");
+    await deleteItem("offline-config", "session-config");
+    await deleteItem("session-cache", "user-session");
+    // form-definitions & draft-reports & submission-queue tidak dihapus
+  },
+
   async getStats() {
-    const [reports, tracks, photos, forms, tiles, configs, drafts, queue, sessions] = await Promise.all([
+    const [
+      reports,       // pending-reports
+      tracks,        // tracking-points
+      photos,        // photo-blobs
+      forms,         // form-definitions
+      tileManifest,  // tile-manifest
+      tileBlobs,     // tile-blobs
+      configCount,   // offline-config
+      drafts,        // draft-reports
+      queue,         // submission-queue
+      sessions,      // session-cache
+    ] = await Promise.all([
       countItems("pending-reports"),
       countItems("tracking-points"),
       countItems("photo-blobs"),
@@ -571,7 +597,7 @@ export const offlineDB = {
       countItems("submission-queue"),
       countItems("session-cache"),
     ]);
-    return { reports, tracks, photos, forms, tiles, configs, drafts, queue, sessions };
+    return { reports, tracks, photos, forms, tiles: tileManifest, tileBlobs, configs: configCount, drafts, queue, sessions };
   },
 
   // ── Storage check ───────────────────────────────────────────────────────

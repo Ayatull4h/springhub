@@ -106,11 +106,10 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         collected[key] = value;
       });
 
-      // Include GPS coords — gunakan nama field yang sesuai (location_lat / location_lng)
-      if (gpsCoords) {
-        collected.location_lat = String(gpsCoords.lat);
-        collected.location_lng = String(gpsCoords.lng);
-      }
+      // GPS coords dari hidden input (location_lat / location_lng) sudah otomatis
+      // dari FormData — tambah anti-spam fields + timestamp
+      collected._submit_time = String(Date.now());
+      collected._website = "";
       collected._captured_at = capturedAt;
 
       // Build photo blobs
@@ -288,9 +287,12 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white"
               />
             ) : field.type === "date" ? (
-              <p className="mt-1 text-sm font-semibold text-brand-700 dark:text-brand-300">
-                {capturedAtDisplay} WIB
-              </p>
+              <>
+                <input type="hidden" name={field.id} value={capturedAt?.split("T")[0] || ""} />
+                <p className="mt-1 text-sm font-semibold text-brand-700 dark:text-brand-300">
+                  {capturedAtDisplay} WIB
+                </p>
+              </>
             ) : field.type === "select" ? (
               <select
                 id={`offline-${field.id}`} name={field.id}
@@ -389,8 +391,8 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                     ? `📍 ${gpsCoords.lat.toFixed(5)}, ${gpsCoords.lng.toFixed(5)}`
                     : "📍 Lokasi akan terdeteksi otomatis"}
                 </p>
-                <input type="hidden" name="lat" value={gpsCoords?.lat || ""} />
-                <input type="hidden" name="lng" value={gpsCoords?.lng || ""} />
+                <input type="hidden" name="location_lat" value={gpsCoords?.lat || ""} />
+                <input type="hidden" name="location_lng" value={gpsCoords?.lng || ""} />
                 <button
                   type="button"
                   onClick={() => {

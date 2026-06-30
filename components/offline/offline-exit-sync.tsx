@@ -510,11 +510,34 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
       }
     }
 
-    // ── Phase 3: Cleanup ─────────────────────────────────────────────────
+    // ── Phase 3: Upload tracking points (GPS trail + markers) ─────────
+    const allTracks = await offlineDB.getAllTrackingPoints();
+    if (allTracks.length > 0) {
+      try {
+        await fetch("/api/offline/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            trackingPoints: allTracks.map((t) => ({
+              lat: t.lat,
+              lng: t.lng,
+              accuracy: t.accuracy,
+              markerType: t.markerType,
+              name: t.name,
+              recordedAt: t.recordedAt,
+            })),
+          }),
+        });
+      } catch {
+        console.warn("[OfflineExitSync] Tracking point upload gagal — non-critical");
+      }
+    }
+
+    // ── Phase 4: Cleanup (jangan hapus submission-queue dan draft-reports) ──
     setPhase("cleaning-up");
     setProgress({ current: 0, total: 3 });
 
-    await offlineDB.clearAll();
+    await offlineDB.clearSessionData();
     setProgress({ current: 1, total: 3 });
 
     if (navigator.serviceWorker.controller) {
