@@ -102,38 +102,27 @@
     .indent {
       padding-left: 20px;
     }
+    .badge-done {
+      color: #080;
+      font-weight: bold;
+    }
+    .badge-pending {
+      color: #c00;
+      font-weight: bold;
+    }
 
-    /* ── Print-specific: cegah tabel/halaman terpotong ── */
     @media print {
       body {
         padding: 0;
         margin: 0;
         max-width: none;
       }
-      table {
-        break-inside: avoid;
-        page-break-inside: avoid;
-      }
-      tr {
-        break-inside: avoid;
-        page-break-inside: avoid;
-      }
-      h2, h3 {
-        break-after: avoid;
-        page-break-after: avoid;
-      }
-      .note, .footer {
-        break-inside: avoid;
-        page-break-inside: avoid;
-      }
-      .grand-total {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      th {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
+      table { break-inside: avoid; page-break-inside: avoid; }
+      tr { break-inside: avoid; page-break-inside: avoid; }
+      h2, h3 { break-after: avoid; page-break-after: avoid; }
+      .note, .footer { break-inside: avoid; page-break-inside: avoid; }
+      .grand-total { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
   </style>
 </head>
@@ -144,21 +133,22 @@
   <hr class="header-line">
 
   <!-- A. SPESIFIKASI INFRASTRUKTUR -->
-  <h2>A. SPESIFIKASI INFRASTRUKTUR <span style="font-weight:normal;font-size:10pt;">(DUMMY / DEVELOPMENT STAGE)</span></h2>
+  <h2>A. SPESIFIKASI INFRASTRUKTUR <span style="font-weight:normal;font-size:10pt;">(PRODUCTION)</span></h2>
 
   <table>
     <tr><td style="width:35%"><strong>Penyedia Server</strong></td><td>Hostinger Indonesia</td></tr>
-    <tr><td><strong>Jenis Layanan</strong></td><td>Hosting VPS <em>(Kernel-based Virtual Machine)</em></td></tr>
-    <tr><td><strong>Nama Paket</strong></td><td>Paket KVM 4</td></tr>
-    <tr><td><strong>Durasi Kontrak</strong></td><td>24 Bulan (2 Tahun)</td></tr>
+    <tr><td><strong>Jenis Layanan</strong></td><td>VPS <em>(Kernel-based Virtual Machine)</em></td></tr>
+    <tr><td><strong>Nama Paket</strong></td><td>KVM 4 &mdash; 4 vCPU, 8GB RAM, 200GB NVMe</td></tr>
+    <tr><td><strong>Model Pembayaran</strong></td><td>Bulanan <em>(tidak perlu bayar 24 bulan di muka)</em></td></tr>
     <tr><td><strong>Lokasi Server</strong></td><td>Indonesia &mdash; Latensi terbaik ~13&nbsp;ms</td></tr>
-    <tr><td><strong>Fasilitas Tambahan</strong></td><td>Gratis Domain 1 Tahun + Proteksi Privasi WHOIS</td></tr>
+    <tr><td><strong>Fasilitas Tambahan</strong></td><td>Gratis Domain 1 Tahun + hPanel + Proteksi Privasi WHOIS</td></tr>
+    <tr><td><strong>Alternatif Lebih Hemat</strong></td><td><strong>IdCloudHost VPS 4</strong> &mdash; Rp199.000/bln (4 vCPU, 8GB, 100GB NVMe, DC Jakarta)</td></tr>
   </table>
 
   <!-- B. RINCIAN BIAYA & ALOKASI DANA -->
-  <h2>B. RINCIAN BIAYA &amp; ALOKASI DANA <span style="font-weight:normal;font-size:10pt;">(KUANTITATIF)</span></h2>
+  <h2>B. RINCIAN BIAYA &amp; ALOKASI DANA</h2>
 
-  <h3>1. Pengeluaran Server <span style="font-weight:normal;">(Modal Awal)</span></h3>
+  <h3>1. Biaya Server <span style="font-weight:normal;">(Bulanan)</span></h3>
 
   <table>
     <tr>
@@ -167,18 +157,23 @@
       <th style="width:20%">Keterangan</th>
     </tr>
     <tr>
-      <td>Harga Paket + Pajak (24 bulan)</td>
-      <td class="num">Rp5.698.296</td>
-      <td>Dibayar di muka</td>
+      <td>Hostinger KVM 4 (per bulan)</td>
+      <td class="num">Rp350.000</td>
+      <td>Bayar tiap bulan</td>
     </tr>
     <tr>
-      <td>Beban Riil Bulanan (Amortisasi)</td>
-      <td class="num">Rp237.429</td>
-      <td>Rp5.698.296 &divide; 24</td>
+      <td>Domain springhub.id</td>
+      <td class="num">Rp0</td>
+      <td>Free 1 tahun dari Hostinger</td>
+    </tr>
+    <tr>
+      <td><strong>Total Server per Bulan</strong></td>
+      <td class="num"><strong>Rp350.000</strong></td>
+      <td></td>
     </tr>
   </table>
 
-  <h3>2. Pengeluaran Operasional <span style="font-weight:normal;">(Gaji Pengelola)</span></h3>
+  <h3>2. Biaya Operasional <span style="font-weight:normal;">(Gaji Pengelola)</span></h3>
 
   <table>
     <tr>
@@ -187,7 +182,7 @@
       <th>Keterangan</th>
     </tr>
     <tr>
-      <td>Alokasi Gaji Bulanan</td>
+      <td>Gaji Bulanan</td>
       <td class="num">Rp2.500.000</td>
       <td>Pengelola &amp; Pengembang</td>
     </tr>
@@ -224,11 +219,6 @@
       <td>$0,015/GB &times; 5 GB</td>
     </tr>
     <tr>
-      <td>Biaya Operasi (Baca/Tulis)</td>
-      <td class="num">$0 / bln</td>
-      <td>Dalam batas free tier</td>
-    </tr>
-    <tr>
       <td>Biaya Egress (Transfer Out)</td>
       <td class="num">$0 / bln</td>
       <td>Gratis &mdash; tanpa biaya egress</td>
@@ -236,80 +226,75 @@
     <tr>
       <td><strong>Total Estimasi R2</strong></td>
       <td class="num"><strong>$0,075 / bln</strong></td>
-      <td><strong>~Rp1.200 / bulan</strong></td>
+      <td><strong>~Rp1.200 / bulan</strong> <em>(masih dalam free tier)</em></td>
     </tr>
   </table>
 
-  <h3>4. Layanan API &amp; Utilitas <span style="font-weight:normal;">(Estimasi)</span></h3>
+  <h3>4. Layanan Pendukung <span style="font-weight:normal;">(Gratis)</span></h3>
 
   <table>
     <tr>
       <th style="width:45%">Layanan</th>
-      <th style="width:25%" class="num">Estimasi / Bulan</th>
+      <th style="width:25%" class="num">Biaya</th>
       <th>Catatan</th>
     </tr>
     <tr>
-      <td>AI API <em>(Claude Sonnet / OpenRouter)</em></td>
-      <td class="num">$5 &ndash; $20</td>
-      <td>Rp80.000 &ndash; Rp320.000</td>
+      <td>Cloudflare CDN &amp; SSL</td>
+      <td class="num">Rp0</td>
+      <td>Free tier &mdash; CDN global, SSL, DDoS protection</td>
     </tr>
     <tr>
-      <td>Cloudflare R2 <em>(Object Storage)</em></td>
-      <td class="num">~$0,075</td>
-      <td>~Rp1.200 &mdash; free tier cukup</td>
+      <td>Amazon SES (Email API)</td>
+      <td class="num">Rp0 &ndash; Rp16.000</td>
+      <td>Pay-per-use &mdash; $0,10/1.000 email. 200 email/bln = Rp0. 50.000 email/bln = Rp16.000. Setup sekali, tanpa biaya bulanan tetap.</td>
     </tr>
     <tr>
-      <td>Xendit <em>(Payment Gateway)</em></td>
+      <td>Xendit (Payment Gateway)</td>
       <td class="num">Rp0</td>
       <td>Fee per transaksi, tanpa biaya bulanan</td>
     </tr>
     <tr>
-      <td>Sentry <em>(Error Tracking &mdash; Opsional)</em></td>
+      <td>Sentry (Error Tracking)</td>
       <td class="num">Rp0</td>
       <td>Free tier cukup untuk development</td>
     </tr>
   </table>
 
   <!-- C. REKAPITULASI BULANAN -->
-  <h2>C. REKAPITULASI BIAYA BULANAN <span style="font-weight:normal;font-size:10pt;">(IDR)</span></h2>
+  <h2>C. REKAPITULASI BIAYA BULANAN</h2>
 
   <table>
     <tr>
       <th style="width:55%">Komponen</th>
       <th style="width:25%" class="num">Per Bulan</th>
-      <th>Persentase</th>
+      <th>% Gaji (Rp2,5JT)</th>
     </tr>
     <tr>
-      <td>Server <em>(Amortisasi 24 bulan)</em></td>
-      <td class="num">Rp237.429</td>
-      <td class="num">~10%</td>
+      <td>Server Hostinger KVM 4</td>
+      <td class="num">Rp350.000</td>
+      <td class="num">14%</td>
+    </tr>
+    <tr>
+      <td>Cloudflare R2</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">&lt;1%</td>
+    </tr>
+    <tr style="border-top:1px solid #333;">
+      <td><strong>Total Infrastruktur</strong></td>
+      <td class="num"><strong>Rp351.200</strong></td>
+      <td class="num"><strong>14%</strong></td>
     </tr>
     <tr>
       <td>Gaji Pengelola</td>
-      <td class="num">Rp2.000.000</td>
-      <td class="num">~83%</td>
-    </tr>
-    <tr>
-      <td>AI API <em>(Estimasi tengah)</em></td>
-      <td class="num">Rp200.000</td>
-      <td class="num">~8%</td>
-    </tr>
-    <tr>
-      <td>Cloudflare R2 <em>(Object Storage)</em></td>
-      <td class="num">Rp1.200</td>
-      <td class="num">~0,05%</td>
-    </tr>
-    <tr class="grand-total">
-      <td><strong>Total Perkiraan Bulanan</strong></td>
-      <td class="num"><strong>Rp2.438.629</strong></td>
-      <td class="num">100%</td>
+      <td class="num">Rp2.500.000</td>
+      <td class="num">-</td>
     </tr>
   </table>
 
-  <p><em>Catatan: Biaya server sudah dibayar di muka untuk 24 bulan. Angka amortisasi hanya untuk acuan arus kas bulanan.</em></p>
+  <p><em>Catatan: Server bayar bulanan (bukan 24 bulan di muka). Domain gratis tahun pertama.</em></p>
 
   <!-- D. PROGRES PROYEK -->
-  <h2>D. PROGRES PROYEK <span style="font-weight:normal;font-size:10pt;">(PER 15 JUNI 2026)</span></h2>
+  <h2>D. PROGRES PROYEK <span style="font-weight:normal;font-size:10pt;">(PER 21 JUNI 2026)</span></h2>
 
   <table>
     <tr>
@@ -330,22 +315,22 @@
     <tr>
       <td>Map &amp; Spring Detail</td>
       <td class="center">100%</td>
-      <td>Leaflet, filter, 1 marker per spring, timeline, gallery</td>
+      <td>OSM Leaflet, filter, mini map, timeline, gallery</td>
     </tr>
     <tr>
       <td>Backend API</td>
       <td class="center">100%</td>
-      <td>63 route.ts &mdash; auth, reports, donations, admin, dll</td>
+      <td>65 route.ts &mdash; semua pakai error handling (<em>getErrorMessage</em>)</td>
     </tr>
     <tr>
       <td>Database &amp; RLS</td>
       <td class="center">100%</td>
-      <td>14 model Prisma + Supabase PostgreSQL + RLS aktif</td>
+      <td>14 model Prisma, PostgreSQL, RLS aktif</td>
     </tr>
     <tr>
       <td>Auth System</td>
       <td class="center">100%</td>
-      <td>Login, register, logout, forgot/reset, session</td>
+      <td>Login, register, logout, forgot/reset password, session</td>
     </tr>
     <tr>
       <td>Admin Panel</td>
@@ -355,36 +340,41 @@
     <tr>
       <td>Donasi (Xendit)</td>
       <td class="center">100%</td>
-      <td>Invoice + webhook + HMAC &mdash; tinggal isi API key real</td>
+      <td>Invoice + webhook + HMAC &mdash; backend siap, tinggal isi API key</td>
     </tr>
     <tr>
       <td>Points Engine</td>
       <td class="center">100%</td>
-      <td>Base + bonus + milestone + streak + trust score</td>
+      <td>Base + bonus + milestone + streak + trust score + auto-block</td>
     </tr>
     <tr>
       <td>PWA &amp; Offline Mode</td>
-      <td class="center">95%</td>
-      <td>Service worker, IndexedDB, session cache, QueueWorker auto-sync</td>
+      <td class="center">98%</td>
+      <td>Service worker, IndexedDB, langsung form (skip setup), QueueWorker, panduan install PWA</td>
     </tr>
     <tr>
       <td>Dark Mode</td>
-      <td class="center">95%</td>
-      <td>Semua halaman &amp; komponen, minor touch-up mungkin ada</td>
+      <td class="center">98%</td>
+      <td>Semua halaman &amp; komponen</td>
+    </tr>
+    <tr>
+      <td>Error Handling &amp; Anti-Spam</td>
+      <td class="center">100%</td>
+      <td>52 route pakai getErrorMessage, CSRF, rate limit, honey pot, time gate</td>
     </tr>
     <tr>
       <td>Testing &amp; UAT</td>
       <td class="center">85%</td>
-      <td>80 test case UAT, 3 unit test, 17 E2E spec, 5 k6 scenario</td>
+      <td>88 test case UAT, 3 unit test, 17 E2E, 5 k6 scenario</td>
     </tr>
-    <tr style="border-top:2px solid #000;">
+    <tr class="grand-total">
       <td><strong>TOTAL PROGRES</strong></td>
-      <td class="center"><strong>~92%</strong></td>
-      <td><strong>8% tersisa untuk production hardening</strong></td>
+      <td class="center"><strong>~95%</strong></td>
+      <td><strong>5% tersisa</strong></td>
     </tr>
   </table>
 
-  <h3>Yang Tersisa (Production Hardening)</h3>
+  <h3>Yang Tersisa</h3>
   <table>
     <tr>
       <th style="width:30%">Item</th>
@@ -392,48 +382,54 @@
       <th>Keterangan</th>
     </tr>
     <tr>
-      <td>Xendit API Key Real</td>
-      <td style="color:#c00;">❌ Placeholder</td>
-      <td>Tinggal ganti .env &mdash; backend sudah siap</td>
+      <td>Xendit &amp; Email API Key Real</td>
+      <td class="badge-pending">❌ Placeholder</td>
+      <td>Tinggal ganti .env &mdash; backend sudah siap 100%</td>
     </tr>
     <tr>
-      <td>SMTP Email (Google)</td>
-      <td style="color:#c00;">❌ Placeholder</td>
-      <td>Forgot password, notifikasi, newsletter &mdash; backend siap</td>
+      <td>Migrasi ke VPS (Hostinger/IdCloudHost)</td>
+      <td class="badge-pending">❌ Belum</td>
+      <td>Tinggal beli &amp; eksekusi &mdash; panduan lengkap di MIGRASI.md</td>
     </tr>
     <tr>
-      <td>Migrasi VPS (Hostinger KVM 4)</td>
-      <td style="color:#c00;">❌ Belum</td>
-      <td>Rencana setelah web 100% stabil di Vercel+Supabase</td>
-    </tr>
-    <tr>
-      <td>AI Agent Lokal (Odysseus)</td>
-      <td style="color:#c00;">❌ Belum</td>
-      <td>Rencana setelah migrasi VPS &mdash; Ollama + RAG + agentic framework</td>
+      <td>Manual Test (88 TC)</td>
+      <td style="color:#e80;">🟡 75/88</td>
+      <td>75✅, 3❌ (legacy PWA), 10⬜ (belum diceklis)</td>
     </tr>
   </table>
 
   <!-- E. CATATAN -->
   <h2>E. CATATAN</h2>
   <ol>
-    <li>Biaya server <strong>sudah dibayar di muka</strong> untuk 24 bulan &mdash; tidak ada beban bulanan berulang untuk infrastruktur.</li>
-    <li>Biaya <strong>AI API</strong> bersifat variatif tergantung volume penggunaan model <em>Claude Sonnet 4</em>.</li>
-    <li>Cloudflare R2 diperkirakan <strong>gratis atau mendekati gratis</strong> berkat free tier 10 GB dan tanpa biaya egress.</li>
-    <li>Biaya domain tahun ke-3 dan seterusnya diperkirakan ~Rp200.000&ndash;300.000/tahun.</li>
-    <li>Belum termasuk biaya <strong>Xendit</strong> (fee per transaksi) dan <strong>Sentry</strong> (jika upgrade ke paid plan).</li>
-    <li>Dokumen ini bersifat <strong>perencanaan</strong> dan dapat berubah sesuai kebutuhan pengembangan.</li>
+    <li><strong>Server bayar bulanan</strong> &mdash; tidak perlu bayar 24 bulan di muka. Rp350.000/bulan, bisa berhenti kapan saja.</li>
+    <li><strong>Domain gratis 1 tahun</strong> dari Hostinger. Tahun kedua ~Rp20.000.</li>
+    <li>Cloudflare R2 <strong>gratis</strong> untuk 10 GB pertama &mdash; cukup untuk ribuan foto.</li>
+    <li>Biaya <strong>Xendit</strong> hanya fee per transaksi (misal: 2% + Rp2.000), tanpa biaya bulanan.</li>
+    <li><strong>Alternatif lebih hemat:</strong> IdCloudHost VPS 4 (Rp199.000/bln) &mdash; spek 4 vCPU, 8GB, 100GB NVMe, DC Jakarta.</li>
+    <li><strong>Amazon SES</strong> pay-per-use &mdash; $0,10/1.000 email. Setup 1 jam (DNS verification), setelah itu gak perlu disentuh lagi. Cocok untuk skala kecil sampai besar tanpa upgrade plan.</li>
   </ol>
 
-  <div class="note">
-    <strong>RINGKASAN EKSEKUTIF:</strong><br>
-    Total investasi tahun pertama: <strong>Rp32.112.696</strong><br>
-    Rata-rata biaya bulanan (termasuk amortisasi server): <strong>Rp2.676.058</strong><br>
-    Progres proyek: <strong>~92%</strong> &mdash; 8% tersisa (Xendit key, SMTP email, VPS migration, AI agent).<br>
-    Biaya server hanya 18% dari total &mdash; sisanya gaji pengelola (75%), AI API (7%), dan Cloudflare R2 (&lt;1%).
-  </div>
+  <!-- F. SPESIFIKASI VPS -->
+  <h2>F. SPESIFIKASI VPS</h2>
+
+  <table>
+    <tr><td style="width:35%"><strong>Penyedia</strong></td><td>Hostinger Indonesia</td></tr>
+    <tr><td><strong>Paket</strong></td><td>KVM 4</td></tr>
+    <tr><td><strong>Lokasi</strong></td><td>Jakarta, Indonesia</td></tr>
+    <tr><td><strong>Sistem Operasi</strong></td><td>Ubuntu 24.04 LTS</td></tr>
+    <tr><td><strong>vCPU</strong></td><td>4 core AMD EPYC</td></tr>
+    <tr><td><strong>RAM</strong></td><td>16 GB</td></tr>
+    <tr><td><strong>Storage</strong></td><td>200 GB NVMe SSD</td></tr>
+    <tr><td><strong>Bandwidth</strong></td><td>16 TB / bulan</td></tr>
+    <tr><td><strong>Port Speed</strong></td><td>1 Gbps</td></tr>
+    <tr><td><strong>Dedicated IP</strong></td><td>1x IPv4</td></tr>
+    <tr><td><strong>Backup</strong></td><td>Mingguan otomatis + snapshot manual</td></tr>
+    <tr><td><strong>DDoS Protection</strong></td><td>BitNinja + Wanguard</td></tr>
+    <tr><td><strong>Biaya</strong></td><td>Rp350.000 / bulan</td></tr>
+  </table>
 
   <div class="footer">
-    Dokumen ini dibuat pada 15 Juni 2026 &mdash; SpringHub oleh Jaga Semesta
+    Dokumen diperbarui: 21 Juni 2026 &mdash; SpringHub oleh Jaga Semesta
   </div>
 
 </body>

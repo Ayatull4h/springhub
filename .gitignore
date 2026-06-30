@@ -64,3 +64,10 @@ e2e-report/
 # credentials
 *credentials*
 *credential*
+
+# local backups
+backup/
+MANUAL-TEST-PART-2*.md
+*.csv
+*.pdf
+baca.*.txt

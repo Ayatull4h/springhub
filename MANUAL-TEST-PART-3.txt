@@ -1011,6 +1011,8 @@ TOTAL                          104       90        0       14
 ======================================================================
 
 [ ] TC-105 Comments — tampil di project detail
+
+[ ] TC-105 Comments — tampil di project detail
     Device  : Both
     Langkah : 1. Buka /projects/[id]  2. Scroll ke bawah
     Harapan : Section "Komentar" muncul dengan judul. Ada form input

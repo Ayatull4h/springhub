@@ -1,9 +1,9 @@
 # RAB — Rencana Anggaran Biaya
 
-## SpringHub Migration from Vercel+Supabase → VPS + Cloudflare
+## SpringHub Migration — Vercel+Supabase → VPS + Cloudflare
 
 **Target:** 7K user, 500 konkuren, 1000 laporan/hari
-**Budget:** Rp 500K–1JT/bulan
+**Budget:** Rp 90K–350K/bulan (disesuaikan gaji Rp2,5JT)
 
 ---
 
@@ -74,77 +74,83 @@
 
 ---
 
-## 📊 3 Skenario RAB
+## 📊 3 Skenario RAB (Disesuaikan Gaji Rp2,5JT)
+
+> Persentase = **biaya hosting ÷ gaji Rp2,5JT**
 
 ---
 
-### 🟢 Skenario A: Termurah (Rp 131–179K/bln)
+### 🟢 Skenario A: Super Hemat (Rp 89–131K/bln)
 
-*Untuk dev/staging / early stage <1K user — semua self-hosted*
+*Rp2,5JT - 131K = masih sisa Rp2,37JT untuk kebutuhan lain ✅*
 
-| Komponen | Provider | Biaya/bln |
-|---|---|---|
-| VPS (4 vCPU, 8GB) | **Netcup RS 1000** | Rp131K |
-| Database | Self-hosted PostgreSQL di VPS | Rp0 |
-| Storage | Cloudflare R2 (free 10GB) | Rp0 |
-| Email | Zoho Mail Free | Rp0 |
-| CDN/DNS/Security | Cloudflare Free | Rp0 |
-| Redis | Self-hosted di VPS | Rp0 |
-| Queue (Bull) | Self-hosted Redis | Rp0 |
-| Monitoring | PM2 + Uptime Kuma | Rp0 |
-| **Total** | | **~Rp131K/bln** |
+| Komponen | Provider | Biaya/bln | % Gaji |
+|---|---|---|---|
+| VPS (2 vCPU, 4GB, 80GB NVMe) | **Hostinger KVM 2** | **Rp179K*** | 7% |
+| VPS (4 vCPU, 8GB, 256GB) Alternatif | **Netcup RS 1000** (Jerman) | Rp131K | 5% |
+| Database | Self-hosted PostgreSQL di VPS | Rp0 | - |
+| Storage | Cloudflare R2 (free 10GB) | Rp0 | - |
+| Email | Resend / Zoho Mail (gratis) | Rp0 | - |
+| CDN/DNS/SSL/Keamanan | Cloudflare Free | Rp0 | - |
+| Redis | Self-hosted di VPS | Rp0 | - |
+| Domain | **Free 1 tahun dari Hostinger** | Rp0 | - |
+| Monitoring | Uptime Kuma (self-host) | Rp0 | - |
+| **Total (Netcup)** | | **~Rp131K/bln** | **5%** |
+| **Total (Hostinger KVM 2)** | | **~Rp179K/bln** | **7%** |
 
-**Alternatif:** Contabo S (Rp140K/bln) — storage 200GB lebih besar
-
-> **⚠️ Warning:** Latensi tinggi karena DC Eropa. Cocok hanya untuk staging/dev.
+**\* Harga Hostinger KVM 2** = Rp179rb/bln (2 vCPU, 4GB RAM, 100GB NVMe). Cukup untuk 1K-3K user.
+> ⚠️ **Netcup** latensi tinggi (server Jerman). Cocok untuk belajar/staging.
+> ⚠️ **Hostinger KVM 2** RAM 4GB — perlu rajin monitor biar gak overload.
 
 ---
 
 ### 🔵 Skenario B: Best Value ✅ REKOMENDASI UTAMA
 
-*Untuk 7K user, 500 konkuren, 1000 laporan/hari*
+*Rp2,5JT - 199K = sisa Rp2,3JT. Paling aman buat produksi.*
 
-#### Opsi B1: Hostinger (DC Indonesia, Managed)
+| Komponen | Provider | Biaya/bln | % Gaji |
+|---|---|---|---|
+| VPS (4 vCPU, 8GB, 100GB NVMe) | **IdCloudHost VPS 4** (Jakarta) | **Rp199K** | **8%** |
+| Database | Self-hosted PostgreSQL di VPS | Rp0 | - |
+| Storage | Cloudflare R2 (free 10GB) | Rp0 | - |
+| Email | Resend (gratis 3.000/bln) | Rp0 | - |
+| CDN/DNS/SSL/Keamanan | Cloudflare Free | Rp0 | - |
+| Redis + Queue | Self-hosted di VPS | Rp0 | - |
+| Domain | Beli terpisah (Niagahoster) | ~Rp20K/thn | - |
+| Monitoring | Uptime Kuma (self-host) | Rp0 | - |
+| **Total** | | **~Rp199K/bln** | **8%** |
 
-| Komponen | Provider | Biaya/bln |
-|---|---|---|
-| VPS (4 vCPU, 8GB, 200GB NVMe) | **Hostinger KVM 4** | Rp350K |
-| Database | Self-hosted PostgreSQL di VPS | Rp0 |
-| Storage | Cloudflare R2 (~5GB usage) | Rp1.2K |
-| Email | Amazon SES (10K email/bln) | Rp1.6K |
-| CDN/DNS/Security | Cloudflare Free | Rp0 |
-| Redis + Queue | Self-hosted di VPS | Rp0 |
-| Monitoring | PM2 + Uptime Kuma | Rp0 |
-| Domain | springhub.id (renewal) | ~Rp20K |
-| **Total** | | **~Rp373K/bln** |
+**Kenapa IdCloudHost?**
+- ✅ **DC Jakarta** — latency rendah untuk user Indonesia
+- ✅ **4 vCPU, 8GB RAM** — cukup untuk SpringHub produksi
+- ✅ **Rp199K** — termurah untuk spek 4/8 di DC lokal
+- ❌ Domain **tidak include** — beli sendiri ~Rp20K/tahun
 
-#### Opsi B2: IdCloudHost (DC Jakarta, Value)
+---
 
-| Komponen | Provider | Biaya/bln |
-|---|---|---|
-| VPS (4 vCPU, 8GB, 100GB NVMe) | **IdCloudHost VPS 4** | Rp199K |
-| Database | Self-hosted PostgreSQL di VPS | Rp0 |
-| Storage | Cloudflare R2 (~5GB usage) | Rp1.2K |
-| Email | Amazon SES (10K email/bln) | Rp1.6K |
-| CDN/DNS/Security | Cloudflare Free | Rp0 |
-| Redis + Queue | Self-hosted di VPS | Rp0 |
-| Monitoring | PM2 + Uptime Kuma | Rp0 |
-| Domain | springhub.id (renewal) | ~Rp20K |
-| **Total** | | **~Rp222K/bln** |
+### 🟡 Skenario C: Paling Nyaman (Rp 199–350K/bln)
 
-#### Opsi B3: Hetzner + Cloudflare (Power-to-Price)
+*Rp2,5JT - 350K = sisa Rp2,15JT. Paling recommended kalau budget memungkinkan.*
 
-| Komponen | Provider | Biaya/bln |
-|---|---|---|
-| VPS (4 vCPU, 8GB, 80GB NVMe) | **Hetzner CX32** | Rp209K |
-| Database | Self-hosted PostgreSQL di VPS | Rp0 |
-| Storage | Cloudflare R2 (~5GB usage) | Rp1.2K |
-| Email | Amazon SES (10K email/bln) | Rp1.6K |
-| CDN/DNS/Security | Cloudflare Free | Rp0 |
-| Redis + Queue | Self-hosted di VPS | Rp0 |
-| Monitoring | PM2 + Uptime Kuma | Rp0 |
-| Domain | springhub.id (renewal) | ~Rp20K |
-| **Total** | | **~Rp232K/bln** |
+| Komponen | Provider | Biaya/bln | % Gaji |
+|---|---|---|---|
+| VPS (4 vCPU, 8GB, 200GB NVMe) | **Hostinger KVM 4** (Jakarta) | **Rp350K** | **14%** |
+| Database | Self-hosted PostgreSQL di VPS | Rp0 | - |
+| Storage | Cloudflare R2 (free 10GB) | Rp0 | - |
+| Email | Resend (gratis 3.000/bln) | Rp0 | - |
+| CDN/DNS/SSL/Keamanan | Cloudflare Free | Rp0 | - |
+| Redis + Queue | Self-hosted di VPS | Rp0 | - |
+| Domain | **Free 1 tahun dari Hostinger** ✅ | Rp0 | - |
+| Monitoring | Uptime Kuma (self-host) | Rp0 | - |
+| **Total** | | **~Rp350K/bln** | **14%** |
+
+**Kenapa Hostinger KVM 4?**
+- ✅ **Domain free 1 tahun** — hemat Rp20K
+- ✅ **200GB NVMe** — lega buat DB + file
+- ✅ **Managed panel** — gampang maintenance
+- ✅ **hPanel** — tinggal klik restart/monitor, gak perlu SSH tiap saat
+- ⚠️ Rp350K = 14% gaji — masih wajar untuk server produksi
+  (Biasanya 10-20% dari gaji dev dialokasikan untuk hosting)
 
 ---
 
@@ -172,41 +178,56 @@
 
 ## 🏆 Kesimpulan & Rekomendasi Akhir
 
-### Paling Murah
-> **Netcup RS 1000 + Cloudflare R2 + Zoho Mail — Rp131K/bln**
-> ⚠️ Hanya untuk staging / <1K user, latency tinggi
+### Skenario Berdasarkan Gaji Rp2,5JT
 
-### Paling Worth It (Sweetspot) 🥇
-> **B1: Hostinger KVM 4 + Cloudflare R2 + Amazon SES — Rp373K/bln**
-> ✅ DC Indonesia, latency rendah, managed panel, fitur lengkap
-
-> **B2: IdCloudHost VPS 4 + Cloudflare R2 + Amazon SES — Rp222K/bln**
-> ✅ DC Jakarta, paling hemat untuk performa lokal
-
-### Paling Powerful 🚀
-> **Hetzner CX42 + Cloudflare Pro + Upstash — Rp838K/bln**
-> ✅ HA ready, dedicated services, scaling untuk 20K+ user
+| Skenario | Biaya/bln | % Gaji | Cocok Untuk |
+|---|---|---|---|
+| 🟢 **A: Super Hemat** (Netcup) | **Rp131K** | **5%** | Belajar, staging, <1K user |
+| 🟢 **A: Super Hemat** (Hostinger KVM 2) | **Rp179K** | **7%** | Produksi kecil, 1K-2K user |
+| 🔵 **B: Best Value** 🥇 | **Rp199K** | **8%** | Produksi 3K-5K user |
+| 🟡 **C: Paling Nyaman** | **Rp350K** | **14%** | Produksi 5K-7K+ user, nyaman |
 
 ---
 
-### Rekomendasi Saya
+### Rekomendasi Akhir — Untuk Gaji Rp2,5JT
 
-Dengan **budget Rp 500K–1JT** dan prioritas **stabilitas + fitur lengkap**:
+**PILIHAN 1 — Paling Recommended 🥇**
+> **IdCloudHost VPS 4 + Cloudflare R2 — Rp199K/bln (8% gaji)**
+> 
+> Spek 4 vCPU, 8GB RAM, 100GB NVMe, DC Jakarta
+> Harga Rp199K masih sisa banyak buat kebutuhan sehari-hari
+> Domain beli sendiri ~Rp20K/tahun (Niagahoster)
 
-**Gunakan Skenario B1 — Hostinger KVM 4 (~Rp373K/bln)**
+**PILIHAN 2 — Kalau Ada Budget Lebih 🟡**
+> **Hostinger KVM 4 + Domain Free — Rp350K/bln (14% gaji)**
+> 
+> Spek sama, storage 2x lipat (200GB), domain gratis 1 tahun
+> Cocok kalau kamu hitung hosting = investasi, bukan biaya
 
-Alasan:
-1. **DC Indonesia** — latency rendah untuk user Indonesia
-2. **Managed Panel** — hPanel/control panel, lebih mudah maintenance
-3. **200GB NVMe** — cukup untuk DB, file, image thumbnail
-4. **Sisa budget** ~Rp127–627K bisa untuk:
-   - Backup otomatis ke R2 (~Rp5K)
-   - Monitoring profesional BetterStack ($0) atau Grafana (free)
-   - Domain renewal
-   - Scaling buffer untuk Next tier (naik ke KVM 8 kalau perlu)
-5. **Lebih hemat dari budget** — tanpa mengorbankan kualitas
+**PILIHAN 3 — Paling Hemat 🟢**
+> **Netcup RS 1000 — Rp131K/bln (5% gaji)**
+> 
+> Paling murah, spek paling gede, tapi latency tinggi (server Jerman)
+> Hanya recommended untuk tahap belajar/pengembangan
 
 ---
 
-*RAB disusun: 2026-05-30*
+### Catatan Manajemen Keuangan
+
+| Pengeluaran | Per Bulan |
+|---|---|
+| Gaji | Rp2.500.000 |
+| **Hosting (Skenario B)** | **-Rp199.000** |
+| Makan + Transport | ~Rp1.200.000 |
+| Token Listrik + Pulsa | ~Rp300.000 |
+| Tabungan/darurat | ~Rp500.000 |
+| **Sisa** | **~Rp301.000** |
+
+> **Kesimpulan:** Skenario B (Rp199K) paling realistis.
+> Gak memberatkan, spek cukup untuk produksi, DC lokal latency rendah.
+
+---
+
+*RAB diperbarui: 21 Juni 2026*
 *Untuk: SpringHub — Migrasi Infrastruktur*
+*Budget disesuaikan gaji developer Rp2,5JT*
