@@ -10,6 +10,7 @@ import Watermark from "@/components/layout/watermark";
 import { QueueWorker } from "@/components/queue-worker";
 import { ToastProvider } from "@/components/toast";
 import { ErrorBoundary } from "@/lib/error-boundary";
+import { ErrorLoggerInit } from "@/components/error-logger-init";
 import { DataSaverProvider } from "@/lib/use-data-saver";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
   },
   description:
     "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://springhub.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://www.springhub.id"),
   manifest: "/manifest.json",
   robots: {
     index: true,
@@ -62,7 +63,7 @@ export const metadata: Metadata = {
     title: "SpringHub · Community-Driven Spring Restoration",
     description:
       "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
-    url: "https://springhub.id",
+    url: "https://www.springhub.id",
     siteName: "SpringHub",
     locale: "id_ID",
     type: "website",
@@ -93,6 +94,39 @@ export default function RootLayout({
             `,
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": "https://www.springhub.id/#organization",
+                  "name": "SpringHub",
+                  "alternateName": "Jaga Semesta",
+                  "url": "https://www.springhub.id",
+                  "description": "Platform komunitas untuk memonitor, merestorasi, dan melindungi mata air Indonesia.",
+                  "foundingDate": "2026",
+                  "areaServed": { "@type": "Country", "name": "Indonesia" },
+                  "sameAs": [
+                    "https://www.instagram.com/jagasemesta",
+                    "https://www.youtube.com/@jagasemesta"
+                  ]
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://www.springhub.id/#website",
+                  "url": "https://www.springhub.id",
+                  "name": "SpringHub · Community-Driven Spring Restoration",
+                  "description": "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
+                  "publisher": { "@id": "https://www.springhub.id/#organization" },
+                  "inLanguage": ["id", "en"]
+                }
+              ]
+            })
+          }}
+        />
       </head>
       <body className="min-h-screen font-sans">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white">
@@ -113,6 +147,7 @@ export default function RootLayout({
                 <SiteFooter />
               </ErrorBoundary>
               <Watermark />
+              <ErrorLoggerInit />
             </DataSaverProvider>
           </I18nProvider>
         </DarkModeProvider>

@@ -1,19 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
 import sharp from "sharp";
+import fs from "fs/promises";
+import path from "path";
 import { addWatermark } from "./watermark";
-
-// Use service role key on server for storage uploads (bypasses RLS).
-// Falls back to anon key for backward compatibility.
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  supabaseKey,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-    ? { auth: { autoRefreshToken: false, persistSession: false } }
-    : undefined
-);
 
 export type UploadResult = {
   url: string;
@@ -21,6 +9,9 @@ export type UploadResult = {
   width: number;
   height: number;
 };
+
+const UPLOAD_DIR = process.env.UPLOAD_DIR || "/data/uploads";
+const UPLOAD_PREFIX = process.env.UPLOAD_URL_PREFIX || "/uploads";
 
 /**
  * Detect image MIME type from file bytes (magic bytes signature).
@@ -74,41 +65,29 @@ export async function uploadPhoto(
   const metadata = await sharp(watermarked).metadata();
 
   const ext = "jpg";
-  const filename = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const storagePath = `${folder}/${filename}`;
 
-  const { error } = await supabase.storage
-    .from("photos")
-    .upload(filename, watermarked, {
-      contentType: "image/jpeg",
-      cacheControl: "31536000",
-    });
+  // Simpan ke local filesystem
+  const fullDir = path.join(UPLOAD_DIR, folder);
+  const fullPath = path.join(UPLOAD_DIR, storagePath);
 
-  if (error) {
-    // Detect specific Supabase Storage errors
-    const msg = error.message || "";
-    if (msg.includes("Bucket not found") || msg.includes("bucket")) {
-      throw new Error(
-        'Bucket penyimpanan "photos" belum tersedia. Admin harus membuatnya di Supabase Dashboard → Storage.'
-      );
-    }
-    if (msg.includes("row-level security") || msg.includes("policy")) {
-      throw new Error(
-        "Izin upload ditolak oleh kebijakan keamanan. Pastikan SUPABASE_SERVICE_ROLE_KEY terisi di .env."
-      );
-    }
-    throw new Error(`Upload gagal: ${error.message}`);
-  }
-
-  const { data: urlData } = supabase.storage.from("photos").getPublicUrl(filename);
+  await fs.mkdir(fullDir, { recursive: true });
+  await fs.writeFile(fullPath, watermarked);
 
   return {
-    url: urlData.publicUrl,
-    path: filename,
+    url: `${UPLOAD_PREFIX}/${storagePath}`,
+    path: storagePath,
     width: metadata.width ?? 0,
     height: metadata.height ?? 0,
   };
 }
 
-export async function deletePhoto(path: string): Promise<void> {
-  await supabase.storage.from("photos").remove([path]);
+export async function deletePhoto(storagePath: string): Promise<void> {
+  const fullPath = path.join(UPLOAD_DIR, storagePath);
+  try {
+    await fs.unlink(fullPath);
+  } catch {
+    // File mungkin sudah tidak ada — ignore
+  }
 }

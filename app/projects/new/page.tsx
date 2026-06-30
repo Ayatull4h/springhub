@@ -33,6 +33,7 @@ export default function NewProjectPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [userPoints, setUserPoints] = useState(0);
+  const [userRole, setUserRole] = useState<string>("");
   const [fileName, setFileName] = useState("");
 
   // Form fields
@@ -53,6 +54,7 @@ export default function NewProjectPage() {
         const data = await res.json();
         if (data.user) {
           setUserPoints(data.user.points ?? 0);
+          setUserRole(data.user.role ?? "");
           setContactName(data.user.username ?? "");
           setContactEmail(data.user.email ?? "");
           setLoading(false);
@@ -62,6 +64,7 @@ export default function NewProjectPage() {
         const cached = await offlineDB.getSession().catch(() => null);
         if (cached) {
           setUserPoints(0);
+          setUserRole(cached.role ?? "");
           setContactName(cached.username);
           setContactEmail("");
           setLoading(false);
@@ -83,7 +86,8 @@ export default function NewProjectPage() {
     checkAuth();
   }, [router]);
 
-  const eligible = userPoints >= PROJECT_PROPOSAL_THRESHOLD;
+  const isAdmin = userRole === "admin";
+  const eligible = isAdmin || userPoints >= PROJECT_PROPOSAL_THRESHOLD;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

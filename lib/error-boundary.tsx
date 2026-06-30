@@ -2,6 +2,7 @@
 
 import { Component, type ReactNode } from "react";
 import Link from "next/link";
+import { logError } from "@/lib/error-logger";
 
 type Props = { children: ReactNode };
 type State = { hasError: boolean; error?: Error };
@@ -11,6 +12,20 @@ export class ErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    // Auto-log ke database
+    logError({
+      message: error.message || "React Error Boundary catch",
+      level: "critical",
+      source: "frontend",
+      stack: error.stack || "",
+      url: typeof window !== "undefined" ? window.location.href : "",
+      metadata: {
+        componentStack: errorInfo.componentStack || "",
+      },
+    });
   }
 
   render() {
@@ -24,6 +39,9 @@ export class ErrorBoundary extends Component<Props, State> {
             <h2 className="mt-4 text-lg font-bold text-ink dark:text-white">Terjadi kesalahan</h2>
             <p className="mt-2 text-sm text-ink-muted dark:text-slate-400">
               {this.state.error?.message || "Something went wrong"}
+            </p>
+            <p className="mt-1 text-xs text-ink-muted dark:text-slate-500">
+              Error sudah tercatat. Tim kami akan lihat.
             </p>
             <div className="mt-6 flex items-center justify-center gap-3">
               <button

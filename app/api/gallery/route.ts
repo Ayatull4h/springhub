@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { buildPhotoUrl } from "@/lib/photo-url";
 
 export const dynamic = "force-dynamic";
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const S3_PUBLIC = process.env.S3_PUBLIC_URL || "";
 
 /**
  * GET /api/gallery?formSlug=spring_monitoring&limit=20
@@ -45,10 +43,6 @@ export async function GET(request: Request) {
       },
     });
 
-    const prefix = SUPABASE_URL
-      ? `${SUPABASE_URL}/storage/v1/object/public/photos/`
-      : `${S3_PUBLIC}/`;
-
     const gallery = reports.map((r) => {
       const featured = r.photos.find((p) => p.id === r.featuredPhotoId);
       return {
@@ -62,7 +56,7 @@ export async function GET(request: Request) {
         photo: featured
           ? {
               id: featured.id,
-              url: `${prefix}${featured.storagePath}`,
+              url: buildPhotoUrl(featured.storagePath),
               width: featured.width,
               height: featured.height,
             }

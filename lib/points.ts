@@ -27,6 +27,15 @@ export async function awardReportPoints(
   const bonus: string[] = [];
   let totalPoints = 0;
 
+  // Admin tidak dapat poin — poin admin selalu 0
+  const user = await prisma.profile.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (user?.role === "admin") {
+    return { pointsAwarded: 0, reason: "Admin tidak mendapat poin", bonus: [] };
+  }
+
   const basePoints = POINTS_MAP[formSlug] ?? 0;
   totalPoints += basePoints;
 
@@ -114,6 +123,13 @@ async function checkMilestones(userId: string) {
  * - 7 hari berturut-turut → +50 pts
  */
 export async function checkDailyStreak(userId: string) {
+  // Admin tidak dapat streak points
+  const user = await prisma.profile.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (user?.role === "admin") return;
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -205,6 +221,13 @@ export async function checkDailyStreak(userId: string) {
  * Range: 0-100. Score 0 triggers warning.
  */
 export async function updateTrustScore(userId: string, accepted: boolean) {
+  // Admin trust score tidak berubah
+  const userRole = await prisma.profile.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (userRole?.role === "admin") return;
+
   const profile = await prisma.profile.findUnique({
     where: { id: userId },
     select: { trustScore: true },

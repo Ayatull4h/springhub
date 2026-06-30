@@ -28,6 +28,11 @@ function getRedis(): Redis {
 
 export const redis = new Proxy({} as Redis, {
   get(_, prop) {
-    return (getRedis() as any)[prop];
+    const target = getRedis();
+    const value = (target as any)[prop];
+    if (typeof value === "function") {
+      return value.bind(target);
+    }
+    return value;
   },
 });

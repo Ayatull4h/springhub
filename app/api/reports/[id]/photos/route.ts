@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { getGuestId } from "@/lib/guest";
 import { uploadPhoto } from "@/lib/upload-photo";
+import { buildPhotoUrls } from "@/lib/photo-url";
 
 /**
  * POST /api/reports/[id]/photos
@@ -12,7 +13,7 @@ import { uploadPhoto } from "@/lib/upload-photo";
  * - Limits file size (max 10 MB)
  * - Strips EXIF metadata via sharp
  * - Compresses to 720p max dimension, JPEG quality 80
- * - Stores on Supabase Storage (bucket: photos)
+ * - Stores on local filesystem (served via Nginx)
  * - Records metadata in the ReportPhoto table
  *
  * Supports both authenticated users and guests (via guest_session_id cookie).
@@ -99,12 +100,6 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Gunakan Supabase Storage URL (fix: foto blank putih karena pake S3)
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const prefix = supabaseUrl
-      ? `${supabaseUrl}/storage/v1/object/public/photos/`
-      : "/";
-
     const photos = await prisma.reportPhoto.findMany({
       where: { reportId: params.id },
       orderBy: { createdAt: "asc" },
@@ -119,10 +114,7 @@ export async function GET(
       },
     });
 
-    const photosWithUrls = photos.map((photo) => ({
-      ...photo,
-      url: `${prefix}${photo.storagePath}`,
-    }));
+    const photosWithUrls = buildPhotoUrls(photos);
 
     return NextResponse.json({ photos: photosWithUrls });
   } catch (error) {

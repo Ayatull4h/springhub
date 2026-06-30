@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
+import { buildPhotoUrl } from "@/lib/photo-url";
 
 export async function GET(
   _request: Request,
@@ -44,12 +45,6 @@ export async function GET(
       return NextResponse.json({ error: "Spring not found" }, { status: 404 });
     }
 
-    // Build full Supabase Storage URL
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const photoPrefix = supabaseUrl
-      ? `${supabaseUrl}/storage/v1/object/public/photos/`
-      : "/";
-
     // Map reports → enrich with parsed fieldData + photo URLs
     const reports = spring.reports.map((r) => {
       let parsedFieldData: Record<string, unknown> = {};
@@ -59,7 +54,7 @@ export async function GET(
 
       const photosWithUrls = r.photos.map((p) => ({
         ...p,
-        url: `${photoPrefix}${p.storagePath}`,
+        url: buildPhotoUrl(p.storagePath),
       }));
 
       return {

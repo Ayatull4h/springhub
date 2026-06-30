@@ -12,6 +12,7 @@ import {
   XCircle,
   ArrowUpRight,
   Download,
+  AlertTriangle,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
@@ -27,7 +28,7 @@ type ReportItem = {
 
 export default function AdminDashboard() {
   const { t } = useI18n();
-  const [stats, setStats] = useState({ users: 0, reports: 0, donations: 0, projects: 0 });
+  const [stats, setStats] = useState({ users: 0, reports: 0, donations: 0, projects: 0, errors: 0, unreadErrors: 0 });
   const [recentReports, setRecentReports] = useState<ReportItem[]>([]);
   const [recentUsers, setRecentUsers] = useState<{ id: string; username: string; role: string; createdAt: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,8 +39,9 @@ export default function AdminDashboard() {
       fetch("/api/admin/reports").then((r) => r.json()),
       fetch("/api/admin/donations").then((r) => r.json()),
       fetch("/api/admin/projects").then((r) => r.json()),
+      fetch("/api/admin/errors?limit=1").then((r) => r.json()),
     ])
-      .then(([usersData, reportsData, donationsData, projectsData]) => {
+      .then(([usersData, reportsData, donationsData, projectsData, errorsData]) => {
         const allUsers = usersData.users ?? [];
         const sorted = [...allUsers].sort(
           (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -49,6 +51,8 @@ export default function AdminDashboard() {
           reports: reportsData.reports?.length ?? 0,
           donations: donationsData.donations?.length ?? 0,
           projects: projectsData.projects?.length ?? 0,
+          errors: errorsData.total ?? 0,
+          unreadErrors: errorsData.unread ?? 0,
         });
         setRecentReports((reportsData.reports ?? []).slice(0, 10));
         setRecentUsers(sorted.slice(0, 5));
@@ -68,6 +72,7 @@ export default function AdminDashboard() {
     { label: t("admin.totalReports"), value: stats.reports.toString(), change: "All time", icon: FileText, color: "text-emerald-600" },
     { label: t("admin.donations"), value: stats.donations.toString(), change: "Total transactions", icon: Heart, color: "text-rose-600" },
     { label: t("admin.activeProjects"), value: stats.projects.toString(), change: "All time", icon: HardHat, color: "text-amber-600" },
+    { label: "Error Logs", value: stats.errors.toString(), change: `${stats.unreadErrors} unread`, icon: AlertTriangle, color: stats.unreadErrors > 0 ? "text-red-500" : "text-slate-400", href: "/admin/errors" },
   ];
 
   if (loading) {
@@ -88,8 +93,8 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((s) => {
           const Icon = s.icon;
-          return (
-            <div key={s.label} className="card">
+          const CardContent = (
+            <div className="card">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-ink-muted">{s.label}</span>
                 <Icon className={`h-4 w-4 ${s.color}`} />
@@ -100,6 +105,13 @@ export default function AdminDashboard() {
                 {s.change}
               </div>
             </div>
+          );
+          return s.href ? (
+            <Link key={s.label} href={s.href}>
+              {CardContent}
+            </Link>
+          ) : (
+            <div key={s.label}>{CardContent}</div>
           );
         })}
       </div>

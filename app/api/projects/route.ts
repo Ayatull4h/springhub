@@ -41,13 +41,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Check eligibility: >= 20K points
+  // Check eligibility: >= 20K points (admin selalu diizinkan)
   const profile = await prisma.profile.findUnique({
     where: { id: session.userId },
-    select: { points: true, username: true, email: true },
+    select: { points: true, username: true, email: true, role: true },
   });
 
-  if (!profile || profile.points < PROJECT_PROPOSAL_THRESHOLD) {
+  if (!profile) {
+    return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+  }
+
+  const isAdmin = profile.role === "admin";
+  if (!isAdmin && profile.points < PROJECT_PROPOSAL_THRESHOLD) {
     return NextResponse.json(
       {
         error: `Minimal ${PROJECT_PROPOSAL_THRESHOLD.toLocaleString("id-ID")} poin untuk submit proyek`,

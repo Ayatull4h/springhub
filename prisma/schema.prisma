@@ -404,3 +404,20 @@ model ContentBlock {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model AppError {
+  id        String   @id @default(uuid())
+  level     String   @default("error") // "info", "warning", "error", "critical"
+  message   String
+  source    String   @default("") // "frontend", "api", "worker", "database"
+  stack     String   @default("")
+  url       String   @default("")
+  userId    String   @default("")
+  metadata  String   @default("{}") // JSON string
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([level, createdAt])
+  @@index([source, createdAt])
+  @@index([read, createdAt])
+}

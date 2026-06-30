@@ -11,11 +11,13 @@ const envSchema = z.object({
   // ── Critical — app will not function without these ─────────────────────
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   JWT_SECRET: z.string().min(16, "JWT_SECRET must be at least 16 characters"),
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url("NEXT_PUBLIC_SUPABASE_URL must be a valid URL"),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, "NEXT_PUBLIC_SUPABASE_ANON_KEY is required"),
 
   // ── High — features will break without these ──────────────────────────
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().optional(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
+  UPLOAD_DIR: z.string().optional().default("/data/uploads"),
+  UPLOAD_URL_PREFIX: z.string().optional().default("/uploads"),
   XENDIT_SECRET_KEY: z.string().optional(),
   XENDIT_WEBHOOK_TOKEN: z.string().optional(),
   REDIS_URL: z.string().optional(),
@@ -27,7 +29,7 @@ const envSchema = z.object({
   S3_PUBLIC_URL: z.string().optional(),
 
   // ── Medium — nice to have ────────────────────────────────────────────
-  NEXT_PUBLIC_APP_URL: z.string().url().optional().default("https://springhub.vercel.app"),
+  NEXT_PUBLIC_APP_URL: z.string().url().optional().default("https://www.springhub.id"),
   NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
   EMAIL_PROVIDER: z.enum(["log", "smtp", "resend"]).optional().default("log"),
   SMTP_HOST: z.string().optional().default("smtp.hostinger.com"),
@@ -61,8 +63,7 @@ export function validateEnv(): Env {
     const fieldErrors = errors.fieldErrors;
 
     // Separate critical vs non-critical
-    const criticalFields = ["DATABASE_URL", "JWT_SECRET", "NEXT_PUBLIC_SUPABASE_URL",
-      "NEXT_PUBLIC_SUPABASE_ANON_KEY"] as const;
+    const criticalFields = ["DATABASE_URL", "JWT_SECRET"] as const;
 
     for (const field of criticalFields) {
       if (fieldErrors[field]) {

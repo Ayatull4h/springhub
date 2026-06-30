@@ -7,4 +7,4 @@ Disallow: /reset-password
 Sitemap: /sitemap.xml
 
 # Host
-Host: https://springhub.vercel.app
+Host: https://www.springhub.id

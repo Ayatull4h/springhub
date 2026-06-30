@@ -44,13 +44,13 @@
   "mcp": {
     "filesystem": {
       "type": "local",
-      "command": ["node_modules/.bin/mcp-server-filesystem", "."],
+      "command": ["node_modules/.bin/mcp-server-filesystem", "/root/springhub"],
       "enabled": true
     },
     "supabase": {
       "type": "local",
       "command": ["node_modules/.bin/mcp-server-supabase"],
-      "enabled": true,
+      "enabled": false,
       "env": {
         "SUPABASE_PROJECT_ID": "",
         "SUPABASE_SERVICE_ROLE_KEY": "",
@@ -60,7 +60,7 @@
     "context7": {
       "type": "local",
       "command": ["node_modules/.bin/context7-mcp", "--api-key", ""],
-      "enabled": true
+      "enabled": false
     },
     "memory": {
       "type": "local",
@@ -82,7 +82,7 @@
     "supermemory": {
       "type": "remote",
       "url": "https://mcp.supermemory.ai/mcp",
-      "enabled": true,
+      "enabled": false,
       "headers": {
         "Authorization": "Bearer YOUR_SUPERMEMORY_KEY"
       }

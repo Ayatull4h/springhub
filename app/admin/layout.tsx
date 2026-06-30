@@ -20,6 +20,7 @@ import {
   Image,
   X,
   Menu,
+  AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
@@ -34,6 +35,7 @@ const sidebar = [
   { label: "admin.sidebar.points", href: "/admin/points", icon: Award },
   { label: "admin.sidebar.courses", href: "/admin/courses", icon: BookOpen },
   { label: "admin.sidebar.feedback", href: "/admin/feedback", icon: MessageSquare },
+  { label: "admin.sidebar.errors", href: "/admin/errors", icon: AlertTriangle },
   { label: "admin.sidebar.reviewQueue", href: "/admin/review", icon: ShieldCheck },
   { label: "admin.sidebar.projects", href: "/admin/projects", icon: FolderKanban },
   { label: "admin.sidebar.content", href: "/admin/content", icon: Image },
@@ -96,6 +98,7 @@ export default function AdminLayout({
             S
           </div>
           <span className="text-sm font-bold text-ink">{t("admin.sidebar.springhubAdmin")}</span>
+          <span className="ml-auto rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">DEMO</span>
         </div>
 
         <nav className="flex-1 space-y-0.5 p-3">
@@ -156,7 +159,8 @@ export default function AdminLayout({
             <span className="hidden text-xs text-ink-subtle sm:inline">
               {t("admin.sidebar.liveData")}
             </span>
-            <div className="flex items-center gap-2 rounded-lg border border-ink-line px-3 py-1.5 text-sm text-ink-muted dark:border-slate-700">
+            <span className="rounded-md bg-amber-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">DEMO</span>
+          <div className="flex items-center gap-2 rounded-lg border border-ink-line px-3 py-1.5 text-sm text-ink-muted dark:border-slate-700">
               <span className="hidden sm:inline">{t("admin.sidebar.environment")}</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </div>
@@ -177,7 +181,10 @@ export default function AdminLayout({
             onClick={e => e.stopPropagation()}
           >
             <div className="flex h-16 items-center justify-between border-b border-ink-line px-5 dark:border-slate-700">
-              <span className="text-sm font-bold text-ink dark:text-white">{t("admin.sidebar.springhubAdmin")}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-ink dark:text-white">{t("admin.sidebar.springhubAdmin")}</span>
+                <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">DEMO</span>
+              </div>
               <button onClick={() => setSidebarOpen(false)} className="rounded-md p-1 text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white" aria-label={t("admin.sidebar.closeMenu")}>
                 <X className="h-5 w-5" />
               </button>
