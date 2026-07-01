@@ -6,6 +6,15 @@ services:
       POSTGRES_USER: springhub
       POSTGRES_PASSWORD: ${DB_PASSWORD:-SpringHub2026!}
       POSTGRES_DB: springhub
+    # Batasi koneksi + timeout — cegah koneksi numpuk kayak di Supabase
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=50"
+      - "-c"
+      - "idle_in_transaction_session_timeout=30000"
+      - "-c"
+      - "statement_timeout=30000"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
