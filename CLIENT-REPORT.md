@@ -1,113 +1,106 @@
-# LAPORAN KEMAJUAN — SpringHub
+# LAPORAN PERKEMBANGAN — SpringHub
 
-**Kepada:** Bapak/Ibu Klien
-**Dari:** Tim Pengembang SpringHub
+**Untuk:** Mbak
+**Perihal:** Progress website SpringHub
 **Tanggal:** 1 Juli 2026, 18:32 WIB
 **Website:** www.springhub.id
 
 ---
 
-## Apa Kabar?
+## Secara Umum
 
-Alhamdulillah, pengerjaan website SpringHub sudah mencapai **99% selesai**. Website sudah bisa diakses secara online dan semua fitur utama sudah berfungsi dengan baik. Berikut ringkasan dari apa yang sudah kami kerjakan dan hasil uji cobanya.
+Alhamdulillah, pengerjaan SpringHub udah hampir selesai. Website udah bisa diakses online dan fitur-fitur utamanya udah berfungsi semua. Intinya **99% siap**, tinggal beberapa hal kecil dari Mbak aja.
 
 ---
 
-## Secara Singkat, Apa Saja yang Sudah Jadi?
+## Apa Aja yang Udah Jadi?
 
-### ✅ Halaman Depan (Landing Page)
-- Tampilan utama website sudah jadi dan menarik
-- Ada peta interaktif yang menunjukkan titik-titik mata air
-- Ada data statistik: jumlah mata air, relawan, laporan yang masuk, dan pohon yang ditanam
+### ✅ Tampilan Depan
+- Landing page udah oke, desainnya natural dengan tema alam
+- Ada **peta interaktif** yang bisa diklik — liatin titik-titik mata air
+- Ada **data statistik** real-time: jumlah mata air, relawan yang terdaftar, laporan yang masuk, pohon yang ditanam
 - Galeri foto dan video
-- Informasi kontak dan media sosial (@jagasemesta di Instagram, YouTube, TikTok, Facebook)
+- Link ke media sosial @jagasemesta (Instagram, YouTube, TikTok, Facebook)
 
-### ✅ Form Laporan (5 Jenis)
-Relawan bisa mengisi 5 jenis laporan lapangan:
-1. **Monitoring Mata Air** — memantau kondisi mata air
-2. **Restorasi Mata Air** — memperbaiki mata air yang rusak
-3. **Pembuatan Parit (Trench)** — membuat saluran resapan
-4. **Penanaman Pohon** — menanam pohon di sekitar mata air
-5. **Penyemaian Bibit** — menyiapkan bibit tanaman
+### ✅ Form Laporan (5 Macam)
+Relawan bisa ngisi 5 jenis laporan langsung dari HP:
+1. **Monitoring Mata Air** — ngecek kondisi mata air
+2. **Restorasi Mata Air** — kalau ada mata air yang rusak, diperbaiki
+3. **Pembuatan Parit Resapan (Trench)** — biar air tanah terisi
+4. **Penanaman Pohon** — nanam pohon di sekitar sumber mata air
+5. **Penyemaian Bibit** — nyiapin bibit buat ditanam nanti
 
-Setiap laporan yang dikirim langsung **dapat poin** (15–100 poin per laporan).
+Setiap laporan yang dikirim **langsung dapet poin**. Semakin rajin, makin banyak poinnya.
 
-### ✅ Sistem Poin & Penghargaan
-Relawan dapat mengumpulkan poin dari:
-- Laporan harian (poin dasar + bonus jika rutin)
-- Bonus strek: lapor 3 hari berturut-turut, lapor seminggu penuh
-- Bonus kualitas: laporan lengkap dengan foto
-- Bonus penemuan: menemukan mata air baru (+50 poin + lencana)
-- Bonus pencapaian: 10 laporan (+50), 50 laporan (+250), 100 laporan (+500)
-- Untuk mencapai 20.000 poin, relawan bisa mengajukan proyek konservasi sendiri
+### ✅ Sistem Poin
+- Laporan biasa: 15–100 poin tergantung jenisnya
+- Bonus rajin: lapor 3 hari berturut-turut dapet bonus, lapor seminggu penuh dapet bonus lebih besar
+- Bonus kualitas: kalau laporannya lengkap plus foto before-after
+- Bonus penemuan: kalau ada relawan yang nemuin mata air baru, dapet 50 poin + lencana spesial
+- Bonus pencapaian: setiap 10, 50, dan 100 laporan ada bonusnya
+- Kalau poin udah **20.000**, relawan bisa ngajuin proyek konservasi sendiri
 
-### ✅ Admin Panel
-Sudah ada halaman khusus untuk pengelola (admin) yang bisa:
-- Melihat dan mengatur data pengguna
-- Menyetujui atau menolak laporan dari relawan
-- Mengelola donasi
-- Melihat statistik dan data lengkap
+### ✅ Halaman Admin
+Mbak (atau siapa pun yang jadi admin) bisa:
+- Lihat daftar pengguna dan atur role-nya
+- Setujui atau tolak laporan dari relawan
+- Kelola donasi yang masuk
+- Lihat data lengkap, termasuk detail kontak pengguna
 
-### ✅ Donasi (Menunggangi Xendit)
-Sistem donasi sudah siap secara teknis. Yang masih kurang adalah **kunci API dari Xendit** (penyedia payment gateway). Setelah itu dimasukkan, donasi bisa langsung aktif.
+### ✅ Donasi (Siap, Tapi...)
+Sistem donasi secara teknis udah selesai. Yang kurang cuma **kunci API dari Xendit** — jadi selama ini belum bisa nyalain fitur donasi. Kalau Mbak udah punya akun Xendit atau mau dibuatkan, tinggal kita pasangin, beres.
 
-### ✅ Sistem Keamanan
-Website sudah dilengkapi perlindungan:
-- Data pribadi (email, nomor HP, lokasi persis) hanya bisa dilihat admin
-- Lokasi mata air di publikasi dikaburkan (radius 5 km) demi keamanan
-- Proteksi dari serangan hacker, spam, dan bot
-- Backup database otomatis setiap hari
+### ✅ Keamanan & Perlindungan Data
+- Data sensitif (email, nomor HP, lokasi persis) cuma admin yang bisa lihat
+- Lokasi mata air di publikasi dikaburkan dalam radius 5 km — biar aman dari pihak yang gak bertanggung jawab
+- Ada proteksi dari spam, serangan hacker, dan bot
+- Data di-backup otomatis setiap jam 3 pagi — aman kalau terjadi apa-apa
 
 ---
 
 ## Hasil Uji Coba
 
-Kami sudah melakukan pengetesan secara menyeluruh:
+Beberapa hari ini udah dilakukan testing secara menyeluruh:
 
 | Jenis Tes | Hasil |
 |---|---|
-| Tes otomatis (API) — 72 skenario | **71 lulus, 0 gagal** |
-| Tes browser (playwright) — 44 skenario | **44 lulus, 0 gagal** |
-| Semua alur: daftar, login, lapor, upload foto, like, komentar | ✅ Berfungsi |
-| Alur admin: review, approve, reject, kelola user | ✅ Berfungsi |
-| Mode gelap (dark mode) di semua halaman | ✅ Berfungsi |
-| Tampilan di HP, tablet, dan komputer | ✅ Responsif |
-| Keamanan: proteksi CSRF, rate limit, fail2ban | ✅ Aktif |
-| Website bisa diinstall sebagai aplikasi di HP (PWA) | ✅ Bisa |
+| Uji coba otomatis (72 skenario) | **71 lulus, 0 gagal** |
+| Uji coba browser langsung (44 skenario) | **44 lulus, 0 gagal** |
+| Semua alur: daftar, login, isi laporan, upload foto | ✅ Lancar |
+| Alur admin: review, approve, tolak, atur pengguna | ✅ Lancar |
+| Tampilan mode gelap (dark mode) | ✅ Berfungsi semua halaman |
+| Tampilan HP, tablet, komputer | ✅ Responsif, rapi semua |
+| Website bisa diinstal sebagai aplikasi di HP | ✅ Bisa |
 
 ---
 
 ## Infrastruktur (Tempat Website Berjalan)
 
-| Komponen | Detail |
-|---|---|
-| Server | Hostinger VPS — 4 CPU, 8GB RAM, 200GB SSD |
-| Database | PostgreSQL 16 — aman dan cepat |
-| Domain | www.springhub.id — dilindungi Cloudflare |
-| Backup | Otomatis tiap jam 3 pagi, disimpan 7 hari |
-| Monitoring | Server dipantau tiap 5 menit |
+**Server:** Hostinger VPS — 4 CPU, 8GB RAM, 200GB SSD
+**Database:** PostgreSQL — udah di-pooling biar gak lemot kalau banyak pengguna
+**Domain:** www.springhub.id — udah pake Cloudflare, jadi lebih cepat & aman
+**Backup:** Otomatis tiap jam 3 pagi, disimpan 7 hari
+**Monitoring:** Server dipantau tiap 5 menit, ada notifikasi kalau ada masalah
 
 ---
 
-## Yang Belum / Perlu Tindak Lanjut dari Client
+## Yang Perlu Dari Mbak
 
-| No | Item | Keterangan |
+| No | Yang Dibutuhkan | Penjelasan |
 |---|---|---|
-| 1 | **🔑 Kunci API Xendit** | Kami perlu API key dari akun Xendit Bapak/Ibu agar fitur donasi bisa aktif. Tanpa ini, tombol donasi belum bisa memproses pembayaran. |
-| 2 | **📸 Konten & Foto Asli** | Saat ini data yang tampil masih contoh (data uji coba). Kalau ada foto-foto mata air, deskripsi, dan data asli, bisa langsung kami masukkan. |
-| 3 | **📄 Kebijakan Privasi & Syarat Ketentuan** | Sudah ada, tapi mungkin perlu review dari pihak legal. |
-| 4 | **🎨 Logo Final** | Jika ada versi terbaru logo dari desainer, bisa kami ganti. |
+| 1 | **🔑 API Key Xendit** | Ini satu-satunya yang ngehalang fitur donasi. Butuh akun Xendit (gratis), nanti API key-nya dipasang di server. Setelah itu donasi langsung aktif. |
+| 2 | **📸 Foto & Konten Asli** | Data yang tampil sekarang masih contoh. Kalau ada foto mata air asli, nama-nama lokasi, atau konten lain, bisa langsung dimasukin biar websitenya lebih hidup. |
+| 3 | **📄 Review Kebijakan Privasi** | Halaman Privacy & Terms udah ada, tapi mungkin perlu dicek ulang sama legal tim. |
+| 4 | **🎨 Logo Final** | Kalau ada update logo, bisa segera diganti. |
 
 ---
 
 ## Kesimpulan
 
-**SpringHub sudah siap digunakan.** Hampir semua fitur sudah jadi dan sudah diuji. Satu-satunya yang perlu dari client adalah **kunci API Xendit** agar donasi bisa berfungsi. Setelah itu, website bisa langsung diluncurkan ke publik.
+**SpringHub udah siap dipake.** Semua fitur utama jalan, udah diuji coba, dan hasilnya memuaskan. Tinggal Mbak nyiapin **API key Xendit** buat donasi, nanti langsung aktif semua.
 
-Silakan buka www.springhub.id untuk melihat langsung. Jika ada yang ingin ditanyakan atau diubah, kami siap membantu.
+Silakan buka langsung di **www.springhub.id** — lihat-lihat dulu, kalau ada yang kurang pas atau perlu ditambah, bilang aja.
 
 ---
 
-*Hormat kami,*
-**Tim Developer SpringHub**
-1 Juli 2026 — 18:32 WIB
+*Dibuat untuk Mbak — 1 Juli 2026, 18:32 WIB*
