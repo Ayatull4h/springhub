@@ -531,3 +531,32 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
    4. **Seed data** — ✅ SUDAH DIISI
    5. **Migrasi ke VPS** — ditunda sampai web 100% stabil
    6. **Deploy ke Vercel** — sudah push ke GitHub, Vercel auto-deploy dari master
+
+### 1 Juli 2026 — Sesi 10: Bugfix Batch + E2E Testing + Connection Pooling
+- **Fokus**: Perbaiki 4 bug kritis, verifikasi connection pooling, E2E testing komprehensif
+- **Fix 1 — OG Image 404**: `public/opengraph-image.png` tidak ada. Generate 60KB PNG via sharp ✅
+- **Fix 2 — 404 Page Title**: Metadata export tidak berfungsi di not-found.tsx → ganti `useEffect` set document.title ✅
+- **Fix 3 — Offline Sync End Session**: `POST /api/offline/sync` auto-end session (`isActive: false, endedAt: new Date()`) → hapus, hanya update `totalDistance`. Delete `/api/offline/session` tetap handle end session ✅
+- **Fix 4 — Tracking Field Mismatch**: Frontend kirim `markerType`/`name`, backend terima `isSpringMarker`/`springName`. Sync endpoint sekarang handle dua format ✅
+- **Connection Pooling**: Prisma URL `?connection_limit=10&pool_timeout=10`, PG `max_connections=50`, `idle_in_transaction_session_timeout=30000` ✅
+- **E2E Testing**: 27 sub-test, 7 kategori — guest, volunteer, admin, offline, UI, frontend pages, database. ✅ Semua core flow berfungsi
+- **Temuan Unik**: 
+  - Hanya 1 bug real: password `!` harus URL-encoded di DATABASE_URL ✅ fixed
+  - Lainnya false-positive/user error: `CSRF cookie+header`, `?entity=` vs `?type=`, guest submission flow (intentional)
+  - DB: 21 reports (14 approved, 1 rejected, 6 pending), 5 users, 54 indexes, zero orphans
+- **Commit**: `1ac9a04` (fix offline), `f61326e` (connection pool), `ccb10c6` (OG+404+sync+markerType)
+
+### 1 Juli 2026 — Sesi 10 (lanjutan): Automated Manual Test Runner
+- **Fokus**: Jalankan 166 test case dari MANUAL-TEST-FINAL.md secara otomatis
+- **Script**: `run-manual-tests.sh` — 141 test via curl/bash (23 test bersifat browser-only tidak bisa di-automasi)
+- **Hasil Run 1 (localhost HTTP)**: 102 PASS / 36 FAIL / 3 SKIP
+  - FAIL penyebab: Cookie `Secure` flag tidak disimpan via HTTP (localhost)
+  - Juga: field name form tidak sesuai (village, subdistrict, flow_condition tidak ada di schema)
+- **Hasil Run 2 (HTTPS)**: Status lebih baik tapi masih ada timeout
+- **Kategorisasi FAIL**:
+  - **Real bugs**: 2 (form-not-found page 200 instead of 404, content API butuh param)
+  - **Test script bugs**: ~20+ (CSRF cookie chaining, field names, assertion key mismatch)
+  - **Infrastructure**: 3 (Xendit not configured, storage partially)
+  - **Browser-only**: 4 (dark mode, offline PWA UI) — tidak bisa di-automasi
+- **Action item**: Script test perlu diperbaiki cookie handling-nya untuk fully automated run
+- **Commit**: `run-manual-tests.sh` baru
