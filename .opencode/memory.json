@@ -29,6 +29,12 @@
       "date": "2026-06-15",
       "session": "Sesi 5 - MCP Fix + Code Audit",
       "content": "User minta review MANUAL-TEST-UAT.md dan seluruh kode. Ditemukan 2 MCP mati karena path masih指向 drive Y: padahal proyek pindah ke C:. Fix: filesystem path, memory path, dan SUPABASE_SERVICE_ROLE_KEY diisi dari .env. Semua MCP enabled=true. Audit code selesai — 92% progress, 23 temuan."
+    },
+    {
+      "id": "session-10",
+      "date": "2026-07-01",
+      "session": "Sesi 10 - Bugfix Batch + E2E Testing + Laporan Client",
+      "content": "4 bug fixed: OG image 404 (static PNG instead of Vercel OG), 404 page title client-side, offline sync tidak end session, tracking field name compatibility (markerType/name dan isSpringMarker/springName). Connection pooling hardening. Python test runner (71/72 PASS), Playwright E2E (44/44 PASS). Docker healthcheck, CSP header, fail2ban DOCKER-NGINX, backup cron, heartbeat monitoring. Aksesibilitas WCAG AA. Security: no PII in logs, CSRF working, CSP/HSTS/XSS headers. Resend email configured. CLIENT-REPORT.pdf dibuat versi non-teknis untuk client (panggil 'mbak', tanpa sudut pandang pertama, bahasa santai). Sudah di-push ke GitHub."
     }
   ]
 }

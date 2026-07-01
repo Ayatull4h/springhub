@@ -3,9 +3,10 @@
 ## Project Identity
 - **Nama**: SpringHub (under **Jaga Semesta**)
 - **Stack**: Next.js 14 App Router + TypeScript (strict) + Tailwind CSS + Leaflet
-- **Hosting**: Vercel (frontend) + Supabase (backend/db/auth/storage)
+- **Hosting**: Hostinger VPS (Docker: nginx + Next.js + PostgreSQL + Redis + Queue Worker) + Cloudflare proxy
+- **Domain**: www.springhub.id — Community-driven monitoring & restoration of Indonesia's artesian springs
+- **Status**: Production-ready (99% selesai, tinggal Xendit API key dari client)
 - **Domain**: Community-driven monitoring & restoration of Indonesia's artesian springs
-- **Status**: Uji coba (proof of concept) — akan ada perbaikan lanjutan
 
 ---
 
@@ -560,3 +561,23 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
   - **Browser-only**: 4 (dark mode, offline PWA UI) — tidak bisa di-automasi
 - **Action item**: Script test perlu diperbaiki cookie handling-nya untuk fully automated run
 - **Commit**: `run-manual-tests.sh` baru
+
+### 1 Juli 2026 — Sesi 10 (lanjutan 2): E2E Final + Fix Batch
+- **Fokus**: Python test runner rewrite, Playwright E2E, infrastructure hardening, laporan client
+- **Progress**:
+  - ✅ **4 bug fixes committed + pushed (`ccb10c6`)**:
+    - **OG image**: generated `public/opengraph-image.png` (60KB, 1200×630) via sharp — removed dynamic route + `@vercel/og`
+    - **404 page title**: `useEffect` sets `document.title = "404 - Halaman Tidak Ditemukan · SpringHub"` (client-side)
+    - **Offline sync no longer ends session**: removed `isActive: false, endedAt: new Date()` from `POST /api/offline/sync`
+    - **Tracking field name compatibility**: accepts both `markerType`/`name` and `isSpringMarker`/`springName`
+  - ✅ **Connection pool hardening**: Prisma URL `?connection_limit=10&pool_timeout=10`, PG `max_connections=50`, timeouts
+  - ✅ **Python test runner**: `run-manual-tests.py` (905 lines, 72 test cases) — uses `requests.Session()`. Result: **71 PASS / 0 FAIL / 1 SKIP** (Xendit not configured)
+  - ✅ **Playwright E2E**: `e2e/playwright-tests.mjs` (826 lines, 44 browser tests). Result: **44 PASS / 0 FAIL / 0 SKIP**
+  - ✅ **Infrastructure hardening**: Docker healthcheck, CSP header duplicated di nginx, X-XSS-Protection, fail2ban DOCKER-NGINX jail, backup DB cron daily 3am, heartbeat monitoring tiap 5 menit
+  - ✅ **Accessibility WCAG 2.1 AA**: form labels fixed, skip link verified, all alt text and aria-label present
+  - ✅ **Security**: no PII leaked in webhook logs, CSRF working, all security headers present
+  - ✅ **Resend email**: configured and working with real API key
+  - ✅ **CLIENT-REPORT.pdf**: laporan untuk client — versi non-teknis, panggil "Mbak", tanpa sudut pandang pertama, bahasa santai
+  - ✅ **All pushed to GitHub**: 2 commits (`e6846c0`, `b2b7f43`, `3aaeaa8`, `4d1b740`, `7bb35a0`)
+- **Status**: 7/7 MCP servers terinstal (filesystem ✅, memory ✅, puppeteer ✅, playwright ✅ aktif; supabase ❌ tidak ada kredensial; context7 ❌; supermemory ❌)
+- **Blocked**: Xendit API key (client perlu buat akun Xendit), Cloudflare R2 (butuh kartu kredit), Cloudflare WAF (konfigurasi manual)
