@@ -25,12 +25,12 @@
 
 | Data | Publik | Volunteer | Admin |
 |---|---|---|---|---|
-| Username, region | ✅ | ✅ | ✅ | ✅ |
-| Snapped location (5km) | ✅ | ✅ | ✅ | ✅ |
-| Precise location | ❌ | ❌ | ✅ |
-| Email, phone | ❌ | ❌ | ❌ | ✅ |
-| Donation detail | ❌ (aggregate only) | ❌ | ❌ | ✅ |
-| Trust score | ❌ | ❌ | ❌ | ✅ |
+| Username, region | PASS | PASS | PASS | PASS |
+| Snapped location (5km) | PASS | PASS | PASS | PASS |
+| Precise location | TIDAK | TIDAK | PASS |
+| Email, phone | TIDAK | TIDAK | TIDAK | PASS |
+| Donation detail | TIDAK (aggregate only) | TIDAK | TIDAK | PASS |
+| Trust score | TIDAK | TIDAK | TIDAK | PASS |
 
 ---
 
@@ -110,7 +110,7 @@ Third Party
 ### Fase 1 — Foundation (Estimasi: 3-5 hari)
 | # | Task | Priority |
 |---|---|---|
-| 1.1 | ✅ AGENTS.md + opencode config + MCP setup | P0 |
+| 1.1 | PASS AGENTS.md + opencode config + MCP setup | P0 |
 | 1.2 | Supabase project + DB schema (profiles, reports, donations, projects, points_log) | P0 |
 | 1.3 | Supabase Auth (magic link + Google OAuth) + halaman Sign In / Join | P0 |
 | 1.4 | POST /api/reports + Zod validasi (cocok ke lib/forms.ts) | P0 |
@@ -331,39 +331,39 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 
 | Route | Status | Fungsi |
 |---|---|---|
-| `/` | ✅ Siap | Landing page |
-| `/report/[slug]` | ✅ Siap | 5 form — submit ke POST /api/reports ✅ |
-| `/sign-in` | ✅ Siap | Login |
-| `/join` | ✅ Siap | Register |
-| `/projects/new` | ✅ Siap | Multi-step project proposal |
-| `/profile` | ✅ Siap | Profile user |
-| `/admin` | ✅ Siap | Dashboard admin |
-| `/admin/users` | ✅ Siap | Manajemen user |
-| `/admin/reports` | ✅ Siap | Laporan + toggle active/inactive |
-| `/admin/donations` | ✅ Siap | Donasi |
-| `/admin/review` | ✅ Siap | Review queue + approve/reject |
-| `/admin/projects` | ✅ Siap | Verifikasi project |
-| `/admin/points` | ✅ Siap | Point rules |
-| `/admin/courses` | ✅ Siap | Course management |
-| `/admin/forms` | ✅ Siap | Dynamic form builder |
-| `/admin/content` | ✅ Siap | Content CMS |
-| `/admin/feedback` | ✅ Siap | Bug reports inbox |
-| `/api/reports` | ✅ Siap | POST submit + GET public list |
-| `/api/reports/[id]/photos` | ✅ Siap | Upload foto |
-| `/api/donations/invoice` | ✅ Siap | Xendit invoice |
-| `/api/donations/webhook` | ✅ Siap | Xendit callback (HMAC) |
-| `/api/projects` | ✅ Siap | GET list / POST create |
-| `/api/leaderboard` | ✅ Siap | Top 20 |
-| `/api/user/profile` | ✅ Siap | GET/PUT profile |
-| `/api/user/points` | ✅ Siap | Riwayat poin |
-| `/api/csrf` | ✅ Siap | CSRF token |
-| `/api/health` | ✅ Siap | DB + Redis health check |
-| `/api/newsletter` | ✅ Siap | Subscribe email |
-| `/api/feedback` | ✅ Siap | Submit bug report |
-| `/api/gallery` | ✅ Siap | Gallery items |
-| `/api/upload/presign` | ✅ Siap | Presigned upload URL |
-| `/api/auth/*` (7 routes) | ✅ Siap | Login, register, logout, me, forgot/reset, claim-guest |
-| `/api/admin/*` (19 routes) | ✅ Siap | All admin CRUD + export |
+| `/` | PASS Siap | Landing page |
+| `/report/[slug]` | PASS Siap | 5 form — submit ke POST /api/reports PASS |
+| `/sign-in` | PASS Siap | Login |
+| `/join` | PASS Siap | Register |
+| `/projects/new` | PASS Siap | Multi-step project proposal |
+| `/profile` | PASS Siap | Profile user |
+| `/admin` | PASS Siap | Dashboard admin |
+| `/admin/users` | PASS Siap | Manajemen user |
+| `/admin/reports` | PASS Siap | Laporan + toggle active/inactive |
+| `/admin/donations` | PASS Siap | Donasi |
+| `/admin/review` | PASS Siap | Review queue + approve/reject |
+| `/admin/projects` | PASS Siap | Verifikasi project |
+| `/admin/points` | PASS Siap | Point rules |
+| `/admin/courses` | PASS Siap | Course management |
+| `/admin/forms` | PASS Siap | Dynamic form builder |
+| `/admin/content` | PASS Siap | Content CMS |
+| `/admin/feedback` | PASS Siap | Bug reports inbox |
+| `/api/reports` | PASS Siap | POST submit + GET public list |
+| `/api/reports/[id]/photos` | PASS Siap | Upload foto |
+| `/api/donations/invoice` | PASS Siap | Xendit invoice |
+| `/api/donations/webhook` | PASS Siap | Xendit callback (HMAC) |
+| `/api/projects` | PASS Siap | GET list / POST create |
+| `/api/leaderboard` | PASS Siap | Top 20 |
+| `/api/user/profile` | PASS Siap | GET/PUT profile |
+| `/api/user/points` | PASS Siap | Riwayat poin |
+| `/api/csrf` | PASS Siap | CSRF token |
+| `/api/health` | PASS Siap | DB + Redis health check |
+| `/api/newsletter` | PASS Siap | Subscribe email |
+| `/api/feedback` | PASS Siap | Submit bug report |
+| `/api/gallery` | PASS Siap | Gallery items |
+| `/api/upload/presign` | PASS Siap | Presigned upload URL |
+| `/api/auth/*` (7 routes) | PASS Siap | Login, register, logout, me, forgot/reset, claim-guest |
+| `/api/admin/*` (19 routes) | PASS Siap | All admin CRUD + export |
 
 ### 📦 New Files (Sesi 9)
 - `components/ui/skeleton.tsx` — base skeleton UI component
@@ -377,24 +377,24 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 
 | Layer | % | Catatan |
 |---|---|---|
-| Landing page UI | 100% | Semua section, i18n, dark mode ✅ |
-| Form UI | 100% | 5 form + dynamic forms + Zod validation ✅ |
-| Map UI | 100% | Leaflet + filter + location picker ✅ |
-| Backend API | 100% | 52 route.ts — auth, reports, donations, projects, courses, admin, dll ✅ |
-| Database | 100% | Prisma 14 models + Supabase PostgreSQL ✅ |
-| Auth | 100% | Login, Register, Logout, Forgot/Reset password, Session ✅ |
-| Donasi | 100% | Xendit invoice + webhook + HMAC verification ✅ |
-| Admin Panel | 100% | 10 tabs — Users, Reports, Donations, Projects, Forms, Points, Courses, Content, Feedback, Review ✅ |
-| Points Engine | 100% | Base + bonus + milestone + streak + trust score ✅ |
-| PWA / SEO | 100% | Manifest, sitemap, OG image, service worker ✅ |
-| Anti-Spam | 100% | CSRF, rate limit, honey pot, time gate, daily limit ✅ |
-| Testing | 85% | 3 unit tests + 17 E2E specs + 5 k6 scenarios + 80 UAT test cases ✅ |
-| Dark Mode | 100% | Semua halaman + komponen + static pages ✅ |
-| Skeleton Loading | 100% | 14 layout-specific skeleton, semua loading.tsx ✅ |
-| Data Saver Mode | 100% | Hook + context + toggle header + map placeholder ✅ |
-| Report Toggle | 100% | Admin bisa active/inactive report, form inactive auto hide ✅ |
-| Offline PWA | 95% | Offline-first session cache, QueueWorker, IndexedDB sync ✅ |
-| Photo Rules | 100% | Min 3 / max 5, validasi submit, Report Issue gallery exception ✅ |
+| Landing page UI | 100% | Semua section, i18n, dark mode PASS |
+| Form UI | 100% | 5 form + dynamic forms + Zod validation PASS |
+| Map UI | 100% | Leaflet + filter + location picker PASS |
+| Backend API | 100% | 52 route.ts — auth, reports, donations, projects, courses, admin, dll PASS |
+| Database | 100% | Prisma 14 models + Supabase PostgreSQL PASS |
+| Auth | 100% | Login, Register, Logout, Forgot/Reset password, Session PASS |
+| Donasi | 100% | Xendit invoice + webhook + HMAC verification PASS |
+| Admin Panel | 100% | 10 tabs — Users, Reports, Donations, Projects, Forms, Points, Courses, Content, Feedback, Review PASS |
+| Points Engine | 100% | Base + bonus + milestone + streak + trust score PASS |
+| PWA / SEO | 100% | Manifest, sitemap, OG image, service worker PASS |
+| Anti-Spam | 100% | CSRF, rate limit, honey pot, time gate, daily limit PASS |
+| Testing | 85% | 3 unit tests + 17 E2E specs + 5 k6 scenarios + 80 UAT test cases PASS |
+| Dark Mode | 100% | Semua halaman + komponen + static pages PASS |
+| Skeleton Loading | 100% | 14 layout-specific skeleton, semua loading.tsx PASS |
+| Data Saver Mode | 100% | Hook + context + toggle header + map placeholder PASS |
+| Report Toggle | 100% | Admin bisa active/inactive report, form inactive auto hide PASS |
+| Offline PWA | 95% | Offline-first session cache, QueueWorker, IndexedDB sync PASS |
+| Photo Rules | 100% | Min 3 / max 5, validasi submit, Report Issue gallery exception PASS |
 | **Total** | **~94%** | **6% tersisa untuk production hardening + VPS migration** |
 
 ---
@@ -503,12 +503,12 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 ### 6 Juni 2026 — Sesi 4: Database Audit & Perbaikan Critical
 - **Issue 1 — Database tidak sinkron**:
   - 5 dari 6 migration belum diapply: comments, notifications, likes/comments, isActive, featuredPhotoId ✅
-  - Tabel OfflineSession, TrackingPoint, ContentBlock ada di Prisma schema tapi tidak ada migration ✅ (di-sync via `prisma db push`)
+  - Tabel OfflineSession, TrackingPoint, ContentBlock ada di Prisma schema tapi tidak ada migration PASS (di-sync via `prisma db push`)
   - **Tindakan**: `prisma migrate deploy` + `prisma db push` ✅
 - **Issue 2 — Seed data belum dijalankan**:
   - Database kosong: tidak ada forms, courses, point rules, users, content ✅
-  - Seed file (`prisma/seed.ts`) pakai `PrismaClient()` tanpa adapter — error ✅ (perbaiki pakai PrismaPg)
-  - **Tindakan**: `npx prisma db seed` ✅ → 2 users, 5 forms, 3 courses, 14 point rules, 4 content blocks
+  - Seed file (`prisma/seed.ts`) pakai `PrismaClient()` tanpa adapter — error PASS (perbaiki pakai PrismaPg)
+  - **Tindakan**: `npx prisma db seed` PASS → 2 users, 5 forms, 3 courses, 14 point rules, 4 content blocks
 - **Issue 3 — Offline sync photo upload gagal di Chrome Android**:
   - **Penyebab utama**: `canvas.toBlob()` di Chrome Android kadang produce blob dengan `type: ""` (empty string). Server nolak karena validasi MIME type.
   - **Penyebab kedua**: Blob dari IndexedDB bisa "detached" saat dikirim via FormData di Chrome Android.
@@ -523,12 +523,12 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
   - **Fix 2**: `handleDelete()` → soft-delete update `isActive: false` di state (jangan dihapus) ✅
 - **Issue 5 — Comments tidak persisten**:
   - **Penyebab**: `Comment` table dan migration belum diapply. API `/api/projects/[id]/comments` sudah benar pakai Prisma.
-  - **Status**: ✅ Migration sudah diapply, Comment table sudah ada. Namun frontend belum ada komponen yang panggil API ini (comments belum diintegrasikan ke UI).
+  - **Status**: PASS Migration sudah diapply, Comment table sudah ada. Namun frontend belum ada komponen yang panggil API ini (comments belum diintegrasikan ke UI).
 - **Yang Belum Dikerjakan**:
    1. **Xendit & Email keys real** — masih placeholder di .env
    2. **Sentry DSN** — masih empty
-   3. ~~Supabase RLS — apply policies dari `supabase/rls-policies.sql`~~ ✅ **SUDAH DIAPPLY**
-   4. **Seed data** — ✅ SUDAH DIISI
+   3. ~~Supabase RLS — apply policies dari `supabase/rls-policies.sql`~~ PASS **SUDAH DIAPPLY**
+   4. **Seed data** — PASS SUDAH DIISI
    5. **Migrasi ke VPS** — ditunda sampai web 100% stabil
    6. **Deploy ke Vercel** — sudah push ke GitHub, Vercel auto-deploy dari master
 
@@ -539,9 +539,9 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 - **Fix 3 — Offline Sync End Session**: `POST /api/offline/sync` auto-end session (`isActive: false, endedAt: new Date()`) → hapus, hanya update `totalDistance`. Delete `/api/offline/session` tetap handle end session ✅
 - **Fix 4 — Tracking Field Mismatch**: Frontend kirim `markerType`/`name`, backend terima `isSpringMarker`/`springName`. Sync endpoint sekarang handle dua format ✅
 - **Connection Pooling**: Prisma URL `?connection_limit=10&pool_timeout=10`, PG `max_connections=50`, `idle_in_transaction_session_timeout=30000` ✅
-- **E2E Testing**: 27 sub-test, 7 kategori — guest, volunteer, admin, offline, UI, frontend pages, database. ✅ Semua core flow berfungsi
+- **E2E Testing**: 27 sub-test, 7 kategori — guest, volunteer, admin, offline, UI, frontend pages, database. PASS Semua core flow berfungsi
 - **Temuan Unik**: 
-  - Hanya 1 bug real: password `!` harus URL-encoded di DATABASE_URL ✅ fixed
+  - Hanya 1 bug real: password `!` harus URL-encoded di DATABASE_URL PASS fixed
   - Lainnya false-positive/user error: `CSRF cookie+header`, `?entity=` vs `?type=`, guest submission flow (intentional)
   - DB: 21 reports (14 approved, 1 rejected, 6 pending), 5 users, 54 indexes, zero orphans
 - **Commit**: `1ac9a04` (fix offline), `f61326e` (connection pool), `ccb10c6` (OG+404+sync+markerType)

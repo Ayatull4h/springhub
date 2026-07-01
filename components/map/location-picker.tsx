@@ -162,10 +162,11 @@ export function LocationPicker({ name, required }: LocationPickerProps) {
       {/* Input koordinat + toggle mode */}
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="block text-[11px] font-medium text-ink-subtle">
+          <label htmlFor={`${name}_lat_input`} className="block text-[11px] font-medium text-ink-subtle">
             Latitude
           </label>
           <input
+            id={`${name}_lat_input`}
             type="number"
             step="any"
             name={`${name}_lat`}
@@ -177,10 +178,11 @@ export function LocationPicker({ name, required }: LocationPickerProps) {
           />
         </div>
         <div>
-          <label className="block text-[11px] font-medium text-ink-subtle">
+          <label htmlFor={`${name}_lng_input`} className="block text-[11px] font-medium text-ink-subtle">
             Longitude
           </label>
           <input
+            id={`${name}_lng_input`}
             type="number"
             step="any"
             name={`${name}_lng`}

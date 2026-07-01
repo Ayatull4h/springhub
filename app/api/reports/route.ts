@@ -144,23 +144,34 @@ export async function POST(request: Request) {
     }
 
     // Try dynamic form validation from DB first
-    let dynamicForm: any = null;
+    let dynamicForm: { fields: { fieldId: string; label: string; type: string; required: boolean; options: string | null }[] } | null = null;
     try {
-      dynamicForm = await prisma.form.findUnique({
+      const result = await prisma.form.findUnique({
         where: { slug: formSlug },
         include: { fields: true },
       });
+      if (result) {
+        dynamicForm = {
+          fields: result.fields.map((f) => ({
+            fieldId: f.fieldId,
+            label: f.label,
+            type: f.type,
+            required: f.required,
+            options: f.options,
+          })),
+        };
+      }
     } catch {
       // Form table may not exist yet — fall back to static schema
     }
 
     if (dynamicForm) {
-      const fields = dynamicForm.fields.map((f: any) => ({
+      const fields = dynamicForm.fields.map((f) => ({
         fieldId: f.fieldId,
         label: f.label,
         type: f.type,
         required: f.required,
-        options: (() => { try { return JSON.parse(f.options); } catch { return []; } })(),
+        options: (() => { try { return JSON.parse(f.options || "[]"); } catch { return []; } })(),
       }));
       const { generateZodSchema } = await import("@/lib/dynamic-validation");
       const dynSchema = generateZodSchema(fields);

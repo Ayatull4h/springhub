@@ -166,14 +166,29 @@ async function run() {
       await page.fill("#email", "ucup@springhub.id");
       await page.fill("#password", "ucup12345");
       await page.click('button[type="submit"]');
-      try { await page.waitForURL((url) => !url.pathname.includes("/sign-in"), { timeout: 15000 }); } catch {}
-      const bodyText = await page.textContent("body");
-      if (bodyText && (bodyText.toLowerCase().includes("ucup") || bodyText.toLowerCase().includes("profil") || bodyText.toLowerCase().includes("profile") || bodyText.toLowerCase().includes("keluar") || bodyText.toLowerCase().includes("logout")))
-        pass("A5: User menu visible after login");
-      else {
-        const userBtn = await page.$('[aria-label*="user" i], [aria-label*="account" i], [class*="avatar"]');
-        if (userBtn) pass("A5: User menu visible after login (via element detection)");
-        else skip("A5: User menu after login", "Could not verify user menu presence");
+      await page.waitForURL((url) => !url.pathname.includes("/sign-in"), { timeout: 20000 });
+      await page.waitForTimeout(1000);
+      // Try multiple strategies to find the user menu
+      const userBtn = await page.$('[aria-label*="user" i], [aria-label*="profile" i], [aria-label*="account" i]');
+      if (userBtn) {
+        pass("A5: User menu visible after login (via aria-label)");
+      } else {
+        const bodyText = await page.textContent("body");
+        if (bodyText && (bodyText.toLowerCase().includes("ucup@springhub.id") || bodyText.toLowerCase().includes("ucup12345") || bodyText.toLowerCase().includes("ucup"))) {
+          pass("A5: User menu visible after login (username text found)");
+        } else {
+          // Look for avatar-like elements: circles with text (initials)
+          const avatar = await page.$('[class*="avatar"], [class*="initial"], [class*="user-"], circle:has(text), [data-testid*="user"]');
+          if (avatar) pass("A5: User menu visible after login (via avatar element)");
+          else {
+            // Check navigation for user-related links
+            const nav = await page.$("nav, header");
+            const navText = nav ? await nav.textContent() : "";
+            if (navText && (navText.toLowerCase().includes("ucup") || navText.toLowerCase().includes("profile") || navText.toLowerCase().includes("profil") || navText.toLowerCase().includes("keluar") || navText.toLowerCase().includes("logout")))
+              pass("A5: User menu visible after login (nav text detected)");
+            else fail("A5: User menu after login", new Error("User menu not found after login"));
+          }
+        }
       }
       await context.close();
     } catch (err) {
@@ -497,18 +512,24 @@ async function run() {
       try { await context.close(); } catch {}
     }
 
-    // Test F4: Create project link
+    // Test F4: Create project link (login as volunteer first)
     try {
       context = await browser.newContext({ viewport: { width: 1280, height: 800 }, locale: "id-ID" });
       page = await context.newPage();
+      await goto(page, `${BASE_URL}/sign-in`);
+      await page.fill("#email", "ucup@springhub.id");
+      await page.fill("#password", "ucup12345");
+      await page.click('button[type="submit"]');
+      await page.waitForURL((url) => !url.pathname.includes("/sign-in"), { timeout: 20000 });
       await goto(page, `${BASE_URL}/projects`);
-      await page.waitForTimeout(1000);
-      const createLinks = await page.$$('a[href*="new"], a[href*="buat"], a[href*="create"], a[href*="ajukan"]');
-      if (createLinks.length > 0) pass("F4: Create project link exists");
+      await page.waitForTimeout(1500);
+      const createBtn = await page.$('a[href*="/projects/new"], a[href*="new"], button:has-text("Buat Project"), button:has-text("Create Project"), a:has-text("Buat Project"), a:has-text("Create Project")');
+      if (createBtn) pass("F4: Create project link exists (authenticated)");
       else {
         const bodyText = await page.textContent("body");
-        if (bodyText && (bodyText.includes("Buat") || bodyText.includes("Ajukan") || bodyText.includes("Tambah"))) pass("F4: Create project text found");
-        else skip("F4: Create project link", "May require login");
+        if (bodyText && (bodyText.toLowerCase().includes("buat") || bodyText.toLowerCase().includes("ajukan") || bodyText.toLowerCase().includes("create") || bodyText.toLowerCase().includes("tambah")))
+          pass("F4: Create project text found on page");
+        else fail("F4: Create project link", new Error("Not found after login"));
       }
       await context.close();
     } catch (err) {
@@ -593,16 +614,42 @@ async function run() {
       try { await context.close(); } catch {}
     }
 
-    // Test G4: Map markers
+    // Test G4: Map markers (CircleMarker) on landing page
     try {
       context = await browser.newContext({ viewport: { width: 1280, height: 800 }, locale: "id-ID" });
       page = await context.newPage();
       await goto(page, `${BASE_URL}/`);
       await page.waitForTimeout(3000);
-      const markers = await page.$$(".leaflet-marker-icon");
-      if (markers.length > 0) pass(`G4: Map markers (${markers.length})`);
-      else if ((await page.$$(".leaflet-marker-pane > *")).length > 0) pass("G4: Map marker pane children found");
-      else skip("G4: Map markers", "No markers (map may be empty)");
+      try { await page.waitForSelector(".leaflet-container", { timeout: 10000 }); } catch {}
+      await page.waitForTimeout(1000);
+      // The map uses react-leaflet CircleMarker (SVG circles), NOT standard Leaflet marker icons
+      // Check for SVG circles in the overlay-pane (CircleMarker renders as <path> inside SVG)
+      let hasCircles = await page.evaluate(() => {
+        const svg = document.querySelector(".leaflet-overlay-pane svg, .leaflet-overlay-pane path");
+        return !!svg;
+      });
+      if (!hasCircles) {
+        // Try zooming in to trigger data fetch / re-render
+        const zoomIn = await page.$(".leaflet-control-zoom-in");
+        if (zoomIn) {
+          await zoomIn.click();
+          await page.waitForTimeout(2000);
+          hasCircles = await page.evaluate(() => {
+            const svg = document.querySelector(".leaflet-overlay-pane svg, .leaflet-overlay-pane path");
+            return !!svg;
+          });
+        }
+      }
+      if (hasCircles) {
+        const count = await page.evaluate(() => document.querySelectorAll(".leaflet-overlay-pane path").length);
+        pass(`G4: Map has CircleMarker elements (${count} path elements)`);
+      } else {
+        // Fallback: check if map container is present and has content
+        const mapEl = await page.$(".leaflet-container");
+        const tiles = await page.$$(".leaflet-tile");
+        if (mapEl && tiles.length > 0) skip("G4: Map markers", "Map loaded but no CircleMarker data");
+        else fail("G4: Map markers", new Error("Map not rendered"));
+      }
       await context.close();
     } catch (err) {
       fail("G4: Map markers", err);

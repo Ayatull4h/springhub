@@ -85,7 +85,7 @@ export default function ReportFormPage() {
             description: data.form.description,
             pointsOnSubmit: data.form.pointsOnSubmit,
             contributionType: data.form.contributionType,
-            fields: data.form.fields.map((f: any) => {
+            fields: data.form.fields.map((f: { fieldId: string; label: string; type: string; required: boolean; placeholder: string | null; helpText: string | null; options: string | null }) => {
               let options: string[];
               try { options = JSON.parse(f.options || "[]"); }
               catch { options = []; }

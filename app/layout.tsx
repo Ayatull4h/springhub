@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   description:
     "Grassroots platform to monitor, restore, and protect Indonesia's artesian springs — by Jaga Semesta.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://www.springhub.id"),
+  alternates: {
+    canonical: "/",
+  },
   manifest: "/manifest.json",
   robots: {
     index: true,

@@ -28,7 +28,8 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    console.log("Xendit webhook received:", JSON.stringify(body, null, 2));
+    const safeLog = { id: body.id, external_id: body.external_id, status: body.status };
+    console.log("Xendit webhook received:", JSON.stringify(safeLog));
 
     // Verify Xendit webhook signature using HMAC-SHA256
     // Ref: https://developers.xendit.co/api-reference/#webhooks

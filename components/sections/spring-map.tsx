@@ -87,7 +87,7 @@ export function SpringMap() {
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
   const [reportsError, setReportsError] = useState("");
-  const [dynamicForms, setDynamicForms] = useState<any[]>([]);
+  const [dynamicForms, setDynamicForms] = useState<Array<{ slug: string; title: string; pointsOnSubmit: number }>>([]);
   const [formsError, setFormsError] = useState("");
   const [showGuide, setShowGuide] = useState(false);
 
@@ -142,7 +142,7 @@ export function SpringMap() {
       title: f.title,
       pointsOnSubmit: f.pointsOnSubmit,
     }));
-    const dbForms = dynamicForms.map((f: any) => ({
+    const dbForms = dynamicForms.map((f) => ({
       slug: f.slug,
       title: f.title,
       pointsOnSubmit: f.pointsOnSubmit,
