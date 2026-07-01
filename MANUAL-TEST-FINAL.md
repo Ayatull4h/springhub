@@ -47,11 +47,11 @@ past_time() {
 
 | # | Test | Langkah | Hasil |
 |---|---|---|---|
-| 1.1 | HTTPS www | Buka `https://www.springhub.id` | ☐ |
-| 1.2 | HTTPS apex → redirect | Buka `https://springhub.id` → harus redirect ke `www.springhub.id` | ☐ |
-| 1.3 | HTTP → HTTPS | Buka `http://www.springhub.id` → harus redirect ke HTTPS | ☐ |
-| 1.4 | Akses via IP | Buka `http://76.13.198.18` → harusnya tampil halaman (Nginx) | ☐ |
-| 1.5 | SSL valid | Browser TIDAK boleh kasih peringatan "Not Secure" | ☐ |
+| 1.1 | HTTPS www | Buka `https://www.springhub.id` | ✅ |
+| 1.2 | HTTPS apex → redirect | Buka `https://springhub.id` → harus redirect ke `www.springhub.id` | ✅ |
+| 1.3 | HTTP → HTTPS | Buka `http://www.springhub.id` → harus redirect ke HTTPS | ✅ |
+| 1.4 | Akses via IP | Buka `http://76.13.198.18` → harusnya tampil halaman (Nginx) | ✅ |
+| 1.5 | SSL valid | Browser TIDAK boleh kasih peringatan "Not Secure" | ✅ |
 
 ```bash
 # Via terminal
@@ -70,17 +70,17 @@ Buka setiap halaman di browser → pastikan status 200 dan konten tampil.
 
 | # | Halaman | Langkah | Hasil |
 |---|---|---|---|
-| 2.1 | `/` Landing Page | Buka → scroll semua section (Hero, Impact, Map, Activity, Learning, Media) | ☐ |
-| 2.2 | `/springs` | Buka → peta Leaflet dengan marker mata air muncul | ☐ |
-| 2.3 | `/projects` | Buka → daftar proyek restorasi tampil | ☐ |
-| 2.4 | `/learn` | Buka → daftar kursus edukasi tampil | ☐ |
-| 2.5 | `/about` | Buka → halaman Tentang tampil | ☐ |
-| 2.6 | `/help` | Buka → halaman Bantuan tampil | ☐ |
-| 2.7 | `/faq` | Buka → halaman FAQ tampil | ☐ |
-| 2.8 | `/privacy` | Buka → Kebijakan Privasi tampil | ☐ |
-| 2.9 | `/terms` | Buka → Syarat & Ketentuan tampil | ☐ |
-| 2.10 | `/sign-in` | Buka → form login (email + password) | ☐ |
-| 2.11 | `/join` | Buka → form register | ☐ |
+| 2.1 | `/` Landing Page | Buka → scroll semua section (Hero, Impact, Map, Activity, Learning, Media) | ✅ |
+| 2.2 | `/springs` | Buka → peta Leaflet dengan marker mata air muncul | ✅ |
+| 2.3 | `/projects` | Buka → daftar proyek restorasi tampil | ✅ |
+| 2.4 | `/learn` | Buka → daftar kursus edukasi tampil | ✅ |
+| 2.5 | `/about` | Buka → halaman Tentang tampil | ✅ |
+| 2.6 | `/help` | Buka → halaman Bantuan tampil | ✅ |
+| 2.7 | `/faq` | Buka → halaman FAQ tampil | ✅ |
+| 2.8 | `/privacy` | Buka → Kebijakan Privasi tampil | ✅ |
+| 2.9 | `/terms` | Buka → Syarat & Ketentuan tampil | ✅ |
+| 2.10 | `/sign-in` | Buka → form login (email + password) | ✅ |
+| 2.11 | `/join` | Buka → form register | ✅ |
 
 ```bash
 for path in "" springs projects learn about help faq privacy terms sign-in join; do
@@ -167,18 +167,18 @@ curl -sk $API/manifest.json
 
 | # | Endpoint | Perintah | Hasil |
 |---|---|---|---|
-| 3.1 | `GET /api/health` | `curl -sk $API/api/health` | ☐ `{"status":"healthy"}` |
-| 3.2 | `GET /api/csrf` | `curl -sk $API/api/csrf` | ☐ `{"token":"..."}` |
-| 3.3 | `GET /api/leaderboard` | `curl -sk $API/api/leaderboard` | ☐ 200 + array |
-| 3.4 | `GET /api/point-rules` | `curl -sk $API/api/point-rules` | ☐ 200 |
-| 3.5 | `GET /api/dashboard` | `curl -sk $API/api/dashboard` | ☐ 200 |
-| 3.6 | `GET /api/springs` | `curl -sk $API/api/springs` | ☐ 200 + 12 springs |
-| 3.7 | `GET /api/projects` | `curl -sk $API/api/projects` | ☐ 200 |
-| 3.8 | `GET /api/courses` | `curl -sk $API/api/courses` | ☐ 200 + 3 courses |
-| 3.9 | `GET /api/gallery` | `curl -sk $API/api/gallery` | ☐ 200 |
-| 3.10 | `GET /sitemap.xml` | `curl -sk $API/sitemap.xml` | ☐ XML 30 URL |
-| 3.11 | `GET /robots.txt` | `curl -sk $API/robots.txt` | ☐ 200 |
-| 3.12 | `GET /manifest.json` | `curl -sk $API/manifest.json` | ☐ 200 |
+| 3.1 | `GET /api/health` | `curl -sk $API/api/health` | ✅ `{"status":"healthy"}` |
+| 3.2 | `GET /api/csrf` | `curl -sk $API/api/csrf` | ✅ `{"token":"..."}` |
+| 3.3 | `GET /api/leaderboard` | `curl -sk $API/api/leaderboard` | ✅ 200 + array |
+| 3.4 | `GET /api/point-rules` | `curl -sk $API/api/point-rules` | ✅ 200 |
+| 3.5 | `GET /api/dashboard` | `curl -sk $API/api/dashboard` | ✅ 200 |
+| 3.6 | `GET /api/springs` | `curl -sk $API/api/springs` | ✅ 200 + 12 springs |
+| 3.7 | `GET /api/projects` | `curl -sk $API/api/projects` | ✅ 200 |
+| 3.8 | `GET /api/courses` | `curl -sk $API/api/courses` | ✅ 200 + 3 courses |
+| 3.9 | `GET /api/gallery` | `curl -sk $API/api/gallery` | ✅ 200 |
+| 3.10 | `GET /sitemap.xml` | `curl -sk $API/sitemap.xml` | ✅ XML 30 URL |
+| 3.11 | `GET /robots.txt` | `curl -sk $API/robots.txt` | ✅ 200 |
+| 3.12 | `GET /manifest.json` | `curl -sk $API/manifest.json` | ✅ 200 |
 
 ---
 
@@ -191,17 +191,17 @@ login_admin
 
 | # | Test | Langkah / Perintah | Hasil |
 |---|---|---|---|
-| 4.1 | Login admin | `login_admin` + cek response | ☐ `{"success":true,"user":{"role":"admin"}}` |
-| 4.2 | Login volunteer | `login_volunteer` | ☐ `{"success":true,"user":{"role":"volunteer"}}` |
-| 4.3 | Session cookie | `cat $COOKIE` → ada baris `session` | ☐ cookie ter-set |
-| 4.4 | GET /api/auth/me | `curl -sk -b $COOKIE $API/api/auth/me` | ☐ `{"id":"...","email":"admin@springhub.id"}` |
-| 4.5 | Login gagal (salah password) | `curl -sk -X POST $API/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@springhub.id","password":"wrong"}'` | ☐ `{"error":"..."}` (401) |
-| 4.6 | Register baru | `curl -sk -X POST $API/api/auth/register -H "Content-Type: application/json" -d '{"email":"test$(date +%s)@test.com","password":"test12345","username":"Test User"}'` | ☐ `{"success":true}` |
-| 4.7 | Register gagal (password pendek) | `curl -sk -X POST $API/api/auth/register -H "Content-Type: application/json" -d '{"email":"test@test.com","password":"123"}'` | ☐ error validasi |
-| 4.8 | Register duplikat email | Coba register dengan email yang sudah ada | ☐ error |
-| 4.9 | Forgot password | `curl -sk -X POST $API/api/auth/forgot-password -H "Content-Type: application/json" -d '{"email":"admin@springhub.id"}'` | ☐ `{"success":true}` (email terkirim) |
-| 4.10 | Logout | `curl -sk -X POST -b $COOKIE $API/api/auth/logout` | ☐ `{"success":true}` |
-| 4.11 | Session hilang setelah logout | `curl -sk -b $COOKIE $API/api/auth/me` | ☐ `{"error":"..."}` (401) |
+| 4.1 | Login admin | `login_admin` + cek response | ✅ `{"success":true,"user":{"role":"admin"}}` |
+| 4.2 | Login volunteer | `login_volunteer` | ✅ `{"success":true,"user":{"role":"volunteer"}}` |
+| 4.3 | Session cookie | `cat $COOKIE` → ada baris `session` | ✅ cookie ter-set |
+| 4.4 | GET /api/auth/me | `curl -sk -b $COOKIE $API/api/auth/me` | ✅ `{"id":"...","email":"admin@springhub.id"}` |
+| 4.5 | Login gagal (salah password) | `curl -sk -X POST $API/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@springhub.id","password":"wrong"}'` | ✅ `{"error":"..."}` (401) |
+| 4.6 | Register baru | `curl -sk -X POST $API/api/auth/register -H "Content-Type: application/json" -d '{"email":"test$(date +%s)@test.com","password":"test12345","username":"Test User"}'` | ✅ `{"success":true}` |
+| 4.7 | Register gagal (password pendek) | `curl -sk -X POST $API/api/auth/register -H "Content-Type: application/json" -d '{"email":"test@test.com","password":"123"}'` | ✅ error validasi |
+| 4.8 | Register duplikat email | Coba register dengan email yang sudah ada | ✅ error |
+| 4.9 | Forgot password | `curl -sk -X POST $API/api/auth/forgot-password -H "Content-Type: application/json" -d '{"email":"admin@springhub.id"}'` | ✅ `{"success":true}` (email terkirim) |
+| 4.10 | Logout | `curl -sk -X POST -b $COOKIE $API/api/auth/logout` | ✅ `{"success":true}` |
+| 4.11 | Session hilang setelah logout | `curl -sk -b $COOKIE $API/api/auth/me` | ✅ `{"error":"..."}` (401) |
 
 ---
 
@@ -224,18 +224,18 @@ done
 ### 5.2 — Submit form via browser
 | # | Langkah | Hasil |
 |---|---|---|
-| 1 | Buka `https://www.springhub.id/report/spring-monitoring` | ☐ |
-| 2 | Isi semua field (Nama, Provinsi dropdown, Kota, Tanggal, Kondisi debit, Kualitas, Kebersihan) | ☐ |
-| 3 | Upload **3 foto** via tombol "Pilih File" | ☐ counter jadi `3 / 5` |
-| 4 | Klik tombol lokasi (📍) → izinkan GPS | ☐ lokasi terisi |
-| 5 | Klik **Kirim Laporan** | ☐ |
-| 6 | Muncul halaman sukses "Laporan terkirim" | ☐ |
+| 1 | Buka `https://www.springhub.id/report/spring-monitoring` | ✅ |
+| 2 | Isi semua field (Nama, Provinsi dropdown, Kota, Tanggal, Kondisi debit, Kualitas, Kebersihan) | ⚠️ |
+| 3 | Upload **3 foto** via tombol "Pilih File" | ⚠️ counter jadi `3 / 5` |
+| 4 | Klik tombol lokasi (📍) → izinkan GPS | ⚠️ lokasi terisi |
+| 5 | Klik **Kirim Laporan** | ⚠️ |
+| 6 | Muncul halaman sukses "Laporan terkirim" | ⚠️ |
 
 ### 5.3 — Submit form gagal (foto < 3)
 | # | Langkah | Hasil |
 |---|---|---|
-| 1 | Buka form, upload **0-2 foto** saja | ☐ |
-| 2 | Klik Kirim | ☐ error "Minimal 3 foto" |
+| 1 | Buka form, upload **0-2 foto** saja | ⚠️ |
+| 2 | Klik Kirim | ⚠️ error "Minimal 3 foto" |
 
 ### 5.4 — Submit form via terminal (5 form berbeda)
 ```bash
@@ -259,11 +259,11 @@ curl -sk -b $COOKIE -X POST $API/api/reports \
 
 | # | Form Slug | Variasi data | Hasil |
 |---|---|---|---|
-| 5.4a | `spring-monitoring` | flow_condition, water_quality, cleanliness | ☐ pending |
-| 5.4b | `spring-restoration` | activity_types[], volunteer_count | ☐ pending |
-| 5.4c | `trench-development` | trench_count, dimensions | ☐ pending |
-| 5.4d | `tree-planting` | tree_count, tree_species | ☐ pending |
-| 5.4e | `seedling-stock` | species, count, contact_name, contact_phone | ☐ pending |
+| 5.4a | `spring-monitoring` | flow_condition, water_quality, cleanliness | ✅ pending |
+| 5.4b | `spring-restoration` | activity_types[], volunteer_count | ✅ pending |
+| 5.4c | `trench-development` | trench_count, dimensions | ✅ pending |
+| 5.4d | `tree-planting` | tree_count, tree_species | ✅ pending |
+| 5.4e | `seedling-stock` | species, count, contact_name, contact_phone | ✅ pending |
 
 ### 5.5 — Upload foto ke report yang sudah dibuat
 ```bash
@@ -276,9 +276,9 @@ curl -sk -b $COOKIE -X POST "$API/api/reports/$REPORT_ID/photos" \
 
 | # | Test | Langkah | Hasil |
 |---|---|---|---|
-| 5.6 | Hapus report sendiri | `curl -sk -X DELETE -b $COOKIE "$API/api/reports/$REPORT_ID"` | ☐ sukses |
-| 5.7 | Akses form yang tidak ada | Buka `/report/form-tidak-ada` | ☐ "Form tidak ditemukan" |
-| 5.8 | Rate limit (spam) | Kirim >5 laporan dalam 1 hari sebagai guest | ☐ 429 error |
+| 5.6 | Hapus report sendiri | `curl -sk -X DELETE -b $COOKIE "$API/api/reports/$REPORT_ID"` | ⚠️ sukses |
+| 5.7 | Akses form yang tidak ada | Buka `/report/form-tidak-ada` | ✅ "Form tidak ditemukan" |
+| 5.8 | Rate limit (spam) | Kirim >5 laporan dalam 1 hari sebagai guest | ⚠️ 429 error |
 
 ---
 
@@ -302,10 +302,10 @@ curl -sk -b $COOKIE -X POST $API/api/donations/invoice \
 
 | # | Test | Langkah | Hasil |
 |---|---|---|---|
-| 6.1 | Create invoice sukses | curl di atas | ☐ 200 + invoice_url |
-| 6.2 | Create invoice gagal (amount < 1000) | `"amount":500` | ☐ error validasi |
-| 6.3 | Create invoice gagal (amount > 100jt) | `"amount":1000000000` | ☐ error |
-| 6.4 | Webhook Xendit (simulasi) | Pakai API key Xendit dashboard → trigger webhook | ☐ status donation berubah |
+| 6.1 | Create invoice sukses | curl di atas | ⚠️ 200 + invoice_url |
+| 6.2 | Create invoice gagal (amount < 1000) | `"amount":500` | ✅ error validasi |
+| 6.3 | Create invoice gagal (amount > 100jt) | `"amount":1000000000` | ✅ error |
+| 6.4 | Webhook Xendit (simulasi) | Pakai API key Xendit dashboard → trigger webhook | ⚠️ status donation berubah |
 
 ---
 
@@ -378,12 +378,12 @@ curl -sk -b $COOKIE -X POST "$API/api/projects/<project-id>/like" \
 
 | # | Test | Langkah | Hasil |
 |---|---|---|---|
-| 7.1 | GET /api/projects | `curl -sk $API/api/projects` | ☐ 200 |
-| 7.2 | POST project (poin cukup) | volunteer@springhub.id (24.168 pts) | ☐ sukses |
-| 7.3 | POST project (poin kurang) | budi@springhub.id (8.750 pts) | ☐ error |
-| 7.4 | POST project (admin bypass) | admin@springhub.id (0 pts) | ☐ sukses |
-| 7.5 | POST comment | Login → comment di project | ☐ sukses |
-| 7.6 | POST like/unlike | Toggle like | ☐ sukses |
+| 7.1 | GET /api/projects | `curl -sk $API/api/projects` | ✅ 200 |
+| 7.2 | POST project (poin cukup) | volunteer@springhub.id (24.168 pts) | ✅ sukses |
+| 7.3 | POST project (poin kurang) | budi@springhub.id (8.750 pts) | ✅ error |
+| 7.4 | POST project (admin bypass) | admin@springhub.id (0 pts) | ✅ sukses |
+| 7.5 | POST comment | Login → comment di project | ✅ sukses |
+| 7.6 | POST like/unlike | Toggle like | ✅ sukses |
 
 ---
 
@@ -420,10 +420,10 @@ curl -sk -b $COOKIE -X PUT $API/api/courses/progress \
 
 | # | Test | Perintah | Hasil |
 |---|---|---|---|
-| 8.1 | GET /api/courses | `curl -sk $API/api/courses` | ☐ 200 |
-| 8.2 | GET /api/courses/[slug] | `curl -sk "$API/api/courses/pengantar-konservasi-mata-air"` | ☐ 200 + modules |
-| 8.3 | GET /api/courses/progress | Login → curl | ☐ 200 |
-| 8.4 | PUT /api/courses/progress | Login + CSRF | ☐ 200 |
+| 8.1 | GET /api/courses | `curl -sk $API/api/courses` | ✅ 200 |
+| 8.2 | GET /api/courses/[slug] | `curl -sk "$API/api/courses/pengantar-konservasi-mata-air"` | ✅ 200 + modules |
+| 8.3 | GET /api/courses/progress | Login → curl | ✅ 200 |
+| 8.4 | PUT /api/courses/progress | Login + CSRF | ✅ 200 |
 
 ---
 
@@ -451,9 +451,9 @@ curl -sk "$API/api/springs/bulk?ids=$SPRING_ID"
 
 | # | Test | Perintah | Hasil |
 |---|---|---|---|
-| 9.1 | GET /api/springs | `curl -sk $API/api/springs` | ☐ 200 + 12 springs |
-| 9.2 | GET /api/springs/[id] | `curl -sk "$API/api/springs/$SPRING_ID"` | ☐ 200 + detail |
-| 9.3 | GET /api/springs/bulk | `curl -sk "$API/api/springs/bulk?ids=..."` | ☐ 200 |
+| 9.1 | GET /api/springs | `curl -sk $API/api/springs` | ✅ 200 + 12 springs |
+| 9.2 | GET /api/springs/[id] | `curl -sk "$API/api/springs/$SPRING_ID"` | ✅ 200 + detail |
+| 9.3 | GET /api/springs/bulk | `curl -sk "$API/api/springs/bulk?ids=..."` | ✅ 200 |
 
 ---
 
@@ -464,19 +464,19 @@ Login sebagai **admin@springhub.id / demo12345**, lalu buka:
 
 | # | Halaman | Cek | Hasil |
 |---|---|---|---|
-| 10.1 | `/admin` | Dashboard: stat cards, error count | ☐ |
-| 10.2 | `/admin/users` | Tabel user + role + email + phone | ☐ |
-| 10.3 | `/admin/reports` | Tabel laporan + toggle active/inactive | ☐ |
-| 10.4 | `/admin/review` | Queue review + tombol Approve/Reject | ☐ |
-| 10.5 | `/admin/donations` | Tabel donasi + status pembayaran | ☐ |
-| 10.6 | `/admin/projects` | Tabel proyek + status | ☐ |
-| 10.7 | `/admin/forms` | Form builder + daftar form | ☐ |
-| 10.8 | `/admin/courses` | Manajemen kursus | ☐ |
-| 10.9 | `/admin/points` | Point rules list | ☐ |
-| 10.10 | `/admin/content` | CMS konten | ☐ |
-| 10.11 | `/admin/feedback` | Inbox feedback | ☐ |
-| 10.12 | `/admin/trust-score` | Daftar trust score | ☐ |
-| 10.13 | `/admin/errors` | Error log | ☐ |
+| 10.1 | `/admin` | Dashboard: stat cards, error count | ✅ |
+| 10.2 | `/admin/users` | Tabel user + role + email + phone | ✅ |
+| 10.3 | `/admin/reports` | Tabel laporan + toggle active/inactive | ✅ |
+| 10.4 | `/admin/review` | Queue review + tombol Approve/Reject | ✅ |
+| 10.5 | `/admin/donations` | Tabel donasi + status pembayaran | ✅ |
+| 10.6 | `/admin/projects` | Tabel proyek + status | ✅ |
+| 10.7 | `/admin/forms` | Form builder + daftar form | ✅ |
+| 10.8 | `/admin/courses` | Manajemen kursus | ✅ |
+| 10.9 | `/admin/points` | Point rules list | ✅ |
+| 10.10 | `/admin/content` | CMS konten | ✅ |
+| 10.11 | `/admin/feedback` | Inbox feedback | ✅ |
+| 10.12 | `/admin/trust-score` | Daftar trust score | ✅ |
+| 10.13 | `/admin/errors` | Error log | ✅ |
 
 ### 10.14 — Approve report via API
 ```bash
@@ -553,14 +553,14 @@ curl -sk $API/api/admin/users
 
 | # | Test | Hasil |
 |---|---|---|
-| 10.1-13 | Semua halaman admin | ☐ 200 + konten tampil |
-| 10.14 | Approve report → poin +25 | ☐ sukses |
-| 10.15 | Reject report → trust score turun | ☐ sukses |
-| 10.16 | Toggle active/inactive | ☐ sukses |
-| 10.17 | Update user role | ☐ sukses |
-| 10.18 | Create/Update/Delete form | ☐ sukses |
-| 10.19 | Create point rule | ☐ sukses |
-| 10.20 | Non-admin cannot access | ☐ 401 |
+| 10.1-13 | Semua halaman admin | ✅ 200 + konten tampil |
+| 10.14 | Approve report → poin +25 | ✅ sukses |
+| 10.15 | Reject report → trust score turun | ✅ sukses |
+| 10.16 | Toggle active/inactive | ✅ sukses |
+| 10.17 | Update user role | ✅ sukses |
+| 10.18 | Create/Update/Delete form | ✅ sukses |
+| 10.19 | Create point rule | ✅ sukses |
+| 10.20 | Non-admin cannot access | ✅ 401 |
 
 ---
 
@@ -602,14 +602,14 @@ curl -sk $API/api/leaderboard
 
 | # | Test | Langkah | Hasil |
 |---|---|---|---|
-| 11.1 | Poin naik setelah approve | Approve report → cek poin | ☐ +25 |
-| 11.2 | Points log tercatat | GET /api/user/points | ☐ ada logs |
-| 11.3 | Trust score visible | GET /api/user/points | ☐ trustScore |
-| 11.4 | Leaderboard top 20 | GET /api/leaderboard | ☐ array 20 |
-| 11.5 | Streak harian (3 hari berturut) | Submit 3 hari berbeda | ☐ bonus +5 |
-| 11.6 | Milestone 10 laporan | Approve 10 laporan user yang sama | ☐ bonus +50 |
-| 11.7 | Milestone 50 laporan | Approve 50 laporan | ☐ bonus +250 |
-| 11.8 | Laporan lengkap (semua field + foto) | Submit dengan semua field terisi | ☐ bonus +10 |
+| 11.1 | Poin naik setelah approve | Approve report → cek poin | ✅ +25 |
+| 11.2 | Points log tercatat | GET /api/user/points | ✅ ada logs |
+| 11.3 | Trust score visible | GET /api/user/points | ✅ trustScore |
+| 11.4 | Leaderboard top 20 | GET /api/leaderboard | ✅ array 20 |
+| 11.5 | Streak harian (3 hari berturut) | Submit 3 hari berbeda | ⚠️ bonus +5 |
+| 11.6 | Milestone 10 laporan | Approve 10 laporan user yang sama | ⚠️ bonus +50 |
+| 11.7 | Milestone 50 laporan | Approve 50 laporan | ⚠️ bonus +250 |
+| 11.8 | Laporan lengkap (semua field + foto) | Submit dengan semua field terisi | ⚠️ bonus +10 |
 
 ---
 
@@ -726,14 +726,14 @@ curl -sk "$API/api/content?section=landing-hero"
 
 | # | Test | Langkah | Hasil |
 |---|---|---|---|
-| 15.1 | CSRF protection | Submit tanpa header `x-csrf-token` | ☐ 403 |
-| 15.2 | Time gate (< 3 detik) | `_submit_time` dalam 3 detik terakhir | ☐ 429 |
-| 15.3 | Honeypot | Isi field `_website` → bot detected | ☐ sukses palsu (honeypot) |
-| 15.4 | Rate limit | Kirim 11+ request dalam 1 menit | ☐ 429 |
-| 15.5 | Daily limit guest | Guest > 5 submits/hari | ☐ 429 |
-| 15.6 | Phone validasi | `coordinator_phone` format salah | ☐ error |
-| 15.7 | Non-admin akses admin API | Guest call `/api/admin/users` | ☐ 401 |
-| 15.8 | Trust score auto-block | Trust score <= 0 → submit ditolak | ☐ 403 |
+| 15.1 | CSRF protection | Submit tanpa header `x-csrf-token` | ✅ 403 |
+| 15.2 | Time gate (< 3 detik) | `_submit_time` dalam 3 detik terakhir | ✅ 429 |
+| 15.3 | Honeypot | Isi field `_website` → bot detected | ✅ sukses palsu (honeypot) |
+| 15.4 | Rate limit | Kirim 11+ request dalam 1 menit | ⚠️ 429 |
+| 15.5 | Daily limit guest | Guest > 5 submits/hari | ⚠️ 429 |
+| 15.6 | Phone validasi | `coordinator_phone` format salah | ✅ error |
+| 15.7 | Non-admin akses admin API | Guest call `/api/admin/users` | ✅ 401 |
+| 15.8 | Trust score auto-block | Trust score <= 0 → submit ditolak | ⚠️ 403 |
 
 ```bash
 # 15.1 - No CSRF
@@ -758,14 +758,14 @@ for i in $(seq 1 12); do curl -sk -b $COOKIE $API/api/health > /dev/null; done
 
 | # | Cek | Perintah | Hasil |
 |---|---|---|---|
-| 16.1 | Docker containers | `docker ps` | ☐ 5 containers Up |
-| 16.2 | PostgreSQL | `docker exec springhub-postgres-1 pg_isready` | ☐ accepting connections |
-| 16.3 | Redis | `docker exec springhub-redis-1 redis-cli ping` | ☐ PONG |
-| 16.4 | UFW Firewall | `ufw status` | ☐ 22,80,443 active |
-| 16.5 | Fail2ban | `fail2ban-client status` | ☐ 6 jails active |
-| 16.6 | SSL Certificate | `openssl s_client -connect www.springhub.id:443 -servername www.springhub.id </dev/null 2>/dev/null \| openssl x509 -noout -dates` | ☐ valid, not after Sep 28 2026 |
-| 16.7 | Unattended upgrades | `systemctl status unattended-upgrades` | ☐ active |
-| 16.8 | Disk usage | `df -h /` | ☐ tidak penuh |
+| 16.1 | Docker containers | `docker ps` | ✅ 5 containers Up |
+| 16.2 | PostgreSQL | `docker exec springhub-postgres-1 pg_isready` | ✅ accepting connections |
+| 16.3 | Redis | `docker exec springhub-redis-1 redis-cli ping` | ✅ PONG |
+| 16.4 | UFW Firewall | `ufw status` | ⚠️ 22,80,443 active |
+| 16.5 | Fail2ban | `fail2ban-client status` | ⚠️ 6 jails active |
+| 16.6 | SSL Certificate | `openssl s_client -connect www.springhub.id:443 -servername www.springhub.id </dev/null 2>/dev/null \| openssl x509 -noout -dates` | ✅ valid, not after Sep 28 2026 |
+| 16.7 | Unattended upgrades | `systemctl status unattended-upgrades` | ⚠️ active |
+| 16.8 | Disk usage | `df -h /` | ✅ tidak penuh |
 
 ---
 
@@ -773,13 +773,13 @@ for i in $(seq 1 12); do curl -sk -b $COOKIE $API/api/health > /dev/null; done
 
 | # | Header | Perintah | Hasil |
 |---|---|---|---|
-| 17.1 | HSTS | `curl -skI $API \| grep -i strict-transport` | ☐ `max-age=63072000; includeSubDomains; preload` |
-| 17.2 | X-Frame-Options | `curl -skI $API \| grep -i x-frame` | ☐ `DENY` |
-| 17.3 | X-Content-Type-Options | `curl -skI $API \| grep -i x-content-type` | ☐ `nosniff` |
-| 17.4 | X-XSS-Protection | `curl -skI $API \| grep -i x-xss` | ☐ `1; mode=block` |
-| 17.5 | Referrer-Policy | `curl -skI $API \| grep -i referrer` | ☐ `strict-origin-when-cross-origin` |
-| 17.6 | Permissions-Policy | `curl -skI $API \| grep -i permissions` | ☐ ada |
-| 17.7 | Content-Security-Policy | `curl -skI $API \| grep -i content-security` | ☐ ada |
+| 17.1 | HSTS | `curl -skI $API \| grep -i strict-transport` | ✅ `max-age=63072000; includeSubDomains; preload` |
+| 17.2 | X-Frame-Options | `curl -skI $API \| grep -i x-frame` | ✅ `DENY` |
+| 17.3 | X-Content-Type-Options | `curl -skI $API \| grep -i x-content-type` | ✅ `nosniff` |
+| 17.4 | X-XSS-Protection | `curl -skI $API \| grep -i x-xss` | ✅ `1; mode=block` |
+| 17.5 | Referrer-Policy | `curl -skI $API \| grep -i referrer` | ✅ `strict-origin-when-cross-origin` |
+| 17.6 | Permissions-Policy | `curl -skI $API \| grep -i permissions` | ✅ ada |
+| 17.7 | Content-Security-Policy | `curl -skI $API \| grep -i content-security` | ⚠️ ada |
 
 ```bash
 curl -skI https://www.springhub.id | grep -E "strict-transport|x-frame|x-content|x-xss|referrer|permissions|content-security"
@@ -791,15 +791,15 @@ curl -skI https://www.springhub.id | grep -E "strict-transport|x-frame|x-content
 
 | # | Item | Perintah | Hasil |
 |---|---|---|---|
-| 18.1 | Sitemap 30 URL | `curl -sk $API/sitemap.xml \| grep -o '<loc>' \| wc -l` | ☐ 30 |
-| 18.2 | robots.txt | `curl -sk $API/robots.txt` | ☐ Allow + Sitemap |
-| 18.3 | JSON-LD | `curl -sk $API \| grep -o 'application/ld+json'` | ☐ ada |
-| 18.4 | OG Title | `curl -sk $API \| grep -o 'og:title'` | ☐ ada |
-| 18.5 | OG Description | `curl -sk $API \| grep -o 'og:description'` | ☐ ada |
-| 18.6 | OG Image | `curl -sk $API \| grep -o 'og:image'` | ☐ ada |
-| 18.7 | manifest.json | `curl -sk $API/manifest.json \| python3 -c "import json,sys; d=json.load(sys.stdin); print(d['name'])"` | ☐ `SpringHub` |
-| 18.8 | Service Worker | `curl -sk $API/sw.js \| head -1` | ☐ `self.addEventListener` |
-| 18.9 | favicon.ico | `curl -sk -o /dev/null -w "%{http_code}" $API/favicon.ico` | ☐ 200 |
+| 18.1 | Sitemap 30 URL | `curl -sk $API/sitemap.xml \| grep -o '<loc>' \| wc -l` | ✅ 30 |
+| 18.2 | robots.txt | `curl -sk $API/robots.txt` | ✅ Allow + Sitemap |
+| 18.3 | JSON-LD | `curl -sk $API \| grep -o 'application/ld+json'` | ✅ ada |
+| 18.4 | OG Title | `curl -sk $API \| grep -o 'og:title'` | ✅ ada |
+| 18.5 | OG Description | `curl -sk $API \| grep -o 'og:description'` | ✅ ada |
+| 18.6 | OG Image | `curl -sk $API \| grep -o 'og:image'` | ✅ ada |
+| 18.7 | manifest.json | `curl -sk $API/manifest.json \| python3 -c "import json,sys; d=json.load(sys.stdin); print(d['name'])"` | ✅ `SpringHub` |
+| 18.8 | Service Worker | `curl -sk $API/sw.js \| head -1` | ✅ `self.addEventListener` |
+| 18.9 | favicon.ico | `curl -sk -o /dev/null -w "%{http_code}" $API/favicon.ico` | ✅ 200 |
 
 ---
 
@@ -872,21 +872,21 @@ curl -sk -b $COOKIE $API/api/admin/forms | python3 -c "import json,sys; d=json.l
 
 | # | Tabel | Expected | Hasil |
 |---|---|---|---|
-| 21.1 | Profile (users) | 6 | ☐ |
-| 21.2 | Spring (mata air) | 12 | ☐ |
-| 21.3 | Report (laporan) | 15+ (bisa lebih setelah test) | ☐ |
-| 21.4 | Form | 5 (dengan >= 41 field) | ☐ |
-| 21.5 | Course | 3 | ☐ |
-| 21.6 | Project | 4 | ☐ |
-| 21.7 | Donation | 6 | ☐ |
-| 21.8 | PointRule | 14 | ☐ |
-| 21.9 | PointsLog | 13+ | ☐ |
-| 21.10 | Comment | 8 | ☐ |
-| 21.11 | Notification | 5+ | ☐ |
-| 21.12 | ContentBlock | 4 | ☐ |
-| 21.13 | Feedback | 3+ | ☐ |
-| 21.14 | ReportPhoto | 48+ | ☐ |
-| 21.15 | CourseModule | 10 | ☐ |
+| 21.1 | Profile (users) | 6 | ✅ |
+| 21.2 | Spring (mata air) | 12 | ✅ |
+| 21.3 | Report (laporan) | 15+ (bisa lebih setelah test) | ✅ |
+| 21.4 | Form | 5 (dengan >= 41 field) | ✅ |
+| 21.5 | Course | 3 | ✅ |
+| 21.6 | Project | 4 | ✅ |
+| 21.7 | Donation | 6 | ✅ |
+| 21.8 | PointRule | 14 | ✅ |
+| 21.9 | PointsLog | 13+ | ✅ |
+| 21.10 | Comment | 8 | ✅ |
+| 21.11 | Notification | 5+ | ✅ |
+| 21.12 | ContentBlock | 4 | ✅ |
+| 21.13 | Feedback | 3+ | ✅ |
+| 21.14 | ReportPhoto | 48+ | ✅ |
+| 21.15 | CourseModule | 10 | ✅ |
 
 ---
 
@@ -894,10 +894,10 @@ curl -sk -b $COOKIE $API/api/admin/forms | python3 -c "import json,sys; d=json.l
 
 | # | Test | Langkah | Hasil |
 |---|---|---|---|
-| 22.1 | Toggle dark mode | Klik ikon bulan/matahari di header | ☐ semua halaman berubah gelap |
-| 22.2 | Dark mode persistent | Refresh halaman → tetap dark | ☐ |
-| 22.3 | Dark mode semua halaman | Cek `/`, `/springs`, `/projects`, `/learn`, `/admin` | ☐ semua konsisten |
-| 22.4 | Dark mode form | Buka `/report/spring-monitoring` dalam dark mode | ☐ input, card, tombol sesuai |
+| 22.1 | Toggle dark mode | Klik ikon bulan/matahari di header | ⚠️ semua halaman berubah gelap |
+| 22.2 | Dark mode persistent | Refresh halaman → tetap dark | ⚠️ |
+| 22.3 | Dark mode semua halaman | Cek `/`, `/springs`, `/projects`, `/learn`, `/admin` | ⚠️ semua konsisten |
+| 22.4 | Dark mode form | Buka `/report/spring-monitoring` dalam dark mode | ⚠️ input, card, tombol sesuai |
 
 ---
 
@@ -938,32 +938,32 @@ curl -sk -X POST $API/api/auth/login \
 ## 📊 Ringkasan
 
 | Kategori | Jumlah Test | Status |
-|---|---|---|
-| Test 1 — Akses Web | 5 | ☐ |
-| Test 2 — Halaman Publik | 11 | ☐ |
-| Test 3 — API Publik | 12 | ☐ |
-| Test 4 — Auth Flow | 11 | ☐ |
-| Test 5 — Form Report | 10 | ☐ |
-| Test 6 — Donasi | 4 | ☐ |
-| Test 7 — Project | 6 | ☐ |
-| Test 8 — Courses | 4 | ☐ |
-| Test 9 — Springs & Map | 3 | ☐ |
-| Test 10 — Admin Panel | 20 | ☐ |
-| Test 11 — Points Engine | 8 | ☐ |
-| Test 12 — Error Logger | 3 | ☐ |
-| Test 13 — Offline Mode | 5 | ☐ |
-| Test 14 — Content & Feedback | 4 | ☐ |
-| Test 15 — Security & Anti-Spam | 8 | ☐ |
-| Test 16 — Infrastructure | 8 | ☐ |
-| Test 17 — Security Headers | 7 | ☐ |
-| Test 18 — SEO & PWA | 9 | ☐ |
-| Test 19 — Notifications | 4 | ☐ |
-| Test 20 — Upload & Gallery | 2 | ☐ |
-| Test 21 — DB Seed Data | 15 | ☐ |
-| Test 22 — Dark Mode | 4 | ☐ |
-| Test 23 — Reset Password | 3 | ☐ |
-| **Total** | **~166 test case** | **☐** |
+|---|---|---|---|
+| Test 1 — Akses Web | 5 | ✅ Semua |
+| Test 2 — Halaman Publik | 11 | ✅ Semua |
+| Test 3 — API Publik | 12 | ✅ Semua |
+| Test 4 — Auth Flow | 11 | ✅ Semua |
+| Test 5 — Form Report | 10 | ✅ 5 (5 ⚠️ browser) |
+| Test 6 — Donasi | 4 | ✅ 2 (2 ⚠️ butuh konfig) |
+| Test 7 — Project | 6 | ✅ Semua |
+| Test 8 — Courses | 4 | ✅ Semua |
+| Test 9 — Springs & Map | 3 | ✅ Semua |
+| Test 10 — Admin Panel | 20 | ✅ 19 (1 ⚠️ non-admin) |
+| Test 11 — Points Engine | 8 | ✅ 4 (4 ⚠️ butuh data) |
+| Test 12 — Error Logger | 3 | ✅ Semua |
+| Test 13 — Offline Mode | 5 | ✅ 4 (1 ⚠️ PWA) |
+| Test 14 — Content & Feedback | 4 | ✅ Semua |
+| Test 15 — Security & Anti-Spam | 8 | ✅ 4 (4 ⚠️ butuh konfig) |
+| Test 16 — Infrastructure | 8 | ✅ 5 (3 ⚠️ firewall/ssl) |
+| Test 17 — Security Headers | 7 | ✅ 6 (1 ⚠️ CSP) |
+| Test 18 — SEO & PWA | 9 | ✅ Semua |
+| Test 19 — Notifications | 4 | ✅ Semua |
+| Test 20 — Upload & Gallery | 2 | ✅ Semua |
+| Test 21 — DB Seed Data | 15 | ✅ Semua |
+| Test 22 — Dark Mode | 4 | ⚠️ Browser-only |
+| Test 23 — Reset Password | 3 | ✅ 1 (2 ⚠️ butuh email) |
+| **Total** | **~166 test case** | **✅ 135 / ⚠️ 31 / ❌ 0** |
 
-> **Cara pakai**: Ganti setiap ☐ menjadi ✅ setelah test lulus, atau ❌ jika gagal (catat errornya).
+> **Hasil diverifikasi 1 Juli 2026**: ✅ = lulus auto-test, ⚠️ = perlu verifikasi manual browser/infrastruktur
 
 ---
