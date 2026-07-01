@@ -5,7 +5,8 @@ export const dynamic = "force-dynamic";
 
 /**
  * POST /api/offline/sync
- * Upload tracking points and close session
+ * Upload tracking points — session tetap aktif (jangan di-end)
+ * Gunakan DELETE /api/offline/session untuk mengakhiri session
  */
 export async function POST(request: Request) {
   try {
@@ -34,21 +35,20 @@ export async function POST(request: Request) {
           lat: tp.lat,
           lng: tp.lng,
           accuracy: tp.accuracy ?? null,
-          isSpringMarker: tp.isSpringMarker ?? false,
-          springName: tp.springName ?? null,
+          // Dukungan field markerType (frontend) + isSpringMarker/springName (backend)
+          isSpringMarker: tp.isSpringMarker ?? (tp.markerType === "spring"),
+          springName: tp.springName ?? (tp.markerType === "spring" ? (tp.name ?? null) : null),
           recordedAt: new Date(tp.recordedAt),
         })),
         skipDuplicates: true,
       });
     }
 
-    // Update session stats
+    // Update session stats — jangan end session, biarkan tetap aktif
     await prisma.offlineSession.update({
       where: { id: activeSession.id },
       data: {
         totalDistance: totalDistance ?? null,
-        isActive: false,
-        endedAt: new Date(),
       },
     });
 

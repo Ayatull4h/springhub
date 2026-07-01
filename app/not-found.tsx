@@ -1,9 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, SearchX } from "lucide-react";
 
 export default function NotFound() {
+  useEffect(() => {
+    document.title = "404 - Halaman Tidak Ditemukan · SpringHub";
+  }, []);
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center bg-slate-50 px-4 text-center dark:bg-slate-900">
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
