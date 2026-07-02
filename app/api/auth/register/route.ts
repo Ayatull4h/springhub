@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { email, password, username } = parsed.data;
+    const { email, password, username: rawUsername } = parsed.data;
 
     const existing = await prisma.profile.findUnique({ where: { email } });
     if (existing) {
@@ -52,13 +52,23 @@ export async function POST(request: Request) {
       );
     }
 
+    let username = rawUsername ?? email.split("@")[0];
+    const usernameTaken = await prisma.profile.findUnique({ where: { username } });
+    if (usernameTaken) {
+      let suffix = 1;
+      while (await prisma.profile.findUnique({ where: { username: `${username}${suffix}` } })) {
+        suffix++;
+      }
+      username = `${username}${suffix}`;
+    }
+
     const passwordHash = await hashPassword(password);
 
     const profile = await prisma.profile.create({
       data: {
         email,
         passwordHash,
-        username: username ?? email.split("@")[0],
+        username,
         role: "volunteer",
       },
     });
