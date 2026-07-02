@@ -2,7 +2,7 @@ import { Page, expect } from "@playwright/test";
 
 export const TEST_USERS = {
   volunteer: { email: "volunteer@springhub.id", password: "vol12345" },
-  admin: { email: "admin@springhub.id", password: "admin123" },
+  admin: { email: "admin@springhub.id", password: "demo12345" },
 };
 
 export const ALL_ROUTES = [

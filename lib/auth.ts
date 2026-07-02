@@ -14,6 +14,11 @@ export type SessionPayload = {
   username: string;
 };
 
+export async function isAdmin(): Promise<boolean> {
+  const session = await getSession();
+  return session?.role === "admin";
+}
+
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 12);
 }
@@ -25,7 +30,7 @@ export async function verifyPassword(
   return bcrypt.compare(password, hash);
 }
 
-export async function createSession(payload: SessionPayload): Promise<string> {
+export async function createSession(payload: SessionPayload, isSecure?: boolean): Promise<string> {
   if (!payload || typeof payload !== "object") {
     throw new Error("Invalid session payload");
   }
@@ -42,7 +47,7 @@ export async function createSession(payload: SessionPayload): Promise<string> {
   const cookieStore = cookies();
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isSecure ?? true,
     sameSite: "lax",
     maxAge: SESSION_DURATION_SEC,
     path: "/",
@@ -51,11 +56,11 @@ export async function createSession(payload: SessionPayload): Promise<string> {
   return token;
 }
 
-export async function destroySession(): Promise<void> {
+export async function destroySession(isSecure?: boolean): Promise<void> {
   const cookieStore = cookies();
   cookieStore.set(SESSION_COOKIE, "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isSecure ?? true,
     sameSite: "strict",
     maxAge: 0,
     path: "/",

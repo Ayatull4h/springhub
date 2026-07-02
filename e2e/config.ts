@@ -3,7 +3,7 @@ export const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
 
 export const TEST_USERS = {
   volunteer: { email: "volunteer@springhub.id", password: "vol12345" },
-  admin: { email: "admin@springhub.id", password: "admin123" },
+  admin: { email: "admin@springhub.id", password: "demo12345" },
 };
 
 export const FORM_SLUGS = [

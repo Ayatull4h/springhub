@@ -39,46 +39,71 @@
   }
 }
 
+/* ═══════════════════════════════════════════════
+   DARK MODE — Warm Navy Palette
+   Logo (dark): #faf9f7 (cream hangat)
+   Inspirasi: navy gelap dengan undertone hangat
+   ═══════════════════════════════════════════════ */
 .dark body {
-  background-color: #0f172a;
-  color: #e2e8f0;
+  background-color: #0b0f15;
+  color: #f5f3ef;
 }
 
 .dark .card {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
+  background-color: #141a22 !important;
+  border-color: #252b34 !important;
 }
 
 .dark .bg-white {
-  background-color: #1e293b !important;
+  background-color: #141a22 !important;
 }
 
 .dark .bg-slate-50 {
-  background-color: #0f172a !important;
+  background-color: #0b0f15 !important;
 }
 
 .dark .text-ink {
-  color: #f1f5f9 !important;
+  color: #f5f3ef !important;
+}
+
+.dark .text-white {
+  color: #f5f3ef !important;
+}
+
+.dark .hover\:text-white:hover {
+  color: #f5f3ef !important;
 }
 
 .dark .text-ink-muted {
-  color: #94a3b8 !important;
+  color: #b3b0ab !important;
 }
 
 .dark .text-ink-subtle {
-  color: #64748b !important;
+  color: #7e7b77 !important;
 }
 
 .dark .border-ink-line {
-  border-color: #334155 !important;
+  border-color: #252b34 !important;
 }
 
 .dark .hover\:bg-slate-50:hover {
-  background-color: #1e293b !important;
+  background-color: #141a22 !important;
 }
 
 .dark .hover\:bg-slate-100:hover {
-  background-color: #1e293b !important;
+  background-color: #1c232d !important;
+}
+
+.dark .hover\:bg-slate-200:hover {
+  background-color: #1c232d !important;
+}
+
+.dark .hover\:bg-slate-700:hover {
+  background-color: #1c232d !important;
+}
+
+.dark .hover\:bg-slate-800:hover {
+  background-color: #141a22 !important;
 }
 
 .dark .hover\:bg-brand-50:hover {
@@ -86,19 +111,53 @@
 }
 
 .dark .bg-slate-100 {
-  background-color: #1e293b !important;
+  background-color: #141a22 !important;
+}
+
+.dark .bg-slate-200 {
+  background-color: #1c232d !important;
+}
+
+.dark .bg-slate-700 {
+  background-color: #1c232d !important;
+}
+
+.dark .bg-slate-800 {
+  background-color: #141a22 !important;
+}
+
+.dark .bg-slate-900 {
+  background-color: #0b0f15 !important;
+}
+
+/* Border overrides — warm */
+.dark .border-slate-600,
+.dark .border-slate-700 {
+  border-color: #252b34 !important;
+}
+
+.dark .text-slate-200 {
+  color: #f5f3ef !important; /* cream — logo match */
+}
+
+.dark .text-slate-300 {
+  color: #d4d0cb !important;
 }
 
 .dark .text-slate-400 {
-  color: #64748b !important;
+  color: #b3b0ab !important;
 }
 
 .dark .text-slate-500 {
-  color: #94a3b8 !important;
+  color: #7e7b77 !important;
 }
 
 .dark .text-slate-600 {
-  color: #cbd5e1 !important;
+  color: #55534f !important;
+}
+
+.dark .text-slate-700 {
+  color: #3d3c39 !important;
 }
 
 .dark .shadow-sm,
@@ -106,13 +165,13 @@
 .dark .shadow-lg,
 .dark .shadow-xl,
 .dark .shadow-2xl {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 0 0 1px rgba(245, 243, 239, 0.06), 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important;
 }
 
 .dark .btn-secondary {
-  background-color: #334155;
-  border-color: #475569;
-  color: #e2e8f0;
+  background-color: #1c232d;
+  border-color: #252b34;
+  color: #f5f3ef;
 }
 
 /* Cursor pointer for all buttons */
@@ -133,24 +192,25 @@ button:not(:disabled) {
   background-color: #f8fafc !important;
 }
 .dark .leaflet-control-zoom a {
-  background-color: #1e293b !important;
-  color: #e2e8f0 !important;
-  border-color: #475569 !important;
+  background-color: #141a22 !important;
+  color: #f5f3ef !important;
+  border-color: #252b34 !important;
 }
 .dark .leaflet-control-attribution {
-  background-color: rgba(30, 41, 59, 0.8) !important;
-  color: #94a3b8 !important;
+  background-color: rgba(20, 26, 34, 0.85) !important;
+  color: #b3b0ab !important;
 }
 .dark .leaflet-popup-content-wrapper {
-  background-color: #1e293b !important;
-  color: #e2e8f0 !important;
+  background-color: #141a22 !important;
+  color: #f5f3ef !important;
+  border: 1px solid #252b34;
 }
 .dark .leaflet-popup-tip {
-  background-color: #1e293b !important;
+  background-color: #141a22 !important;
 }
 .dark .leaflet-bar a {
-  background-color: #1e293b !important;
-  color: #e2e8f0 !important;
+  background-color: #141a22 !important;
+  color: #f5f3ef !important;
 }
 
 /* SVG icons in dark mode — jangan kena override text-ink */
@@ -181,7 +241,7 @@ button:not(:disabled) {
 
 /* Print styles */
 @media print {
-  header, footer, .fixed, .sticky, button, .btn-primary, .btn-secondary, .card.shadow-* {
+  header, footer, .fixed, .sticky, button, .btn-primary, .btn-secondary, [class*="shadow-"] {
     display: none !important;
   }
   body { background: white !important; color: black !important; font-size: 12pt; }
@@ -193,8 +253,9 @@ button:not(:disabled) {
   @apply rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30;
 }
 .dark .input {
-  background-color: #1e293b;
-  color: #e2e8f0;
+  background-color: #141a22;
+  color: #f5f3ef;
+  border-color: #252b34;
 }
 
 /* Better touch targets on mobile */

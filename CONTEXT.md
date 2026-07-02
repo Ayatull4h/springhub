@@ -1,6 +1,6 @@
 # 🌊 SpringHub — Project Context
 
-> Panduan untuk setup di PC baru. Dibuat: 6 Juni 2026.
+> Panduan untuk setup di PC baru. Diperbarui: 2 Juli 2026.
 > Baca ini DULU sebelum ngoding.
 
 ---
@@ -21,7 +21,7 @@ npm run dev
 **Akun test:**
 | Email | Password | Role | Poin |
 |---|---|---|---|
-| `admin@springhub.id` | `admin123` | admin | 99.999 |
+| `admin@springhub.id` | `demo12345` | admin | 99.999 |
 | `volunteer@springhub.id` | `vol12345` | volunteer | 24.168 |
 
 ---
@@ -32,11 +32,13 @@ npm run dev
 |---|---|---|
 | Frontend | Next.js 14 App Router + TypeScript strict + Tailwind | — |
 | Map | Leaflet / react-leaflet (dynamic import, SSR false) | — |
-| Database | Supabase PostgreSQL (via Prisma ORM) | Pooler: `pooler.supabase.com` |
+| Database | PostgreSQL (via Prisma ORM) | Hostinger VPS, port 5432 |
 | Auth | JWT (jose) + httpOnly cookie | `SameSite: lax` (PWA compatible) |
-| Storage | Supabase Storage (bucket: `photos`) | Foto dikompres 720p + watermark |
+| Storage | Local filesystem (/data/uploads) | Foto dikompres 720p + watermark |
 | Icons | lucide-react | — |
 | Payment | Xendit (placeholder — belum active) | — |
+| Queue | BullMQ + Redis | Email worker async |
+| Proxy | Nginx + Cloudflare | SSL, rate limiting, caching |
 
 ---
 
@@ -56,30 +58,31 @@ npm run dev
 ## 4. Environment Variables (.env)
 
 ```env
-# Database (Supabase Postgres — via Prisma)
-DATABASE_URL="postgresql://postgres.bhelvywlvwlqmvyblwmn:jagasemesta001@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres"
-DIRECT_URL="postgresql://postgres.bhelvywlvwlqmvyblwmn:jagasemesta001@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres"
+# Database (VPS PostgreSQL — via Prisma)
+DATABASE_URL="postgresql://springhub:SPRINGHUB_DB_PASS@postgres:5432/springhub"
+DIRECT_URL="postgresql://springhub:SPRINGHUB_DB_PASS@postgres:5432/springhub"
 
 # Auth
-JWT_SECRET="58a9b0a476dc873fa8c1b1facf6d6fa0cdee9a0f04f9b6b9fce666c02b92"
-NEXT_PUBLIC_SUPABASE_URL="https://bhelvywlvwlqmvyblwmn.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="sb_publishable_pefFmwGmMQPCRsQsYf60pw_Dc4Htng8"
+JWT_SECRET="<generate-ulang-jika-bocor>"
 
-# Xendit (placeholder)
+# Xendit (placeholder — menunggu client)
 XENDIT_SECRET_KEY=""
 XENDIT_WEBHOOK_TOKEN=""
 
 # App
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
+NEXT_PUBLIC_APP_URL="https://www.springhub.id"
 NEXT_PUBLIC_APP_NAME="SpringHub"
+
+# Email
+EMAIL_API_KEY="<isi-dari-resend>"
 ```
 
 ---
 
-## 5. Database State (per 6 Juni 2026)
+## 5. Database State (per 2 Juli 2026)
 
 **19 tabel — semua sudah dibuat:**
-`Profile`, `Session`, `Report`, `ReportPhoto`, `Project`, `Donation`, `PointsLog`, `CoursesProgress`, `PointRule`, `Course`, `CourseModule`, `Form`, `FormField`, `OfflineSession`, `TrackingPoint`, `Feedback`, `Notification`, `Comment`, `ContentBlock`
+`Profile`, `Session`, `Spring`, `MapPointType`, `MapPointCategory`, `MapPoint`, `Report`, `ReportPhoto`, `Project`, `Donation`, `PointsLog`, `CoursesProgress`, `PointRule`, `Course`, `CourseModule`, `Form`, `FormField`, `OfflineSession`, `TrackingPoint`, `Feedback`, `Notification`, `Comment`, `ContentBlock`, `AppError`
 
 **Seed data sudah diisi:**
 - 2 users (admin + volunteer)
@@ -123,17 +126,17 @@ Browser (Client)
 
 ---
 
-## 7. API Routes (52 endpoints)
+## 7. API Routes (103 endpoints)
 
 | Group | Routes |
 |---|---|
-| Auth | `/api/auth/login|register|logout|me|forgot-password|reset-password|claim-guest` |
-| Reports | `/api/reports|/api/reports/[id]/photos` |
-| Donations | `/api/donations/invoice|/api/donations/webhook` |
-| Projects | `/api/projects|/api/projects/[id]/comments|/api/projects/[id]/like` |
-| Offline | `/api/offline/session|/api/offline/sync` |
-| Admin | `/api/admin/users|reports|donations|projects|forms|courses|content|feedback|export|download|point-rules` |
-| Other | `/api/leaderboard|health|csrf|newsletter|gallery|feedback|forms|courses|upload/presign|point-rules|content|notifications|user/profile|user/points` |
+| Auth (7) | `/api/auth/login|register|logout|me|forgot-password|reset-password|claim-guest` |
+| Reports (4) | `/api/reports|/api/reports/[id]/photos|/api/reports/[id]/photos/[photoId]` |
+| Donations (2) | `/api/donations/invoice|/api/donations/webhook` |
+| Projects (3) | `/api/projects|/api/projects/[id]/comments|/api/projects/[id]/like` |
+| Offline (4) | `/api/offline/session|/api/offline/sync` |
+| Admin (25) | `/api/admin/users|reports|donations|projects|forms|courses|content|feedback|errors|export|download|point-rules|trust-scores|map-types|map-points` |
+| Other (15) | `/api/leaderboard|health|csrf|newsletter|gallery|feedback|forms|courses|upload/presign|point-rules|content|notifications|user/profile|user/points|springs|dashboard|map-points|log/error` |
 
 ---
 
@@ -146,18 +149,27 @@ Browser (Client)
 | 3 | Comments tidak persisten | ✅ Fixed 6 Juni | Migration diapply, API siap, UI belum |
 | 4 | Database migration pending (5 file) | ✅ Fixed 6 Juni | `prisma migrate deploy` + `prisma db push` |
 | 5 | Seed data kosong | ✅ Fixed 6 Juni | `prisma db seed` (fix adapter) |
+| 6 | OG Image 404 | ✅ Fixed 1 Juli | Generated 60KB PNG via sharp |
+| 7 | Offline sync end session bug | ✅ Fixed 1 Juli | Hapus auto-end session di sync |
+| 8 | Tracking field mismatch | ✅ Fixed 1 Juli | Accept both old & new field names |
+| 9 | CSRF/Session cookie Secure flag di HTTP | ✅ Fixed 2 Juli | Deteksi protocol dari x-forwarded-proto |
+| 10 | E2E password mismatch | ✅ Fixed 2 Juli | admin123 → demo12345 di test helpers |
+| 11 | CSP duplikasi nginx + next.config | ✅ Fixed 2 Juli | Hapus dari nginx, pertahankan di next.config |
+| 12 | Docker certbot_data volume tidak terpakai | ✅ Fixed 2 Juli | Hapus volume |
+| 13 | Worker missing depends_on postgres | ✅ Fixed 2 Juli | Tambah condition: service_healthy |
+| 14 | MCP packages di runtime dependencies | ✅ Fixed 2 Juli | Pindah ke devDependencies |
 
 ---
 
 ## 9. Yang Belum (Backlog)
 
-1. **Xendit real keys** — masih placeholder
-2. **Sentry DSN** — monitoring error
-3. **Supabase RLS policies** — `supabase/rls-policies.sql` perlu di-run
-4. **Comments UI** — frontend belum panggil API comments
-5. **GPS tracking points sync** — data di IndexedDB belum dikirim ke server
-6. **Testing** — 0 test file (perlu Playwright/E2E)
-7. **Migrasi ke VPS** — masih di Vercel + Supabase free tier
+1. **Xendit real keys** — masih placeholder (menunggu client)
+2. **Sentry DSN** — monitoring error (masih kosong)
+3. **Comments UI** — frontend belum panggil API comments
+4. **GPS tracking points sync** — data di IndexedDB belum dikirim ke server
+5. **Secret management** — env vars masih hardcoded di file system, perlu secret manager
+6. **E2E Firefox/WebKit** — masih ada fail di browser non-Chromium (rate limit/timeout)
+7. **loading.tsx coverage** — 9/43 route sudah punya, sisanya inherit dari root
 
 ---
 
@@ -170,3 +182,6 @@ Browser (Client)
 | 15 Mei Sesi 3 | Audit lengkap | Temuan C1-C11, H1-H10, M1-M10, L1-L7 |
 | 1 Juni | RAB, Bug Fixes, Dark Mode | Form visibility, dark mode 15+ file |
 | 6 Juni | Database audit + offline sync | Migrasi + seed + fix upload Chrome Android |
+| 1 Juli | Bugfix batch + E2E testing | 4 bugs fixed, Python test runner, Playwright 44/44 pass |
+| 1 Juli (2) | Automated manual test | Python runner 71/72 pass, CSRF/Secure flag issue |
+| 2 Juli | Infrastructure audit + fix | CSP duplikasi, Docker compose, MCP packages, loading.tsx, docs update |

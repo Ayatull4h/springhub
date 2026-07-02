@@ -7,7 +7,7 @@ const SECRET = getJwtSecret();
 const CSRF_COOKIE = "csrf_token";
 const CSRF_HEADER = "x-csrf-token";
 
-export async function generateCsrfToken(): Promise<string> {
+export async function generateCsrfToken(isSecure?: boolean): Promise<string> {
   const token = await new SignJWT({} as JWTPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("1h")
@@ -16,7 +16,7 @@ export async function generateCsrfToken(): Promise<string> {
   const cookieStore = cookies();
   cookieStore.set(CSRF_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isSecure ?? true,
     sameSite: "lax",
     maxAge: 3600,
     path: "/",

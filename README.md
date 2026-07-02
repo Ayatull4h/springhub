@@ -22,7 +22,7 @@ npm run dev
 
 | Email | Password | Role |
 |---|---|---|
-| `admin@springhub.id` | `admin123` | admin |
+| `admin@springhub.id` | `demo12345` | admin |
 | `volunteer@springhub.id` | `vol12345` | volunteer |
 
 ---
@@ -55,15 +55,15 @@ Proyek ini menggunakan **opencode** dengan agents:
 
 ---
 
-## 📊 Status Proyek (per 6 Juni 2026)
+## 📊 Status Proyek (per 2 Juli 2026)
 
 | Layer | Status |
 |---|---|
 | Landing page UI | 100% ✅ |
 | Form UI (5 forms + dynamic) | 100% ✅ |
 | Map UI (Leaflet + filter) | 100% ✅ |
-| Backend API (52 routes) | 100% ✅ |
-| Database (19 tables + seed) | 100% ✅ |
+| Backend API (103 endpoints) | 100% ✅ |
+| Database (19 models + seed) | 100% ✅ |
 | Auth (login, register, session) | 100% ✅ |
 | Donasi (Xendit) | 100% ✅ (placeholder key) |
 | Admin Panel (10 tabs) | 100% ✅ |
@@ -71,8 +71,11 @@ Proyek ini menggunakan **opencode** dengan agents:
 | Offline Survey Mode | 100% ✅ |
 | PWA / SEO | 100% ✅ |
 | Anti-Spam | 100% ✅ |
-| Testing | 80% ⏳ |
-| **Total** | **~90%** |
+| Testing (E2E 110 pass + unit) | 85% ⏳ |
+| Skeleton Loading | 100% ✅ |
+| Data Saver Mode | 100% ✅ |
+| Dark Mode | 100% ✅ |
+| **Total** | **~94%** |
 
 ---
 
@@ -85,17 +88,26 @@ Proyek ini menggunakan **opencode** dengan agents:
 | 3 | Comments tidak persisten | ✅ | 6 Juni 2026 |
 | 4 | Database migration pending | ✅ | 6 Juni 2026 |
 | 5 | Seed data kosong | ✅ | 6 Juni 2026 |
+| 6 | OG Image 404 | ✅ | 1 Juli 2026 |
+| 7 | Offline sync end session bug | ✅ | 1 Juli 2026 |
+| 8 | Tracking field mismatch | ✅ | 1 Juli 2026 |
+| 9 | CSRF cookie Secure flag di HTTP | ✅ | 2 Juli 2026 |
+| 10 | E2E password mismatch (admin123 ≠ demo12345) | ✅ | 2 Juli 2026 |
+| 11 | CSP duplikasi nginx + next.config | ✅ | 2 Juli 2026 |
+| 12 | Docker certbot_data volume nganggur | ✅ | 2 Juli 2026 |
+| 13 | Worker missing depends_on postgres | ✅ | 2 Juli 2026 |
+| 14 | MCP packages di runtime dependencies | ✅ | 2 Juli 2026 |
 
 ---
 
 ## 📋 Yang Belum
 
-1. **Xendit key real** — masih placeholder
-2. **Sentry DSN** — error monitoring
-3. **Supabase RLS policies** — perlu di-apply
-4. **Comments UI** — frontend belum integrasi
-5. **Testing** — E2E + unit test
-6. **Migrasi ke VPS** — masih Vercel + Supabase free tier
+1. **Xendit key real** — masih placeholder (menunggu client)
+2. **Sentry DSN** — error monitoring (masih kosong)
+3. **Comments UI** — frontend belum integrasi API comments
+4. **GPS tracking points sync** — data di IndexedDB belum dikirim ke server
+5. **Secret management** — env vars masih hardcoded, perlu secret manager
+6. **E2E Firefox/WebKit tests** — masih ada fail di browser non-Chromium
 
 ---
 

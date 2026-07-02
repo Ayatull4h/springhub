@@ -11,7 +11,7 @@ export default defineConfig({
     ["list"],
   ],
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:31759",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
@@ -29,10 +29,5 @@ export default defineConfig({
       use: { ...devices["Desktop Safari"] },
     },
   ],
-  webServer: {
-    command: "npx next dev -p 3000",
-    url: "http://localhost:3000",
-    reuseExistingServer: true,
-    timeout: 120000,
-  },
+  // Dev server running externally on http://localhost:3000
 });
