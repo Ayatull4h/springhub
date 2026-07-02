@@ -214,6 +214,7 @@ export default function AdminReviewPage() {
                               width={64}
                               height={64}
                               className="h-full w-full object-cover"
+                              unoptimized
                             />
                           </button>
                           <button
@@ -316,6 +317,7 @@ export default function AdminReviewPage() {
               width={1200}
               height={800}
               className="h-auto max-h-[85vh] w-auto max-w-[85vw] rounded-lg object-contain"
+              unoptimized
             />
           </div>
         </div>
