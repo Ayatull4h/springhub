@@ -1,0 +1,17 @@
+node_modules/
+.next/
+backup/
+*.md
+*.pdf
+*.csv
+MANUAL-TEST-*
+*.txt
+e2e/
+e2e-report/
+test-results/
+.eslintrc.json
+.git/
+.gitignore
+.prettierrc
+docker-compose.yml
+.dockerignore

@@ -43,7 +43,6 @@ export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
         alt={title}
         onError={handleImgError}
         referrerPolicy="no-referrer"
-        crossOrigin="anonymous"
         className="absolute inset-0 h-full w-full object-cover"
         loading="lazy"
       />

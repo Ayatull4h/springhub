@@ -28,14 +28,6 @@ export default function ReportIssuePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [csrfToken, setCsrfToken] = useState("");
-
-  useEffect(() => {
-    fetch("/api/csrf")
-      .then((r) => r.json())
-      .then((data) => { if (data.token) setCsrfToken(data.token); })
-      .catch(() => {});
-  }, []);
 
   function determineType(): FeedbackType {
     const hasBug = bugDescription.trim().length > 0;
@@ -73,6 +65,8 @@ export default function ReportIssuePage() {
       if (screenshots.length > 0) {
         payload.bugScreenshots = await Promise.all(screenshots.map(toBase64));
       }
+
+      const { token: csrfToken } = await fetch("/api/csrf").then(r => r.json());
 
       const res = await fetch("/api/feedback", {
         method: "POST",
