@@ -24,6 +24,10 @@ export async function POST(request: Request) {
       );
     }
 
+    const cl = request.headers.get("content-length");
+    if (cl && parseInt(cl, 10) > 100_000) {
+      return NextResponse.json({ error: "Payload terlalu besar" }, { status: 413 });
+    }
     const body = await request.json();
     const { amountIdr, donorName, donorEmail, tierId, projectId } = body;
 

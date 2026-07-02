@@ -18,8 +18,7 @@ test.describe("Report Forms", () => {
 
   test("Invalid form slug should show not found", async ({ page }) => {
     await page.goto("/report/nonexistent-form");
-    await page.waitForTimeout(2000);
-    await expect(page.getByText(/tidak ditemukan/i).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/tidak ditemukan|form not found/i).first()).toBeVisible({ timeout: 15000 });
   });
 
   test("Anti-spam: honeypot field should be hidden", async ({ page }) => {

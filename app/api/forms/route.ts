@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { safeParseJson } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 import { getOrSet } from "@/lib/cache";
 
@@ -19,6 +20,7 @@ export async function GET() {
               options: true, sortOrder: true,
             },
           },
+          mapType: { select: { id: true, slug: true, name: true, icon: true } },
         },
       });
 
@@ -26,7 +28,7 @@ export async function GET() {
         ...form,
         fields: form.fields.map((field: { options: string }) => ({
           ...field,
-          options: JSON.parse(field.options),
+          options: safeParseJson(field.options),
         })),
       }));
     }, 300);
