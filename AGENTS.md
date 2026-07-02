@@ -601,7 +601,20 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 - **MCP Status**: context7 ✅, supermemory ✅, filesystem ✅, memory ✅, puppeteer ✅, playwright ✅, supabase ❌
 - **Blocked**: Xendit API key (client), Sentry DSN (masih kosong)
 
-### 2 Juli 2026 — Sesi 11: Full System Audit + Infrastructure Fix + MCP Setup
+### 2 Juli 2026 — Sesi 12: CSRF Debug, YT Thumbnail Fix, Validation Display
+- **Fokus**: Perbaiki CSRF yang masih gagal di browser, YouTube thumbnail putih, error validasi tidak jelas
+- **Progress**:
+  - ✅ **CSRF root cause**: Token di-fetch saat mount (useEffect) → disimpan di state → tab lain buka di antara mount dan submit → cookie di-rotate tapi state stale → mismatch
+  - ✅ **CSRF fix**: Ganti mount-time fetch jadi **just-in-time** (fetch token pas mau submit) di `app/report/[slug]/page.tsx` dan `app/report-issue/page.tsx`
+  - ✅ **YT thumbnail fix**: Hapus `crossOrigin="anonymous"` dari `<img>` (i.ytimg.com tidak kirim CORS header)
+  - ✅ **`.dockerignore`**: Sebelumnya tidak ada → build context 1.8GB, build timeout. Sekarang build ~1 menit.
+  - ✅ **Docker rebuild**: Image tidak pernah di-rebuild dengan 4 commit terakhir — semua fix CSRF dll hanya di GitHub, tidak jalan di VPS
+  - ✅ **Error display**: Prioritas `data.details` (field-specific errors) di atas `data.error` ("Validasi gagal")
+  - ✅ **Province dropdown**: `spring-monitoring.province` tipe "text" → "province" (dropdown 38 provinsi) via SQL
+  - ✅ **Favicon**: 1024×1024 (919KB) → 196×196 (31KB) + 32×32 ICO (1.5KB)
+  - ✅ **E2E**: Playwright 96/97 pass, curl form submission + CSRF success
+  - ✅ **Git**: 4 commit — `6158c86`, `d607725`, `9ca4df6`, `a5648d1`
+- **Blocked**: Xendit API key (client), Sentry DSN (masih kosong)
 - **Fokus**: Audit menyeluruh semua layer, perbaiki critical issues, setup MCP servers, update dokumentasi
 - **Progress**:
   - ✅ **Audit infrastruktur**: Ditemukan 6 CRITICAL + 5 HIGH issues (secret bocor, CSP duplikasi, Docker misconfig)
