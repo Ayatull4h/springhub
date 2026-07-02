@@ -33,13 +33,19 @@ export async function getCsrfToken(): Promise<string | null> {
 export async function verifyCsrfToken(token: string): Promise<boolean> {
   const cookieStore = cookies();
   const cookieToken = cookieStore.get(CSRF_COOKIE)?.value;
-  if (!cookieToken || !token) return false;
+  if (!cookieToken || !token) {
+    console.warn("[CSRF] missing token", { hasCookie: !!cookieToken, hasHeader: !!token });
+    return false;
+  }
 
   try {
     await jwtVerify(token, SECRET);
     await jwtVerify(cookieToken, SECRET);
-    return token === cookieToken;
-  } catch {
+    const match = token === cookieToken;
+    if (!match) console.warn("[CSRF] token mismatch");
+    return match;
+  } catch (err) {
+    console.warn("[CSRF] verification error:", err);
     return false;
   }
 }

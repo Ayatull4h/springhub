@@ -23,7 +23,6 @@ export default function ReportFormPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [honeypot, setHoneypot] = useState("");
-  const [csrfToken, setCsrfToken] = useState("");
   // Catat waktu halaman dimuat — bukan waktu submit — untuk anti-spam time gate
   const [pageLoadTime] = useState(() => Date.now());
 
@@ -54,13 +53,6 @@ export default function ReportFormPage() {
     }
     setPhotoBlobs(blobs);
   }, [photoFiles]);
-
-  useEffect(() => {
-    fetch("/api/csrf")
-      .then((r) => r.json())
-      .then((data) => { if (data.token) setCsrfToken(data.token); })
-      .catch(() => {});
-  }, []);
 
   // Dynamic form from DB
   type DbFormData = {
@@ -143,6 +135,42 @@ export default function ReportFormPage() {
     );
   }
 
+  async function uploadReportPhotos(
+    reportId: string,
+    formData: FormData,
+    fields: FormField[],
+  ): Promise<string[]> {
+    const errors: string[] = [];
+    const photoFieldIds = fields.filter((f: FormField) => f.type === "photo").map((f: FormField) => f.id);
+    for (const fieldId of photoFieldIds) {
+      const files = formData.getAll(fieldId);
+      for (const file of files) {
+        if (file && file instanceof File && file.size > 0) {
+          try {
+            const photoPayload = new FormData();
+            photoPayload.append("photo", file);
+            photoPayload.append("field_id", fieldId);
+            const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
+              method: "POST",
+              body: photoPayload,
+            });
+            if (!photoRes.ok) {
+              const photoData = await photoRes.json().catch(() => null);
+              errors.push(
+                (photoData?.error || "")
+                  ? `Foto ${file.name}: ${photoData?.error}`
+                  : `Foto ${file.name} gagal diupload`
+              );
+            }
+          } catch {
+            errors.push(`Foto ${file.name} gagal — cek koneksi`);
+          }
+        }
+      }
+    }
+    return errors;
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!activeForm) return;
@@ -182,9 +210,11 @@ export default function ReportFormPage() {
     formData.set("_captured_at", capturedAt);
 
     try {
+      const { token } = await fetch("/api/csrf").then(r => r.json());
+
       const res = await fetch("/api/reports", {
         method: "POST",
-        headers: csrfToken ? { "x-csrf-token": csrfToken } : {},
+        headers: token ? { "x-csrf-token": token } : {},
         body: formData,
       });
 
@@ -193,6 +223,28 @@ export default function ReportFormPage() {
       if (data.honeypot) {
         setSuccess(true);
         return;
+      }
+
+      if (res.status === 403 && data.error?.includes("CSRF")) {
+        const { token: retryToken } = await fetch("/api/csrf").then(r => r.json());
+        if (retryToken) {
+          const retryRes = await fetch("/api/reports", {
+            method: "POST",
+            headers: { "x-csrf-token": retryToken },
+            body: formData,
+          });
+          if (!retryRes.ok) {
+            const retryData = await retryRes.json();
+            setError(typeof retryData.error === "string" ? retryData.error : t("report.error"));
+            return;
+          }
+          const retryData = await retryRes.json();
+          if (retryData.report?.id) {
+            await uploadReportPhotos(retryData.report.id, formData, activeForm.fields);
+          }
+          setSuccess(true);
+          return;
+        }
       }
 
       if (!res.ok) {
@@ -209,40 +261,7 @@ export default function ReportFormPage() {
       // ── Upload photos after successful report creation ────────────
       let photoErrors: string[] = [];
       if (data.report?.id) {
-        const reportId = data.report.id;
-        const photoFieldIds = activeForm.fields
-          .filter((f: FormField) => f.type === "photo")
-          .map((f: FormField) => f.id);
-
-        for (const fieldId of photoFieldIds) {
-          const files = formData.getAll(fieldId);
-          for (const file of files) {
-            if (file && file instanceof File && file.size > 0) {
-              try {
-                const photoPayload = new FormData();
-                photoPayload.append("photo", file);
-                photoPayload.append("field_id", fieldId);
-
-                const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
-                  method: "POST",
-                  body: photoPayload,
-                });
-                const photoData = photoRes.ok ? null : await photoRes.json().catch(() => null);
-                if (!photoRes.ok) {
-                  const serverMsg = photoData?.error || "";
-                  photoErrors.push(
-                    serverMsg
-                      ? `Foto ${(file as File).name}: ${serverMsg}`
-                      : `Foto ${(file as File).name} gagal diupload`
-                  );
-                }
-              } catch {
-                photoErrors.push(`Foto ${(file as File).name} gagal — cek koneksi`);
-              }
-            }
-          }
-        }
-
+        photoErrors = await uploadReportPhotos(data.report.id, formData, activeForm.fields);
       }
 
       // If photos failed, warn but still show success
@@ -267,12 +286,13 @@ export default function ReportFormPage() {
           }
         }
       }
+      const fallbackToken = await fetch("/api/csrf").then(r => r.json()).then(d => d.token || "").catch(() => "");
       await offlineDB.queueSubmission({
         id: `queue-${activeForm.slug}-${Date.now()}`,
         formSlug: activeForm.slug,
         fieldData: { ...fieldData, _captured_at: capturedAt },
         photoBlobs: formBlobs.length > 0 ? formBlobs : photoBlobs,
-        csrfToken,
+        csrfToken: fallbackToken,
         createdAt: Date.now(),
         retryCount: 0,
       });
