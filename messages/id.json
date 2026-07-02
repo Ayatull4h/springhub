@@ -399,6 +399,7 @@
   "admin.sidebar.reviewQueue": "Review",
   "admin.sidebar.projects": "Proyek",
   "admin.sidebar.content": "Konten",
+  "admin.sidebar.map": "Peta",
   "admin.sidebar.springhubAdmin": "SpringHub Admin",
   "admin.sidebar.liveData": "Data langsung dari Postgres",
   "admin.sidebar.environment": "SpringHub / Lokal",

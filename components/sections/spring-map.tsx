@@ -11,17 +11,16 @@ import {
   Sparkles,
   Droplets,
   Loader2,
-  WifiOff,
 } from "lucide-react";
 import { type SpringStatus } from "@/lib/data";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
 import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
-import { useDataSaver } from "@/lib/use-data-saver";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
+import { MapFilter } from "@/components/map/map-filter";
 
 const LeafletMap = dynamic(
   () => import("@/components/map/leaflet-map").then((m) => m.LeafletMap),
@@ -77,12 +76,8 @@ type ReportItem = {
 
 export function SpringMap() {
   const { t } = useI18n();
-  const { isEnabled: dataSaver } = useDataSaver();
-  const [showMonitoring, setShowMonitoring] = useState(true);
-  const [showTreePlanting, setShowTreePlanting] = useState(true);
-  const [showSeedling, setShowSeedling] = useState(true);
-  const [showTrench, setShowTrench] = useState(true);
-  const [showRestoration, setShowRestoration] = useState(true);
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [page, setPage] = useState(1);
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
@@ -115,18 +110,31 @@ export function SpringMap() {
       .finally(() => {});
   }, []);
 
+  // Map form slug → MapPointType slug dari API
+  // Fallback buat form lama yg belum punya mapType di DB
+  const formTypeMap = useMemo(() => {
+    const map: Record<string, string> = {
+      "spring-monitoring": "spring",
+      "spring-restoration": "spring",
+      "tree-planting": "tree-planting",
+      "trench-development": "trench",
+      "seedling-stock": "seedling",
+    };
+    // Timpa dari API (form baru pakai slug yg sama)
+    for (const f of dynamicForms) {
+      const mt = (f as { mapType?: { slug: string } }).mapType;
+      if (mt?.slug) map[f.slug] = mt.slug;
+    }
+    return map;
+  }, [dynamicForms]);
+
   const visible = useMemo(
     () => reports.filter(r => {
-      const slug = r.formSlug;
-      // Use exact slug matching so each filter is independent and predicTable
-      if (slug === "spring-monitoring" && !showMonitoring) return false;
-      if (slug === "trench-development" && !showTrench) return false;
-      if (slug === "tree-planting" && !showTreePlanting) return false;
-      if (slug === "seedling-stock" && !showSeedling) return false;
-      if (slug === "spring-restoration" && !showRestoration) return false;
-      return true;
+      if (!selectedType) return true; // "Semua" selected
+      const type = formTypeMap[r.formSlug] || "";
+      return type === selectedType;
     }),
-    [reports, showMonitoring, showTrench, showTreePlanting, showSeedling, showRestoration]
+    [reports, selectedType, formTypeMap]
   );
   const formTitles: Record<string, string> = {
     "spring-monitoring": "form.title.monitoring",
@@ -187,36 +195,12 @@ export function SpringMap() {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-ink">{t("map.show")}</span>
-            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-              <input type="checkbox" checked={showMonitoring} onChange={e => setShowMonitoring(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-blue-500" /> {t("map.checkMonitoring")}
-              </span>
-            </label>
-            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-              <input type="checkbox" checked={showRestoration} onChange={e => setShowRestoration(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-amber-500" /> {t("map.checkRestoration")}
-              </span>
-            </label>
-            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-              <input type="checkbox" checked={showTreePlanting} onChange={e => setShowTreePlanting(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-amber-500" /> {t("map.checkTree")}
-              </span>
-            </label>
-            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-              <input type="checkbox" checked={showTrench} onChange={e => setShowTrench(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-amber-800" />
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-amber-500" /> {t("map.checkTrench")}
-              </span>
-            </label>
-            <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-              <input type="checkbox" checked={showSeedling} onChange={e => setShowSeedling(e.target.checked)} className="h-3.5 w-3.5 rounded border-ink-line text-brand-600" />
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-blue-500" /> {t("map.checkSeedling")}
-              </span>
-            </label>
+            <MapFilter
+              selectedType={selectedType}
+              selectedCategory={selectedCategory}
+              onTypeChange={setSelectedType}
+              onCategoryChange={setSelectedCategory}
+            />
           </div>
           <div className="flex items-center gap-3">
             <StatusInfo />
@@ -224,17 +208,7 @@ export function SpringMap() {
           </div>
         </div>
         <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
-          {dataSaver ? (
-            <div className="flex h-full w-full items-center justify-center rounded-xl bg-ink/5 dark:bg-ink/10 text-center p-8">
-              <div>
-                <WifiOff className="mx-auto h-8 w-8 text-ink-muted" />
-                <p className="mt-2 text-sm text-ink-muted">Mode hemat data aktif.</p>
-                <p className="text-xs text-ink-subtle">Matikan data saver untuk melihat peta interaktif.</p>
-              </div>
-            </div>
-          ) : (
-            <LeafletMap reports={visible} />
-          )}
+<LeafletMap reports={visible} />
         </div>
       </div>
 

@@ -41,11 +41,21 @@ type ReportData = {
 type SpringGroup = {
   id: string;
   name: string;
+  slug?: string;
   snappedLat: number;
   snappedLng: number;
   reports: ReportData[];
   latestFormSlug: string;
   latestCreatedAt: string;
+};
+
+const formIconsToType: Record<string, string> = {
+  "spring-monitoring": "spring",
+  "spring-restoration": "spring",
+  "tree-planting": "tanam-pohon",
+  "trench-development": "trench",
+  "seedling-stock": "seedling",
+  "spring": "spring",
 };
 
 const formIcons: Record<string, string> = {
@@ -154,9 +164,11 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
       // Sort by date desc → latest first for status
       list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       const latest = list[0];
+      const name = springNames[id] || "Mata Air";
       groups.push({
         id,
-        name: springNames[id] || "Mata Air",
+        name,
+        slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || id,
         snappedLat: latest.snappedLat!,
         snappedLng: latest.snappedLng!,
         reports: list,
@@ -248,7 +260,10 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
                   weight: 3,
                 }}
                 eventHandlers={{
-                  click: () => router.push(`/springs/${sg.id}`),
+                  click: () => {
+                    const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";
+                    router.push(`/${typeFromForm}/${sg.slug || sg.id}`);
+                  },
                 }}
               >
                 <Tooltip direction="top" offset={[0, -8]}>

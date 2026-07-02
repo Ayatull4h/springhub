@@ -69,6 +69,34 @@ export async function POST(request: Request) {
       );
     }
 
+    // Cari MapPointType berdasarkan contributionType dulu
+    const contribToType: Record<string, string> = {
+      monitoring: "spring",
+      restoration: "spring",
+      trench: "trench",
+      tree_planting: "tree-planting",
+      seedling_stock: "seedling",
+    };
+    const typeSlug = contribToType[contributionType || ""] || slug;
+    let mapPointType = await prisma.mapPointType.findUnique({ where: { slug: typeSlug } });
+    if (!mapPointType) {
+      // Coba cari berdasarkan slug form (fallback)
+      mapPointType = await prisma.mapPointType.findUnique({ where: { slug } });
+    }
+    if (!mapPointType) {
+      // Bikin baru kalo belum ada
+      mapPointType = await prisma.mapPointType.create({
+        data: {
+          slug,
+          name: title,
+          description: description ? `Titik untuk "${title}"` : `Titik untuk "${title}"`,
+          icon: "MapPin",
+          sortOrder: 0,
+          isActive: true,
+        },
+      });
+    }
+
     const form = await prisma.form.create({
       data: {
         slug,
@@ -76,6 +104,7 @@ export async function POST(request: Request) {
         description: description || "",
         pointsOnSubmit: pointsOnSubmit ?? 25,
         contributionType: contributionType || "monitoring",
+        mapTypeId: mapPointType.id,
         fields: fields?.length
           ? {
               create: fields.map(
@@ -102,7 +131,7 @@ export async function POST(request: Request) {
             }
           : undefined,
       },
-      include: { fields: { orderBy: { sortOrder: "asc" } } },
+      include: { fields: { orderBy: { sortOrder: "asc" } }, mapType: true },
     });
 
     return NextResponse.json({ form }, { status: 201 });

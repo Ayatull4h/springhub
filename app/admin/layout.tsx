@@ -18,6 +18,7 @@ import {
   ChevronDown,
   MessageSquare,
   Image,
+  MapPin,
   X,
   Menu,
   AlertTriangle,
@@ -39,6 +40,7 @@ const sidebar = [
   { label: "admin.sidebar.reviewQueue", href: "/admin/review", icon: ShieldCheck },
   { label: "admin.sidebar.projects", href: "/admin/projects", icon: FolderKanban },
   { label: "admin.sidebar.content", href: "/admin/content", icon: Image },
+  { label: "admin.sidebar.map", href: "/admin/map", icon: MapPin },
 ];
 
 export default function AdminLayout({

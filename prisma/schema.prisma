@@ -106,6 +106,65 @@ model Spring {
   @@index([name])
 }
 
+// ─── MAP SYSTEM (Generalized) ────────────────────────────────────────────────
+
+model MapPointType {
+  id          String              @id @default(uuid())
+  slug        String              @unique // "spring", "conservation", "tree-planting", "trench"
+  name        String              // "Mata Air", "Konservasi", "Tanam Pohon", "Parit Resapan"
+  description String              @default("")
+  icon        String              @default("MapPin")
+  sortOrder   Int                 @default(0)
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  categories  MapPointCategory[]
+  forms       Form[]
+  points      MapPoint[]
+}
+
+model MapPointCategory {
+  id        String   @id @default(uuid())
+  typeId    String
+  slug      String   // "sehat", "terdegradasi", "restorasi", "pohon-hampir-punah"
+  name      String   // "Sehat", "Terdegradasi", "Dalam Restorasi", "Pohon Hampir Punah"
+  color     String   @default("#2563eb") // hex color for marker
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  type     MapPointType @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  mapPoints MapPoint[]
+
+  @@unique([typeId, slug])
+}
+
+model MapPoint {
+  id            String      @id @default(uuid())
+  typeId        String
+  categoryId    String?
+  name          String
+  slug          String      @unique
+  snappedLat    Float?
+  snappedLng    Float?
+  province      String      @default("")
+  regency       String      @default("")
+  village       String      @default("")
+  subdistrict   String      @default("")
+  description   String      @default("")
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  type          MapPointType     @relation(fields: [typeId], references: [id])
+  category      MapPointCategory? @relation(fields: [categoryId], references: [id])
+  reports       Report[]
+
+  @@index([typeId, isActive])
+  @@index([snappedLat, snappedLng])
+  @@index([slug])
+}
+
 model Report {
   id              String       @id @default(uuid())
   userId          String?
@@ -123,6 +182,7 @@ model Report {
   reviewNote      String       @default("")
   featuredPhotoId String?
   springId        String?
+  mapPointId      String?
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
@@ -130,6 +190,7 @@ model Report {
   reviewedBy Profile?      @relation("reviewedReports", fields: [reviewedById], references: [id])
   photos     ReportPhoto[] @relation("ReportPhotos")
   spring     Spring?       @relation(fields: [springId], references: [id])
+  mapPoint   MapPoint?     @relation(fields: [mapPointId], references: [id])
 
   pointsLogs PointsLog[]
   form       Form?       @relation(fields: [formSlug], references: [slug])
@@ -140,6 +201,7 @@ model Report {
   @@index([createdAt])
   @@index([guestId])
   @@index([springId])
+  @@index([mapPointId])
 }
 
 model ReportPhoto {
@@ -294,6 +356,10 @@ model Form {
 
   fields  FormField[]
   reports Report[]
+  mapTypeId String?
+  mapType   MapPointType? @relation(fields: [mapTypeId], references: [id])
+
+  @@index([mapTypeId])
 }
 
 model FormField {

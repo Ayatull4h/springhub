@@ -63,11 +63,12 @@ export async function POST(request: Request) {
       },
     });
 
+    const proto = request.headers.get("x-forwarded-proto") || request.headers.get("x-forwarded-scheme") || "https";
     await createSession({
       userId: profile.id,
       role: profile.role,
       username: profile.username,
-    });
+    }, proto === "https");
 
     const guestId = getExistingGuestId();
     if (guestId) {

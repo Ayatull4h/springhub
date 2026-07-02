@@ -399,6 +399,7 @@
   "admin.sidebar.reviewQueue": "Review Queue",
   "admin.sidebar.projects": "Projects",
   "admin.sidebar.content": "Content",
+  "admin.sidebar.map": "Map",
   "admin.sidebar.springhubAdmin": "SpringHub Admin",
   "admin.sidebar.liveData": "Live data from Postgres",
   "admin.sidebar.environment": "SpringHub / Local",
