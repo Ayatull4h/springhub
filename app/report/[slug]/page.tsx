@@ -248,12 +248,10 @@ export default function ReportFormPage() {
       }
 
       if (!res.ok) {
-        const errMsg =
-          typeof data.error === "string"
-            ? data.error
-            : data.details
-              ? Object.values(data.details).flat().join(", ")
-              : t("report.error");
+        const fieldErrors = data.details
+          ? Object.values(data.details).flat().join(", ")
+          : "";
+        const errMsg = fieldErrors || (typeof data.error === "string" ? data.error : t("report.error"));
         setError(errMsg);
         return;
       }
