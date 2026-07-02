@@ -110,32 +110,7 @@ export function SpringMap() {
       .finally(() => {});
   }, []);
 
-  // Map form slug → MapPointType slug dari API
-  // Fallback buat form lama yg belum punya mapType di DB
-  const formTypeMap = useMemo(() => {
-    const map: Record<string, string> = {
-      "spring-monitoring": "spring",
-      "spring-restoration": "spring",
-      "tree-planting": "tree-planting",
-      "trench-development": "trench",
-      "seedling-stock": "seedling",
-    };
-    // Timpa dari API (form baru pakai slug yg sama)
-    for (const f of dynamicForms) {
-      const mt = (f as { mapType?: { slug: string } }).mapType;
-      if (mt?.slug) map[f.slug] = mt.slug;
-    }
-    return map;
-  }, [dynamicForms]);
-
-  const visible = useMemo(
-    () => reports.filter(r => {
-      if (!selectedType) return true; // "Semua" selected
-      const type = formTypeMap[r.formSlug] || "";
-      return type === selectedType;
-    }),
-    [reports, selectedType, formTypeMap]
-  );
+  // Map form slug → form title (untuk filter)
   const formTitles: Record<string, string> = {
     "spring-monitoring": "form.title.monitoring",
     "spring-restoration": "form.title.restoration",
@@ -162,6 +137,68 @@ export function SpringMap() {
       return true;
     });
   }, [dynamicForms]);
+
+  // Count reports per form slug + status subcategory
+  const formCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const statusCounts: Record<string, Record<string, number>> = {};
+    for (const r of reports) {
+      counts[r.formSlug] = (counts[r.formSlug] || 0) + 1;
+      const s = getStatusFromForm(r.formSlug);
+      if (!statusCounts[r.formSlug]) statusCounts[r.formSlug] = {};
+      statusCounts[r.formSlug][s] = (statusCounts[r.formSlug][s] || 0) + 1;
+    }
+    return { total: counts, byStatus: statusCounts };
+  }, [reports]);
+
+  const statusColors: Record<string, string> = {
+    healthy: "#22c55e",
+    degraded: "#ef4444",
+    restoration: "#f59e0b",
+  };
+
+  const statusI18nKeys: Record<string, string> = {
+    healthy: "map.status.healthy",
+    degraded: "map.status.degraded",
+    restoration: "map.status.restoration",
+  };
+
+  const formFilterOptions = useMemo(() => {
+    return allForms
+      .filter(f => (formCounts.total[f.slug] || 0) > 0)
+      .map(f => {
+        const sub: { value: string; label: string; color: string }[] = [];
+        const statusSlugs = Object.keys(formCounts.byStatus[f.slug] || {});
+        for (const st of statusSlugs) {
+          sub.push({
+            value: `cat:${f.slug}:${st}`,
+            label: `${t(statusI18nKeys[st])} (${formCounts.byStatus[f.slug][st]})`,
+            color: statusColors[st] || "#6b7280",
+          });
+        }
+        return {
+          value: f.slug,
+          label: t(formTitles[f.slug] || f.title),
+          count: formCounts.total[f.slug] || 0,
+          subcategories: sub,
+        };
+      });
+  }, [allForms, formCounts, t]);
+
+  // Filter reports by form slug + optional status subcategory
+  const visible = useMemo(
+    () => reports.filter(r => {
+      if (!selectedType) return true;
+      if (r.formSlug !== selectedType) return false;
+      if (selectedCategory) {
+        const status = getStatusFromForm(r.formSlug);
+        const cat = selectedCategory.replace(`cat:${selectedType}:`, "");
+        return status === cat;
+      }
+      return true;
+    }),
+    [reports, selectedType, selectedCategory]
+  );
 
   const itemsPerPage = 6;
   const totalPages = Math.max(1, Math.ceil(visible.length / itemsPerPage));
@@ -200,6 +237,7 @@ export function SpringMap() {
               selectedCategory={selectedCategory}
               onTypeChange={setSelectedType}
               onCategoryChange={setSelectedCategory}
+              formOptions={formFilterOptions}
             />
           </div>
           <div className="flex items-center gap-3">

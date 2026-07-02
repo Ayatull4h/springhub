@@ -1,8 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
+
+type Subcategory = {
+  value: string;
+  label: string;
+  color: string;
+};
+
+type FormOption = {
+  value: string;
+  label: string;
+  count: number;
+  subcategories: Subcategory[];
+};
 
 type Category = {
   id: string;
@@ -26,41 +38,61 @@ type MapFilterProps = {
   selectedCategory: string;
   onTypeChange: (type: string) => void;
   onCategoryChange: (category: string) => void;
+  formOptions?: FormOption[];
 };
 
-export function MapFilter({ selectedType, selectedCategory, onTypeChange, onCategoryChange }: MapFilterProps) {
+export function MapFilter({ selectedType, selectedCategory, onTypeChange, onCategoryChange, formOptions }: MapFilterProps) {
   const [types, setTypes] = useState<MapType[]>([]);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    if (formOptions) return;
     fetch("/api/map-points/types")
       .then((r) => r.json())
       .then((data) => setTypes(data.types || []))
       .catch(() => {});
-  }, []);
+  }, [formOptions]);
 
-  // Flatten for dropdown: "semua", per type, per category
-  const options: { value: string; label: string; color?: string; indent: boolean }[] = [
+  const options: { value: string; label: string; color?: string; indent: boolean; parentValue?: string }[] = [
     { value: "", label: "Semua Titik", indent: false },
   ];
 
-  for (const t of types) {
-    options.push({ value: `type:${t.slug}`, label: `◆ ${t.name} (${t.count})`, indent: false });
-    for (const c of t.categories) {
-      if (c.count > 0) {
-        options.push({
-          value: `cat:${t.slug}:${c.slug}`,
-          label: `  ${c.name} (${c.count})`,
-          color: c.color,
-          indent: true,
-        });
+  if (formOptions) {
+    for (const f of formOptions) {
+      if (f.count > 0) {
+        options.push({ value: f.value, label: `${f.label} (${f.count})`, indent: false });
+        for (const sc of f.subcategories) {
+          options.push({ value: sc.value, label: sc.label, color: sc.color, indent: true, parentValue: f.value });
+        }
+      }
+    }
+  } else {
+    for (const t of types) {
+      options.push({ value: `type:${t.slug}`, label: `◆ ${t.name} (${t.count})`, indent: false });
+      for (const c of t.categories) {
+        if (c.count > 0) {
+          options.push({
+            value: `cat:${t.slug}:${c.slug}`,
+            label: `  ${c.name} (${c.count})`,
+            color: c.color,
+            indent: true,
+          });
+        }
       }
     }
   }
 
-  const selectedLabel = options.find(
-    (o) => o.value === `type:${selectedType}` || o.value === `cat:${selectedType}:${selectedCategory}`
-  )?.label || "Semua Titik";
+  const selectedLabel = (() => {
+    if (formOptions) {
+      const match = options.find(
+        (o) => o.value === selectedType || o.value === `cat:${selectedType}:${selectedCategory}`
+      );
+      return match?.label || "Semua Titik";
+    }
+    return options.find(
+      (o) => o.value === `type:${selectedType}` || o.value === `cat:${selectedType}:${selectedCategory}`
+    )?.label || "Semua Titik";
+  })();
 
   return (
     <div className="relative z-[999]">
@@ -83,6 +115,14 @@ export function MapFilter({ selectedType, selectedCategory, onTypeChange, onCate
                   if (opt.value === "") {
                     onTypeChange("");
                     onCategoryChange("");
+                  } else if (formOptions) {
+                    if (opt.parentValue) {
+                      onTypeChange(opt.parentValue);
+                      onCategoryChange(opt.value);
+                    } else {
+                      onTypeChange(opt.value);
+                      onCategoryChange("");
+                    }
                   } else if (opt.value.startsWith("type:")) {
                     onTypeChange(opt.value.replace("type:", ""));
                     onCategoryChange("");
@@ -96,9 +136,13 @@ export function MapFilter({ selectedType, selectedCategory, onTypeChange, onCate
                 className={`w-full px-3 py-1.5 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 ${
                   opt.value === "" && !selectedType
                     ? "bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
-                    : opt.value === `type:${selectedType}` && !selectedCategory
+                    : !formOptions && opt.value === `type:${selectedType}` && !selectedCategory
                     ? "bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
-                    : opt.value === `cat:${selectedType}:${selectedCategory}`
+                    : !formOptions && opt.value === `cat:${selectedType}:${selectedCategory}`
+                    ? "bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
+                    : formOptions && (opt.value === selectedType || (!opt.parentValue && opt.value === selectedType))
+                    ? "bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
+                    : formOptions && opt.parentValue && opt.value === `cat:${selectedType}:${selectedCategory}`
                     ? "bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
                     : "text-ink dark:text-slate-300"
                 }`}

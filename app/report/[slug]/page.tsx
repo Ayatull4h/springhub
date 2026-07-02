@@ -103,13 +103,15 @@ export default function ReportFormPage() {
       .finally(() => setDbFormLoading(false));
   }, [slug]);
 
-  // Gabung field dari DB + statis, urutkan sesuai static schema
+  // Gabung field dari DB + statis, utamakan DB (hapus dari DB = hilang dari form)
   const activeForm = (() => {
     if (!dbForm) return form;
-    const staticForm = form;
-    if (!staticForm) return dbForm;
-    const dbFieldMap = new Map(dbForm.fields.map((f) => [f.id, f]));
-    const mergedFields = staticForm.fields.map((sf) => dbFieldMap.get(sf.id) || sf);
+    if (!form) return dbForm;
+    const staticFieldMap = new Map(form.fields.map((f) => [f.id, f]));
+    const mergedFields = dbForm.fields.map((df) => {
+      const sf = staticFieldMap.get(df.id);
+      return sf ? { ...sf, ...df, options: df.options?.length ? df.options : sf.options } : df;
+    });
     return { ...dbForm, fields: mergedFields };
   })();
 
