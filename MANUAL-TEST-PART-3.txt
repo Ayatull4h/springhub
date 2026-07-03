@@ -2,9 +2,9 @@
   MANUAL TEST — SPRINGHUB UAT (PART 3)
 ======================================================================
 
-URL    : https://springhub.vercel.app/
-Tanggal: 23 Juni 2026
-Total  : 122 Test Case (104 existing + 18 baru Sesi 10)
+URL    : https://www.springhub.id
+Tanggal: 3 Juli 2026
+Total  : 123 Test Case (110 existing + 13 baru Sesi 13)
 
 CARA PAKAI:
   [x] = Lolos
@@ -1007,158 +1007,109 @@ TOTAL                          104       90        0       14
     Reset connection pool.
 
 ======================================================================
-  20. SESI 10 — COMMENTS UI + I18N + PWA SAFARI  ❇️ BARU
+  20. SESI 13 — PHOTO UPLOAD + REGISTER UNIQUE + MAP FILTER  ❇️ BARU
 ======================================================================
 
-[ ] TC-105 Comments — tampil di project detail
-
-[ ] TC-105 Comments — tampil di project detail
+[ ] TC-105 Register — email case insensitive
     Device  : Both
-    Langkah : 1. Buka /projects/[id]  2. Scroll ke bawah
-    Harapan : Section "Komentar" muncul dengan judul. Ada form input
-              jika sudah login, atau "Masuk untuk berkomentar" jika
-              guest
-    Catatan : Sesi 10: components/projects/CommentsSection.tsx
+    Langkah : 1. Buka /join  2. Daftar dengan Ayatullah.Reza4@Gmail.com
+              3. Submit
+    Harapan : Email dipaksa lowercase sebelum dicek. Jika email sama
+              dengan existing akun, ditolak "Email sudah terdaftar"
+    Catatan : Fix Sesi 13: register route pake toLowerCase().trim()
+              sebelum findUnique. Cegah duplikat email beda huruf
+              besar/kecil.
 
-[ ] TC-106 Comments — post komentar (login)
+[ ] TC-106 Register — duplicate username auto-suffix
     Device  : Both
-    Langkah : 1. Login volunteer  2. Buka /projects/[id]
-              3. Scroll ke komentar  4. Ketik teks  5. Klik Kirim
-    Harapan : Komentar muncul secara optimistic. Real comment
-              menggantikan setelah response API. Hitungan bertambah
-    Catatan : Sesi 10: optimistic UI + fire-and-forget
+    Langkah : 1. Daftar dengan username "ayatullah" (sudah ada)
+              2. Submit
+    Harapan : Username otomatis ditambah angka → "ayatullah1".
+              Bisa daftar dengan username unik.
+    Catatan : Fix Sesi 13: register route cek findUnique username,
+              loop +1 sampai nemu yang available.
 
-[ ] TC-107 Comments — tanpa login
+[ ] TC-107 Register — username unique constraint
     Device  : Both
-    Langkah : 1. Guest (incognito)  2. Buka /projects/[id]
-              3. Scroll ke komentar
-    Harapan : Tidak ada form input. Ada teks "Masuk untuk berkomentar"
-              dengan link ke /sign-in
-    Catatan : Sesi 10: auth gate
+    Langkah : 1. Admin cek DB  2. Cek index "Profile_username_key"
+    Harapan : Username punya UNIQUE constraint di PostgreSQL. Tidak
+              bisa ada 2 profile dengan username sama.
+    Catatan : Fix Sesi 13: prisma schema + @unique + SQL index.
 
-[ ] TC-108 Comments — loading state
+[ ] TC-108 Admin review — photo thumbnail muncul
     Device  : Both
-    Langkah : 1. Slow network (DevTools throttling)  2. Buka
-              /projects/[id]  3. Scroll ke komentar
-    Harapan : Spinner loading muncul saat fetch. List kosong teks
-              jika tidak ada komentar
-    Catatan : Sesi 10: loading + empty state
+    Langkah : 1. Login admin  2. /admin/review  3. Cari laporan dgn
+              foto  4. Cek thumbnail
+    Harapan : Thumbnail foto muncul (tidak broken image). Foto dari
+              /data/uploads/ diserve via nginx.
+    Catatan : Fix Sesi 13: tambah `unoptimized` di Image component.
 
-[ ] TC-109 Comments — error handling
+[ ] TC-109 Admin review — enlarged photo
     Device  : Both
-    Langkah : 1. Login  2. Matikan internet  3. Ketik komentar
-              4. Klik Kirim
-    Harapan : Error "Gagal mengirim komentar" muncul. Optimistic
-              comment di-rollback (hilang dari list)
-    Catatan : Sesi 10: error state + rollback optimistic
+    Langkah : 1. /admin/review  2. Klik thumbnail  3. Cek modal
+    Harapan : Foto enlarged muncul full. Bisa ditutup. Loading benar.
+    Catatan : Fix Sesi 13: unoptimized juga di enlarged Image.
 
-[ ] TC-110 i18n — EN/ID toggle admin
+[ ] TC-110 Map filter — form names bilingual
     Device  : Both
-    Langkah : 1. Login admin  2. /admin  3. Klik EN/ID toggle
-              4. Cek sidebar
-    Harapan : Sidebar Labels berubah: "Dashboard" → "Dashboard",
-              "Users" → "Pengguna", "Reports" → "Laporan",
-              "Forms" → "Formulir"
-    Catatan : Sesi 10: admin.sidebar.* keys
+    Langkah : 1. Landing page  2. Scroll ke map  3. Klik filter
+              4. Lihat daftar form
+    Harapan : Nama form pakai form.title.* dari i18n: "Pemantauan
+              Mata Air", "Restorasi Mata Air", dll.
+    Catatan : Fix Sesi 13: map filter pake formTitles map + t().
 
-[ ] TC-111 i18n — Admin Forms page
+[ ] TC-111 Map filter — status subcategories
     Device  : Both
-    Langkah : 1. Login admin  2. Klik EN/ID toggle  3. /admin/forms
-    Harapan : Title "Forms" → "Formulir". Tombol "Create New Form" →
-              "Buat Form Baru". Filter tabs berubah. Badge status
-              "Inactive" → "Nonaktif"
-    Catatan : Sesi 10: admin.forms.* keys
+    Langkah : 1. Map filter  2. Expand form  3. Lihat sub-items
+    Harapan : Subkategori status: "Sehat (3)", "Terdegradasi (2)",
+              "Restorasi (1)" warna hijau/merah/kuning.
+    Catatan : Fix Sesi 13: subcategories dari formCounts.byStatus.
 
-[ ] TC-112 i18n — Admin Courses page
+[ ] TC-112 Map filter — filter by form & status
     Device  : Both
-    Langkah : 1. Login admin  2. Klik EN/ID toggle  3. /admin/courses
-    Harapan : Title "Courses" → "Kursus". Tombol "New Course" →
-              "Kursus Baru". "No courses found" → "Tidak ada kursus"
-    Catatan : Sesi 10: admin.courses.* keys
+    Langkah : 1. Map filter  2. Klik subkategori "Sehat"
+    Harapan : Map hanya menampilkan marker dengan status sehat untuk
+              form tsb. Pakai direct formSlug matching.
+    Catatan : Fix Sesi 13: filter pake r.formSlug === selectedType.
 
-[ ] TC-113 i18n — Admin Points page
+[ ] TC-113 Photo upload — EACCES fix (NEW report)
     Device  : Both
-    Langkah : 1. Login admin  2. Klik EN/ID toggle  3. /admin/points
-    Harapan : Title "Point Rules" → "Aturan Poin". Table headers
-              berubah: "Name" → "Nama", "Points" → "Poin",
-              "Category" → "Kategori". Modal tambah: "Nama Aturan",
-              "Deskripsi", dll.
-    Catatan : Sesi 10: admin.points.* keys
+    Langkah : 1. Submit laporan BARU dengan 3-5 foto  2. Cek admin
+    Harapan : Foto terupload. Admin bisa lihat thumbnail. OLD report
+              tetap tanpa foto.
+    Catatan : Fix Sesi 13: volume /data/uploads ownership 1001:65533.
 
-[ ] TC-114 i18n — Admin Content Manager
+[ ] TC-114 DB form field — delete sync from admin
     Device  : Both
-    Langkah : 1. Login admin  2. Klik EN/ID toggle  3. /admin/content
-    Harapan : Title "Content Manager" → "Manajemen Konten".
-              "Add media" → "Tambah media". Form labels berubah
-    Catatan : Sesi 10: admin.content.* keys
+    Langkah : 1. Admin > /admin/forms  2. Hapus 1 field
+              3. Buka /report/[slug]
+    Harapan : Field yang dihapus tidak muncul di form. Merger
+              pake DB fields sebagai base.
+    Catatan : Fix Sesi 13: merger di-invert (DB→static).
 
-[ ] TC-115 i18n — Admin Trust Score
+[ ] TC-115 Forgot password — email DNS issue
     Device  : Both
-    Langkah : 1. Login admin  2. Klik EN/ID toggle
-              3. /admin/trust-score
-    Harapan : Title "Trust Score Management" → "Manajemen Trust
-              Score". Summary card labels berubah. Table headers
-              berubah. "Search users" → "Cari pengguna..."
-    Catatan : Sesi 10: admin.trustScore.* keys
+    Langkah : 1. /sign-in > Lupa Password  2. Masukin email
+              3. Cek spam/promotions
+    Harapan : Resend API accept. Tapi Gmail mungkin filter karena
+              SPF/DKIM/MX belum di-set di Cloudflare.
+    Catatan : Known issue. Fix: tambah 4 record DNS di Cloudflare.
 
-[ ] TC-116 i18n — Learning Hub page
+[ ] TC-116 Password admin — direct reset
     Device  : Both
-    Langkah : 1. Klik EN/ID toggle  2. Buka /learn
-    Harapan : Title berubah. Subtitle course description berubah.
-              "Mulai Belajar" ↔ "Start Course" berubah
-    Catatan : Sesi 10: learn.* keys
+    Langkah : 1. Login ayatullah.reza4@gmail.com / admin123
+              2. Akses /admin
+    Harapan : Login berhasil. Role admin. Akses admin panel penuh.
 
-[ ] TC-117 i18n — Course Detail page
+[ ] TC-117 Admin login — password lama ditolak
     Device  : Both
-    Langkah : 1. Klik EN/ID toggle  2. Buka /learn/[slug]
-    Harapan : "Course Modules" ↔ "Modul Kursus". "Back to Learning
-              Hub" ↔ "Kembali ke Learning Hub". Module status
-              (Completed/Start/Locked) berubah bahasa
-    Catatan : Sesi 10: learn.course.* keys
+    Langkah : 1. Coba login dengan password lama
+    Harapan : Gagal "Email atau password salah". Password hash
+              sudah di-overwrite via bcrypt.
 
-[ ] TC-118 i18n — Module page
-    Device  : Both
-    Langkah : 1. Klik EN/ID toggle  2. Buka /learn/[slug]/[moduleId]
-    Harapan : "Module X of Y" berubah. "Previous", "Mark as Complete",
-              "Next", "Back to course" semua berubah sesuai bahasa
-    Catatan : Sesi 10: learn.course.* keys
-
-[ ] TC-119 PWA Safari — CSRF sameSite lax
-    Device  : iOS
-    Langkah : 1. Buka Safari mode normal  2. Login admin
-              3. DevTools > Cookies
-    Harapan : Cookie CSRF punya SameSite="Lax" (bukan "Strict").
-              Form submit tetap work di PWA standalone
-    Catatan : Sesi 10: lib/csrf.ts — sameSite changed from "strict"
-              to "lax"
-
-[ ] TC-120 PWA Safari — session CSRF token
-    Device  : iOS
-    Langkah : 1. Login via Safari  2. Buka DevTools > IndexedDB
-              3. Cek session-cache
-    Harapan : Entry "user-session" punya csrfToken terisi (bukan
-              string kosong). Token valid
-    Catatan : Sesi 10: lib/session-cache.ts — fetch /api/csrf
-
-[ ] TC-121 PWA Safari — offline error message
-    Device  : iOS
-    Langkah : 1. Safari Private mode  2. Buka /offline
-    Harapan : Error spesifik Safari muncul: "Safari di mode
-              Private/Incognito mungkin membatasi IndexedDB" dengan
-              solusi langkah-langkah
-    Catatan : Sesi 10: app/offline/page.tsx — platform detection
-
-[ ] TC-122 Pool config — deploy verification
-    Device  : Both
-    Langkah : 1. Cek Vercel deploy log  2. Pastikan deploy sukses
-              3. Buka web  4. Submit form 3x berturut-turut
-    Harapan : Build sukses. Form submit tidak error "max clients
-              reached". Pool size 3 cukup untuk concurrent requests
-    Catatan : Sesi 10: lib/prisma.ts max=3, connection_limit=3
-
-=====================================================================
+==============================================================
   RINGKASAN
-======================================================================
+==============================================================
 
 Area                          Total    Lolos    Gagal    Belum
 ----                          -----    -----    -----    -----
@@ -1181,14 +1132,11 @@ Offline Photo Counter            3        0        0        3
 Skeleton Loading (Sesi 9)        3        0        0        3
 Data Saver Mode (Sesi 9)         3        0        0        3
 Static Pages Dark (Sesi 9)       2        0        0        2
-Comments UI (Sesi 10)            5        0        0        5
-i18n EN/ID (Sesi 10)             9        0        0        9
-PWA Safari (Sesi 10)             3        0        0        3
-Pool Config (Sesi 10)            1        0        0        1
+Sesi 13 — Photo+Register+Filter 13        0        0       13
 ----                          -----    -----    -----    -----
-TOTAL                          122       90        0       32
-* 18 TC baru: TC-105 s/d TC-122 (Sesi 10)
+TOTAL                          123       90        0       33
+* 13 TC baru: TC-105 s/d TC-117 (Sesi 13)
 * 14 TC perlu test: TC-97 s/d TC-104 (Sesi 9)
 * 6 TC retest: TC-44,45,46 (PWA), TC-94,95,96 (photo)
 
-======================================================================
+==============================================================

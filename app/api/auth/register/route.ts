@@ -42,7 +42,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const { email, password, username: rawUsername } = parsed.data;
+    const { email: rawEmail, password, username: rawUsername } = parsed.data;
+    const email = rawEmail.toLowerCase().trim();
 
     const existing = await prisma.profile.findUnique({ where: { email } });
     if (existing) {
