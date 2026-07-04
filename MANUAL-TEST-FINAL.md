@@ -346,4 +346,47 @@ fail2ban-client status sshd | grep "Total banned"
 
 ---
 
-*Document generated: 1 Juli 2026 — by SpringHub Build Agent*
+---
+## Test 18 — Sesi 13: Photo Upload + Register Unique + Map Filter (15 test)
+
+| # | Test | Langkah | Hasil |
+|---|---|---|---|
+| 18.1 | Register email case insensitive | Daftar dgn `Ayatullah.Reza4@Gmail.com` → ditolak "Email sudah terdaftar" | |
+| 18.2 | Register duplicate username | Daftar dgn username "ayatullah" → otomatis jadi "ayatullah1" | |
+| 18.3 | Username unique constraint | Cek DB: `Profile_username_key` UNIQUE index ada | |
+| 18.4 | Admin review photo thumbnail | /admin/review → thumbnail foto muncul (gak broken) | |
+| 18.5 | Admin review enlarged photo | Klik thumbnail → modal enlarged muncul | |
+| 18.6 | Map filter form names bilingual | Filter pake `form.title.*` i18n: "Pemantauan Mata Air" dll | |
+| 18.7 | Map filter status subcategories | Expand form → lihat "Sehat (3)", "Terdegradasi (2)" | |
+| 18.8 | Map filter by form+status | Klik subkategori → filter marker by formSlug | |
+| 18.9 | Photo upload EACCES fix | Submit laporan BARU dgn foto → admin bisa lihat | |
+| 18.10 | DB form field delete sync | Admin hapus field → form publik ikut hilang | |
+| 18.11 | Forgot password email DNS | Coba lupa password → Resend accept, Gmail mungkin filter | |
+| 18.12 | Admin password direct reset | Login `ayatullah.reza4@gmail.com` / `admin123` | |
+| 18.13 | Manual test file updated | `MANUAL-TEST-PART-3.txt` + 13 TC baru | |
+
+## Ringkasan (Updated 3 Juli 2026)
+
+| Kategori | Test | Target |
+|---|---|---|
+| Test 1 - Akses Web | 5 | Semua PASS |
+| Test 2 - Halaman Publik | 12 | Semua PASS |
+| Test 3 - API Publik | 12 | Semua PASS |
+| Test 4 - Auth Flow | 11 | Semua PASS |
+| Test 5 - Form Report | 7 | Semua PASS |
+| Test 6 - Donasi | 3 | 1 CATATAN (Xendit) |
+| Test 7 - Project | 6 | Semua PASS |
+| Test 8 - Courses | 4 | Semua PASS |
+| Test 9 - Springs & Map | 3 | Semua PASS |
+| Test 10 - Admin Panel | 10 | Semua PASS |
+| Test 11 - Points | 3 | Semua PASS |
+| Test 12 - Dark Mode | 4 | Browser manual |
+| Test 13 - Security | 6 | Semua PASS |
+| Test 14 - SEO & PWA | 6 | Semua PASS |
+| Test 15 - Infrastructure | 5 | Semua PASS |
+| Test 16 - Aksesibilitas | 5 | Browser manual |
+| Test 17 - Beta/Bug | 4 | Browser manual |
+| Test 18 - Sesi 13 | 13 | Perlu test manual |
+| **TOTAL** | **~119 test** | Lihat `MANUAL-TEST-PART-3.txt` untuk detail |
+
+*Document generated: 3 Juli 2026 — by SpringHub Build Agent*
