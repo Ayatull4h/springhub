@@ -365,6 +365,16 @@ fail2ban-client status sshd | grep "Total banned"
 | 18.12 | Admin password direct reset | Login `ayatullah.reza4@gmail.com` / `admin123` | |
 | 18.13 | Manual test file updated | `MANUAL-TEST-PART-3.txt` + 13 TC baru | |
 
+## Test 19 — Sesi 14: Map Filter Sync with Admin/MAP (5 test)
+
+| # | Test | Langkah | Hasil |
+|---|---|---|---|
+| 19.1 | Map filter subcategories dari DB | Landing page filter → subcategories dari MapPointCategory table | |
+| 19.2 | Admin/map add custom subcategory | `/admin/map` → add new category → landing page filter update | |
+| 19.3 | Admin/map edit category name/color | `/admin/map` → edit → landing page reflects change | |
+| 19.4 | Admin/map delete category | `/admin/map` → delete → hilang dari filter | |
+| 19.5 | Map filter form names i18n | Nama form bilingual dari form.title.* | |
+
 ## Ringkasan (Updated 3 Juli 2026)
 
 | Kategori | Test | Target |

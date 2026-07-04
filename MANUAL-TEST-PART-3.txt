@@ -1107,6 +1107,55 @@ TOTAL                          104       90        0       14
     Harapan : Gagal "Email atau password salah". Password hash
               sudah di-overwrite via bcrypt.
 
+======================================================================
+  21. SESI 14 — MAP FILTER SYNCHRONIZED WITH ADMIN/MAP  ❇️ BARU
+======================================================================
+
+[ ] TC-118 Map filter — subcategories dari DB (bukan hardcoded)
+    Device  : Both
+    Langkah : 1. Landing page  2. Buka filter map
+    Harapan : Subcategories label/color diambil dari MapPointCategory
+              table (sehat/terdegradasi/restorasi, baru-tanam/tumbuh/
+              mati, berfungsi/tersumbat/rusak, siap-tanam/butuh-
+              perawatan). BUKAN hardcoded "Sehat"/"Terdegradasi"/
+              "Restorasi" doang.
+    Catatan : Fix Sesi 14: spring-map.tsx fetch /api/map-points/types
+              + findCategoryForStatus() mapping.
+
+[ ] TC-119 Admin/map — add custom subcategory
+    Device  : Both
+    Langkah : 1. /admin/map  2. Expand tipe "Tanam Pohon"
+              3. Klik "Add Category"  4. Isi: slug="berbunga",
+              name="Berbunga", color="#a855f7"  5. Save
+    Harapan : Category baru tersimpan. Refresh landing page →
+              filter "Tanam Pohon" punya subcategory "Berbunga".
+    Catatan : Fix Sesi 14: admin/map CRUD + spring-map.tsx baca
+              dari DB. Sinkron otomatis.
+
+[ ] TC-120 Admin/map — edit category name/color
+    Device  : Both
+    Langkah : 1. /admin/map  2. Expand tipe  3. Ubah nama/color
+              4. Save
+    Harapan : Perubahan langsung terlihat di map filter landing
+              page. Nama & warna berubah.
+    Catatan : Fix Sesi 14: DB-driven categories.
+
+[ ] TC-121 Admin/map — delete category
+    Device  : Both
+    Langkah : 1. /admin/map  2. Hapus category  3. Refresh
+              landing page
+    Harapan : Category hilang dari filter. Report tanpa category
+              masuk fallback pertama.
+    Catatan : Fix Sesi 14: cascade delete.
+
+[ ] TC-122 Map filter — form names from i18n
+    Device  : Both
+    Langkah : 1. Landing page  2. Buka filter map
+    Harapan : Nama form pake form.title.* i18n (Pemantauan Mata Air,
+              Restorasi Mata Air, Pengembangan Rorak, Penanaman Pohon,
+              Stok Bibit Pohon).
+    Catatan : Fix Sesi 14: formTitleI18nKey() helper.
+
 ==============================================================
   RINGKASAN
 ==============================================================
@@ -1133,9 +1182,10 @@ Skeleton Loading (Sesi 9)        3        0        0        3
 Data Saver Mode (Sesi 9)         3        0        0        3
 Static Pages Dark (Sesi 9)       2        0        0        2
 Sesi 13 — Photo+Register+Filter 13        0        0       13
+Sesi 14 — Map Sync Admin/MAP     5        0        0        5
 ----                          -----    -----    -----    -----
-TOTAL                          123       90        0       33
-* 13 TC baru: TC-105 s/d TC-117 (Sesi 13)
+TOTAL                          128       90        0       38
+* 18 TC baru: TC-105 s/d TC-122 (Sesi 13+14)
 * 14 TC perlu test: TC-97 s/d TC-104 (Sesi 9)
 * 6 TC retest: TC-44,45,46 (PWA), TC-94,95,96 (photo)
 
