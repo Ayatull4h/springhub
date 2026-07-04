@@ -12,7 +12,6 @@ import {
   Droplets,
   Loader2,
 } from "lucide-react";
-import { type SpringStatus } from "@/lib/data";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
 import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
@@ -34,34 +33,37 @@ const LeafletMap = dynamic(
   }
 );
 
-const statusStyles: Record<SpringStatus, { dot: string; chip: string }> = {
-  healthy: { dot: "bg-blue-500", chip: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" },
-  degraded: { dot: "bg-red-500", chip: "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
-  restoration: { dot: "bg-amber-500", chip: "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300" },
+type CategoryItem = {
+  id: string;
+  slug: string;
+  name: string;
+  color: string;
 };
 
-function getStatusFromForm(formSlug: string): SpringStatus {
+function getStatusFromForm(formSlug: string): string {
   switch (formSlug) {
-    case "spring-monitoring":
-      return "healthy";
-    case "spring-restoration":
-      return "restoration";
+    case "spring-monitoring": return "healthy";
+    case "spring-restoration": return "restoration";
     case "trench-development":
-    case "tree-planting":
-      return "restoration";
-    case "seedling-stock":
-      return "healthy";
-    default:
-      return "degraded";
+    case "tree-planting": return "restoration";
+    case "seedling-stock": return "healthy";
+    default: return "degraded";
   }
 }
 
-function getLabelFromStatus(status: SpringStatus): string {
-  switch (status) {
-    case "healthy": return "Sehat";
-    case "degraded": return "Terdegradasi";
-    case "restoration": return "Restorasi";
+function findCategoryForStatus(formSlug: string, status: string, categories: CategoryItem[]): CategoryItem | undefined {
+  if (categories.length === 0) return undefined;
+  const statusSlugMap: Record<string, string[]> = {
+    healthy: ["sehat", "baik", "siap", "berfungsi"],
+    degraded: ["terdegradasi", "rusak", "mati", "tersumbat"],
+    restoration: ["restorasi", "baru", "tumbuh", "butuh"],
+  };
+  const keywords = statusSlugMap[status] || [];
+  for (const kw of keywords) {
+    const match = categories.find(c => c.slug.includes(kw));
+    if (match) return match;
   }
+  return categories[0];
 }
 
 type ReportItem = {
@@ -84,6 +86,7 @@ export function SpringMap() {
   const [reportsError, setReportsError] = useState("");
   const [dynamicForms, setDynamicForms] = useState<Array<{ slug: string; title: string; pointsOnSubmit: number }>>([]);
   const [formsError, setFormsError] = useState("");
+  const [mapTypesWithCats, setMapTypesWithCats] = useState<Array<{ slug: string; id: string; name: string; categories: CategoryItem[] }>>([]);
   const [showGuide, setShowGuide] = useState(false);
 
   const fetchReports = () => {
@@ -110,13 +113,22 @@ export function SpringMap() {
       .finally(() => {});
   }, []);
 
-  // Map form slug → form title (untuk filter)
-  const formTitles: Record<string, string> = {
-    "spring-monitoring": "form.title.monitoring",
-    "spring-restoration": "form.title.restoration",
-    "trench-development": "form.title.trench",
-    "tree-planting": "form.title.planting",
-    "seedling-stock": "form.title.seedling",
+  useEffect(() => {
+    fetch("/api/map-points/types")
+      .then(r => r.json())
+      .then(data => setMapTypesWithCats(data.types || []))
+      .catch(() => {});
+  }, []);
+
+  const formTitleI18nKey = (slug: string): string => {
+    const map: Record<string, string> = {
+      "spring-monitoring": "form.title.monitoring",
+      "spring-restoration": "form.title.restoration",
+      "trench-development": "form.title.trench",
+      "tree-planting": "form.title.planting",
+      "seedling-stock": "form.title.seedling",
+    };
+    return map[slug] || slug;
   };
 
   const allForms = useMemo(() => {
@@ -138,66 +150,91 @@ export function SpringMap() {
     });
   }, [dynamicForms]);
 
-  // Count reports per form slug + status subcategory
-  const formCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    const statusCounts: Record<string, Record<string, number>> = {};
-    for (const r of reports) {
-      counts[r.formSlug] = (counts[r.formSlug] || 0) + 1;
-      const s = getStatusFromForm(r.formSlug);
-      if (!statusCounts[r.formSlug]) statusCounts[r.formSlug] = {};
-      statusCounts[r.formSlug][s] = (statusCounts[r.formSlug][s] || 0) + 1;
+  // Map form slug → its linked MapPointType's categories
+  const formCategories = useMemo(() => {
+    const map = new Map<string, CategoryItem[]>();
+    for (const mt of mapTypesWithCats) {
+      const formsWithType = allForms.filter(f => f.slug === mt.slug);
+      for (const f of formsWithType) {
+        map.set(f.slug, mt.categories);
+      }
     }
-    return { total: counts, byStatus: statusCounts };
-  }, [reports]);
+    // Fallback: match form slugs to map type slugs
+    if (mapTypesWithCats.length > 0) {
+      const fallbacks: Record<string, string> = {
+        "spring-monitoring": "spring",
+        "spring-restoration": "spring",
+        "trench-development": "trench",
+        "tree-planting": "tree-planting",
+        "seedling-stock": "seedling",
+      };
+      for (const [formSlug, typeSlug] of Object.entries(fallbacks)) {
+        if (!map.has(formSlug)) {
+          const mt = mapTypesWithCats.find(t => t.slug === typeSlug);
+          if (mt) map.set(formSlug, mt.categories);
+        }
+      }
+    }
+    return map;
+  }, [mapTypesWithCats, allForms]);
 
-  const statusColors: Record<string, string> = {
-    healthy: "#22c55e",
-    degraded: "#ef4444",
-    restoration: "#f59e0b",
-  };
-
-  const statusI18nKeys: Record<string, string> = {
-    healthy: "map.status.healthy",
-    degraded: "map.status.degraded",
-    restoration: "map.status.restoration",
-  };
+  // Count reports per form slug + category from DB
+  const formCounts = useMemo(() => {
+    const total: Record<string, number> = {};
+    const byCat: Record<string, Record<string, number>> = {};
+    for (const r of reports) {
+      total[r.formSlug] = (total[r.formSlug] || 0) + 1;
+      const cats = formCategories.get(r.formSlug) || [];
+      const status = getStatusFromForm(r.formSlug);
+      const matched = findCategoryForStatus(r.formSlug, status, cats);
+      if (matched) {
+        if (!byCat[r.formSlug]) byCat[r.formSlug] = {};
+        byCat[r.formSlug][matched.slug] = (byCat[r.formSlug][matched.slug] || 0) + 1;
+      }
+    }
+    return { total, byCategory: byCat };
+  }, [reports, formCategories]);
 
   const formFilterOptions = useMemo(() => {
     return allForms
       .filter(f => (formCounts.total[f.slug] || 0) > 0)
       .map(f => {
         const sub: { value: string; label: string; color: string }[] = [];
-        const statusSlugs = Object.keys(formCounts.byStatus[f.slug] || {});
-        for (const st of statusSlugs) {
-          sub.push({
-            value: `cat:${f.slug}:${st}`,
-            label: `${t(statusI18nKeys[st])} (${formCounts.byStatus[f.slug][st]})`,
-            color: statusColors[st] || "#6b7280",
-          });
+        const cats = formCategories.get(f.slug) || [];
+        for (const c of cats) {
+          const count = formCounts.byCategory[f.slug]?.[c.slug] || 0;
+          if (count > 0) {
+            sub.push({
+              value: `cat:${f.slug}:${c.slug}`,
+              label: `${c.name} (${count})`,
+              color: c.color,
+            });
+          }
         }
         return {
           value: f.slug,
-          label: t(formTitles[f.slug] || f.title),
+          label: t(formTitleI18nKey(f.slug), f.title),
           count: formCounts.total[f.slug] || 0,
           subcategories: sub,
         };
       });
-  }, [allForms, formCounts, t]);
+  }, [allForms, formCounts, formCategories, t]);
 
-  // Filter reports by form slug + optional status subcategory
+  // Filter reports by form slug + optional category slug
   const visible = useMemo(
     () => reports.filter(r => {
       if (!selectedType) return true;
       if (r.formSlug !== selectedType) return false;
       if (selectedCategory) {
+        const cats = formCategories.get(r.formSlug) || [];
         const status = getStatusFromForm(r.formSlug);
-        const cat = selectedCategory.replace(`cat:${selectedType}:`, "");
-        return status === cat;
+        const matched = findCategoryForStatus(r.formSlug, status, cats);
+        const catSlug = selectedCategory.replace(`cat:${selectedType}:`, "");
+        return matched?.slug === catSlug;
       }
       return true;
     }),
-    [reports, selectedType, selectedCategory]
+    [reports, selectedType, selectedCategory, formCategories]
   );
 
   const itemsPerPage = 6;
@@ -283,9 +320,11 @@ export function SpringMap() {
           ) : (
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {visibleList.map((r) => {
+              const cats = formCategories.get(r.formSlug) || [];
               const status = getStatusFromForm(r.formSlug);
-              const styles = statusStyles[status];
-              const statusLabel = getLabelFromStatus(status);
+              const matched = findCategoryForStatus(r.formSlug, status, cats);
+              const chipColor = matched?.color || "#6b7280";
+              const chipLabel = matched?.name || status.charAt(0).toUpperCase() + status.slice(1);
               return (
                 <li
                   key={r.id}
@@ -297,10 +336,10 @@ export function SpringMap() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <div className="truncate text-sm font-semibold text-ink">
-                        {t(formTitles[r.formSlug] || r.formSlug.replace(/-/g, " "))}
+                        {t(formTitleI18nKey(r.formSlug), r.formSlug.replace(/-/g, " "))}
                       </div>
-                      <span className={cn("chip", styles.chip)}>
-                        {statusLabel}
+                      <span className="chip" style={{ backgroundColor: chipColor + "20", color: chipColor, borderColor: chipColor + "40" }}>
+                        {chipLabel}
                       </span>
                     </div>
                     <div className="text-xs text-ink-muted">
@@ -369,7 +408,7 @@ export function SpringMap() {
               >
                 <span className="min-w-0">
                   <span className="block truncate font-medium text-ink">
-                    {t(formTitles[f.slug] || f.title)}
+                    {t(formTitleI18nKey(f.slug), f.title)}
                   </span>
                   <span className="block truncate text-xs text-ink-muted">
                     {t("map.pointsOnSubmit", { pts: String(f.pointsOnSubmit) })}
