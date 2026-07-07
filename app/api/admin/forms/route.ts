@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 
 function isAdmin(session: { userId: string; role: string } | null) {
   return session?.role === "admin";
@@ -15,7 +17,7 @@ function isAdmin(session: { userId: string; role: string } | null) {
 export async function GET(request: Request) {
   const session = await getSession();
   if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     const { searchParams } = new URL(request.url);
@@ -45,9 +47,16 @@ export async function GET(request: Request) {
 
 // POST /api/admin/forms — buat form baru
 export async function POST(request: Request) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
+
+
   const session = await getSession();
   if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     const body = await request.json();
@@ -134,6 +143,7 @@ export async function POST(request: Request) {
       include: { fields: { orderBy: { sortOrder: "asc" } }, mapType: true },
     });
 
+    auditLog("post create form", "post create form id=" + form.id);
     return NextResponse.json({ form }, { status: 201 });
   } catch (error) {
     console.error("Admin form create error::", error instanceof Error ? error.message : error);

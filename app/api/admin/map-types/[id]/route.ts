@@ -1,6 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 
 export async function GET(
   _request: Request,
@@ -9,7 +11,7 @@ export async function GET(
   try {
     const session = await getSession();
     if (!session || session.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     const { id } = await params;
@@ -33,10 +35,15 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   try {
     const session = await getSession();
     if (!session || session.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     const { id } = await params;
@@ -79,6 +86,7 @@ export async function PUT(
       });
     }
 
+    auditLog("put map-type", "updated map-type " + id);
     return NextResponse.json({ type });
   } catch (error) {
     console.error("PUT /api/admin/map-types/[id] error:", error);
@@ -90,10 +98,15 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // CSRF protection
+  const csrfToken = _request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   try {
     const session = await getSession();
     if (!session || session.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     const { id } = await params;
@@ -110,6 +123,7 @@ export async function DELETE(
     }
 
     await prisma.mapPointType.delete({ where: { id } });
+    auditLog("delete map-type", "deleted map-type " + id);
     return NextResponse.json({ message: "Tipe berhasil dihapus" });
   } catch (error) {
     console.error("DELETE /api/admin/map-types/[id] error:", error);

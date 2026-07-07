@@ -3,14 +3,22 @@ import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getSession();
     if (!session || session.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
+    const url = new URL(request.url);
+    const statusFilter = url.searchParams.get("status") || "";
+    const where: Record<string, unknown> = {};
+    if (statusFilter && ["pending", "approved", "rejected"].includes(statusFilter)) {
+      where.status = statusFilter;
+    }
+
     const reports = await prisma.report.findMany({
+      where,
       orderBy: { createdAt: "desc" },
       include: {
         user: { select: { id: true, username: true, email: true } },

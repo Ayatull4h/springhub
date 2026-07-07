@@ -1,15 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 export const dynamic = "force-dynamic";
 
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getSession();
   if (!session || session.role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   try {
@@ -26,9 +33,14 @@ export async function PUT(
       data: { role },
       select: { id: true, username: true, role: true },
     });
+    auditLog("put user", "put user");
+
 
     return NextResponse.json({ success: true, user });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to update role" }, { status: 500 });
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Failed to update role") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
   }
 }

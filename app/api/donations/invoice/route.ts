@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
-import { createInvoice } from "@/lib/xendit";
+import { createInvoice, DONATION_TIERS } from "@/lib/xendit";
 import { getSession } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";
 import { donationLimiter } from "@/lib/rate-limit";
@@ -39,6 +39,17 @@ export async function POST(request: Request) {
         { error: "Jumlah donasi tidak valid (min Rp1.000, maks Rp100.000.000)" },
         { status: 400 }
       );
+    }
+
+    // Cross-check amount vs tier — cegah abuse tier "Rp 25K" tapi bayar Rp 1jt
+    if (tierId && tierId !== "custom") {
+      const matchedTier = DONATION_TIERS.find(t => t.id === tierId);
+      if (matchedTier && matchedTier.amountIdr !== amount) {
+        return NextResponse.json(
+          { error: `Jumlah donasi tidak sesuai dengan tier "${tierId}". Diharapkan Rp ${matchedTier.amountIdr.toLocaleString("id-ID")}.` },
+          { status: 400 }
+        );
+      }
     }
 
     if (!donorName || typeof donorName !== "string" || donorName.trim().length === 0) {

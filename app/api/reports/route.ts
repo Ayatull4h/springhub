@@ -94,9 +94,9 @@ export async function POST(request: Request) {
       // Handle location fields
       if (key === "location_lat" || key.endsWith("_lat")) {
         const parsed = parseFloat(value as string);
-        if (isNaN(parsed)) {
+        if (isNaN(parsed) || parsed < -90 || parsed > 90) {
           return NextResponse.json(
-            { error: "Lokasi lat tidak valid" },
+            { error: `Latitude tidak valid: ${value as string}. Harus antara -90 dan 90.` },
             { status: 400 }
           );
         }
@@ -106,9 +106,9 @@ export async function POST(request: Request) {
       }
       if (key === "location_lng" || key.endsWith("_lng")) {
         const parsed = parseFloat(value as string);
-        if (isNaN(parsed)) {
+        if (isNaN(parsed) || parsed < -180 || parsed > 180) {
           return NextResponse.json(
-            { error: "Lokasi lng tidak valid" },
+            { error: `Longitude tidak valid: ${value as string}. Harus antara -180 dan 180.` },
             { status: 400 }
           );
         }

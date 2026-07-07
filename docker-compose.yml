@@ -34,13 +34,15 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    env_file:
+      - .env.production
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru --requirepass ${REDIS_PASSWORD:-SpringHub2026!}
     volumes:
       - redis_data:/data
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "redis-cli -a '${REDIS_PASSWORD}' ping | grep -q PONG"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -63,8 +65,8 @@ services:
       - .env.production
     environment:
       DATABASE_URL: "postgresql://springhub:${DB_PASSWORD:-SpringHub2026!}@postgres:5432/springhub"
-      REDIS_URL: "redis://redis:6379"
-      REDIS_QUEUE_URL: "redis://redis:6379"
+      REDIS_URL: "redis://default:${REDIS_PASSWORD:-SpringHub2026!}@redis:6379"
+      REDIS_QUEUE_URL: "redis://default:${REDIS_PASSWORD:-SpringHub2026!}@redis:6379"
       UPLOAD_DIR: "/data/uploads"
       UPLOAD_URL_PREFIX: "/uploads"
       PORT: "31759"
@@ -104,8 +106,8 @@ services:
     env_file:
       - .env.production
     environment:
-      REDIS_URL: "redis://redis:6379"
-      REDIS_QUEUE_URL: "redis://redis:6379"
+      REDIS_URL: "redis://default:${REDIS_PASSWORD:-SpringHub2026!}@redis:6379"
+      REDIS_QUEUE_URL: "redis://default:${REDIS_PASSWORD:-SpringHub2026!}@redis:6379"
     command: npx tsx workers/email-worker.ts
     security_opt:
       - no-new-privileges:true
@@ -138,9 +140,9 @@ services:
     cap_add:
       - NET_BIND_SERVICE
       - CHOWN
-      - SETUID
-      - SETGID
       - DAC_OVERRIDE
+      - SETGID
+      - SETUID
     deploy:
       resources:
         limits:

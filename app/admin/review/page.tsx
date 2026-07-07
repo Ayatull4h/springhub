@@ -52,10 +52,10 @@ export default function AdminReviewPage() {
 
   const fetchPending = () => {
     setLoading(true);
-    fetch("/api/admin/reports")
+    fetch("/api/admin/reports?status=pending")
       .then((r) => r.json())
       .then(async (data) => {
-        const pending = (data.reports ?? []).filter((r: ReportItem) => r.status === "pending");
+        const pending = (data.reports ?? []);
         setReports(pending);
         // Fetch photos for each pending report
         const photoMap: Record<string, ReportPhoto[]> = {};

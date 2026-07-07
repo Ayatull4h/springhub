@@ -3,11 +3,18 @@ import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { updateTrustScore } from "@/lib/points";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 
 export async function POST(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   try {
     const session = await getSession();
     if (!session || session.role !== "admin") {
@@ -78,6 +85,8 @@ export async function POST(
         console.error("Notification create failed (non-blocking):", e);
       }
     }
+    auditLog("post report", "post report");
+
 
     return NextResponse.json({ success: true, status: "rejected" });
   } catch (error) {

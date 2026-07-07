@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { logError } from "@/lib/error-logger";
 import { sendNotificationEmail } from "@/lib/email";
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,7 @@ export async function GET() {
     return NextResponse.json({ notifications });
   } catch (err) {
     console.error("[Notifications GET]", err);
+    await logError({ message: "Notifications GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
     return NextResponse.json({ notifications: [], error: "Gagal memuat notifikasi" }, { status: 200 });
   }
 }

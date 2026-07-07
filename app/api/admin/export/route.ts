@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
+import { buildPhotoUrl } from "@/lib/photo-url";
 
 export const dynamic = "force-dynamic";
 
@@ -65,11 +66,14 @@ export async function GET(request: Request) {
         const reports = await prisma.report.findMany({
           where: { ...dateFilter },
           orderBy: { createdAt: "desc" },
-          include: { user: { select: { username: true } } },
+          include: {
+            user: { select: { username: true } },
+            photos: { select: { id: true, storagePath: true, fieldId: true }, take: 10 },
+          },
         });
         csv = toCsv(
-          reports.map((r) => [r.id, r.user?.username || "guest", r.formSlug, r.status, String(r.preciseLat ?? ""), String(r.preciseLng ?? ""), String(r.snappedLat ?? ""), String(r.snappedLng ?? ""), r.reviewedById || "", r.createdAt.toISOString()]),
-          ["ID", "User", "FormSlug", "Status", "PreciseLat", "PreciseLng", "SnappedLat", "SnappedLng", "ReviewedBy", "CreatedAt"]
+          reports.map((r) => [r.id, r.user?.username || "guest", r.formSlug, r.status, String(r.preciseLat ?? ""), String(r.preciseLng ?? ""), String(r.snappedLat ?? ""), String(r.snappedLng ?? ""), r.reviewedById || "", r.createdAt.toISOString(), r.photos.map((p) => buildPhotoUrl(p.storagePath)).join("; ")]),
+          ["ID", "User", "FormSlug", "Status", "PreciseLat", "PreciseLng", "SnappedLat", "SnappedLng", "ReviewedBy", "CreatedAt", "PhotoURLs"]
         );
         filename = `springhub-reports-${startDate || "all"}.csv`;
         break;
@@ -130,8 +134,25 @@ export async function GET(request: Request) {
         break;
       }
 
+      case "photos": {
+        const photos = await prisma.reportPhoto.findMany({
+          orderBy: { createdAt: "desc" },
+          include: {
+            report: {
+              select: { id: true, formSlug: true, status: true },
+            },
+          },
+        });
+        csv = toCsv(
+          photos.map((p) => [p.id, p.report?.id || "", p.report?.formSlug || "", p.report?.status || "", p.fieldId, buildPhotoUrl(p.storagePath), p.mimeType, `${p.width}x${p.height}`, p.createdAt.toISOString()]),
+          ["PhotoID", "ReportID", "FormSlug", "ReportStatus", "FieldID", "URL", "MimeType", "Dimensions", "CreatedAt"]
+        );
+        filename = `springhub-photos-${startDate || "all"}.csv`;
+        break;
+      }
+
       default:
-        return NextResponse.json({ error: "Invalid entity. Valid: users, reports, donations, projects, feedback, points" }, { status: 400 });
+        return NextResponse.json({ error: "Invalid entity. Valid: users, reports, donations, projects, feedback, points, photos" }, { status: 400 });
     }
 
     // Send email notification if requested

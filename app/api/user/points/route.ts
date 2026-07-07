@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logError } from "@/lib/error-logger";
+import { prismaWithRls } from "@/lib/prisma-rls";
+import { rlsContextFromSession } from "@/lib/auth-context";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -31,6 +34,7 @@ export async function GET() {
     });
   } catch (err) {
     console.error("[User Points GET]", err);
+    await logError({ message: "User Points GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
     return NextResponse.json({ points: 0, trustScore: 50, totalEarned: 0, logs: [] }, { status: 200 });
   }
 }

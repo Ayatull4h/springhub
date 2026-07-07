@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 
 function isAdmin(session: { userId: string; role: string } | null) {
   return session?.role === "admin";
@@ -14,7 +16,7 @@ export async function GET(
 ) {
   const session = await getSession();
   if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     const form = await prisma.form.findUnique({
@@ -24,6 +26,7 @@ export async function GET(
     if (!form) {
       return NextResponse.json({ error: "Form not found" }, { status: 404 });
     }
+    auditLog("get form", "form " + form.id);
     return NextResponse.json({ form });
   } catch (error) {
     console.error("Admin form fetch error:", error);
@@ -39,16 +42,35 @@ export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getSession();
   if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
-  try {
-    const body = await request.json();
-    const { slug, title, description, pointsOnSubmit, contributionType, isActive, sortOrder, fields } = body;
+    try {
+      const body = await request.json();
+      const { slug, title, description, pointsOnSubmit, contributionType, isActive, sortOrder, fields } = body;
 
-    // Check slug uniqueness if changed
-    if (slug) {
+      // Ambil form saat ini untuk referensi slug lama
+      const currentForm = await prisma.form.findUnique({
+        where: { id: params.id },
+        select: { slug: true },
+      });
+
+      // Check slug uniqueness if changed
+    if (slug && currentForm && slug !== currentForm.slug) {
+      // Cegah orphan reports — tolak slug change jika ada reports dengan slug lama
+      const reportCount = await prisma.report.count({ where: { formSlug: currentForm.slug } });
+      if (reportCount > 0) {
+        return NextResponse.json(
+          { error: `Tidak bisa mengganti slug: ${reportCount} laporan masih menggunakan slug "${currentForm.slug}"` },
+          { status: 409 }
+        );
+      }
       const existing = await prisma.form.findFirst({
         where: { slug, NOT: { id: params.id } },
       });
@@ -130,9 +152,14 @@ export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getSession();
   if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     const form = await prisma.form.findUnique({

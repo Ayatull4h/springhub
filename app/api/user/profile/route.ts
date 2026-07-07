@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession, hashPassword, verifyPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logError } from "@/lib/error-logger";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -64,6 +65,7 @@ export async function GET() {
     return NextResponse.json({ profile, reports, pointsLogs });
   } catch (err) {
     console.error("[User Profile GET]", err);
+    await logError({ message: "User Profile GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
     return NextResponse.json({ error: "Gagal memuat profil" }, { status: 200 });
   }
 }
@@ -104,8 +106,9 @@ export async function PUT(request: Request) {
     });
 
     return NextResponse.json({ success: true, user: updated });
-  } catch (error) {
-    console.error("Profile update error:", error);
+  } catch (err) {
+    console.error("Profile update error:", err);
+    await logError({ message: "Profile update error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
     return NextResponse.json({ error: "Gagal mengupdate profil" }, { status: 500 });
   }
 }

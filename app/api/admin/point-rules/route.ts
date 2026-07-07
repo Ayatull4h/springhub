@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -24,6 +26,13 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
+
+
   const session = await getSession();
   if (!session || session.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
@@ -52,6 +61,7 @@ export async function POST(request: Request) {
       },
     });
 
+    auditLog("post point-rule", "created point-rule " + rule.id);
     return NextResponse.json({ rule }, { status: 201 });
   } catch (error) {
     console.error("Failed to create point rule::", error instanceof Error ? error.message : error);

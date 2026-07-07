@@ -1,12 +1,15 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { logError } from "@/lib/error-logger";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 
 export async function GET() {
   try {
     const session = await getSession();
     if (!session || session.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     const types = await prisma.mapPointType.findMany({
@@ -18,17 +21,25 @@ export async function GET() {
     });
 
     return NextResponse.json({ types });
-  } catch (error) {
-    console.error("GET /api/admin/map-types error:", error);
+  } catch (err) {
+    console.error("GET /api/admin/map-types error:", err);
+    await logError({ message: "Admin map types GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
     return NextResponse.json({ error: "Gagal memuat data" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
+
+
   try {
     const session = await getSession();
     if (!session || session.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     const body = await request.json();
@@ -61,9 +72,11 @@ export async function POST(request: NextRequest) {
       include: { categories: { orderBy: { sortOrder: "asc" } } },
     });
 
+    auditLog("post map-type", "created map-type " + type.id);
     return NextResponse.json({ type }, { status: 201 });
-  } catch (error) {
-    console.error("POST /api/admin/map-types error:", error);
+  } catch (err) {
+    console.error("POST /api/admin/map-types error:", err);
+    await logError({ message: "Admin map types POST error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
     return NextResponse.json({ error: "Gagal membuat tipe" }, { status: 500 });
   }
 }

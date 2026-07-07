@@ -85,8 +85,19 @@ export default function AdminTrustScorePage() {
     }
   };
 
-  const handleReset = (userId: string) => {
-    setEditValues((prev) => ({ ...prev, [userId]: "50" }));
+  const handleReset = async (userId: string) => {
+    try {
+      const { token } = await fetch("/api/csrf").then(r => r.json());
+      const res = await fetch(`/api/admin/trust-scores/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "x-csrf-token": token },
+        body: JSON.stringify({ trustScore: 50 }),
+      });
+      if (res.ok) {
+        setEditValues((prev) => ({ ...prev, [userId]: "50" }));
+        fetchUsers();
+      }
+    } catch {}
   };
 
   const getTrustIcon = (score: number) => {

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 
 function isAdmin(session: { userId: string; role: string } | null) {
   return session?.role === "admin";
@@ -11,9 +13,14 @@ export async function POST(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getSession();
   if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     const form = await prisma.form.findUnique({
@@ -60,6 +67,7 @@ export async function POST(
       },
     });
 
+    auditLog("post create field", "post create field id=" + params.id);
     return NextResponse.json({ field }, { status: 201 });
   } catch (error) {
     console.error("Create field error::", error instanceof Error ? error.message : error);

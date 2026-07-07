@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { hashPassword, createSession, getSession } from "@/lib/auth";
@@ -9,7 +10,12 @@ import { auditLog } from "@/lib/audit";
 
 const registerSchema = z.object({
   email: z.string().email("Email tidak valid"),
-  password: z.string().min(8, "Password minimal 8 karakter"),
+  password: z
+    .string()
+    .min(8, "Password minimal 8 karakter")
+    .regex(/[A-Z]/, "Password harus mengandung huruf BESAR")
+    .regex(/[a-z]/, "Password harus mengandung huruf kecil")
+    .regex(/[0-9]/, "Password harus mengandung angka"),
   username: z.string().min(2, "Username minimal 2 karakter").optional(),
 });
 
@@ -45,6 +51,7 @@ export async function POST(request: Request) {
     const { email: rawEmail, password, username: rawUsername } = parsed.data;
     const email = rawEmail.toLowerCase().trim();
 
+    // Cegah duplicate email — cek dua kali (application + database level)
     const existing = await prisma.profile.findUnique({ where: { email } });
     if (existing) {
       return NextResponse.json(
@@ -65,14 +72,29 @@ export async function POST(request: Request) {
 
     const passwordHash = await hashPassword(password);
 
-    const profile = await prisma.profile.create({
-      data: {
-        email,
-        passwordHash,
-        username,
-        role: "volunteer",
-      },
-    });
+    // Gunakan create dengan catch unique constraint sebagai jaring pengaman
+    let profile;
+    try {
+      profile = await prisma.profile.create({
+        data: {
+          email,
+          passwordHash,
+          username,
+          role: "volunteer",
+        },
+      });
+    } catch (createErr) {
+      if (createErr instanceof Prisma.PrismaClientKnownRequestError && createErr.code === "P2002") {
+        const target = (createErr.meta?.target as string[]) || [];
+        if (target.includes("email")) {
+          return NextResponse.json({ error: "Email sudah terdaftar" }, { status: 409 });
+        }
+        if (target.includes("username")) {
+          return NextResponse.json({ error: "Username sudah dipakai" }, { status: 409 });
+        }
+      }
+      throw createErr; // Re-throw — akan di-catch oleh handler utama
+    }
 
     const proto = request.headers.get("x-forwarded-proto") || request.headers.get("x-forwarded-scheme") || "https";
     await createSession({

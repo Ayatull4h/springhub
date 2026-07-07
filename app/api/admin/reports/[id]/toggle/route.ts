@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   try {
     const session = await getSession();
     if (!session || session.role !== "admin") {
@@ -19,6 +29,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       data: { isActive: !report.isActive },
     });
 
+    auditLog("post toggle report", "post toggle report id=" + params.id);
     return NextResponse.json({ isActive: updated.isActive });
   } catch (error) {
     console.error("Toggle report error:", error instanceof Error ? error.message : error);

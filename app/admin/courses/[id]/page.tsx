@@ -335,7 +335,7 @@ export default function AdminEditCoursePage() {
             {modules.map((mod, index) => (
               <div
                 key={index}
-                className="rounded-lg border border-ink-line bg-slate-50 p-3"
+                className="rounded-lg border border-ink-line bg-slate-50 p-3 dark:bg-slate-800"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-ink-muted">

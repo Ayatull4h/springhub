@@ -212,7 +212,7 @@ export default function AdminContentPage() {
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowForm(false)}>
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-ink">{editing ? t("admin.content.edit") : t("admin.content.addTitle")} {activeSection}</h3>
             <form onSubmit={handleSave} className="mt-4 space-y-3">
               <div>
@@ -225,32 +225,32 @@ export default function AdminContentPage() {
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">{t("admin.content.titleLabel")}</label>
-                <input required value={form.title} onChange={e => setForm({...form, title: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
+                <input required value={form.title} onChange={e => setForm({...form, title: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" />
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">{t("admin.content.subtitle")}</label>
-                <input value={form.subtitle} onChange={e => setForm({...form, subtitle: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder="e.g. Apr 2026 · 200 volunteers" />
+                <input value={form.subtitle} onChange={e => setForm({...form, subtitle: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" placeholder="e.g. Apr 2026 · 200 volunteers" />
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">{t("admin.content.description")}</label>
-                <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={2} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
+                <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={2} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" />
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">{t("admin.content.imageUrl")}</label>
-                <input value={form.imageUrl} onChange={e => setForm({...form, imageUrl: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder={t("admin.content.imageUrl")} />
+                <input value={form.imageUrl} onChange={e => setForm({...form, imageUrl: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" placeholder={t("admin.content.imageUrl")} />
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">Link URL (YouTube or article)</label>
-                <input value={form.linkUrl} onChange={e => setForm({...form, linkUrl: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder={t("admin.content.linkUrl")} />
+                <input value={form.linkUrl} onChange={e => setForm({...form, linkUrl: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" placeholder={t("admin.content.linkUrl")} />
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">{t("admin.content.linkLabel")}</label>
-                <input value={form.linkLabel} onChange={e => setForm({...form, linkLabel: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" placeholder="Watch on YouTube" />
+                <input value={form.linkLabel} onChange={e => setForm({...form, linkLabel: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" placeholder="Watch on YouTube" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-medium text-ink-muted">{t("admin.content.sortOrder")}</label>
-                  <input type="number" value={form.sortOrder} onChange={e => setForm({...form, sortOrder: parseInt(e.target.value) || 0})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm" />
+                  <input type="number" value={form.sortOrder} onChange={e => setForm({...form, sortOrder: parseInt(e.target.value) || 0})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">

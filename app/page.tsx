@@ -5,6 +5,7 @@ import { VolunteerActivities } from "@/components/sections/volunteer";
 import { PartnerSection } from "@/_senior/components/PartnerSection";
 import { LearningHub } from "@/components/sections/learning-hub";
 import { MediaSection } from "@/components/sections/media";
+import { DonateSection } from "@/components/sections/donate";
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <PartnerSection />
       <LearningHub />
       <MediaSection />
+      <DonateSection />
     </>
   );
 }

@@ -18,8 +18,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Token dan password wajib diisi" }, { status: 400 });
     }
 
-    if (password.length < 8) {
-      return NextResponse.json({ error: "Password minimal 8 karakter" }, { status: 400 });
+    if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+      return NextResponse.json({ error: "Password minimal 8 karakter, harus mengandung huruf besar, huruf kecil, dan angka" }, { status: 400 });
     }
 
     let payload: { email: string; userId: string };

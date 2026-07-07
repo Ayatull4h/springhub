@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { logError } from "@/lib/error-logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -56,8 +57,9 @@ export async function GET(request: NextRequest) {
     }));
 
     return NextResponse.json({ points: result });
-  } catch (error) {
-    console.error("GET /api/map-points error:", error);
+  } catch (err) {
+    console.error("GET /api/map-points error:", err);
+    await logError({ message: "Map points GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
     return NextResponse.json({ error: "Gagal memuat titik map" }, { status: 500 });
   }
 }

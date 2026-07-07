@@ -129,3 +129,15 @@ export const uploadLimiter = createRateLimiter("upload", {
   windowMs: 60_000,
   maxRequests: 20,
 });
+
+// Login lockout: 5 failed attempts → lock 15 menit
+export const loginLockout = createRateLimiter("login-lockout", {
+  windowMs: 15 * 60_000,
+  maxRequests: 5,
+});
+
+// Webhook: 10 requests per 60 detik — cegah flood dari Xendit callback
+export const webhookLimiter = createRateLimiter("webhook", {
+  windowMs: 60_000,
+  maxRequests: 10,
+});

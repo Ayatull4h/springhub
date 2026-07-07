@@ -389,7 +389,7 @@ export default function ReportFormPage() {
         }}
       >
         {/* Honeypot */}
-        <div className="hidden" aria-hidden>
+        <div style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, overflow: "hidden" }} aria-hidden>
           <label htmlFor="_website">{t("form.honeypot")}</label>
           <input
             id="_website"

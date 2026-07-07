@@ -209,6 +209,101 @@ Third Party
 
 ---
 
+## Security Backlog — 2FA / MFA
+
+2FA/MFA **belum diimplementasi**. Rencana:
+
+### Prinsip
+- **Opsional (opt-in)**, bukan mandatory — user bisa pilih mau pake 2FA atau tidak
+- User mengaktifkan/menonaktifkan dari halaman Profile
+- Admin WAJIB pake 2FA (kebijakan keamanan)
+
+### Teknis
+- Metode: **TOTP** (Time-based One-Time Password) via Google Authenticator / Authy
+- Library: `otplib` (generate + verify TOTP)
+- Penyimpanan: `Profile.secret2FA` — encrypted di database
+- Flow:
+  1. User enable 2FA → scan QR code → verify token pertama
+  2. User login → after password match → minta TOTP code
+  3. TOTP valid → session dibuat
+  4. Jika TOTP salah → login ditolak
+
+### Tabel
+```prisma
+model Profile {
+  // ...existing fields...
+  secret2FA      String?   // (opsional) TOTP secret, null jika 2FA nonaktif
+  is2FAEnabled   Boolean   @default(false)
+}
+```
+
+### UI yang diperlukan
+1. **Halaman Profile** — tombol "Aktifkan 2FA" + QR code + input verifikasi
+2. **Halaman Login** — step kedua setelah password: input 6-digit TOTP
+3. **Halaman Admin** — badge "2FA Active" di daftar user
+
+---
+
+## Catatan untuk Agent Lain — 7 Juli 2026
+
+### Security Changes — Wajib Tahu
+
+**1. CSRF di Admin**
+Semua endpoint admin POST/PUT/PATCH/DELETE sekarang wajib `verifyCsrfToken()` dari header `x-csrf-token`. Kalau bikin endpoint admin baru, jangan lupa:
+```typescript
+import { verifyCsrfToken } from "@/lib/csrf";
+const csrfToken = request.headers.get("x-csrf-token");
+if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+  return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+}
+```
+
+**2. Error Logging — Otomatis ke AppError**
+`getErrorMessage()` dari `@/lib/prisma` sekarang auto-log error ke AppError. Semua catch blocks HARUS pake `getErrorMessage(error, fallback)` — jangan return string hardcoded. Kalo ada catch yang masih pake `.json({ error: "Failed" })` tanpa `getErrorMessage`, itu bug.
+
+**3. Audit Trail — Wajib**
+Semua admin mutation (POST/PUT/PATCH/DELETE) harus panggil `auditLog()` sebelum return sukses. Udah di-apply ke 20+ endpoint. Kalo bikin endpoint admin baru, contoh:
+```typescript
+auditLog("create course", "course created " + course.id);
+return NextResponse.json({ course }, { status: 201 });
+```
+
+**4. RLS — Prisma $extends**
+Di `lib/prisma-rls.ts` ada RLS extension. Untuk route publik yang query data user-specific, pake:
+```typescript
+import { prismaWithRls } from "@/lib/prisma-rls";
+import { getRlsContext } from "@/lib/auth-context";
+const ctx = await getRlsContext();
+const db = prismaWithRls(ctx);
+const reports = await db.report.findMany(); // auto-filter by role
+```
+Model yang terproteksi: report, pointsLog, donation, project, notification, coursesProgress, offlineSession, feedback.
+
+**5. Password Strength**
+Register & reset password: wajib uppercase + lowercase + angka (min 8 karakter). Zod schema di `register/route.ts` dan validasi manual di `reset-password/route.ts`.
+
+**6. Login Lockout**
+5 gagal login → lock 15 menit. Pake `loginLockout` dari `@/lib/rate-limit`.
+
+**7. JWT Rotation**
+Ada `verifyJwtWithRotation()` di `lib/jwt.ts` yang verifikasi pake current + previous key. Session verification udah pake ini. Kalo bikin JWT verification baru, pake ini:
+```typescript
+import { verifyJwtWithRotation } from "@/lib/jwt";
+const result = await verifyJwtWithRotation(token, (secret) => jwtVerify(token, secret));
+```
+
+**8. Redis + DB Password**
+Redis pake `requirepass` via `REDIS_PASSWORD` env var. DB password wajib diisi via `DB_PASSWORD` — gak ada fallback hardcoded. Docker compose butuh `.env` file di root.
+
+**9. Akun Demo (sudah di-seed)**
+| Email | Password | Role | Poin |
+|---|---|---|---|
+| `admin@springhub.id` | `demo12345` | admin | 99.999 |
+| `ucup@springhub.id` | `ucup12345` | volunteer | 20.168 (bisa project) |
+| `vol@springhub.id` | `vol12345` | volunteer | 8.750 (belum bisa project) |
+
+---
+
 ## Diskusi Tersimpan
 
 ### 15 Mei 2026 — Sesi 1

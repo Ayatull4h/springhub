@@ -7,7 +7,20 @@ const logger = pino({
       ? { target: "pino/file", options: { destination: 1 } }
       : undefined,
   redact: {
-    paths: ["req.headers.cookie", "req.headers.authorization", "body.password", "body.passwordHash"],
+    paths: [
+      "req.headers.cookie",
+      "req.headers.authorization",
+      "req.headers.x-api-key",
+      "req.headers.x-callback-token",
+      "body.password",
+      "body.passwordHash",
+      "body.token",
+      "body.email",
+      "body.phone",
+      "body.donorEmail",
+      "body.donorPhone",
+      "body.apiKey",
+    ],
     censor: "[REDACTED]",
   },
 });

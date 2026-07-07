@@ -43,13 +43,25 @@ export default function AdminUsersPage() {
     }
   }
 
-  useEffect(() => {
-    fetch("/api/admin/users")
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+
+  const fetchUsers = (p: number) => {
+    setLoading(true);
+    fetch(`/api/admin/users?page=${p}&limit=50`)
       .then((r) => r.json())
-      .then((data) => setUsers(data.users ?? []))
+      .then((data) => {
+        setUsers(data.users ?? []);
+        setTotal(data.total ?? 0);
+        setTotalPages(data.totalPages ?? 1);
+        setPage(p);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { fetchUsers(1); }, []);
 
   if (loading) {
     return (
@@ -65,7 +77,7 @@ export default function AdminUsersPage() {
         <div>
           <h2 className="text-xl font-bold text-ink">{t("admin.users.title")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
-            {t("admin.users.count", { count: String(users.length) })}
+            {t("admin.users.count", { count: String(total) })} · Halaman {page}/{totalPages}
           </p>
         </div>
         <button
@@ -176,7 +188,26 @@ export default function AdminUsersPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+         </table>
+        </div>
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <button
+            onClick={() => fetchUsers(page - 1)}
+            disabled={page <= 1}
+            className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30 dark:hover:bg-slate-700"
+          >
+            ← {t("common.previous")}
+          </button>
+          <span className="text-xs text-ink-muted">
+            {t("common.pageOf", { current: String(page), total: String(totalPages) })}
+          </span>
+          <button
+            onClick={() => fetchUsers(page + 1)}
+            disabled={page >= totalPages}
+            className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 disabled:opacity-30 dark:hover:bg-slate-700"
+          >
+            {t("common.next")} →
+          </button>
         </div>
       </div>
     </div>

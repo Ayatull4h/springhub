@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 export const dynamic = "force-dynamic";
 
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getSession();
   if (!session || session.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
@@ -30,6 +37,7 @@ export async function PUT(
       data,
     });
 
+    auditLog("put point-rule", "point-rule " + rule.id);
     return NextResponse.json({ rule });
   } catch (error) {
     console.error("Failed to update point rule::", error instanceof Error ? error.message : error);
@@ -44,6 +52,11 @@ export async function DELETE(
   _request: Request,
   { params }: { params: { id: string } }
 ) {
+  // CSRF protection
+  const csrfToken = _request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getSession();
   if (!session || session.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });

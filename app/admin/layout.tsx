@@ -100,7 +100,7 @@ export default function AdminLayout({
             S
           </div>
           <span className="text-sm font-bold text-ink">{t("admin.sidebar.springhubAdmin")}</span>
-          <span className="ml-auto rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">DEMO</span>
+          {process.env.NEXT_PUBLIC_DEMO_MODE && <span className="ml-auto rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">DEMO</span>}
         </div>
 
         <nav className="flex-1 space-y-0.5 p-3">
@@ -161,7 +161,7 @@ export default function AdminLayout({
             <span className="hidden text-xs text-ink-subtle sm:inline">
               {t("admin.sidebar.liveData")}
             </span>
-            <span className="rounded-md bg-amber-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">DEMO</span>
+            {process.env.NEXT_PUBLIC_DEMO_MODE && <span className="rounded-md bg-amber-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">DEMO</span>}
           <div className="flex items-center gap-2 rounded-lg border border-ink-line px-3 py-1.5 text-sm text-ink-muted dark:border-slate-700">
               <span className="hidden sm:inline">{t("admin.sidebar.environment")}</span>
               <ChevronDown className="h-3.5 w-3.5" />
@@ -185,7 +185,7 @@ export default function AdminLayout({
             <div className="flex h-16 items-center justify-between border-b border-ink-line px-5 dark:border-slate-700">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold text-ink dark:text-white">{t("admin.sidebar.springhubAdmin")}</span>
-                <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">DEMO</span>
+                {process.env.NEXT_PUBLIC_DEMO_MODE && <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">DEMO</span>}
               </div>
               <button onClick={() => setSidebarOpen(false)} className="rounded-md p-1 text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white" aria-label={t("admin.sidebar.closeMenu")}>
                 <X className="h-5 w-5" />

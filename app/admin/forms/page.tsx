@@ -14,6 +14,15 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
+async function csrfHeaders(): Promise<Record<string, string>> {
+  try {
+    const { token } = await fetch("/api/csrf").then(r => r.json());
+    return { "Content-Type": "application/json", "x-csrf-token": token };
+  } catch {
+    return { "Content-Type": "application/json" };
+  }
+}
+
 type FormField = {
   id: string;
   fieldId: string;
@@ -68,6 +77,7 @@ export default function AdminFormsPage() {
     try {
       const res = await fetch(`/api/admin/forms/${id}`, {
         method: "DELETE",
+        headers: await csrfHeaders(),
       });
       const data = await res.json();
       if (res.ok) {
@@ -96,7 +106,7 @@ export default function AdminFormsPage() {
     try {
       const res = await fetch(`/api/admin/forms/${form.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: await csrfHeaders(),
         body: JSON.stringify({ isActive: !form.isActive }),
       });
       if (res.ok) {
@@ -167,7 +177,7 @@ export default function AdminFormsPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
+        <div className="flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
           <AlertCircle className="h-4 w-4" />
           {error}
         </div>
@@ -175,7 +185,7 @@ export default function AdminFormsPage() {
 
       {filtered.length === 0 ? (
         <div className="card py-12 text-center">
-          <ClipboardList className="mx-auto h-8 w-8 text-slate-300" />
+          <ClipboardList className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600" />
           <p className="mt-2 text-sm text-ink-muted">{t("admin.forms.noForms")}</p>
           {filter !== "all" && (
             <button
@@ -195,14 +205,14 @@ export default function AdminFormsPage() {
                   className={`flex h-10 w-10 items-center justify-center rounded-lg ${
                     form.isActive
                       ? "bg-brand-50 text-brand-600"
-                      : "bg-slate-100 text-slate-400"
+                      : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
                   }`}
                 >
                   <ClipboardList className="h-5 w-5" />
                 </div>
                 <div className="flex items-center gap-1">
                   {!form.isActive && (
-                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">
+                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400">
                       {t("admin.forms.inactive")}
                     </span>
                   )}
@@ -245,7 +255,7 @@ export default function AdminFormsPage() {
                 <span className="rounded-md bg-brand-50 px-2 py-0.5 text-brand-700">
                   +{form.pointsOnSubmit} pts
                 </span>
-                <span className="rounded-md bg-slate-100 px-2 py-0.5 capitalize text-slate-600">
+                <span className="rounded-md bg-slate-100 px-2 py-0.5 capitalize text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                   {form.contributionType}
                 </span>
                 <span className="inline-flex items-center gap-1">

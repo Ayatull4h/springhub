@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { logError } from "@/lib/error-logger";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -30,14 +31,14 @@ export async function GET() {
       // impactStats — total counts
       prisma.report.count({ where: { isActive: true } }),
       prisma.report.count({ where: { status: "approved", isActive: true } }),
-      prisma.report.count({ where: { formSlug: "tree_planting", isActive: true } }),
-      prisma.report.count({ where: { formSlug: "trench_development", isActive: true } }),
+      prisma.report.count({ where: { formSlug: "tree-planting", isActive: true } }),
+      prisma.report.count({ where: { formSlug: "trench-development", isActive: true } }),
 
       // impactStats — this month counts
       prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, isActive: true } }),
       prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, status: "approved", isActive: true } }),
-      prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, formSlug: "tree_planting", isActive: true } }),
-      prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, formSlug: "trench_development", isActive: true } }),
+      prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, formSlug: "tree-planting", isActive: true } }),
+      prisma.report.count({ where: { createdAt: { gte: firstOfMonth }, formSlug: "trench-development", isActive: true } }),
 
       // monthlyProgress — user, project, course, donation
       prisma.profile.count(),
@@ -49,8 +50,8 @@ export async function GET() {
       }),
 
       // monthlyProgress — form-slug counts
-      prisma.report.count({ where: { formSlug: "spring_restoration", isActive: true } }),
-      prisma.report.count({ where: { formSlug: "seedling_stock", isActive: true } }),
+      prisma.report.count({ where: { formSlug: "spring-restoration", isActive: true } }),
+      prisma.report.count({ where: { formSlug: "seedling-stock", isActive: true } }),
 
       // topVolunteers
       prisma.profile.findMany({
@@ -149,8 +150,8 @@ export async function GET() {
 
       const entry = regionMap.get(region) || { reports: 0, trees: 0, trenches: 0 };
       entry.reports += 1;
-      if (rpt.formSlug === "tree_planting") entry.trees += 1;
-      if (rpt.formSlug === "trench_development") entry.trenches += 1;
+      if (rpt.formSlug === "tree-planting") entry.trees += 1;
+      if (rpt.formSlug === "trench-development") entry.trenches += 1;
       regionMap.set(region, entry);
     }
 
@@ -191,8 +192,15 @@ export async function GET() {
       topRegions,
       topVolunteers: topVolunteersFormatted,
     });
-  } catch (error) {
-    console.error("Dashboard API error:", error);
+  } catch (err) {
+    console.error("Dashboard API error:", err);
+    await logError({
+      message: "Dashboard API error",
+      level: "error",
+      source: "api",
+      stack: err instanceof Error ? err.stack : "",
+      metadata: { error: String(err) },
+    }).catch(() => {});
     return NextResponse.json(
       { error: "Failed to load dashboard data" },
       { status: 500 }

@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import { cookies } from "next/headers";
-import { getJwtSecret } from "./jwt";
+import { getJwtSecret, getJwtSecrets, verifyJwtWithRotation } from "./jwt";
 
 const SECRET = getJwtSecret();
 
@@ -67,13 +67,46 @@ export async function destroySession(isSecure?: boolean): Promise<void> {
   });
 }
 
+/**
+ * Cek apakah IP request termasuk dalam whitelist admin.
+ * Set ADMIN_ALLOWED_IPS di .env dengan format: "192.168.1.1,10.0.0.0/8"
+ * Kosongkan (atau tidak diset) untuk mengizinkan semua IP.
+ */
+export function isAdminIpAllowed(request: Request): boolean {
+  const allowedCidrs = process.env.ADMIN_ALLOWED_IPS;
+  if (!allowedCidrs) return true; // Tidak ada whitelist → izinkan semua
+
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "";
+  if (!ip) return true; // IP tidak terdeteksi → izinkan (hindari lockout)
+
+  const ranges = allowedCidrs.split(",").map(s => s.trim()).filter(Boolean);
+  if (ranges.length === 0) return true;
+
+  // Simple IP match (CIDR parsing bisa ditambah nanti)
+  return ranges.some(range => {
+    if (range.includes("/")) {
+      // CIDR — basic prefix check
+      const [baseIp] = range.split("/");
+      return ip.startsWith(baseIp.substring(0, baseIp.lastIndexOf(".")));
+    }
+    return ip === range;
+  });
+}
+
 export async function getSession(): Promise<SessionPayload | null> {
   const cookieStore = cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    // Coba verifikasi dengan current + previous key (rotasi support)
+    const result = await verifyJwtWithRotation<JWTPayload>(token, (secret) =>
+      jwtVerify(token, secret).then((r) => r.payload)
+    );
+
+    if (!result) return null;
+    const payload = result.payload;
+
     if (!payload || typeof payload !== "object") return null;
     const p = payload as Record<string, unknown>;
     if (

@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   const profile = await prisma.profile.findUnique({
@@ -70,7 +70,7 @@ export async function GET(request: Request) {
 export async function DELETE(request: Request) {
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   const profile = await prisma.profile.findUnique({

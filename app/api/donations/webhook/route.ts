@@ -3,6 +3,7 @@ import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { timingSafeEqual } from "crypto";
 import type { DonationStatus } from "@prisma/client";
+import { webhookLimiter } from "@/lib/rate-limit";
 
 /**
  * Xendit webhook handler for payment status notifications.
@@ -14,6 +15,13 @@ import type { DonationStatus } from "@prisma/client";
  */
 export async function POST(request: Request) {
   try {
+    // Rate limit webhook — cegah flood
+    const ip = request.headers.get("x-forwarded-for") || "webhook";
+    const limiter = await webhookLimiter.check(`webhook:${ip}`);
+    if (!limiter.allowed) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     const expectedToken = process.env.XENDIT_WEBHOOK_TOKEN;
 
     if (expectedToken) {
@@ -72,7 +80,7 @@ export async function POST(request: Request) {
     // Xendit may send duplicate webhooks. Check if already processed.
     const existing = await prisma.donation.findFirst({
       where: { invoiceId: id },
-      select: { id: true, status: true, projectId: true, amountIdr: true, userId: true },
+      select: { id: true, status: true, projectId: true, amountIdr: true, userId: true, donorName: true, donorEmail: true, tierId: true },
     });
 
     if (!existing) {
@@ -113,6 +121,23 @@ export async function POST(request: Request) {
             metadata: JSON.stringify({ invoiceId: id, donationId: existing.id }),
           },
         });
+
+        // Notifikasi admin ada donasi baru
+        const admins = await prisma.profile.findMany({
+          where: { role: "admin" },
+          select: { id: true },
+        });
+        for (const admin of admins) {
+          await tx.notification.create({
+            data: {
+              userId: admin.id,
+              type: "donation",
+              title: `Donasi baru: Rp${existing.amountIdr.toLocaleString("id-ID")}`,
+              body: `Donasi dari ${existing.donorName || existing.donorEmail || "anonim"} — ${existing.tierId || "Tanpa tier"}`,
+              link: "/admin/donations",
+            },
+          });
+        }
 
         // Update project raised amount if this is a project-specific donation
         if (existing.projectId) {

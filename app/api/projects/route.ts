@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logError } from "@/lib/error-logger";
 export const dynamic = "force-dynamic";
 import { PROJECT_PROPOSAL_THRESHOLD } from "@/lib/data";
 
@@ -31,6 +32,7 @@ export async function GET() {
     return NextResponse.json({ projects });
   } catch (err) {
     console.error("[Projects GET]", err);
+    await logError({ message: "Projects GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
     return NextResponse.json({ projects: [] }, { status: 200 });
   }
 }

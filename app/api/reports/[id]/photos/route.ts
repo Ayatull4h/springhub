@@ -47,6 +47,15 @@ export async function POST(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    // Batasi total foto per report (max 5)
+    const existingPhotoCount = await prisma.reportPhoto.count({ where: { reportId: report.id } });
+    if (existingPhotoCount >= 5) {
+      return NextResponse.json(
+        { error: "Maksimal 5 foto per laporan. Hapus foto lama untuk upload baru." },
+        { status: 400 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("photo") as File | null;
     const fieldId = (formData.get("field_id") as string) || "photo";

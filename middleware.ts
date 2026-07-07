@@ -57,6 +57,21 @@ export async function middleware(request: NextRequest) {
       url.searchParams.set("redirect", pathname);
       return NextResponse.redirect(url);
     }
+
+    // IP whitelist untuk admin (optional)
+    const allowedCidrs = process.env.ADMIN_ALLOWED_IPS;
+    if (allowedCidrs) {
+      const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "";
+      const ranges = allowedCidrs.split(",").map(s => s.trim()).filter(Boolean);
+      if (ip && ranges.length > 0) {
+        const allowed = ranges.some(range =>
+          range.includes("/") ? ip.startsWith(range.split("/")[0].split(".").slice(0, 2).join(".")) : ip === range
+        );
+        if (!allowed) {
+          return new NextResponse("Access denied: IP not allowed", { status: 403 });
+        }
+      }
+    }
   }
 
   if (AUTH_ROUTES.includes(pathname)) {

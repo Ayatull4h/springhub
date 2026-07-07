@@ -23,8 +23,6 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@sentry/nextjs": "^10.55.0",
-
-
     "archiver": "^8.0.0",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.10.0",
@@ -37,8 +35,8 @@
     "jose": "^6.2.3",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.408.0",
-    "next": "14.2.5",
-    "nodemailer": "^8.0.10",
+    "next": "^14.2.35",
+    "nodemailer": "^8.0.11",
     "pino": "^10.3.1",
     "prisma": "^7.8.0",
     "react": "^18.3.1",
@@ -49,8 +47,6 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-
-    "@upstash/context7-mcp": "^3.2.1",
     "@modelcontextprotocol/server-filesystem": "^2026.1.14",
     "@modelcontextprotocol/server-memory": "^2026.1.26",
     "@modelcontextprotocol/server-puppeteer": "^2025.5.12",
@@ -65,15 +61,16 @@
     "@types/nodemailer": "^8.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@upstash/context7-mcp": "^3.2.1",
     "@vitejs/plugin-react": "^6.0.2",
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.5.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.35",
     "jsdom": "^29.1.1",
     "md-to-pdf": "^5.2.5",
     "pg": "^8.21.0",
-    "postcss": "^8.4.39",
-    "tailwindcss": "^3.4.6",
+    "postcss": "^8.5.16",
+    "tailwindcss": "^3.4.19",
     "tsx": "^4.22.0",
     "typescript": "^5.5.3",
     "vitest": "^4.1.6"

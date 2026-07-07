@@ -39,8 +39,24 @@ export const prisma: PrismaClient = getPrisma();
 /**
  * Get a user-friendly error message from an unknown error.
  * Handles Prisma, JWT, Zod, and generic errors gracefully.
+ * Automatically logs all errors to AppError table (fire-and-forget).
  */
 export function getErrorMessage(error: unknown, fallback = "Terjadi kesalahan. Silakan coba lagi."): string {
+  // Log error ke AppError secara asynchronous
+  if (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : "";
+    import("@/lib/error-logger").then(({ logError }) => {
+      logError({
+        message: msg.slice(0, 500),
+        level: "error",
+        source: "api",
+        stack: stack?.slice(0, 2000) || "",
+        metadata: { fallback },
+      }).catch(() => {});
+    }).catch(() => {});
+  }
+
   if (typeof error === "string") return error;
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P1001") return "Database tidak tersedia. Silakan coba lagi.";

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 
 function isAdmin(session: { userId: string; role: string } | null) {
   return session?.role === "admin";
@@ -14,7 +16,7 @@ export async function GET(
 ) {
   const session = await getSession();
   if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     const course = await prisma.course.findUnique({
@@ -24,6 +26,7 @@ export async function GET(
     if (!course) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
+    auditLog("put course", "course " + course.id);
     return NextResponse.json({ course });
   } catch (error) {
     console.error("Admin course fetch error::", error instanceof Error ? error.message : error);
@@ -39,9 +42,14 @@ export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getSession();
   if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     const body = await request.json();
@@ -118,9 +126,14 @@ export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getSession();
   if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     await prisma.course.delete({
