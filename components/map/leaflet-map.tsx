@@ -1,8 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { MapContainer, TileLayer, CircleMarker, Tooltip, Circle, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Tooltip, Popup, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 // Status (condition) based colors for springs:
@@ -139,8 +138,22 @@ function FitBounds({ data }: { data: (ReportData | SpringGroup)[] }) {
   return null;
 }
 
-export function LeafletMap({ reports }: { reports: ReportData[] }) {
-  const router = useRouter();
+function getMarkerColor(
+  formSlug: string,
+  formColors?: Record<string, { color: string; fillColor: string; label: string }>
+): { color: string; fillColor: string; label: string } {
+  if (formColors?.[formSlug]) return formColors[formSlug];
+  const status = getStatusFromForm(formSlug);
+  return statusColors[status] ?? statusColors.degraded;
+}
+
+export function LeafletMap({
+  reports,
+  formColors,
+}: {
+  reports: ReportData[];
+  formColors?: Record<string, { color: string; fillColor: string; label: string }>;
+}) {
   const [tileError, setTileError] = useState(false);
   const [springNames, setSpringNames] = useState<Record<string, string>>({});
 
@@ -241,11 +254,11 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
 
         {/* ═══ Spring Group markers (one per spring) ═══ */}
         {springs.groups.map((sg) => {
-          const status = getStatusFromForm(sg.latestFormSlug);
-          const fc = statusColors[status] ?? statusColors.degraded;
+          const fc = getMarkerColor(sg.latestFormSlug, formColors);
           const actCount = sg.reports.length;
+          const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";
+          const detailUrl = `/${typeFromForm}/${sg.slug || sg.id}`;
 
-          // Larger radius for springs with more reports
           const radius = Math.min(12, 6 + actCount * 1.5);
 
           return (
@@ -258,12 +271,6 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
                   fillColor: fc.fillColor,
                   fillOpacity: 0.8,
                   weight: 3,
-                }}
-                eventHandlers={{
-                  click: () => {
-                    const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";
-                    router.push(`/${typeFromForm}/${sg.slug || sg.id}`);
-                  },
                 }}
               >
                 <Tooltip direction="top" offset={[0, -8]}>
@@ -281,6 +288,32 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
                     <span className="text-brand-600">Klik untuk detail</span>
                   </div>
                 </Tooltip>
+                <Popup>
+                  <div className="min-w-[200px] text-sm">
+                    <strong className="text-base">{sg.name}</strong>
+                    <div className="mt-1 text-xs text-ink-muted">
+                      {actCount} laporan · terakhir{" "}
+                      {new Date(sg.latestCreatedAt).toLocaleDateString("id-ID", {
+                        day: "numeric", month: "short", year: "numeric",
+                      })}
+                    </div>
+                    <div className="mt-2 space-y-1">
+                      {sg.reports.slice(0, 10).map((r) => (
+                        <div key={r.id} className="flex items-center gap-1 text-xs border-t border-ink-line/40 pt-1 first:border-t-0 first:pt-0">
+                          <span>{formIcons[r.formSlug] || "📋"}</span>
+                          <span className="capitalize text-ink-muted">{r.formSlug.replace(/-/g, " ")}</span>
+                          {r.user?.username && <span className="text-ink-subtle">— {r.user.username}</span>}
+                        </div>
+                      ))}
+                    </div>
+                    <a
+                      href={detailUrl}
+                      className="mt-2 block rounded-md bg-brand-600 px-3 py-1.5 text-center text-xs font-semibold text-white hover:bg-brand-700"
+                    >
+                      Lihat Detail →
+                    </a>
+                  </div>
+                </Popup>
               </CircleMarker>
               <Circle
                 center={[sg.snappedLat, sg.snappedLng]}
@@ -299,8 +332,8 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
 
         {/* ═══ Individual markers (no springId) — legacy fallback ═══ */}
         {springs.noSpring.map((r) => {
-          const status = getStatusFromForm(r.formSlug);
-          const fc = statusColors[status] ?? statusColors.degraded;
+          const fc = getMarkerColor(r.formSlug, formColors);
+          const detailUrl = `/${formIconsToType[r.formSlug] || "spring"}/${r.id}`;
           return (
             <Fragment key={r.id}>
               <CircleMarker
@@ -330,6 +363,27 @@ export function LeafletMap({ reports }: { reports: ReportData[] }) {
                     )}
                   </div>
                 </Tooltip>
+                <Popup>
+                  <div className="min-w-[180px] text-sm">
+                    <strong className="capitalize">{r.formSlug.replace(/-/g, " ")}</strong>
+                    <div className="mt-1 text-xs text-ink-muted">
+                      {new Date(r.createdAt).toLocaleDateString("id-ID", {
+                        day: "numeric", month: "short", year: "numeric",
+                      })}
+                    </div>
+                    {r.user?.username && (
+                      <div className="text-xs text-ink-muted">
+                        oleh {r.user.username}{r.user?.region ? ` · ${r.user.region}` : ""}
+                      </div>
+                    )}
+                    <a
+                      href={detailUrl}
+                      className="mt-2 block rounded-md bg-brand-600 px-3 py-1.5 text-center text-xs font-semibold text-white hover:bg-brand-700"
+                    >
+                      Lihat Detail →
+                    </a>
+                  </div>
+                </Popup>
               </CircleMarker>
               <Circle
                 center={[r.snappedLat!, r.snappedLng!]}

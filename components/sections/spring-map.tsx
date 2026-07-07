@@ -40,15 +40,26 @@ type CategoryItem = {
   color: string;
 };
 
-function getStatusFromForm(formSlug: string): string {
-  switch (formSlug) {
-    case "spring-monitoring": return "healthy";
-    case "spring-restoration": return "restoration";
-    case "trench-development":
-    case "tree-planting": return "restoration";
-    case "seedling-stock": return "healthy";
-    default: return "degraded";
+function getStatusFromForm(formSlug: string, formTitle?: string): string {
+  // Hardcoded untuk 5 form static
+  const staticMap: Record<string, string> = {
+    "spring-monitoring": "healthy",
+    "spring-restoration": "restoration",
+    "trench-development": "restoration",
+    "tree-planting": "restoration",
+    "seedling-stock": "healthy",
+  };
+  if (staticMap[formSlug]) return staticMap[formSlug];
+
+  // Fallback: tebak dari title/description
+  const lower = (formTitle || formSlug).toLowerCase();
+  if (lower.includes("restorasi") || lower.includes("restoration") || lower.includes("tanam") || lower.includes("trench") || lower.includes("rorak")) {
+    return "restoration";
   }
+  if (lower.includes("monitoring") || lower.includes("pemantauan") || lower.includes("bibit") || lower.includes("seedling") || lower.includes("seed")) {
+    return "healthy";
+  }
+  return "degraded";
 }
 
 function findCategoryForStatus(formSlug: string, status: string, categories: CategoryItem[]): CategoryItem | undefined {
@@ -185,7 +196,8 @@ export function SpringMap() {
     for (const r of reports) {
       total[r.formSlug] = (total[r.formSlug] || 0) + 1;
       const cats = formCategories.get(r.formSlug) || [];
-      const status = getStatusFromForm(r.formSlug);
+      const formTitle = t(formTitleI18nKey(r.formSlug));
+      const status = getStatusFromForm(r.formSlug, formTitle);
       const matched = findCategoryForStatus(r.formSlug, status, cats);
       if (matched) {
         if (!byCat[r.formSlug]) byCat[r.formSlug] = {};
@@ -193,7 +205,7 @@ export function SpringMap() {
       }
     }
     return { total, byCategory: byCat };
-  }, [reports, formCategories]);
+  }, [reports, formCategories, t]);
 
   const formFilterOptions = useMemo(() => {
     return allForms
@@ -220,6 +232,18 @@ export function SpringMap() {
       });
   }, [allForms, formCounts, formCategories, t]);
 
+  // Build formColors lookup from map types/categories (data-driven, overrides hardcoded)
+  const formColors = useMemo(() => {
+    const colors: Record<string, { color: string; fillColor: string; label: string }> = {};
+    for (const [formSlug, cats] of formCategories.entries()) {
+      if (cats.length > 0) {
+        const c = cats[0];
+        colors[formSlug] = { color: c.color, fillColor: c.color, label: c.name };
+      }
+    }
+    return colors;
+  }, [formCategories]);
+
   // Filter reports by form slug + optional category slug
   const visible = useMemo(
     () => reports.filter(r => {
@@ -227,7 +251,8 @@ export function SpringMap() {
       if (r.formSlug !== selectedType) return false;
       if (selectedCategory) {
         const cats = formCategories.get(r.formSlug) || [];
-        const status = getStatusFromForm(r.formSlug);
+        const formTitle = t(formTitleI18nKey(r.formSlug));
+        const status = getStatusFromForm(r.formSlug, formTitle);
         const matched = findCategoryForStatus(r.formSlug, status, cats);
         const catSlug = selectedCategory.replace(`cat:${selectedType}:`, "");
         return matched?.slug === catSlug;
@@ -283,7 +308,7 @@ export function SpringMap() {
           </div>
         </div>
         <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
-<LeafletMap reports={visible} />
+<LeafletMap reports={visible} formColors={formColors} />
         </div>
       </div>
 
@@ -321,7 +346,8 @@ export function SpringMap() {
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {visibleList.map((r) => {
               const cats = formCategories.get(r.formSlug) || [];
-              const status = getStatusFromForm(r.formSlug);
+              const formTitle = t(formTitleI18nKey(r.formSlug));
+              const status = getStatusFromForm(r.formSlug, formTitle);
               const matched = findCategoryForStatus(r.formSlug, status, cats);
               const chipColor = matched?.color || "#6b7280";
               const chipLabel = matched?.name || status.charAt(0).toUpperCase() + status.slice(1);
