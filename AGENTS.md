@@ -22,7 +22,7 @@
 
 ## Data Privacy — RLS First
 
-**Prinsip**: Data sensitif TIDAK pernah dikirim ke frontend publik. Perlindungan di level database (Supabase RLS), bukan UI hiding.
+**Prinsip**: Data sensitif TIDAK pernah dikirim ke frontend publik. Perlindungan di level database (PostgreSQL RLS), bukan UI hiding.
 
 | Data | Publik | Volunteer | Admin |
 |---|---|---|---|---|
@@ -84,7 +84,8 @@ Semua perhitungan poin dilakukan **server-side**, tidak bisa dimanipulasi dari f
 ## Arsitektur Teknis
 
 ```
-Frontend (Vercel)
+Frontend (VPS Docker)
+├── Nginx (reverse proxy + static files)
 ├── Next.js 14 App Router
 ├── Tailwind CSS + custom brand palette
 ├── Leaflet / react-leaflet (dynamic import, SSR false)
@@ -92,16 +93,17 @@ Frontend (Vercel)
 ├── next-intl (EN/ID — planned)
 └── PWA (manifest + service worker — planned)
 
-Backend (Supabase)
-├── Postgres DB + RLS policies
-├── Auth (magic link + Google OAuth + phone OTP)
-├── Storage (foto kompresi 720p + hapus EXIF)
-└── Realtime (leaderboard live update — planned)
+Backend (PostgreSQL + Redis)
+├── PostgreSQL 16 (Docker)
+├── Redis 7 (Docker) — cache, queue, rate limit
+├── Queue Worker — offline sync, notification
+└── Prisma ORM — migration + query
 
 Third Party
 ├── Xendit (payment gateway — invoices + webhook)
 ├── OpenStreetMap (map tiles)
-└── WhatsApp API (phone OTP verification)
+├── Cloudflare (DNS, proxy, WAF)
+└── Resend (email)
 ```
 
 ---
@@ -153,7 +155,7 @@ Third Party
 | 4.3 | Dark mode toggle | P2 |
 | 4.4 | Data saver mode (navigator.connection.saveData) | P2 |
 | 4.5 | Skeleton loading states untuk semua section | P2 |
-| 4.6 | Newsletter backend (simpan ke Supabase) | P2 |
+| 4.6 | Newsletter backend (simpan ke database) | P2 |
 | 4.7 | Halaman statis: Help Center, FAQ, Privacy, Terms | P3 |
 
 ---
@@ -173,7 +175,7 @@ Third Party
 3. **Location snap**: 5km grid snapping di `lib/geo.ts` — wajib untuk semua publikasi
 4. **Email/phone**: hanya admin yang bisa lihat di panel terpisah, tidak pernah di frontend publik
 5. **Points server-side**: semua perhitungan poin di server, jangan pernah kirim poin dari client
-6. **RLS**: setiap tabel Supabase harus punya policies untuk read/write per role
+6. **RLS**: setiap tabel harus punya policies untuk read/write per role
 7. **CSRF**: form submission pakai token untuk cegah cross-site request
 
 ### Database Requirements
@@ -202,7 +204,7 @@ Third Party
 
 ## Catatan Pengerjaan
 
-## Semua perubahan sudah di-push ke GitHub dan auto-deploy ke Vercel.
+## Semua perubahan sudah di-push ke GitHub.
 ## Manual test plan tersedia di MANUAL-TEST.md (99 test case).
 
 ---

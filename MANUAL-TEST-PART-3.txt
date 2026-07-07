@@ -23,7 +23,7 @@ AKUN TEST:
 
 [x] TC-01 Landing page render
     Device  : Both
-    Langkah : 1. Buka incognito  2. Akses https://springhub.vercel.app/
+    Langkah : 1. Buka incognito  2. Akses https://www.springhub.id/
     Harapan : Landing page tampil (navbar, hero, map, dashboard, media,
               activities, footer)
     Catatan : -
@@ -75,7 +75,7 @@ AKUN TEST:
     Langkah : 1. Upload 1 foto (1/5)  2. Upload 2 foto (3/5)
               3. Upload 2 foto (5/5)  4. Submit
     Harapan : Semua 5 foto terkirim (tidak hanya batch terakhir).
-              Foto tersimpan di Supabase Storage
+              Foto tersimpan di server storage
     Catatan : -
 
 [x] TC-09 Batas 5 laporan/hari untuk guest
@@ -288,7 +288,7 @@ AKUN TEST:
 
 [x] TC-37 Install PWA
     Device  : HP
-    Langkah : 1. Chrome Android  2. Buka springhub.vercel.app
+    Langkah : 1. Chrome Android  2. Buka www.springhub.id
               3. Install prompt atau menu > Install app
     Harapan : Bisa diinstall sebagai PWA
     Catatan : -
@@ -309,7 +309,7 @@ AKUN TEST:
 
 [x] TC-37 Install PWA
     Device  : HP
-    Langkah : 1. Chrome Android  2. Buka springhub.vercel.app
+    Langkah : 1. Chrome Android  2. Buka www.springhub.id
               3. Install prompt atau menu > Install app
     Harapan : Bisa diinstall sebagai PWA
     Catatan : -
@@ -415,7 +415,7 @@ AKUN TEST:
     Device  : Both
     Langkah : 1. Upload 3-5 foto (batch/bertahap)  2. Isi field
               3. Submit
-    Harapan : Sukses. Semua foto terupload. Tersimpan di Supabase
+    Harapan : Sukses. Semua foto terupload. Tersimpan di server
               Storage. Thumbnail di /admin/reports
     Catatan : -
 
@@ -930,7 +930,7 @@ TOTAL                          104       90        0       14
    - ucup@springhub.id / ucup12345 (Sesi 8: password min 8 char + 20.168 pts)
    - volunteer@springhub.id / vol12345
    - admin@springhub.id / admin123
-   - Jalankan `prisma/fix-ucup.sql` di Supabase SQL Editor jika seed belum
+   - Jalankan `prisma/fix-ucup.sql` di PostgreSQL client jika seed belum
      diupdate, atau re-run `npx prisma db seed`.
 
 2. Connection pool: Pool size 3→10, idle timeout 10s→30s (fix Sesi 6).
@@ -946,7 +946,7 @@ TOTAL                          104       90        0       14
    missing deps — aman, existing).
 
 6. Masalah login (pool habis): Jika login error 500 dengan pesan
-   "max clients reached", restart pool Supabase via Dashboard SQL
+   "max clients reached", restart pool PostgreSQL via Dashboard SQL
    atau tunggu 5 menit. Fix permanen: ?pgbouncer=true sudah ditambah
    di connection string (perlu push & deploy).
 
@@ -999,11 +999,11 @@ TOTAL                          104       90        0       14
     di privacy page → "melaksanakan". Semua konten terbaca di dark
     mode.
 
-17. Pool Supabase (Sesi 9): Size max 3→5, idle timeout 10s→30s,
+17. Connection pool (Sesi 9): Size max 3→5, idle timeout 10s→30s,
     connection timeout 5s→10s. SQL fix di `prisma/fix-pool.sql` —
-    jalanin di Supabase Dashboard untuk terminate idle connections.
-    JANGAN jalankan ALTER DATABASE (sudah dihapus — tidak valid di
-    Supabase). Jika masih EMAXCONNSESSION: Dashboard > Database >
+    jalanin di PostgreSQL admin untuk terminate idle connections.
+    JANGAN jalankan ALTER DATABASE (sudah dihapus). Jika masih
+    EMAXCONNSESSION: admin > Database >
     Reset connection pool.
 
 ======================================================================

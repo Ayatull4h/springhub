@@ -2,7 +2,7 @@
 
 A community-driven web platform under **Jaga Semesta** to coordinate field work, funding, capacity building, and gamified volunteer activity around restoring Indonesia's artesian springs.
 
-**Stack:** Next.js 14 App Router · TypeScript strict · Tailwind CSS · Leaflet · Supabase PostgreSQL · Prisma ORM
+**Stack:** Next.js 14 App Router · TypeScript strict · Tailwind CSS · Leaflet · PostgreSQL + Redis · Prisma ORM · VPS (Docker)
 
 ---
 

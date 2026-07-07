@@ -13,9 +13,6 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(16, "JWT_SECRET must be at least 16 characters"),
 
   // ── High — features will break without these ──────────────────────────
-  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
-  NEXT_PUBLIC_SUPABASE_URL: z.string().optional(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
   UPLOAD_DIR: z.string().optional().default("/data/uploads"),
   UPLOAD_URL_PREFIX: z.string().optional().default("/uploads"),
   XENDIT_SECRET_KEY: z.string().optional(),

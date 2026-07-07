@@ -24,8 +24,7 @@
     "@prisma/client": "^7.8.0",
     "@sentry/nextjs": "^10.55.0",
 
-    "@supabase/ssr": "^0.10.3",
-    "@supabase/supabase-js": "^2.105.4",
+
     "archiver": "^8.0.0",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.10.0",
@@ -50,7 +49,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@supabase/mcp-server-supabase": "^0.8.2",
+
     "@upstash/context7-mcp": "^3.2.1",
     "@modelcontextprotocol/server-filesystem": "^2026.1.14",
     "@modelcontextprotocol/server-memory": "^2026.1.26",

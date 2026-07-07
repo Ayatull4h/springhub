@@ -1,23 +1,7 @@
-/**
- * Photo URL helper — single source of truth for building photo URLs.
- *
- * Strategy:
- * 1. If Supabase URL is configured, use Supabase Storage (legacy)
- * 2. If S3_PUBLIC_URL is configured, use S3 (Cloudflare R2)
- * 3. Otherwise, use local filesystem path served by Nginx
- */
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const S3_PUBLIC = process.env.S3_PUBLIC_URL || "";
 const UPLOAD_PREFIX = process.env.UPLOAD_URL_PREFIX || "/uploads";
 
-/**
- * Get the base URL prefix for photo storage.
- */
 export function getPhotoUrlPrefix(): string {
-  if (SUPABASE_URL) {
-    return `${SUPABASE_URL}/storage/v1/object/public/photos/`;
-  }
   if (S3_PUBLIC) {
     return `${S3_PUBLIC}/`;
   }

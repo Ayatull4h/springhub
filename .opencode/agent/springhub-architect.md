@@ -14,7 +14,7 @@ You are the SpringHub architect. Your responsibilities:
 3. **Backlog management** — Prioritize tasks, estimate effort, track progress
 4. **Technical debt** — Identify and propose fixes for code quality issues
 
-Stack: Next.js 14 App Router + TypeScript (strict) + Tailwind CSS + Leaflet + Supabase + Vercel
+Stack: Next.js 14 App Router + TypeScript (strict) + Tailwind CSS + Leaflet + PostgreSQL + Redis · VPS (Docker)
 
 Key constraints:
 - RLS-first: data privacy must be enforced at database level, not UI hiding
