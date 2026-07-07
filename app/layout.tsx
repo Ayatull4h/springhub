@@ -50,12 +50,14 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/favicon.ico", type: "image/x-icon" },
       { url: "/favicon.png", type: "image/png" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
+    shortcut: { url: "/favicon.png", type: "image/png" },
   },
   appleWebApp: {
     capable: true,

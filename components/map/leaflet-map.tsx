@@ -150,9 +150,11 @@ function getMarkerColor(
 export function LeafletMap({
   reports,
   formColors,
+  formLookup,
 }: {
   reports: ReportData[];
   formColors?: Record<string, { color: string; fillColor: string; label: string }>;
+  formLookup?: Record<string, { title: string; typeSlug: string }>;
 }) {
   const [tileError, setTileError] = useState(false);
   const [springNames, setSpringNames] = useState<Record<string, string>>({});
@@ -298,13 +300,16 @@ export function LeafletMap({
                       })}
                     </div>
                     <div className="mt-2 space-y-1">
-                      {sg.reports.slice(0, 10).map((r) => (
-                        <div key={r.id} className="flex items-center gap-1 text-xs border-t border-ink-line/40 pt-1 first:border-t-0 first:pt-0">
-                          <span>{formIcons[r.formSlug] || "📋"}</span>
-                          <span className="capitalize text-ink-muted">{r.formSlug.replace(/-/g, " ")}</span>
-                          {r.user?.username && <span className="text-ink-subtle">— {r.user.username}</span>}
-                        </div>
-                      ))}
+                      {sg.reports.slice(0, 10).map((r) => {
+                        const formInfo = formLookup?.[r.formSlug];
+                        return (
+                          <div key={r.id} className="flex items-center gap-1 text-xs border-t border-ink-line/40 pt-1 first:border-t-0 first:pt-0">
+                            <span>{formIcons[r.formSlug] || "📋"}</span>
+                            <span className="text-ink-muted">{formInfo?.title || r.formSlug.replace(/-/g, " ")}</span>
+                            {r.user?.username && <span className="text-ink-subtle">— {r.user.username}</span>}
+                          </div>
+                        );
+                      })}
                     </div>
                     <a
                       href={detailUrl}
@@ -365,7 +370,7 @@ export function LeafletMap({
                 </Tooltip>
                 <Popup>
                   <div className="min-w-[180px] text-sm">
-                    <strong className="capitalize">{r.formSlug.replace(/-/g, " ")}</strong>
+                    <strong>{formLookup?.[r.formSlug]?.title || r.formSlug.replace(/-/g, " ")}</strong>
                     <div className="mt-1 text-xs text-ink-muted">
                       {new Date(r.createdAt).toLocaleDateString("id-ID", {
                         day: "numeric", month: "short", year: "numeric",

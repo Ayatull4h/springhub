@@ -244,6 +244,23 @@ export function SpringMap() {
     return colors;
   }, [formCategories]);
 
+  // Build formLookup — title asli dari DB + typeSlug untuk navigasi
+  const formLookup = useMemo(() => {
+    const lookup: Record<string, { title: string; typeSlug: string }> = {};
+    for (const f of allForms) {
+      lookup[f.slug] = { title: f.title, typeSlug: f.slug };
+    }
+    // Override typeSlug dari MapPointType
+    for (const mt of mapTypesWithCats) {
+      for (const f of allForms) {
+        if (f.slug === mt.slug) {
+          lookup[f.slug] = { ...lookup[f.slug], typeSlug: mt.slug };
+        }
+      }
+    }
+    return lookup;
+  }, [allForms, mapTypesWithCats]);
+
   // Filter reports by form slug + optional category slug
   const visible = useMemo(
     () => reports.filter(r => {
@@ -308,7 +325,7 @@ export function SpringMap() {
           </div>
         </div>
         <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
-<LeafletMap reports={visible} formColors={formColors} />
+<LeafletMap reports={visible} formColors={formColors} formLookup={formLookup} />
         </div>
       </div>
 
