@@ -79,9 +79,10 @@ export async function POST(request: Request) {
     }
 
     // Cari MapPointType berdasarkan contributionType dulu
+    // Setiap form dapet MapPointType sendiri (bukan share)
     const contribToType: Record<string, string> = {
       monitoring: "spring",
-      restoration: "spring",
+      restoration: "spring-restoration",
       trench: "trench",
       tree_planting: "tree-planting",
       seedling_stock: "seedling",

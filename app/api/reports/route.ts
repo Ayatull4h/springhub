@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getGuestId } from "@/lib/guest";
+import { buildPhotoUrl } from "@/lib/photo-url";
 import {
   formSchemaMap,
   getForm,
@@ -334,6 +335,12 @@ export async function GET(request: Request) {
         snappedLng: true,
         springId: true,
         createdAt: true,
+        featuredPhotoId: true,
+        photos: {
+          select: { id: true, storagePath: true },
+          take: 1,
+          orderBy: { createdAt: "desc" },
+        },
         user: {
           select: { username: true, region: true },
         },
@@ -352,7 +359,17 @@ export async function GET(request: Request) {
     ).length;
     const degraded = total - healthy - restoration;
 
-    return NextResponse.json({ reports, stats: { total, healthy, restoration, degraded } });
+    // Enrich reports with featured photo URL
+    const enriched = reports.map((r: { featuredPhotoId: string | null; photos: { id: string; storagePath: string }[] }) => ({
+      ...r,
+      photoUrl: r.featuredPhotoId
+        ? buildPhotoUrl(r.photos.find(p => p.id === r.featuredPhotoId)?.storagePath || "")
+        : r.photos.length > 0
+        ? buildPhotoUrl(r.photos[0].storagePath)
+        : null,
+    }));
+
+    return NextResponse.json({ reports: enriched, stats: { total, healthy, restoration, degraded } });
   } catch (error) {
     console.error("Reports fetch error:", error instanceof Error ? error.message : error);
     return NextResponse.json(

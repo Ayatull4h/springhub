@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { MapContainer, TileLayer, CircleMarker, Tooltip, Popup, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -34,6 +35,7 @@ type ReportData = {
   snappedLng: number | null;
   springId: string | null;
   createdAt: string;
+  photoUrl?: string | null;
   user?: { username: string; region: string };
 };
 
@@ -46,11 +48,12 @@ type SpringGroup = {
   reports: ReportData[];
   latestFormSlug: string;
   latestCreatedAt: string;
+  springCount: number;
 };
 
 const formIconsToType: Record<string, string> = {
   "spring-monitoring": "spring",
-  "spring-restoration": "spring",
+  "spring-restoration": "spring-restoration",
   "tree-planting": "tanam-pohon",
   "trench-development": "trench",
   "seedling-stock": "seedling",
@@ -156,39 +159,50 @@ export function LeafletMap({
   formColors?: Record<string, { color: string; fillColor: string; label: string }>;
   formLookup?: Record<string, { title: string; typeSlug: string }>;
 }) {
+  const router = useRouter();
   const [tileError, setTileError] = useState(false);
   const [springNames, setSpringNames] = useState<Record<string, string>>({});
 
-  // Group reports by springId → one marker per spring
+  // Group reports by snapped location → one marker per grid (bisa banyak spring)
   const springs = useMemo(() => {
-    const map = new Map<string, ReportData[]>();
+    const locMap = new Map<string, { reports: ReportData[]; springIds: Set<string>; springNames: Set<string> }>();
     const noSpring: ReportData[] = [];
 
     for (const r of reports) {
       if (r.springId && r.snappedLat && r.snappedLng) {
-        const list = map.get(r.springId) || [];
-        list.push(r);
-        map.set(r.springId, list);
+        const key = `${r.snappedLat.toFixed(3)}_${r.snappedLng.toFixed(3)}`;
+        if (!locMap.has(key)) {
+          locMap.set(key, { reports: [], springIds: new Set(), springNames: new Set() });
+        }
+        const entry = locMap.get(key)!;
+        entry.reports.push(r);
+        entry.springIds.add(r.springId);
+        if (r.springId) {
+          const name = springNames[r.springId];
+          if (name) entry.springNames.add(name);
+        }
       } else if (r.snappedLat && r.snappedLng) {
         noSpring.push(r);
       }
     }
 
     const groups: SpringGroup[] = [];
-    for (const [id, list] of map.entries()) {
-      // Sort by date desc → latest first for status
-      list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      const latest = list[0];
-      const name = springNames[id] || "Mata Air";
+    for (const [, entry] of locMap.entries()) {
+      entry.reports.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      const latest = entry.reports[0];
+      const names = Array.from(entry.springNames);
+      const name = names.length > 0 ? names.join(", ") : `Mata Air (${entry.springIds.size} sumber)`;
+      const firstId = Array.from(entry.springIds)[0] || "unknown";
       groups.push({
-        id,
+        id: firstId,
         name,
-        slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || id,
+        slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || firstId,
         snappedLat: latest.snappedLat!,
         snappedLng: latest.snappedLng!,
-        reports: list,
+        reports: entry.reports,
         latestFormSlug: latest.formSlug,
         latestCreatedAt: latest.createdAt,
+        springCount: entry.springIds.size,
       });
     }
 
@@ -261,7 +275,7 @@ export function LeafletMap({
           const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";
           const detailUrl = `/${typeFromForm}/${sg.slug || sg.id}`;
 
-          const radius = Math.min(12, 6 + actCount * 1.5);
+                  const radius = Math.min(12, 6 + actCount * 1.5);
 
           return (
             <Fragment key={`spring-${sg.id}`}>
@@ -273,6 +287,9 @@ export function LeafletMap({
                   fillColor: fc.fillColor,
                   fillOpacity: 0.8,
                   weight: 3,
+                }}
+                eventHandlers={{
+                  click: () => router.push(detailUrl),
                 }}
               >
                 <Tooltip direction="top" offset={[0, -8]}>
@@ -294,11 +311,21 @@ export function LeafletMap({
                   <div className="min-w-[200px] text-sm">
                     <strong className="text-base">{sg.name}</strong>
                     <div className="mt-1 text-xs text-ink-muted">
-                      {actCount} laporan · terakhir{" "}
+                      {actCount} laporan{sg.springCount > 1 ? ` · ${sg.springCount} sumber` : ""} · terakhir{" "}
                       {new Date(sg.latestCreatedAt).toLocaleDateString("id-ID", {
                         day: "numeric", month: "short", year: "numeric",
                       })}
                     </div>
+                    {sg.reports[0]?.photoUrl && (
+                      <div className="mt-2">
+                        <img
+                          src={sg.reports[0].photoUrl}
+                          alt=""
+                          className="h-16 w-16 rounded-lg object-cover border border-ink-line/40"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                      </div>
+                    )}
                     <div className="mt-2 space-y-1">
                       {sg.reports.slice(0, 10).map((r) => {
                         const formInfo = formLookup?.[r.formSlug];
@@ -351,6 +378,9 @@ export function LeafletMap({
                   fillOpacity: 0.7,
                   weight: 2,
                 }}
+                eventHandlers={{
+                  click: () => router.push(detailUrl),
+                }}
               >
                 <Tooltip direction="top" offset={[0, -8]}>
                   <div className="text-xs">
@@ -372,6 +402,16 @@ export function LeafletMap({
                 <Popup>
                   <div className="min-w-[180px] text-sm">
                     <strong>{formLookup?.[r.formSlug]?.title || r.formSlug.replace(/-/g, " ")}</strong>
+                    {r.photoUrl && (
+                      <div className="mt-1.5">
+                        <img
+                          src={r.photoUrl}
+                          alt=""
+                          className="h-20 w-full rounded-lg object-cover border border-ink-line/40"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                      </div>
+                    )}
                     <div className="mt-1 text-xs text-ink-muted">
                       {new Date(r.createdAt).toLocaleDateString("id-ID", {
                         day: "numeric", month: "short", year: "numeric",

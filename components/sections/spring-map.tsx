@@ -174,7 +174,7 @@ export function SpringMap() {
     if (mapTypesWithCats.length > 0) {
       const fallbacks: Record<string, string> = {
         "spring-monitoring": "spring",
-        "spring-restoration": "spring",
+        "spring-restoration": "spring-restoration",
         "trench-development": "trench",
         "tree-planting": "tree-planting",
         "seedling-stock": "seedling",

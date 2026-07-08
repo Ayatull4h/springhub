@@ -45,6 +45,18 @@ export async function GET(
       return NextResponse.json({ error: "Spring not found" }, { status: 404 });
     }
 
+    // Cari spring lain di snapped location yang SAMA (umbul asem & umbul pengilon)
+    const siblings = await prisma.spring.findMany({
+      where: {
+        snappedLat: spring.snappedLat,
+        snappedLng: spring.snappedLng,
+        id: { not: spring.id },
+        isDummy: false,
+      },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    });
+
     // Map reports → enrich with parsed fieldData + photo URLs
     const reports = spring.reports.map((r) => {
       let parsedFieldData: Record<string, unknown> = {};
@@ -110,6 +122,7 @@ export async function GET(
         updatedAt: spring.updatedAt,
         reports,
         stats,
+        siblings,
       },
     });
   } catch (error) {

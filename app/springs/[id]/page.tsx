@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -213,19 +213,24 @@ export default function SpringDetailPage() {
   const { t } = useI18n();
   const springId = params.id as string;
 
+  const router = useRouter();
   const [spring, setSpring] = useState<SpringData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [enlargedPhoto, setEnlargedPhoto] = useState<(Photo & { reportDate?: string; reportAuthor?: string }) | null>(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [siblings, setSiblings] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
     if (!springId) return;
+    setLoading(true);
     fetch(`/api/springs/${springId}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (data?.spring) setSpring(data.spring);
-        else setError("Spring tidak ditemukan");
+        if (data?.spring) {
+          setSpring(data.spring);
+          setSiblings(data.spring.siblings || []);
+        } else setError("Spring tidak ditemukan");
       })
       .catch(() => setError("Gagal memuat data"))
       .finally(() => setLoading(false));
@@ -293,6 +298,22 @@ export default function SpringDetailPage() {
               <h1 className="text-2xl font-extrabold text-ink md:text-3xl">
                 {spring.name}
               </h1>
+              {siblings.length > 0 && (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-medium text-ink-muted">Mata air lain di lokasi ini:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {siblings.map((sib) => (
+                      <button
+                        key={sib.id}
+                        onClick={() => router.push(`/springs/${sib.id}`)}
+                        className="rounded-full border border-ink-line/60 px-3 py-1 text-xs font-medium text-ink-muted transition hover:border-brand-300 hover:text-brand-700 dark:border-slate-700 dark:hover:border-brand-700"
+                      >
+                        {sib.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-muted">
               <span className="flex items-center gap-1">
