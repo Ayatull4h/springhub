@@ -199,19 +199,7 @@ export default function AdminMapPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 rounded-lg bg-slate-200 dark:bg-slate-700" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // Forms linked to each map type
+  // Forms linked to each map type (MUST be before early return — hooks order)
   const formsByType = useMemo(() => {
     const map = new Map<string, FormItem[]>();
     for (const f of formsList) {
@@ -230,6 +218,18 @@ export default function AdminMapPage() {
     () => points.filter(p => p.snappedLat !== null && p.snappedLng !== null) as (MapPointItem & { snappedLat: number; snappedLng: number })[],
     [points]
   );
+
+  if (loading) {
+    return (
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-16 rounded-lg bg-slate-200 dark:bg-slate-700" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

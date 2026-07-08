@@ -59,11 +59,9 @@ export function MapFilter({ selectedType, selectedCategory, onTypeChange, onCate
 
   if (formOptions) {
     for (const f of formOptions) {
-      if (f.count > 0) {
-        options.push({ value: f.value, label: `${f.label} (${f.count})`, indent: false });
-        for (const sc of f.subcategories) {
-          options.push({ value: sc.value, label: sc.label, color: sc.color, indent: true, parentValue: f.value });
-        }
+      options.push({ value: f.value, label: `${f.label}${f.count > 0 ? ` (${f.count})` : ""}`, indent: false });
+      for (const sc of f.subcategories) {
+        options.push({ value: sc.value, label: sc.label, color: sc.color, indent: true, parentValue: f.value });
       }
     }
   } else {

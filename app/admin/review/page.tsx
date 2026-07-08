@@ -81,9 +81,10 @@ export default function AdminReviewPage() {
   async function handleApprove(id: string) {
     setProcessing((p) => ({ ...p, [id]: true }));
     try {
+      const { token } = await fetch("/api/csrf").then(r => r.json());
       const res = await fetch(`/api/admin/reports/${id}/approve`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": token },
         body: JSON.stringify({ featuredPhotoId: featured[id] || null }),
       });
       if (res.ok) {
@@ -103,9 +104,10 @@ export default function AdminReviewPage() {
   async function handleReject(id: string) {
     setProcessing((p) => ({ ...p, [id]: true }));
     try {
+      const { token } = await fetch("/api/csrf").then(r => r.json());
       const res = await fetch(`/api/admin/reports/${id}/reject`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": token },
         body: JSON.stringify({ note: notes[id] || "" }),
       });
       if (res.ok) {

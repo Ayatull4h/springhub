@@ -208,9 +208,7 @@ export function SpringMap() {
   }, [reports, formCategories, t]);
 
   const formFilterOptions = useMemo(() => {
-    return allForms
-      .filter(f => (formCounts.total[f.slug] || 0) > 0)
-      .map(f => {
+    return allForms.map(f => {
         const sub: { value: string; label: string; color: string }[] = [];
         const cats = formCategories.get(f.slug) || [];
         for (const c of cats) {
