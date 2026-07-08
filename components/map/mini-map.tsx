@@ -25,7 +25,7 @@ export default function MiniMap({
   zoom?: number;
 }) {
   return (
-    <div className="aspect-[4/1] w-full overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
+    <div className="mini-map-container aspect-[4/1] w-full overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
       <MapContainer
         center={[lat, lng]}
         zoom={zoom}

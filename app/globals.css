@@ -190,6 +190,10 @@ button:not(:disabled) {
 .leaflet-popup-content { margin: 10px 12px !important; overflow: visible !important; }
 .leaflet-popup-content img { max-width: 100%; height: auto; }
 
+/* Cegah Leaflet map overflow nutup konten di bawahnya */
+.leaflet-container { z-index: 1 !important; position: relative !important; }
+.mini-map-container { position: relative; z-index: 1; contain: layout; }
+
 /* Restore Leaflet map display in dark mode — jangan kena override global */
 .dark .leaflet-container {
   background-color: #f8fafc !important;

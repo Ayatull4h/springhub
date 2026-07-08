@@ -313,16 +313,6 @@ export function LeafletMap({
                         day: "numeric", month: "short", year: "numeric",
                       })}
                     </div>
-                    {sg.reports[0]?.photoUrl && (
-                      <div className="mt-2">
-                        <img
-                          src={sg.reports[0].photoUrl}
-                          alt=""
-                          className="h-16 w-16 rounded-lg object-cover border border-ink-line/40"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                        />
-                      </div>
-                    )}
                     <div className="mt-2 space-y-1">
                       {sg.reports.slice(0, 10).map((r) => {
                         const formInfo = formLookup?.[r.formSlug];
@@ -396,16 +386,6 @@ export function LeafletMap({
                 <Popup>
                   <div className="min-w-[180px] text-sm">
                     <strong>{formLookup?.[r.formSlug]?.title || r.formSlug.replace(/-/g, " ")}</strong>
-                    {r.photoUrl && (
-                      <div className="mt-1.5">
-                        <img
-                          src={r.photoUrl}
-                          alt=""
-                          className="h-20 w-full rounded-lg object-cover border border-ink-line/40"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                        />
-                      </div>
-                    )}
                     <div className="mt-1 text-xs text-ink-muted">
                       {new Date(r.createdAt).toLocaleDateString("id-ID", {
                         day: "numeric", month: "short", year: "numeric",
