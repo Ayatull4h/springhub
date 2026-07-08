@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
-**Tanggal**: 8 Juli 2026
+**Tanggal**: 8 Juli 2026 (Update: marker popup, admin map, favicon, approve CSRF)
 **Domain**: https://www.springhub.id
-**Total Test**: ~120 test case — 12 kategori
+**Total Test**: ~130 test case — 13 kategori
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -45,9 +45,9 @@ echo $CSRF
 | 1.1 | Landing page kebuka | Buka `www.springhub.id` di browser — harusnya muncul halaman utama dengan peta, statistik, dan tombol donasi | |
 | 1.2 | Pakai HTTPS aman | Lihat di address bar — harus ada gembok 🔒 | |
 | 1.3 | Halaman 404 keren | Buka `www.springhub.id/halaman-yang-tidak-ada` — harusnya muncul halaman "Halaman Tidak Ditemukan" yang bagus, bukan putih polos | |
-| 1.4 | Icon tab (favicon) muncul | Lihat di tab browser — harusnya ada logo SpringHub. Kalo masih icon lama, tekan **Ctrl+F5** (hard refresh) | |
+| 1.4 | Icon tab (favicon) muncul | Lihat di tab browser — harusnya logo SpringHub. Buka `www.springhub.id/favicon.png?v=3` — harusnya gambar logo 196x196 | |
 | 1.5 | Dark mode bisa diganti | Klik tombol bulan/matahari di pojok kanan atas — tampilan harus berubah jadi gelap/terang | |
-| 1.6 | Favicon versi baru | Buka tab baru, akses langsung `www.springhub.id/favicon.png` — harusnya gambar logo 196x196, bukan icon lama | |
+| 1.6 | Favicon cache bust | Di incognito, buka `www.springhub.id/favicon.ico` — harusnya download file 31KB (bukan icon "S" kecil) | |
 
 ---
 
@@ -89,6 +89,9 @@ echo $CSRF
 | 3.13 | Buat form baru | Klik "Tambah Form" — isi data, simpan — form baru harus muncul di halaman depan | |
 | 3.14 | Setting map | Klik "Map" — harusnya ada daftar tipe titik peta + warna kategori | |
 | 3.15 | Ubah warna marker | Klik color picker di kategori — warna marker di peta harus berubah | |
+| 3.16 | Admin map — tab settings | Di halaman admin map, tab "Settings" — harusnya tampil daftar tipe + kategori + warna | |
+| 3.17 | Admin map — tab map | Klik tombol "Map View" — harusnya tampil peta dengan marker-marker yang warnanya sesuai kategori | |
+| 3.18 | Admin map — form terhubung | Klik marker di admin map — popup harus nampilin form-form apa aja yang terhubung ke tipe titik itu | |
 
 ---
 
@@ -104,6 +107,8 @@ echo $CSRF
 | 4.6 | Validasi lat/lng | Coba isi latitude dengan angka 999 — harusnya ditolak (range -90 sampai 90) | |
 | 4.7 | Honey pot (anti-bot) | Coba isi field yang tidak kelihatan di halaman — harusnya ditolak | |
 | 4.8 | CSRF aman | Form tanpa token CSRF — harusnya ditolak 403 | |
+| 4.9 | Marker popup di peta | Scroll ke peta, klik salah satu marker (lingkaran warna biru/merah/kuning) — harusnya muncul popup dengan info laporan | |
+| 4.10 | Protection radius transparan | Klik di area lingkaran putus-putus di sekitar marker — harusnya popup marker tetap muncul (gak kehalang) | |
 
 ---
 
@@ -157,6 +162,7 @@ echo $CSRF
 | 8.6 | SQL injection gagal | Coba isi form dengan `' OR 1=1 --` — harusnya ditolak validasi | |
 | 8.7 | XSS gagal | Coba isi form dengan `<script>alert(1)</script>` — harusnya tersimpan aman (tidak jalan) | |
 | 8.8 | Admin bisa export data | Buka `/admin` → klik Export → pilih Users — harusnya download file CSV | |
+| 8.9 | Approve/reject pake CSRF | Buka Review Queue → klik Approve/Reject — harusnya berhasil (gak error "Invalid CSRF token") | |
 
 ---
 
@@ -217,20 +223,36 @@ Gunakan terminal. Login dulu sebagai admin.
 
 ---
 
+---
+
+## Test 13 — Storage & Backup (4 test)
+
+Gunakan terminal untuk test ini.
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 13.1 | Cek penggunaan disk | `df -h /` — harusnya terpakai ≤ 70 GB (kalo lebih dari 100 GB, ada penumpukan build cache) | |
+| 13.2 | Cek docker build cache | `docker system df` — `Build Cache` harusnya 0 B (kalo masih besar, jalankan `docker builder prune -a`) | |
+| 13.3 | Cek database berfungsi | Buka admin panel → data users/reports/donasi muncul — database jalan | |
+| 13.4 | Cek foto tersimpan | `docker exec springhub-web-1 ls /data/uploads/reports/ 2>/dev/null \|\| echo "Belum ada foto"` — harusnya ada folder report atau "Belum ada foto" | |
+
+---
+
 ## Ringkasan Hasil
 
 | Kategori | PASS | FAIL | Catatan |
 |---|---|---|---|
-| Test 1 — Buka Website (5) | | | |
+| Test 1 — Buka Website (6) | | | |
 | Test 2 — Login & Daftar (8) | | | |
-| Test 3 — Halaman Admin (15) | | | |
-| Test 4 — Form & Laporan (8) | | | |
+| Test 3 — Halaman Admin (18) | | | |
+| Test 4 — Form & Laporan (10) | | | |
 | Test 5 — Peta (6) | | | |
 | Test 6 — Poin & Leaderboard (6) | | | |
 | Test 7 — Donasi (5) | | | |
-| Test 8 — Keamanan (8) | | | |
+| Test 8 — Keamanan (9) | | | |
 | Test 9 — Dark Mode (5) | | | |
 | Test 10 — Akun & Profile (4) | | | |
 | Test 11 — CRUD Admin (8) | | | |
 | Test 12 — API Endpoints (10) | | | |
+| Test 13 — Storage & Backup (4) | | | |
 | **TOTAL** | **/** | **/** | |
