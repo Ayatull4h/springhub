@@ -78,9 +78,9 @@ export default function PwaInstallGuide() {
               </h4>
               <ol className="ml-5 list-decimal space-y-1.5 text-ink-muted dark:text-slate-300">
                 <li dangerouslySetInnerHTML={{ __html: t("pwa.guide.iosStep1") }} />
-                <li>{t("pwa.guide.iosStep2")}</li>
-                <li>{t("pwa.guide.iosStep3")}</li>
-                <li>{t("pwa.guide.iosStep4")}</li>
+                <li dangerouslySetInnerHTML={{ __html: t("pwa.guide.iosStep2") }} />
+                <li dangerouslySetInnerHTML={{ __html: t("pwa.guide.iosStep3") }} />
+                <li dangerouslySetInnerHTML={{ __html: t("pwa.guide.iosStep4") }} />
                 <li>{t("pwa.guide.iosStep5")}</li>
               </ol>
             </div>

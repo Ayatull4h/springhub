@@ -281,9 +281,10 @@ function DeleteConfirmModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
       <div className="w-full max-w-sm max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg font-bold text-ink">{t("admin.points.delete")}</h3>
-        <p className="mt-2 text-sm text-ink-muted">
-          {t("admin.points.deleteConfirm", { name: ruleName })}
-        </p>
+        <p
+          className="mt-2 text-sm text-ink-muted"
+          dangerouslySetInnerHTML={{ __html: t("admin.points.deleteConfirm", { name: ruleName }) }}
+        />
         <div className="mt-4 flex justify-end gap-2">
           <button
             onClick={onClose}
