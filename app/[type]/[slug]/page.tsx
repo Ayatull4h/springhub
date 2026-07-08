@@ -197,7 +197,7 @@ export default function MapPointDetailPage() {
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-110"
                     sizes="(max-width: 768px) 50vw, 16vw"
-                    unoptimized
+                   
                   />
                 </button>
               ))}
@@ -285,7 +285,6 @@ export default function MapPointDetailPage() {
                           fill
                           className="object-cover"
                           sizes="80px"
-                          unoptimized
                         />
                       </button>
                     ))}
@@ -332,7 +331,6 @@ export default function MapPointDetailPage() {
               width={point.allPhotos[lightboxIndex].width || 1200}
               height={point.allPhotos[lightboxIndex].height || 800}
               className="max-h-[85vh] w-auto rounded-lg object-contain"
-              unoptimized
             />
             <p className="mt-2 text-center text-sm text-white/70">
               {lightboxIndex + 1} / {point.allPhotos.length}

@@ -3,8 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper, Camera } from "lucide-react";
+import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 type MediaItem = {
@@ -94,18 +93,13 @@ function MediaThumb({ item }: { item: MediaItem }) {
 export function MediaSection() {
   const { t } = useI18n();
   const [items, setItems] = useState<MediaItem[]>([]);
-  const [gallery, setGallery] = useState<{ reportId: string; photo: { url: string; width: number; height: number } | null; username: string; region: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/content?section=media")
       .then(r => r.json())
       .then(data => setItems(data.items || []))
-      .catch(console.error);
-    fetch("/api/gallery?limit=12")
-      .then(r => r.json())
-      .then(data => setGallery(data.gallery || []))
-      .catch(() => {})
+      .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
 
@@ -188,45 +182,6 @@ export function MediaSection() {
         </div>
       )}
 
-      {/* ═══ Live Photo Gallery — dari laporan lapangan ═══ */}
-      {gallery.length > 0 && (
-        <div className="mt-12">
-          <div className="flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-lg font-bold text-ink">
-              <Camera className="h-5 w-5 text-brand-600" />
-              {t("media.fieldPhotos", "Foto Lapangan")}
-            </h3>
-            <span className="text-xs text-ink-muted">
-              {gallery.length} foto terbaru
-            </span>
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {gallery.map((g, i) =>
-              g.photo ? (
-                <Link
-                  key={g.reportId + i}
-                  href={`/springs/${g.reportId}`}
-                  className="group relative aspect-square overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800"
-                >
-                  <Image
-                    src={g.photo.url}
-                    alt=""
-                    width={g.photo.width || 400}
-                    height={g.photo.height || 400}
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-110"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
-                  <div className="absolute bottom-0 left-0 right-0 p-2 text-xs text-white opacity-0 transition group-hover:opacity-100">
-                    {g.username}
-                    {g.region ? ` · ${g.region}` : ""}
-                  </div>
-                </Link>
-              ) : null
-            )}
-          </div>
-        </div>
-      )}
     </section>
   );
 }
