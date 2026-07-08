@@ -141,3 +141,9 @@ export const webhookLimiter = createRateLimiter("webhook", {
   windowMs: 60_000,
   maxRequests: 10,
 });
+
+// Public API: 30 requests per 10 detik — cegah scraping / spam
+export const publicLimiter = createRateLimiter("public", {
+  windowMs: 10_000,
+  maxRequests: 30,
+});

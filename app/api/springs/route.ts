@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { publicLimiter } from "@/lib/rate-limit";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const limitCheck = await publicLimiter.check(`springs:${ip}`);
+    if (!limitCheck.allowed) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
+    }
+
     const springs = await prisma.spring.findMany({
       select: {
         id: true,
