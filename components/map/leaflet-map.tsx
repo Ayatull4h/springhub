@@ -329,6 +329,7 @@ export function LeafletMap({
                   fillOpacity: 0.05,
                   weight: 1,
                   dashArray: "4 4",
+                  interactive: false,
                 }}
               />
             </Fragment>
@@ -399,6 +400,7 @@ export function LeafletMap({
                   fillOpacity: 0.05,
                   weight: 1,
                   dashArray: "4 4",
+                  interactive: false,
                 }}
               />
             </Fragment>

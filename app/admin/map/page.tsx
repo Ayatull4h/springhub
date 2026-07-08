@@ -106,7 +106,7 @@ export default function AdminMapPage() {
 
   async function fetchForms() {
     try {
-      const res = await fetch("/api/forms");
+      const res = await fetch("/api/admin/forms?status=all");
       if (res.ok) {
         const data = await res.json();
         setFormsList(data.forms || []);
