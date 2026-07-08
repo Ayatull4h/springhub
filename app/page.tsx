@@ -6,6 +6,12 @@ import { PartnerSection } from "@/_senior/components/PartnerSection";
 import { LearningHub } from "@/components/sections/learning-hub";
 import { MediaSection } from "@/components/sections/media";
 import { DonateSection } from "@/components/sections/donate";
+import dynamic from "next/dynamic";
+
+const ActivitiesCard = dynamic(
+  () => import("@/_senior/components/ActivitiesCard").then(m => ({ default: m.ActivitiesCard })),
+  { ssr: false }
+);
 
 export default function HomePage() {
   return (
@@ -14,6 +20,11 @@ export default function HomePage() {
       <ImpactDashboard />
       <SpringMap />
       <VolunteerActivities />
+      <div className="container-page">
+        <div className="grid gap-6 lg:grid-cols-12">
+          <ActivitiesCard />
+        </div>
+      </div>
       <PartnerSection />
       <LearningHub />
       <MediaSection />
