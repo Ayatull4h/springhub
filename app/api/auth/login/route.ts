@@ -71,7 +71,6 @@ export async function POST(request: Request) {
 
     // Login berhasil — reset lockout counter
     await loginLockout.reset(`user:${profile.id}`);
-
     const proto = request.headers.get("x-forwarded-proto") || request.headers.get("x-forwarded-scheme") || "https";
     await createSession({
       userId: profile.id,

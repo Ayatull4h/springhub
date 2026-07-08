@@ -325,7 +325,7 @@ export function SpringMap() {
           </div>
         </div>
         <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
-<LeafletMap reports={visible} formColors={formColors} formLookup={formLookup} />
+          <LeafletMap reports={visible} formColors={formColors} formLookup={formLookup} />
         </div>
       </div>
 

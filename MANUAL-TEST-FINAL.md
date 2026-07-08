@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
-**Tanggal**: 7 Juli 2026
+**Tanggal**: 8 Juli 2026
 **Domain**: https://www.springhub.id
-**Total Test**: 100+ test case — 12 kategori
+**Total Test**: ~120 test case — 12 kategori
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -45,8 +45,9 @@ echo $CSRF
 | 1.1 | Landing page kebuka | Buka `www.springhub.id` di browser — harusnya muncul halaman utama dengan peta, statistik, dan tombol donasi | |
 | 1.2 | Pakai HTTPS aman | Lihat di address bar — harus ada gembok 🔒 | |
 | 1.3 | Halaman 404 keren | Buka `www.springhub.id/halaman-yang-tidak-ada` — harusnya muncul halaman "Halaman Tidak Ditemukan" yang bagus, bukan putih polos | |
-| 1.4 | Icon tab (favicon) muncul | Lihat di tab browser — harusnya ada logo SpringHub | |
+| 1.4 | Icon tab (favicon) muncul | Lihat di tab browser — harusnya ada logo SpringHub. Kalo masih icon lama, tekan **Ctrl+F5** (hard refresh) | |
 | 1.5 | Dark mode bisa diganti | Klik tombol bulan/matahari di pojok kanan atas — tampilan harus berubah jadi gelap/terang | |
+| 1.6 | Favicon versi baru | Buka tab baru, akses langsung `www.springhub.id/favicon.png` — harusnya gambar logo 196x196, bukan icon lama | |
 
 ---
 
