@@ -404,13 +404,13 @@ export default function SpringDetailPage() {
 
       {/* Mini Map */}
       {spring.snappedLat && spring.snappedLng && (
-        <div className="container-page pb-6">
+        <div className="container-page pb-6 overflow-hidden">
           <MiniMap lat={spring.snappedLat} lng={spring.snappedLng} />
         </div>
       )}
 
       {/* Timeline & Gallery */}
-      <div className="container-page grid gap-6 lg:grid-cols-5">
+      <div className="container-page grid gap-6 lg:grid-cols-5 mt-2">
         {/* Timeline — 3/5 width */}
         <div className="lg:col-span-3">
           <h2 className="mb-4 text-lg font-bold text-ink">Timeline Aktivitas</h2>
@@ -470,36 +470,70 @@ export default function SpringDetailPage() {
                         </p>
                       )}
 
-                      {/* Photos */}
-                      {report.photos.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {report.photos.map((photo) => (
-                            <button
-                              key={photo.id}
-                              onClick={() =>
-                                setEnlargedPhoto({
-                                  ...photo,
-                                  reportDate: formatDateShort(report.createdAt),
-                                  reportAuthor: report.username,
-                                })
-                              }
-                              className="group relative h-20 w-20 flex-none overflow-hidden rounded-lg border border-ink-line/40 dark:border-slate-600"
-                            >
-                              <Image
-                                src={photo.url}
-                                alt=""
-                                width={80}
-                                height={80}
-                                className="h-full w-full object-cover transition duration-200 group-hover:scale-110"
-                                unoptimized
-                              />
-                              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/20">
-                                <Camera className="h-5 w-5 text-white opacity-0 transition group-hover:opacity-100" aria-hidden="true" />
-                              </div>
-                            </button>
-                          ))}
+                    {/* Featured Photo (thumbnail admin) */}
+                    {(() => {
+                      const featured = report.photos.find((p) => p.id === report.featuredPhotoId);
+                      const otherPhotos = report.photos.filter((p) => p.id !== report.featuredPhotoId);
+                      const displayPhoto = featured || report.photos[0];
+                      return displayPhoto ? (
+                        <div className="mt-3">
+                          <button
+                            onClick={() =>
+                              setEnlargedPhoto({
+                                ...displayPhoto,
+                                reportDate: formatDateShort(report.createdAt),
+                                reportAuthor: report.username,
+                              })
+                            }
+                            className="group relative w-full overflow-hidden rounded-lg border border-ink-line/40 dark:border-slate-600"
+                            style={{ aspectRatio: "16/9", maxHeight: 200 }}
+                          >
+                            <Image
+                              src={displayPhoto.url}
+                              alt=""
+                              fill
+                              className="object-cover transition duration-200 group-hover:scale-105"
+                              unoptimized
+                              sizes="(max-width: 640px) 100vw, 50vw"
+                            />
+                          </button>
+                          {otherPhotos.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              {otherPhotos.slice(0, 4).map((photo) => (
+                                <button
+                                  key={photo.id}
+                                  onClick={() =>
+                                    setEnlargedPhoto({
+                                      ...photo,
+                                      reportDate: formatDateShort(report.createdAt),
+                                      reportAuthor: report.username,
+                                    })
+                                  }
+                                  className="group relative h-12 w-12 flex-none overflow-hidden rounded-md border border-ink-line/30 dark:border-slate-600"
+                                >
+                                  <Image
+                                    src={photo.url}
+                                    alt=""
+                                    fill
+                                    className="object-cover transition duration-200 group-hover:scale-110"
+                                    unoptimized
+                                    sizes="48px"
+                                  />
+                                </button>
+                              ))}
+                              {otherPhotos.length > 4 && (
+                                <button
+                                  onClick={() => setShowAllPhotos(true)}
+                                  className="flex h-12 w-12 items-center justify-center rounded-md border border-ink-line/30 text-xs text-ink-muted hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800"
+                                >
+                                  +{otherPhotos.length - 4}
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </div>
-                      )}
+                      ) : null;
+                    })()}
                     </div>
                   </div>
                 );

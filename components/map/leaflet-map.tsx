@@ -288,9 +288,6 @@ export function LeafletMap({
                   fillOpacity: 0.8,
                   weight: 3,
                 }}
-                eventHandlers={{
-                  click: () => router.push(detailUrl),
-                }}
               >
                 <Tooltip direction="top" offset={[0, -8]}>
                   <div className="max-w-[180px] text-xs leading-relaxed">
@@ -377,9 +374,6 @@ export function LeafletMap({
                   fillColor: fc.fillColor,
                   fillOpacity: 0.7,
                   weight: 2,
-                }}
-                eventHandlers={{
-                  click: () => router.push(detailUrl),
                 }}
               >
                 <Tooltip direction="top" offset={[0, -8]}>
