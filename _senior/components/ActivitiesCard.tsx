@@ -91,7 +91,7 @@ export function ActivitiesCard() {
                       width={240}
                       height={128}
                       className="h-full w-full object-cover transition duration-200 group-hover:scale-105"
-                      unoptimized
+                     
                     />
                   ) : (
                     formInfo.icon

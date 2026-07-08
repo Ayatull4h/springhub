@@ -179,7 +179,7 @@ function PhotoModal({
           width={photo.width || 1280}
           height={photo.height || 720}
           className="max-h-[80vh] w-auto object-contain"
-          unoptimized
+         
         />
         {(photo.reportDate || photo.reportAuthor) && (
           <div className="flex items-center gap-3 border-t border-ink-line px-4 py-2 text-xs text-ink-muted dark:border-slate-700">
@@ -493,7 +493,7 @@ export default function SpringDetailPage() {
                               alt=""
                               fill
                               className="object-cover transition duration-200 group-hover:scale-105"
-                              unoptimized
+                             
                               sizes="(max-width: 640px) 100vw, 50vw"
                             />
                           </button>
@@ -516,7 +516,7 @@ export default function SpringDetailPage() {
                                     alt=""
                                     fill
                                     className="object-cover transition duration-200 group-hover:scale-110"
-                                    unoptimized
+                                   
                                     sizes="48px"
                                   />
                                 </button>
@@ -564,7 +564,7 @@ export default function SpringDetailPage() {
                       alt=""
                       fill
                       className="object-cover transition duration-200 group-hover:scale-110"
-                      unoptimized
+                     
                       sizes="(max-width: 640px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/20">
