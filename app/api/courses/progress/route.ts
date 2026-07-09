@@ -63,19 +63,24 @@ export async function PUT(request: Request) {
         },
       });
       if (!existing) {
+        // Baca poin dari PointRule, fallback 25
+        const rule = await prisma.pointRule.findFirst({
+          where: { name: { contains: "Course", mode: "insensitive" } },
+        });
+        const coursePoints = rule?.points || 25;
         await prisma.pointsLog.create({
           data: {
             userId: session.userId,
-            amount: 25,
+            amount: coursePoints,
             reason: `Course ${courseSlug} completed`,
             metadata: JSON.stringify({ courseSlug }),
           },
         });
         await prisma.profile.update({
           where: { id: session.userId },
-          data: { points: { increment: 25 } },
+          data: { points: { increment: coursePoints } },
         });
-        pointsAwarded = 25;
+        pointsAwarded = coursePoints;
       }
     }
 

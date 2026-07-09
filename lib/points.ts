@@ -36,15 +36,27 @@ export async function awardReportPoints(
     return { pointsAwarded: 0, reason: "Admin tidak mendapat poin", bonus: [] };
   }
 
-  // Coba ambil base points dari DB form (dynamic) dulu, fallback ke POINTS_MAP (static)
-  let basePoints = POINTS_MAP[formSlug] ?? 0;
+  // Coba ambil base points: PointRule → DB form → POINTS_MAP
+  let basePoints = 0;
   try {
-    const dbForm = await prisma.form.findUnique({ where: { slug: formSlug }, select: { pointsOnSubmit: true } });
-    if (dbForm?.pointsOnSubmit && dbForm.pointsOnSubmit > 0) {
-      basePoints = dbForm.pointsOnSubmit;
+    // 1. PointRule (admin atur di /admin/points)
+    const rule = await prisma.pointRule.findFirst({
+      where: { name: { contains: formSlug.replace(/-/g, " "), mode: "insensitive" } },
+    });
+    if (rule?.points && rule.points > 0) {
+      basePoints = rule.points;
+    } else {
+      // 2. DB form pointsOnSubmit
+      const dbForm = await prisma.form.findUnique({ where: { slug: formSlug }, select: { pointsOnSubmit: true } });
+      if (dbForm?.pointsOnSubmit && dbForm.pointsOnSubmit > 0) {
+        basePoints = dbForm.pointsOnSubmit;
+      }
     }
   } catch {
-    // DB form mungkin belum ada — fallback ke static POINTS_MAP
+    // ignore
+  }
+  if (basePoints === 0) {
+    basePoints = POINTS_MAP[formSlug] ?? 0;
   }
   totalPoints += basePoints;
 
