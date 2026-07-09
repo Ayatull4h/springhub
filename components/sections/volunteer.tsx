@@ -140,12 +140,12 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <div className="mt-3 flex-1">
-            <ul className="grid gap-3 md:grid-cols-2 h-full">
+          <div className="mt-3 flex-1 card p-4">
+            <ul className="grid gap-3 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
               return (
-                <li key={i} className="card">
+                <li key={i} className="border rounded-lg border-ink-line/60 bg-white p-3 dark:border-slate-700 dark:bg-slate-800">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="text-sm font-semibold text-ink">{a.user}</div>
@@ -189,8 +189,7 @@ export function VolunteerActivities() {
               );
             })}
           </ul>
-          </div>
-          {totalActPages > 1 && (
+            {totalActPages > 1 && (
             <div className="mt-3 flex items-center justify-center gap-1">
               <button
                 onClick={() => setActPage(p => Math.max(1, p - 1))}
@@ -223,6 +222,7 @@ export function VolunteerActivities() {
               </button>
             </div>
           )}
+        </div>
         </div>
 
         <div className="card flex flex-col bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 lg:col-span-5 h-full">
