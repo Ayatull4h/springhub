@@ -230,7 +230,11 @@ function buildGraph(filter, query) {
 
   // Edges — cocokkan dengan route node yang ada di nodeMap
   for (const c of CONNS) {
-    const toId = "model:" + c.to;
+    // Normalize model name: Prisma pake PascalCase, route pake camelCase
+    const modelKey = "model:" + c.to;
+    // Capitalize first letter after "model:" — contentBlock → ContentBlock
+    const capitalizedKey = "model:" + c.to.charAt(0).toUpperCase() + c.to.slice(1);
+    const toId = nodeMap[modelKey] ? modelKey : (nodeMap[capitalizedKey] ? capitalizedKey : modelKey);
     if (!nodeMap[toId]) continue;
 
     // Cari route node yang path-nya cocok dengan c.from
@@ -245,7 +249,7 @@ function buildGraph(filter, query) {
     if (edgeSet.has(key)) continue;
     edgeSet.add(key);
     const edgeColor = c.auth === "admin" ? "#ef4444" : c.auth === "user" ? "#eab308" : "#3b82f6";
-    nodes.push({ from: fromId, to: toId, arrows: "to", label: c.label, color: { color: edgeColor }, width: 1, font: { size: 9, color: "#94a3b8" } });
+    nodes.push({ from: fromId, to: toId, arrows: "to", label: c.label, color: { color: edgeColor, highlight: edgeColor }, width: 2, font: { size: 10, color: "#cbd5e1", strokeWidth: 0 }, smooth: { type: "curvedCW", roundness: 0.2 } });
   }
 
   // Separate nodes from edges
@@ -275,6 +279,7 @@ function render(filter, query) {
 
   if (network) network.destroy();
   network = new vis.Network(container, data, options);
+  window.network = network;
 
   network.on("click", function(params) {
     if (params.nodes.length === 0) { document.getElementById("detail").style.display = "none"; return; }
