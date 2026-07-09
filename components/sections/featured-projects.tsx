@@ -49,7 +49,6 @@ const TYPE_INFO: Record<string, { icon: typeof TreePine; label: string }> = {
 
 export function FeaturedProjects() {
   const [projects, setProjects] = useState<FeaturedProject[]>(DUMMY_PROJECTS);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/projects")
@@ -64,19 +63,8 @@ export function FeaturedProjects() {
           }
         }
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, []);
-
-  if (loading) {
-    return (
-      <section className="bg-gradient-to-b from-emerald-50 to-white py-20 dark:from-emerald-950/50 dark:to-slate-900">
-        <div className="container-page text-center">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-emerald-600" />
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="bg-gradient-to-b from-emerald-50 to-white py-20 dark:from-emerald-950/50 dark:to-slate-900">
