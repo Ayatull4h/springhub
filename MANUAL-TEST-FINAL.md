@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
-**Tanggal**: 9 Juli 2026 (Update: PWA icons, logo baru, offline sync, gallery API)
+**Tanggal**: 9 Juli 2026 (Update: Course-PointRule, PointRule award, route map)
 **Domain**: https://www.springhub.id
-**Total Test**: ~145 test case — 14 kategori
+**Total Test**: ~155 test case — 14 kategori
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -109,6 +109,7 @@ echo $CSRF
 | 4.8 | CSRF aman | Form tanpa token CSRF — harusnya ditolak 403 | |
 | 4.9 | Marker popup di peta | Scroll ke peta, klik salah satu marker (lingkaran warna biru/merah/kuning) — harusnya muncul popup dengan info laporan | |
 | 4.10 | Protection radius transparan | Klik di area lingkaran putus-putus di sekitar marker — harusnya popup marker tetap muncul (gak kehalang) | |
+| 4.11 | Desa & Kecamatan muncul | Buka form Spring Monitoring — field Desa dan Kecamatan harus muncul (sinkron online & offline) | |
 
 ---
 
@@ -250,6 +251,29 @@ Gunakan terminal untuk test ini.
 | 14.6 | Submit offline | Klik "Simpan" — data harus tersimpan dan muncul notifikasi sukses | |
 | 14.7 | Sinkronisasi offline→online | Kembali ke koneksi internet, buka `/offline` → klik "Sinkronkan" — data harus terkirim | |
 | 14.8 | PWA icon baru | Di HP Android/iOS, buka menu "Add to Home Screen" — icon harus logo baru (bukan "S") | |
+| 14.9 | Offline langsung ke mode survey | Buka PWA saat offline — harus langsung ke halaman `/offline`, bukan landing page | |
+| 14.10 | Form offline sinkron dengan DB | Setup offline, lalu admin ubah form → online → buka offline setup — form harus update | |
+
+---
+
+## Test 15 — PointRule & Course (4 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 15.1 | Course selesai dapet poin | Buka Learning Hub → selesaikan 1 course → cek poin harus bertambah 25 | |
+| 15.2 | Admin edit poin course | Buka `/admin/points` → edit "Course Selesai" → selesaikan course → poin sesuai yang diedit | |
+| 15.3 | Admin edit poin form | Buka `/admin/points` → edit "Spring Monitoring" → submit form → approve → poin sesuai yang diedit | |
+| 15.4 | Poin dari DB form | Edit `pointsOnSubmit` di `/admin/forms` → submit → approve → poin sesuai (PointRule override) | |
+
+---
+
+## Test 16 — Route Map (3 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 16.1 | Route map terbuka | Buka `www.springhub.id/api-routes.html` — harusnya graph dengan 101 node + 123 edge | |
+| 16.2 | Filter by type | Klik filter "Admin" — graph harus filter cuma node merah + model terkait | |
+| 16.3 | Klik node | Klik salah satu node — detail panel harus muncul (method, auth, models) | |
 
 ---
 
@@ -260,7 +284,7 @@ Gunakan terminal untuk test ini.
 | Test 1 — Buka Website (6) | | | |
 | Test 2 — Login & Daftar (8) | | | |
 | Test 3 — Halaman Admin (18) | | | |
-| Test 4 — Form & Laporan (10) | | | |
+| Test 4 — Form & Laporan (11) | | | |
 | Test 5 — Peta (6) | | | |
 | Test 6 — Poin & Leaderboard (6) | | | |
 | Test 7 — Donasi (5) | | | |
@@ -270,5 +294,7 @@ Gunakan terminal untuk test ini.
 | Test 11 — CRUD Admin (8) | | | |
 | Test 12 — API Endpoints (10) | | | |
 | Test 13 — Storage & Backup (4) | | | |
-| Test 14 — Offline Mode & PWA (8) | | | |
+| Test 14 — Offline Mode & PWA (10) | | | |
+| Test 15 — PointRule & Course (4) | | | |
+| Test 16 — Route Map (3) | | | |
 | **TOTAL** | **/** | **/** | |
