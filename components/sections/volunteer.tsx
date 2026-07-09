@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   ArrowRight,
   MapPin,
@@ -17,7 +18,6 @@ import {
 } from "lucide-react";
 import {
   PROJECT_PROPOSAL_THRESHOLD,
-  recentActivities as dummyActivities,
 } from "@/lib/data";
 import { getForm } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
@@ -42,6 +42,7 @@ type ActivityItem = {
   when: string;
   points: number;
   formSlug: string;
+  photoUrl?: string | null;
 };
 
 export function VolunteerActivities() {
@@ -59,21 +60,21 @@ export function VolunteerActivities() {
       .catch(() => {});
   }, []);
 
-  // Fetch real activities from API, merge with dummy
+  // Fetch real activities from API (max 10)
   useEffect(() => {
-    fetch("/api/reports?limit=10")
+    fetch("/api/gallery?limit=10")
       .then(r => r.ok ? r.json() : null)
       .then(data => {
-        if (data?.reports?.length > 0) {
-          const mapped: ActivityItem[] = data.reports.map((r: any) => ({
-            user: r.user?.username || "Relawan",
+        if (data?.gallery?.length > 0) {
+          const mapped: ActivityItem[] = data.gallery.map((r: any) => ({
+            user: r.username || "Relawan",
             action: r.formSlug === "spring-monitoring" ? "melakukan pemantauan mata air"
                   : r.formSlug === "spring-restoration" ? "melakukan restorasi mata air"
                   : r.formSlug === "tree-planting" ? "menanam pohon endemik"
                   : r.formSlug === "trench-development" ? "membangun rorak"
                   : r.formSlug === "seedling-stock" ? "melaporkan stok bibit"
                   : `mengisi form ${r.formSlug}`,
-            location: r.user?.region || "Indonesia",
+            location: r.region || "Indonesia",
             when: timeAgo(r.createdAt),
             points: r.formSlug === "spring-restoration" ? 100
                   : r.formSlug === "trench-development" ? 50
@@ -81,15 +82,15 @@ export function VolunteerActivities() {
                   : r.formSlug === "seedling-stock" ? 15
                   : 25,
             formSlug: r.formSlug,
+            photoUrl: r.photo?.url || null,
           }));
-          // Merge: real data first, then dummy to fill slots
           setRealActivities(mapped);
         }
       })
       .catch(() => {});
   }, []);
 
-  const allActivities = [...realActivities, ...dummyActivities].slice(0, 10);
+  const allActivities = realActivities.slice(0, 10);
   const [actPage, setActPage] = useState(1);
   const actPerPage = 2;
   const totalActPages = Math.max(1, Math.ceil(allActivities.length / actPerPage));
@@ -135,18 +136,24 @@ export function VolunteerActivities() {
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>
-                  <div className={`mt-3 flex h-32 items-center justify-center rounded-lg ${
+                  <div className={`mt-3 flex h-32 items-center justify-center overflow-hidden rounded-lg ${
                     a.formSlug?.includes("trench")
                       ? "bg-gradient-to-br from-amber-50 to-stone-100 dark:from-amber-900/30 dark:to-stone-900/50"
                       : a.formSlug?.includes("seedling")
                         ? "bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/30 dark:to-green-900/50"
                         : "bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-900/50"
                   }`}>
-                    {a.formSlug?.includes("monitoring") && <Eye className="h-10 w-10 text-emerald-500" />}
-                    {a.formSlug?.includes("restoration") && <Wrench className="h-10 w-10 text-amber-500" />}
-                    {a.formSlug?.includes("trench") && <Layers className="h-10 w-10 text-amber-800" />}
-                    {a.formSlug?.includes("tree") && <TreePine className="h-10 w-10 text-green-500" />}
-                    {a.formSlug?.includes("seedling") && <Sprout className="h-10 w-10 text-emerald-600" />}
+                    {a.photoUrl ? (
+                      <Image src={a.photoUrl} alt="" width={240} height={128} className="h-full w-full object-cover" unoptimized />
+                    ) : (
+                      <>
+                        {a.formSlug?.includes("monitoring") && <Eye className="h-10 w-10 text-emerald-500" />}
+                        {a.formSlug?.includes("restoration") && <Wrench className="h-10 w-10 text-amber-500" />}
+                        {a.formSlug?.includes("trench") && <Layers className="h-10 w-10 text-amber-800" />}
+                        {a.formSlug?.includes("tree") && <TreePine className="h-10 w-10 text-green-500" />}
+                        {a.formSlug?.includes("seedling") && <Sprout className="h-10 w-10 text-emerald-600" />}
+                      </>
+                    )}
                   </div>
                   <div className="mt-3 flex items-center justify-between gap-2 border-t border-ink-line pt-3 text-xs text-ink-muted dark:border-slate-700">
                     <div className="flex items-center gap-2">
