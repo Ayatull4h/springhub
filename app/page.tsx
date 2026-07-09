@@ -6,6 +6,7 @@ import { PartnerSection } from "@/_senior/components/PartnerSection";
 import { LearningHub } from "@/components/sections/learning-hub";
 import { MediaSection } from "@/components/sections/media";
 import { DonateSection } from "@/components/sections/donate";
+import { ActivitiesCard } from "@/_senior/components/ActivitiesCard";
 
 export default function HomePage() {
   return (
@@ -14,6 +15,11 @@ export default function HomePage() {
       <ImpactDashboard />
       <SpringMap />
       <VolunteerActivities />
+      <div className="container-page py-8">
+        <div className="grid gap-6 lg:grid-cols-12">
+          <ActivitiesCard />
+        </div>
+      </div>
       <PartnerSection />
       <LearningHub />
       <MediaSection />
