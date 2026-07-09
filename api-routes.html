@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpringHub — API Route Map</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.6/standalone/umd/vis-network.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #0b0f15; color: #e2e8f0; }
+header { background: #141a22; border-bottom: 1px solid #252b34; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+header h1 { font-size: 18px; font-weight: 700; color: #f5f3ef; }
+header span { font-size: 12px; color: #b3b0ab; }
+#controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 12px 24px; background: #141a22; border-bottom: 1px solid #252b34; }
+#controls input { flex: 1; min-width: 200px; padding: 8px 12px; border-radius: 6px; border: 1px solid #252b34; background: #0b0f15; color: #f5f3ef; font-size: 13px; outline: none; }
+#controls input:focus { border-color: #0284c7; }
+#controls button { padding: 6px 14px; border-radius: 6px; border: 1px solid #252b34; background: #1c232d; color: #b3b0ab; font-size: 12px; cursor: pointer; transition: all .15s; }
+#controls button:hover { background: #252b34; color: #f5f3ef; }
+#controls button.active { background: #0284c7; color: #fff; border-color: #0284c7; }
+#graph { width: 100%; height: calc(100vh - 130px); position: relative; }
+#detail { position: absolute; top: 16px; right: 16px; width: 320px; max-height: 70vh; overflow-y: auto; background: #141a22; border: 1px solid #252b34; border-radius: 12px; padding: 16px; display: none; z-index: 10; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+#detail h3 { font-size: 14px; font-weight: 700; color: #f5f3ef; margin-bottom: 8px; }
+#detail .tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin: 2px; }
+#detail .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; border-bottom: 1px solid #252b34; }
+#detail .row:last-child { border: none; }
+#detail .key { color: #b3b0ab; }
+#detail .val { color: #f5f3ef; font-weight: 500; }
+#legend { position: absolute; bottom: 16px; left: 16px; background: #141a22; border: 1px solid #252b34; border-radius: 8px; padding: 12px; z-index: 10; font-size: 11px; }
+#legend .item { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+#legend .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<header>
+  <div><h1>🗺️ SpringHub — Route Map</h1></div>
+  <span id="stats">0 routes · 0 models · 0 connections</span>
+</header>
+<div id="controls">
+  <input id="search" type="text" placeholder="Cari route atau model..." oninput="filterGraph(this.value)">
+  <button class="active" data-filter="all" onclick="setFilter('all', this)">Semua</button>
+  <button data-filter="public" onclick="setFilter('public', this)">🔵 Public</button>
+  <button data-filter="user" onclick="setFilter('user', this)">🟡 User</button>
+  <button data-filter="admin" onclick="setFilter('admin', this)">🔴 Admin</button>
+  <button onclick="fitViewport()">🔍 Fit</button>
+  <button onclick="exportPng()">📷 PNG</button>
+</div>
+<div id="graph">
+  <div id="detail"></div>
+  <div id="legend">
+    <div class="item"><span class="dot" style="background:#3b82f6"></span> Public API</div>
+    <div class="item"><span class="dot" style="background:#eab308"></span> Auth Required</div>
+    <div class="item"><span class="dot" style="background:#ef4444"></span> Admin Only</div>
+    <div class="item"><span class="dot" style="background:#22c55e"></span> Database Model</div>
+  </div>
+</div>
+
+<script>
+const ROUTES = [{"path":"/api/admin/content/:id","methods":["PUT","DELETE"],"models":["contentBlock"],"auth":"admin"},{"path":"/api/admin/content","methods":["GET","POST"],"models":["contentBlock"],"auth":"admin"},{"path":"/api/admin/courses/:id","methods":["GET","PUT","DELETE"],"models":["course","courseModule"],"auth":"admin"},{"path":"/api/admin/courses","methods":["GET","POST"],"models":["course"],"auth":"admin"},{"path":"/api/admin/donations","methods":["GET"],"models":["donation"],"auth":"admin"},{"path":"/api/admin/download","methods":["GET"],"models":["reportPhoto"],"auth":"admin"},{"path":"/api/admin/errors/:id","methods":["PATCH","DELETE"],"models":["profile","appError"],"auth":"admin"},{"path":"/api/admin/errors","methods":["GET","DELETE"],"models":["profile","appError"],"auth":"admin"},{"path":"/api/admin/export","methods":["GET"],"models":["profile","report","donation","project","feedback","pointsLog","reportPhoto"],"auth":"admin"},{"path":"/api/admin/feedback/:id","methods":["PATCH"],"models":["feedback"],"auth":"admin"},{"path":"/api/admin/feedback","methods":["GET"],"models":["feedback"],"auth":"admin"},{"path":"/api/admin/forms/:id/fields/:fieldId","methods":["PUT","DELETE"],"models":["formField"],"auth":"admin"},{"path":"/api/admin/forms/:id/fields","methods":["POST"],"models":["form","formField"],"auth":"admin"},{"path":"/api/admin/forms/:id","methods":["GET","PUT","DELETE"],"models":["form","report","formField"],"auth":"admin"},{"path":"/api/admin/forms","methods":["GET","POST"],"models":["form","mapPointType"],"auth":"admin"},{"path":"/api/admin/map-points","methods":["GET","POST"],"models":["mapPoint","mapPointType","mapPointCategory"],"auth":"admin"},{"path":"/api/admin/map-types/:id","methods":["GET","PUT","DELETE"],"models":["mapPointType","mapPointCategory","mapPoint"],"auth":"admin"},{"path":"/api/admin/map-types","methods":["GET","POST"],"models":["mapPointType"],"auth":"admin"},{"path":"/api/admin/point-rules/:id","methods":["PUT","DELETE"],"models":["pointRule"],"auth":"admin"},{"path":"/api/admin/point-rules","methods":["GET","POST"],"models":["pointRule"],"auth":"admin"},{"path":"/api/admin/projects/:id","methods":["PATCH"],"models":["project"],"auth":"admin"},{"path":"/api/admin/projects","methods":["GET"],"models":["project"],"auth":"admin"},{"path":"/api/admin/reports/:id/approve","methods":["POST"],"models":["report","reportPhoto","notification"],"auth":"admin"},{"path":"/api/admin/reports/:id/reject","methods":["POST"],"models":["report","pointsLog","notification"],"auth":"admin"},{"path":"/api/admin/reports/:id/toggle","methods":["POST"],"models":["report"],"auth":"admin"},{"path":"/api/admin/reports","methods":["GET"],"models":["report"],"auth":"admin"},{"path":"/api/admin/trust-scores/:id","methods":["PUT"],"models":["profile","pointsLog"],"auth":"admin"},{"path":"/api/admin/trust-scores","methods":["GET"],"models":["profile"],"auth":"admin"},{"path":"/api/admin/users/:id","methods":["PUT"],"models":["profile"],"auth":"admin"},{"path":"/api/admin/users","methods":["GET"],"models":["profile"],"auth":"admin"},{"path":"/api/auth/claim-guest","methods":["POST"],"models":["report","pointsLog"],"auth":"public"},{"path":"/api/auth/forgot-password","methods":["POST"],"models":["profile"],"auth":"public"},{"path":"/api/auth/login","methods":["POST"],"models":["profile","report","pointsLog"],"auth":"public"},{"path":"/api/auth/logout","methods":["POST"],"models":[],"auth":"public"},{"path":"/api/auth/me","methods":["GET"],"models":["profile"],"auth":"public"},{"path":"/api/auth/register","methods":["POST"],"models":["profile","report","pointsLog"],"auth":"public"},{"path":"/api/auth/reset-password","methods":["POST"],"models":["profile"],"auth":"public"},{"path":"/api/content","methods":["GET"],"models":["contentBlock"],"auth":"public"},{"path":"/api/courses/:slug","methods":["GET"],"models":["course"],"auth":"public"},{"path":"/api/courses/progress","methods":["GET","PUT"],"models":["coursesProgress","pointsLog","profile"],"auth":"user"},{"path":"/api/courses","methods":["GET"],"models":["course"],"auth":"public"},{"path":"/api/csrf","methods":["GET"],"models":[],"auth":"public"},{"path":"/api/dashboard","methods":["GET"],"models":["report","profile","project","coursesProgress","donation"],"auth":"public"},{"path":"/api/donations/invoice","methods":["POST"],"models":["project","donation"],"auth":"user"},{"path":"/api/donations/webhook","methods":["POST"],"models":["profile"],"auth":"public"},{"path":"/api/feedback","methods":["POST"],"models":["feedback"],"auth":"user"},{"path":"/api/forms/:slug","methods":["GET"],"models":["form"],"auth":"public"},{"path":"/api/forms","methods":["GET"],"models":["form"],"auth":"public"},{"path":"/api/gallery","methods":["GET"],"models":["report"],"auth":"public"},{"path":"/api/health","methods":["GET"],"models":[],"auth":"public"},{"path":"/api/leaderboard","methods":["GET"],"models":["profile","report"],"auth":"public"},{"path":"/api/log/error","methods":["POST"],"models":["appError"],"auth":"public"},{"path":"/api/map-points/:id","methods":["GET"],"models":["mapPoint"],"auth":"public"},{"path":"/api/map-points","methods":["GET"],"models":["mapPointType","mapPointCategory","mapPoint"],"auth":"public"},{"path":"/api/map-points/types","methods":["GET"],"models":["mapPointType","mapPoint"],"auth":"public"},{"path":"/api/map-types","methods":["GET"],"models":["mapPointType"],"auth":"public"},{"path":"/api/newsletter","methods":["POST"],"models":["pointsLog"],"auth":"public"},{"path":"/api/notifications/:id/read","methods":["POST"],"models":["notification"],"auth":"user"},{"path":"/api/notifications","methods":["GET","POST"],"models":["notification","profile"],"auth":"user"},{"path":"/api/notifications/unread","methods":["GET"],"models":["notification"],"auth":"user"},{"path":"/api/offline/session","methods":["POST","GET","DELETE"],"models":["offlineSession"],"auth":"user"},{"path":"/api/offline/sync","methods":["POST"],"models":["trackingPoint","offlineSession"],"auth":"user"},{"path":"/api/point-rules","methods":["GET"],"models":["pointRule"],"auth":"public"},{"path":"/api/projects/:id/comments","methods":["GET","POST"],"models":["comment","project"],"auth":"user"},{"path":"/api/projects/:id/like","methods":["POST"],"models":["project"],"auth":"user"},{"path":"/api/projects","methods":["GET","POST"],"models":["project","profile"],"auth":"user"},{"path":"/api/reports/:id/photos/:photoId","methods":["DELETE"],"models":["reportPhoto"],"auth":"user"},{"path":"/api/reports/:id/photos","methods":["POST","GET"],"models":["report","reportPhoto"],"auth":"user"},{"path":"/api/reports/:id","methods":["DELETE"],"models":["report"],"auth":"user"},{"path":"/api/reports","methods":["POST","GET"],"models":["form","profile","report","spring"],"auth":"user"},{"path":"/api/springs/:id","methods":["GET"],"models":["spring"],"auth":"public"},{"path":"/api/springs/bulk","methods":["GET"],"models":["spring"],"auth":"public"},{"path":"/api/springs","methods":["GET"],"models":["spring"],"auth":"public"},{"path":"/api/upload/presign","methods":["GET"],"models":[],"auth":"user"},{"path":"/api/user/notifications","methods":["GET"],"models":["pointsLog","report"],"auth":"user"},{"path":"/api/user/points","methods":["GET"],"models":["profile","pointsLog"],"auth":"user"},{"path":"/api/user/profile","methods":["GET","PUT"],"models":["profile","report","pointsLog"],"auth":"user"}];
+const MODELS = [{"name":"Profile","fields":22,"lines":["id            String   @id @default(uuid())","email         String   @unique","passwordHash  String","username      String   @unique @default(\"\")","role          Role     @default(volunteer)","phone         String   @default(\"\")","phoneVerified Boolean  @default(false)","region        String   @default(\"\")","points        Int      @default(0)","trustScore    Int      @default(50)","createdAt     DateTime @default(now())","updatedAt     DateTime @updatedAt","reports         Report[]","donations       Donation[]","projects        Project[]","pointsLogs      PointsLog[]","sessions        Session[]","courses         CoursesProgress[]","reviewedReports Report[]          @relation(\"reviewedReports\")","offlineSessions OfflineSession[]","notifications  Notification[]","userComments   Comment[]"]},{"name":"Session","fields":6,"lines":["id        String   @id @default(uuid())","profileId String","token     String   @unique","expiresAt DateTime","createdAt DateTime @default(now())","profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)"]},{"name":"Spring","fields":12,"lines":["id          String   @id @default(uuid())","name        String","snappedLat  Float?","snappedLng  Float?","province    String   @default(\"\")","regency     String   @default(\"\")","village     String   @default(\"\")","subdistrict String   @default(\"\")","isDummy     Boolean  @default(false)","createdAt   DateTime @default(now())","updatedAt   DateTime @updatedAt","reports Report[]"]},{"name":"MapPointType","fields":12,"lines":["id          String              @id @default(uuid())","slug        String              @unique // \"spring\", \"conservation\", \"tree-planting\", \"trench\"","name        String              // \"Mata Air\", \"Konservasi\", \"Tanam Pohon\", \"Parit Resapan\"","description String              @default(\"\")","icon        String              @default(\"MapPin\")","sortOrder   Int                 @default(0)","isActive    Boolean             @default(true)","createdAt   DateTime            @default(now())","updatedAt   DateTime            @updatedAt","categories  MapPointCategory[]","forms       Form[]","points      MapPoint[]"]},{"name":"MapPointCategory","fields":9,"lines":["id        String   @id @default(uuid())","typeId    String","slug      String   // \"sehat\", \"terdegradasi\", \"restorasi\", \"pohon-hampir-punah\"","name      String   // \"Sehat\", \"Terdegradasi\", \"Dalam Restorasi\", \"Pohon Hampir Punah\"","color     String   @default(\"#2563eb\") // hex color for marker","sortOrder Int      @default(0)","createdAt DateTime @default(now())","type     MapPointType @relation(fields: [typeId], references: [id], onDelete: Cascade)","mapPoints MapPoint[]"]},{"name":"MapPoint","fields":18,"lines":["id            String      @id @default(uuid())","typeId        String","categoryId    String?","name          String","slug          String      @unique","snappedLat    Float?","snappedLng    Float?","province      String      @default(\"\")","regency       String      @default(\"\")","village       String      @default(\"\")","subdistrict   String      @default(\"\")","description   String      @default(\"\")","isActive      Boolean     @default(true)","createdAt     DateTime    @default(now())","updatedAt     DateTime    @updatedAt","type          MapPointType     @relation(fields: [typeId], references: [id])","category      MapPointCategory? @relation(fields: [categoryId], references: [id])","reports       Report[]"]},{"name":"Report","fields":26,"lines":["id              String       @id @default(uuid())","userId          String?","guestId         String?","formSlug        String","status          ReportStatus @default(pending)","isActive        Boolean      @default(true)","isDummy         Boolean      @default(false)","fieldData       String // JSON string of form fields","preciseLat      Float?","preciseLng      Float?","snappedLat      Float?","snappedLng      Float?","reviewedById    String?","reviewNote      String       @default(\"\")","featuredPhotoId String?","springId        String?","mapPointId      String?","createdAt       DateTime     @default(now())","updatedAt       DateTime     @updatedAt","user       Profile?      @relation(fields: [userId], references: [id])","reviewedBy Profile?      @relation(\"reviewedReports\", fields: [reviewedById], references: [id])","photos     ReportPhoto[] @relation(\"ReportPhotos\")","spring     Spring?       @relation(fields: [springId], references: [id])","mapPoint   MapPoint?     @relation(fields: [mapPointId], references: [id])","pointsLogs PointsLog[]","form       Form?       @relation(fields: [formSlug], references: [slug])"]},{"name":"ReportPhoto","fields":9,"lines":["id          String   @id @default(uuid())","reportId    String","fieldId     String","storagePath String   @default(\"\")","mimeType    String   @default(\"image/jpeg\")","width       Int      @default(0)","height      Int      @default(0)","createdAt   DateTime @default(now())","report Report @relation(\"ReportPhotos\", fields: [reportId], references: [id], onDelete: Cascade)"]},{"name":"Project","fields":20,"lines":["id           String        @id @default(uuid())","userId       String?","title        String","summary      String        @default(\"\")","region       String        @default(\"\")","typeId       String","status       ProjectStatus @default(pending)","goalAmount   Int           @default(0)","raisedAmount Int           @default(0)","likes        Int           @default(0)","comments     Int           @default(0)","contactName  String        @default(\"\")","contactEmail String        @default(\"\")","contactPhone String        @default(\"\")","proposalFile String        @default(\"\")","createdAt    DateTime      @default(now())","updatedAt    DateTime      @updatedAt","user      Profile?   @relation(fields: [userId], references: [id])","donations     Donation[]","commentList   Comment[]  @relation(\"ProjectComments\")"]},{"name":"Donation","fields":16,"lines":["id         String         @id @default(uuid())","userId     String?","projectId  String?","invoiceId  String         @default(\"\")","externalId String         @default(\"\")","amountIdr  Int","tierId     String         @default(\"\")","donorName  String         @default(\"\")","donorEmail String         @default(\"\")","status     DonationStatus @default(pending)","paidAt     DateTime?","expiresAt  DateTime?","createdAt  DateTime       @default(now())","updatedAt  DateTime       @updatedAt","user    Profile? @relation(fields: [userId], references: [id])","project Project? @relation(fields: [projectId], references: [id])"]},{"name":"PointsLog","fields":7,"lines":["id        String   @id @default(uuid())","userId    String?","guestId   String?","reportId  String?","amount    Int","reason    String","metadata  String   @default(\"{"]},{"name":"CoursesProgress","fields":11,"lines":["id               String   @id @default(uuid())","userId           String","courseId         String   @default(\"\")","courseSlug       String","completedModules Int      @default(0)","totalModules     Int      @default(1)","completed        Boolean  @default(false)","createdAt        DateTime @default(now())","updatedAt        DateTime @updatedAt","user   Profile @relation(fields: [userId], references: [id], onDelete: Cascade)","course Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)"]},{"name":"PointRule","fields":10,"lines":["id          String   @id @default(uuid())","name        String","description String   @default(\"\")","points      Int","category    String // \"basic\", \"bonus\", \"milestone\"","icon        String   @default(\"Star\")","isActive    Boolean  @default(true)","sortOrder   Int      @default(0)","createdAt   DateTime @default(now())","updatedAt   DateTime @updatedAt"]},{"name":"Course","fields":13,"lines":["id          String   @id @default(uuid())","slug        String   @unique","title       String","description String   @default(\"\")","level       String   @default(\"Beginner\")","duration    String   @default(\"30 min\")","icon        String   @default(\"BookOpen\")","isActive    Boolean  @default(true)","sortOrder   Int      @default(0)","createdAt   DateTime @default(now())","updatedAt   DateTime @updatedAt","modules  CourseModule[]","progress CoursesProgress[]"]},{"name":"CourseModule","fields":8,"lines":["id        String   @id @default(uuid())","courseId  String","title     String","content   String   @default(\"\") // Markdown atau HTML content","sortOrder Int      @default(0)","createdAt DateTime @default(now())","updatedAt DateTime @updatedAt","course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)"]},{"name":"Form","fields":14,"lines":["id               String   @id @default(uuid())","slug             String   @unique","title            String","description      String   @default(\"\")","pointsOnSubmit   Int      @default(25)","contributionType String   @default(\"monitoring\")","isActive         Boolean  @default(true)","sortOrder        Int      @default(0)","createdAt        DateTime @default(now())","updatedAt        DateTime @updatedAt","fields  FormField[]","reports Report[]","mapTypeId String?","mapType   MapPointType? @relation(fields: [mapTypeId], references: [id])"]},{"name":"FormField","fields":12,"lines":["id          String   @id @default(uuid())","formId      String","fieldId     String","label       String","type        String   @default(\"text\")","required    Boolean  @default(false)","placeholder String   @default(\"\")","helpText    String   @default(\"\")","options     String   @default(\"[]\")","sortOrder   Int      @default(0)","createdAt   DateTime @default(now())","form Form @relation(fields: [formId], references: [id], onDelete: Cascade)"]},{"name":"OfflineSession","fields":9,"lines":["id            String    @id @default(uuid())","userId        String","isActive      Boolean   @default(true)","selectedForms Json      @default(\"[]\")","totalDistance Float? // meters","startedAt     DateTime  @default(now())","endedAt       DateTime?","user           Profile         @relation(fields: [userId], references: [id], onDelete: Cascade)","trackingPoints TrackingPoint[]"]},{"name":"TrackingPoint","fields":9,"lines":["id             String   @id @default(uuid())","sessionId      String","lat            Float","lng            Float","accuracy       Float?","isSpringMarker Boolean  @default(false)","springName     String? // nama mata air jika marker","recordedAt     DateTime @default(now())","session OfflineSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)"]},{"name":"Feedback","fields":10,"lines":["id             String   @id @default(uuid())","type           String   @default(\"bug\") // \"bug\", \"kritik\", \"saran\", \"both\"","kritik         String   @default(\"\")","saran          String   @default(\"\")","bugDescription String   @default(\"\")","bugScreenshot  String   @default(\"\") // storage path","status         String   @default(\"open\") // \"open\", \"read\", \"resolved\"","userId         String? // null if guest","createdAt      DateTime @default(now())","updatedAt      DateTime @updatedAt"]},{"name":"Notification","fields":9,"lines":["id        String   @id @default(uuid())","userId    String","type      String   @default(\"info\") // \"draft\", \"submission-sent\", \"points-earned\", \"report-approved\", \"report-rejected\", \"project-verified\", \"event\"","title     String","body      String   @default(\"\")","isRead    Boolean  @default(false)","link      String   @default(\"\") // deep link to relevant page","createdAt DateTime @default(now())","user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)"]},{"name":"Comment","fields":7,"lines":["id        String   @id @default(uuid())","projectId String","userId    String","text      String","createdAt DateTime @default(now())","project   Project  @relation(\"ProjectComments\", fields: [projectId], references: [id], onDelete: Cascade)","user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)"]},{"name":"ContentBlock","fields":10,"lines":["id          String   @id @default(uuid())","section     String // \"media\", \"projects\", \"stats\", \"testimonials\"","type        String   @default(\"\") // \"video\", \"event\", \"publication\", \"press\", \"project\", \"stat\"","title       String","subtitle    String   @default(\"\")","description String   @default(\"\")","imageUrl    String   @default(\"\")","linkUrl     String   @default(\"\")","linkLabel   String   @default(\"\")","data        String   @default(\"{"]},{"name":"AppError","fields":8,"lines":["id        String   @id @default(uuid())","level     String   @default(\"error\") // \"info\", \"warning\", \"error\", \"critical\"","message   String","source    String   @default(\"\") // \"frontend\", \"api\", \"worker\", \"database\"","stack     String   @default(\"\")","url       String   @default(\"\")","userId    String   @default(\"\")","metadata  String   @default(\"{"]}];
+const CONNS = [{"from":"/api/admin/content/:id","to":"contentBlock","label":"update","auth":"admin"},{"from":"/api/admin/content","to":"contentBlock","label":"create","auth":"admin"},{"from":"/api/admin/courses/:id","to":"course","label":"update","auth":"admin"},{"from":"/api/admin/courses/:id","to":"courseModule","label":"update","auth":"admin"},{"from":"/api/admin/courses","to":"course","label":"create","auth":"admin"},{"from":"/api/admin/donations","to":"donation","label":"read","auth":"admin"},{"from":"/api/admin/download","to":"reportPhoto","label":"read","auth":"admin"},{"from":"/api/admin/errors/:id","to":"profile","label":"update","auth":"admin"},{"from":"/api/admin/errors/:id","to":"appError","label":"update","auth":"admin"},{"from":"/api/admin/errors","to":"profile","label":"delete","auth":"admin"},{"from":"/api/admin/errors","to":"appError","label":"delete","auth":"admin"},{"from":"/api/admin/export","to":"profile","label":"read","auth":"admin"},{"from":"/api/admin/export","to":"report","label":"read","auth":"admin"},{"from":"/api/admin/export","to":"donation","label":"read","auth":"admin"},{"from":"/api/admin/export","to":"project","label":"read","auth":"admin"},{"from":"/api/admin/export","to":"feedback","label":"read","auth":"admin"},{"from":"/api/admin/export","to":"pointsLog","label":"read","auth":"admin"},{"from":"/api/admin/export","to":"reportPhoto","label":"read","auth":"admin"},{"from":"/api/admin/feedback/:id","to":"feedback","label":"update","auth":"admin"},{"from":"/api/admin/feedback","to":"feedback","label":"read","auth":"admin"},{"from":"/api/admin/forms/:id/fields/:fieldId","to":"formField","label":"update","auth":"admin"},{"from":"/api/admin/forms/:id/fields","to":"form","label":"create","auth":"admin"},{"from":"/api/admin/forms/:id/fields","to":"formField","label":"create","auth":"admin"},{"from":"/api/admin/forms/:id","to":"form","label":"update","auth":"admin"},{"from":"/api/admin/forms/:id","to":"report","label":"update","auth":"admin"},{"from":"/api/admin/forms/:id","to":"formField","label":"update","auth":"admin"},{"from":"/api/admin/forms","to":"form","label":"create","auth":"admin"},{"from":"/api/admin/forms","to":"mapPointType","label":"create","auth":"admin"},{"from":"/api/admin/map-points","to":"mapPoint","label":"create","auth":"admin"},{"from":"/api/admin/map-points","to":"mapPointType","label":"create","auth":"admin"},{"from":"/api/admin/map-points","to":"mapPointCategory","label":"create","auth":"admin"},{"from":"/api/admin/map-types/:id","to":"mapPointType","label":"update","auth":"admin"},{"from":"/api/admin/map-types/:id","to":"mapPointCategory","label":"update","auth":"admin"},{"from":"/api/admin/map-types/:id","to":"mapPoint","label":"update","auth":"admin"},{"from":"/api/admin/map-types","to":"mapPointType","label":"create","auth":"admin"},{"from":"/api/admin/point-rules/:id","to":"pointRule","label":"update","auth":"admin"},{"from":"/api/admin/point-rules","to":"pointRule","label":"create","auth":"admin"},{"from":"/api/admin/projects/:id","to":"project","label":"update","auth":"admin"},{"from":"/api/admin/projects","to":"project","label":"read","auth":"admin"},{"from":"/api/admin/reports/:id/approve","to":"report","label":"create","auth":"admin"},{"from":"/api/admin/reports/:id/approve","to":"reportPhoto","label":"create","auth":"admin"},{"from":"/api/admin/reports/:id/approve","to":"notification","label":"create","auth":"admin"},{"from":"/api/admin/reports/:id/reject","to":"report","label":"create","auth":"admin"},{"from":"/api/admin/reports/:id/reject","to":"pointsLog","label":"create","auth":"admin"},{"from":"/api/admin/reports/:id/reject","to":"notification","label":"create","auth":"admin"},{"from":"/api/admin/reports/:id/toggle","to":"report","label":"create","auth":"admin"},{"from":"/api/admin/reports","to":"report","label":"read","auth":"admin"},{"from":"/api/admin/trust-scores/:id","to":"profile","label":"update","auth":"admin"},{"from":"/api/admin/trust-scores/:id","to":"pointsLog","label":"update","auth":"admin"},{"from":"/api/admin/trust-scores","to":"profile","label":"read","auth":"admin"},{"from":"/api/admin/users/:id","to":"profile","label":"update","auth":"admin"},{"from":"/api/admin/users","to":"profile","label":"read","auth":"admin"},{"from":"/api/auth/claim-guest","to":"report","label":"create","auth":"public"},{"from":"/api/auth/claim-guest","to":"pointsLog","label":"create","auth":"public"},{"from":"/api/auth/forgot-password","to":"profile","label":"create","auth":"public"},{"from":"/api/auth/login","to":"profile","label":"create","auth":"public"},{"from":"/api/auth/login","to":"report","label":"create","auth":"public"},{"from":"/api/auth/login","to":"pointsLog","label":"create","auth":"public"},{"from":"/api/auth/me","to":"profile","label":"read","auth":"public"},{"from":"/api/auth/register","to":"profile","label":"create","auth":"public"},{"from":"/api/auth/register","to":"report","label":"create","auth":"public"},{"from":"/api/auth/register","to":"pointsLog","label":"create","auth":"public"},{"from":"/api/auth/reset-password","to":"profile","label":"create","auth":"public"},{"from":"/api/content","to":"contentBlock","label":"read","auth":"public"},{"from":"/api/courses/:slug","to":"course","label":"read","auth":"public"},{"from":"/api/courses/progress","to":"coursesProgress","label":"update","auth":"user"},{"from":"/api/courses/progress","to":"pointsLog","label":"update","auth":"user"},{"from":"/api/courses/progress","to":"profile","label":"update","auth":"user"},{"from":"/api/courses","to":"course","label":"read","auth":"public"},{"from":"/api/dashboard","to":"report","label":"read","auth":"public"},{"from":"/api/dashboard","to":"profile","label":"read","auth":"public"},{"from":"/api/dashboard","to":"project","label":"read","auth":"public"},{"from":"/api/dashboard","to":"coursesProgress","label":"read","auth":"public"},{"from":"/api/dashboard","to":"donation","label":"read","auth":"public"},{"from":"/api/donations/invoice","to":"project","label":"create","auth":"user"},{"from":"/api/donations/invoice","to":"donation","label":"create","auth":"user"},{"from":"/api/donations/webhook","to":"profile","label":"create","auth":"public"},{"from":"/api/feedback","to":"feedback","label":"create","auth":"user"},{"from":"/api/forms/:slug","to":"form","label":"read","auth":"public"},{"from":"/api/forms","to":"form","label":"read","auth":"public"},{"from":"/api/gallery","to":"report","label":"read","auth":"public"},{"from":"/api/leaderboard","to":"profile","label":"read","auth":"public"},{"from":"/api/leaderboard","to":"report","label":"read","auth":"public"},{"from":"/api/log/error","to":"appError","label":"create","auth":"public"},{"from":"/api/map-points/:id","to":"mapPoint","label":"read","auth":"public"},{"from":"/api/map-points","to":"mapPointType","label":"read","auth":"public"},{"from":"/api/map-points","to":"mapPointCategory","label":"read","auth":"public"},{"from":"/api/map-points","to":"mapPoint","label":"read","auth":"public"},{"from":"/api/map-points/types","to":"mapPointType","label":"read","auth":"public"},{"from":"/api/map-points/types","to":"mapPoint","label":"read","auth":"public"},{"from":"/api/map-types","to":"mapPointType","label":"read","auth":"public"},{"from":"/api/newsletter","to":"pointsLog","label":"create","auth":"public"},{"from":"/api/notifications/:id/read","to":"notification","label":"create","auth":"user"},{"from":"/api/notifications","to":"notification","label":"create","auth":"user"},{"from":"/api/notifications","to":"profile","label":"create","auth":"user"},{"from":"/api/notifications/unread","to":"notification","label":"read","auth":"user"},{"from":"/api/offline/session","to":"offlineSession","label":"create","auth":"user"},{"from":"/api/offline/sync","to":"trackingPoint","label":"create","auth":"user"},{"from":"/api/offline/sync","to":"offlineSession","label":"create","auth":"user"},{"from":"/api/point-rules","to":"pointRule","label":"read","auth":"public"},{"from":"/api/projects/:id/comments","to":"comment","label":"create","auth":"user"},{"from":"/api/projects/:id/comments","to":"project","label":"create","auth":"user"},{"from":"/api/projects/:id/like","to":"project","label":"create","auth":"user"},{"from":"/api/projects","to":"project","label":"create","auth":"user"},{"from":"/api/projects","to":"profile","label":"create","auth":"user"},{"from":"/api/reports/:id/photos/:photoId","to":"reportPhoto","label":"delete","auth":"user"},{"from":"/api/reports/:id/photos","to":"report","label":"create","auth":"user"},{"from":"/api/reports/:id/photos","to":"reportPhoto","label":"create","auth":"user"},{"from":"/api/reports/:id","to":"report","label":"delete","auth":"user"},{"from":"/api/reports","to":"form","label":"create","auth":"user"},{"from":"/api/reports","to":"profile","label":"create","auth":"user"},{"from":"/api/reports","to":"report","label":"create","auth":"user"},{"from":"/api/reports","to":"spring","label":"create","auth":"user"},{"from":"/api/springs/:id","to":"spring","label":"read","auth":"public"},{"from":"/api/springs/bulk","to":"spring","label":"read","auth":"public"},{"from":"/api/springs","to":"spring","label":"read","auth":"public"},{"from":"/api/user/notifications","to":"pointsLog","label":"read","auth":"user"},{"from":"/api/user/notifications","to":"report","label":"read","auth":"user"},{"from":"/api/user/points","to":"profile","label":"read","auth":"user"},{"from":"/api/user/points","to":"pointsLog","label":"read","auth":"user"},{"from":"/api/user/profile","to":"profile","label":"update","auth":"user"},{"from":"/api/user/profile","to":"report","label":"update","auth":"user"},{"from":"/api/user/profile","to":"pointsLog","label":"update","auth":"user"}];
+let network = null;
+
+const colorMap = { public: { bg: "#1e3a5f", border: "#3b82f6" }, user: { bg: "#3d3c00", border: "#eab308" }, admin: { bg: "#3f0f0f", border: "#ef4444" }, model: { bg: "#0a3d1a", border: "#22c55e" } };
+
+function buildGraph(filter, query) {
+  const q = (query || "").toLowerCase();
+
+  // Build nodes
+  const nodes = [];
+  const nodeMap = {};
+  const edgeSet = new Set();
+
+  // Model nodes (green)
+  for (const m of MODELS) {
+    if (q && !m.name.toLowerCase().includes(q)) continue;
+    const id = "model:" + m.name;
+    nodes.push({ id, label: m.name, title: m.fields + " fields", group: "model", shape: "ellipse", ...colorMap.model, size: Math.min(30, 12 + m.fields * 1.2) });
+    nodeMap[id] = { type: "model", name: m.name, fields: m.fields };
+  }
+
+  // Route nodes
+  for (const r of ROUTES) {
+    if (filter !== "all" && r.auth !== filter) continue;
+    if (q && !r.path.toLowerCase().includes(q)) continue;
+    const col = colorMap[r.auth] || colorMap.public;
+    const label = r.methods.join(",");
+    const id = "route:" + r.path + ":" + r.methods.join("");
+    nodes.push({ id, label, title: r.path, group: r.auth, ...col, size: 8 + r.models.length * 5 });
+    nodeMap[id] = { type: "route", path: r.path, methods: r.methods, models: r.models, auth: r.auth };
+  }
+
+  // Edges
+  for (const c of CONNS) {
+    const fromId = "route:" + c.from + ":GET,POST,PUT,PATCH,DELETE";
+    const toId = "model:" + c.to;
+    if (!nodeMap[fromId] || !nodeMap[toId]) continue;
+    const key = fromId + "→" + toId;
+    if (edgeSet.has(key)) continue;
+    edgeSet.add(key);
+    const edgeColor = c.auth === "admin" ? "#ef4444" : c.auth === "user" ? "#eab308" : "#3b82f6";
+    nodes.push({ from: fromId, to: toId, arrows: "to", label: c.label, color: { color: edgeColor }, width: 1, font: { size: 9, color: "#94a3b8" } });
+  }
+
+  // Separate nodes from edges
+  const nodeItems = nodes.filter(n => n.id);
+  const edgeItems = nodes.filter(n => n.from);
+
+  return { nodes: nodeItems, edges: edgeItems };
+}
+
+function render(filter, query) {
+  const data = buildGraph(filter, query);
+  const container = document.getElementById("graph");
+
+  const options = {
+    physics: { stabilization: true, solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -60, centralGravity: 0.005, springLength: 180, springConstant: 0.02 } },
+    layout: { improvedLayout: true },
+    edges: { smooth: { type: "curvedCW", roundness: 0.15 } },
+    nodes: { font: { color: "#e2e8f0", size: 11, strokeWidth: 0 }, borderWidth: 2, chosen: { node: { borderWidth: 3 } } },
+    interaction: { hover: true, tooltipDelay: 200, navigationButtons: true, keyboard: true },
+    groups: {
+      public: { color: { background: colorMap.public.bg, border: colorMap.public.border }, font: { color: "#93c5fd" } },
+      user: { color: { background: colorMap.user.bg, border: colorMap.user.border }, font: { color: "#fde68a" } },
+      admin: { color: { background: colorMap.admin.bg, border: colorMap.admin.border }, font: { color: "#fca5a5" } },
+      model: { color: { background: colorMap.model.bg, border: colorMap.model.border }, font: { color: "#86efac" }, shape: "ellipse" }
+    }
+  };
+
+  if (network) network.destroy();
+  network = new vis.Network(container, data, options);
+
+  network.on("click", function(params) {
+    if (params.nodes.length === 0) { document.getElementById("detail").style.display = "none"; return; }
+    const id = params.nodes[0];
+    const info = {};
+    for (const n of [...ROUTES, ...MODELS, ...CONNS]) {
+      // Find by id pattern
+    }
+    // Route
+    for (const r of ROUTES) {
+      if ("route:" + r.path + ":" + r.methods.join("") === id) {
+        showDetailRoute(r);
+        return;
+      }
+    }
+    // Model
+    for (const m of MODELS) {
+      if ("model:" + m.name === id) {
+        showDetailModel(m);
+        return;
+      }
+    }
+  });
+
+  document.getElementById("stats").textContent = data.nodes.length + " routes · " + MODELS.length + " models · " + CONNS.length + " connections";
+}
+
+function showDetailRoute(r) {
+  const d = document.getElementById("detail");
+  d.style.display = "block";
+  d.innerHTML = `
+    <h3>${r.path}</h3>
+    <div class="row"><span class="key">Methods</span><span class="val">${r.methods.join(", ")}</span></div>
+    <div class="row"><span class="key">Auth</span><span class="tag" style="background:${r.auth === 'admin' ? '#3f0f0f' : r.auth === 'user' ? '#3d3c00' : '#1e3a5f'};color:${r.auth === 'admin' ? '#fca5a5' : r.auth === 'user' ? '#fde68a' : '#93c5fd'}">${r.auth}</span></div>
+    <div class="row"><span class="key">Models</span><span class="val">${r.models.join(", ") || "-"}</span></div>
+  `;
+}
+
+function showDetailModel(m) {
+  const d = document.getElementById("detail");
+  d.style.display = "block";
+  d.innerHTML = `
+    <h3>🗄️ ${m.name}</h3>
+    <div class="row"><span class="key">Fields</span><span class="val">${m.fields}</span></div>
+    <div class="row" style="flex-wrap:wrap"><span class="key">Columns</span><span class="val" style="font-size:10px">${m.lines.slice(0,15).map(l => l.split(" ")[0]).join(", ")}${m.lines.length > 15 ? ", ..." : ""}</span></div>
+  `;
+}
+
+function filterGraph(query) { render(currentFilter, query); }
+let currentFilter = "all";
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll("#controls button[data-filter]").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  render(f, document.getElementById("search").value);
+}
+function fitViewport() { if (network) network.fit(); }
+function exportPng() {
+  if (!network) return;
+  const canvas = document.querySelector("#graph canvas");
+  if (!canvas) return;
+  const link = document.createElement("a");
+  link.download = "springhub-route-map.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+
+render("all", "");
+</script>
+</body>
+</html>
