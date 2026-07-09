@@ -14,10 +14,10 @@ export default function HomePage() {
       <ImpactDashboard />
       <SpringMap />
       <VolunteerActivities />
-      <FeaturedProjects />
       <PartnerSection />
       <LearningHub />
       <MediaSection />
+      <FeaturedProjects />
       <DonateSection />
     </>
   );
