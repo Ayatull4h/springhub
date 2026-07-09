@@ -33,6 +33,7 @@ export async function GET() {
         raisedAmount: true,
         typeId: true,
         likes: true,
+        comments: true,
         createdAt: true,
         user: { select: { username: true } },
         _count: { select: { donations: true, commentList: true } },

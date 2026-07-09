@@ -20,6 +20,8 @@ type ProjectDetail = {
   raisedAmount: number;
   typeId: string;
   createdAt: string;
+  likes: number;
+  comments: number;
   user: { username: string } | null;
   _count: { donations: number; comments: number };
 };
@@ -215,7 +217,7 @@ export default function ProjectDetailPage() {
               </button>
               <span className="inline-flex items-center gap-1.5">
                 <MessageSquare className="h-4 w-4" />
-                {project._count?.comments ?? 0}
+                {project.comments ?? 0}
               </span>
             </div>
           </div>
