@@ -103,19 +103,19 @@ export default function ReportFormPage() {
       .finally(() => setDbFormLoading(false));
   }, [slug]);
 
-  // Gabung field: STATIS sebagai base, DB sebagai override (opsi/help dari DB)
-  // Jadi semua field static selalu muncul, walau DB cuma punya sebagian field
+  // Gabung field: DB sebagai base (sumber kebenaran), static sebagai fallback
   const activeForm = (() => {
     if (!dbForm) return form;
     if (!form) return dbForm;
-    const dbFieldMap = new Map(dbForm.fields.map((df: Record<string, unknown>) => [(df.fieldId as string) || (df.id as string), df]));
-    const mergedFields = form.fields.map((sf) => {
-      const df = dbFieldMap.get(sf.id) as Record<string, unknown> | undefined;
-      const dbOptions = df?.options;
-      const opts = Array.isArray(dbOptions) && dbOptions.length > 0 ? dbOptions : sf.options;
-      return df ? { ...sf, ...df, id: sf.id, options: opts } : sf;
+    // df.fieldId = field identifier (spring_name), sf.id = field identifier
+    // Cocokkan: DB fieldId → static field id
+    const staticFieldMap = new Map(form.fields.map((f) => [f.id, f]));
+    const mergedFields = dbForm.fields.map((df) => {
+      const fieldId = (df as Record<string, unknown>).fieldId as string || df.id;
+      const sf = staticFieldMap.get(fieldId);
+      return sf ? { ...sf, ...df, id: fieldId, options: df.options?.length ? df.options : sf.options } : df;
     });
-    return { ...form, ...dbForm, fields: mergedFields };
+    return { ...dbForm, fields: mergedFields };
   })();
 
   // Show loading while DB form is being fetched (only when static form not found)

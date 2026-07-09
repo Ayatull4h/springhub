@@ -38,11 +38,6 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         const cached = await offlineDB.getAllForms();
         if (cached && cached.length > 0) {
           setForms(cached);
-        } else {
-          // Fallback: load static form definitions
-          const slugs = ["spring-monitoring", "spring-restoration", "trench-development", "tree-planting", "seedling-stock"];
-          const staticForms = slugs.map(s => getForm(s)).filter(Boolean);
-          setForms(staticForms);
         }
       } catch (err) {
         console.error("Failed to load forms:", err);
