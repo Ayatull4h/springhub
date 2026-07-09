@@ -5,10 +5,11 @@ import Link from "next/link";
 import {
   ArrowRight, MapPin, TreePine, Droplets, Users, Loader2, Heart, MessageSquare,
 } from "lucide-react";
+import { featuredProjects as dummyData } from "@/lib/data";
 import { formatNumber } from "@/lib/utils";
 
 type FeaturedProject = {
-  id: string;
+  id?: string;
   title: string;
   summary: string;
   region: string;
@@ -18,8 +19,21 @@ type FeaturedProject = {
   typeId: string;
   likes: number;
   comments: number;
-  user: { username: string } | null;
+  user?: { username: string } | null;
 };
+
+const DUMMY_PROJECTS: FeaturedProject[] = dummyData.map((d, i) => ({
+  id: `dummy-${i}`,
+  title: d.title,
+  summary: d.summary,
+  region: d.region,
+  status: d.status,
+  goalAmount: d.goal,
+  raisedAmount: d.raised,
+  typeId: d.typeId,
+  likes: d.likes,
+  comments: d.comments,
+}));
 
 const TYPE_INFO: Record<string, { icon: typeof TreePine; label: string }> = {
   spring_restoration: { icon: Droplets, label: "Restorasi Mata Air" },
@@ -34,15 +48,20 @@ const TYPE_INFO: Record<string, { icon: typeof TreePine; label: string }> = {
 };
 
 export function FeaturedProjects() {
-  const [projects, setProjects] = useState<FeaturedProject[]>([]);
+  const [projects, setProjects] = useState<FeaturedProject[]>(DUMMY_PROJECTS);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/projects")
       .then((r) => r.json())
       .then((data) => {
-        if (data.projects) {
-          setProjects(data.projects.filter((p: FeaturedProject) => p.status === "approved").slice(0, 3));
+        if (data.projects?.length) {
+          const approved = data.projects
+            .filter((p: FeaturedProject) => p.status === "approved")
+            .slice(0, 3);
+          if (approved.length > 0) {
+            setProjects(approved);
+          }
         }
       })
       .catch(() => {})
@@ -58,8 +77,6 @@ export function FeaturedProjects() {
       </section>
     );
   }
-
-  if (projects.length === 0) return null;
 
   return (
     <section className="bg-gradient-to-b from-emerald-50 to-white py-20 dark:from-emerald-950/50 dark:to-slate-900">
@@ -79,7 +96,7 @@ export function FeaturedProjects() {
             const Icon = typeInfo.icon;
             const progress = p.goalAmount > 0 ? Math.round((p.raisedAmount / p.goalAmount) * 100) : 0;
             return (
-              <Link key={p.id} href={`/projects/${p.id}`} className="group block">
+              <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
                 <article className="card flex flex-col h-full transition-shadow hover:shadow-lg">
                   <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/20">
                     <Icon className="h-12 w-12 text-emerald-500 dark:text-emerald-400" />
