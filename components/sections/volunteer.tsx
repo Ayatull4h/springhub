@@ -66,24 +66,42 @@ export function VolunteerActivities() {
       .then(r => r.ok ? r.json() : null)
       .then(data => {
         if (data?.gallery?.length > 0) {
-          const mapped: ActivityItem[] = data.gallery.map((r: any) => ({
-            user: r.username || "Relawan",
-            action: r.formSlug === "spring-monitoring" ? "melakukan pemantauan mata air"
-                  : r.formSlug === "spring-restoration" ? "melakukan restorasi mata air"
-                  : r.formSlug === "tree-planting" ? "menanam pohon endemik"
-                  : r.formSlug === "trench-development" ? "membangun rorak"
-                  : r.formSlug === "seedling-stock" ? "melaporkan stok bibit"
-                  : `mengisi form ${r.formSlug}`,
-            location: r.region || "Indonesia",
-            when: timeAgo(r.createdAt),
-            points: r.formSlug === "spring-restoration" ? 100
-                  : r.formSlug === "trench-development" ? 50
-                  : r.formSlug === "tree-planting" ? 50
-                  : r.formSlug === "seedling-stock" ? 15
-                  : 25,
-            formSlug: r.formSlug,
-            photoUrl: r.photo?.url || null,
-          }));
+          const mapped: ActivityItem[] = data.gallery.map((r: any) => {
+            let action = "";
+            let locationDetail = "";
+            if (r.formSlug === "spring-monitoring" || r.formSlug === "spring-restoration") {
+              action = r.detailName ? `memantau ${r.detailName}` : "memantau mata air";
+              locationDetail = r.detailName || "";
+            } else if (r.formSlug === "tree-planting") {
+              action = r.detailName
+                ? `menanam ${r.detailCount ? r.detailCount + " " : ""}${r.detailName}`
+                : "menanam pohon";
+              locationDetail = r.detailName || "";
+            } else if (r.formSlug === "trench-development") {
+              action = r.detailCount ? `membangun ${r.detailCount} rorak` : "membangun rorak";
+              locationDetail = r.detailCount ? `${r.detailCount} rorak` : "";
+            } else if (r.formSlug === "seedling-stock") {
+              action = r.detailName
+                ? `melaporkan ${r.detailCount ? r.detailCount + " " : ""}bibit ${r.detailName}`
+                : "melaporkan stok bibit";
+              locationDetail = r.detailName || "";
+            } else {
+              action = `mengisi form ${r.formSlug}`;
+            }
+            return {
+              user: r.username || "Relawan",
+              action,
+              location: r.province || r.region || "Indonesia",
+              when: timeAgo(r.createdAt),
+              points: r.formSlug === "spring-restoration" ? 100
+                    : r.formSlug === "trench-development" ? 50
+                    : r.formSlug === "tree-planting" ? 50
+                    : r.formSlug === "seedling-stock" ? 15
+                    : 25,
+              formSlug: r.formSlug,
+              photoUrl: r.photo?.url || null,
+            };
+          });
           setRealActivities(mapped);
         }
       })

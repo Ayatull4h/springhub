@@ -35,6 +35,7 @@ export async function GET(request: Request) {
         createdAt: true,
         snappedLat: true,
         snappedLng: true,
+        fieldData: true,
         featuredPhotoId: true,
         user: { select: { username: true, region: true } },
         photos: {
@@ -45,6 +46,8 @@ export async function GET(request: Request) {
 
     const gallery = reports.map((r) => {
       const featured = r.photos.find((p) => p.id === r.featuredPhotoId);
+      let parsedFieldData: Record<string, unknown> = {};
+      try { parsedFieldData = JSON.parse(typeof r.fieldData === "string" ? r.fieldData : "{}"); } catch {}
       return {
         reportId: r.id,
         formSlug: r.formSlug,
@@ -53,6 +56,11 @@ export async function GET(request: Request) {
         snappedLng: r.snappedLng,
         username: r.user?.username || "guest",
         region: r.user?.region || "",
+        province: (parsedFieldData.province as string) || "",
+        detailName: (parsedFieldData.spring_name as string) ||
+                    (parsedFieldData.species as string) || "",
+        detailCount: (parsedFieldData.trench_count as string) ||
+                     (parsedFieldData.count as string) || "",
         photo: featured
           ? {
               id: featured.id,
