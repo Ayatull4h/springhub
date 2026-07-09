@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
-**Tanggal**: 8 Juli 2026 (Update: marker popup, admin map, favicon, approve CSRF)
+**Tanggal**: 9 Juli 2026 (Update: PWA icons, logo baru, offline sync, gallery API)
 **Domain**: https://www.springhub.id
-**Total Test**: ~130 test case — 13 kategori
+**Total Test**: ~145 test case — 14 kategori
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -238,6 +238,21 @@ Gunakan terminal untuk test ini.
 
 ---
 
+## Test 14 — Offline Mode & PWA (8 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 14.1 | Halaman offline terbuka | Buka `www.springhub.id/offline` — harusnya ada tombol "Mulai Survey Offline" | |
+| 14.2 | Setup offline — pilih form | Klik "Mulai Survey Offline" → pilih form yang mau diisi (monitoring, tree planting, dll) → Next | |
+| 14.3 | Cache form definition | Setelah setup, form yang dipilih harus muncul di daftar form offline | |
+| 14.4 | Isi form offline | Pilih salah satu form, isi field-fieldnya (nama, lokasi, foto minimal 3) | |
+| 14.5 | Upload foto offline | Klik tombol foto, ambil minimal 3 foto — counter harus bertambah | |
+| 14.6 | Submit offline | Klik "Simpan" — data harus tersimpan dan muncul notifikasi sukses | |
+| 14.7 | Sinkronisasi offline→online | Kembali ke koneksi internet, buka `/offline` → klik "Sinkronkan" — data harus terkirim | |
+| 14.8 | PWA icon baru | Di HP Android/iOS, buka menu "Add to Home Screen" — icon harus logo baru (bukan "S") | |
+
+---
+
 ## Ringkasan Hasil
 
 | Kategori | PASS | FAIL | Catatan |
@@ -255,4 +270,5 @@ Gunakan terminal untuk test ini.
 | Test 11 — CRUD Admin (8) | | | |
 | Test 12 — API Endpoints (10) | | | |
 | Test 13 — Storage & Backup (4) | | | |
+| Test 14 — Offline Mode & PWA (8) | | | |
 | **TOTAL** | **/** | **/** | |
