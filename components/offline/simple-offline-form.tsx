@@ -219,8 +219,8 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
     );
   }
 
-  // ── Form fill ────────────────────────────────────────────────
-  const formDef = getForm(selectedForm.slug) || (selectedForm as FormSchema);
+  // ── Form fill — prefer dynamic form (dari cache/IndexedDB), fallback static ──
+  const formDef = (selectedForm as FormSchema)?.fields ? (selectedForm as FormSchema) : getForm(selectedForm.slug);
 
   return (
     <div className="container-page max-w-3xl py-8">
@@ -304,6 +304,22 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                   <option key={opt} value={opt}>{opt}</option>
                 ))}
               </select>
+            ) : field.type === "location" ? (
+              <div className="mt-1">
+                <input type="hidden" name={`${field.id}_lat`} value={gpsCoords?.lat || ""} />
+                <input type="hidden" name={`${field.id}_lng`} value={gpsCoords?.lng || ""} />
+                {gpsStatus === "got" ? (
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">
+                    📍 {gpsCoords!.lat.toFixed(5)}, {gpsCoords!.lng.toFixed(5)}
+                  </p>
+                ) : gpsStatus === "error" ? (
+                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                    Lokasi tidak tersedia. Klik dapatkan lokasi di atas.
+                  </p>
+                ) : (
+                  <p className="text-sm text-ink-muted">Mendapatkan lokasi GPS...</p>
+                )}
+              </div>
             ) : field.type === "province" ? (
               <select
                 id={`offline-${field.id}`} name={field.id}
@@ -383,30 +399,6 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 {(photoFiles[field.id] || []).length >= 5 && (
                   <p className="mt-1 text-xs text-amber-600">Maksimal 5 foto. Hapus yang ada untuk mengganti.</p>
                 )}
-              </div>
-            ) : field.type === "location" ? (
-              <div className="mt-1">
-                <p className="text-xs text-ink-muted">
-                  {gpsCoords
-                    ? `📍 ${gpsCoords.lat.toFixed(5)}, ${gpsCoords.lng.toFixed(5)}`
-                    : "📍 Lokasi akan terdeteksi otomatis"}
-                </p>
-                <input type="hidden" name="location_lat" value={gpsCoords?.lat || ""} />
-                <input type="hidden" name="location_lng" value={gpsCoords?.lng || ""} />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setGpsStatus("getting");
-                    navigator.geolocation.getCurrentPosition(
-                      (pos) => { setGpsCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setGpsStatus("got"); },
-                      () => setGpsStatus("error"),
-                      { enableHighAccuracy: true, timeout: 15000 }
-                    );
-                  }}
-                  className="mt-2 text-xs text-brand-600 hover:underline"
-                >
-                  {gpsStatus === "error" ? "Coba lagi ambil lokasi" : "Ambil ulang lokasi"}
-                </button>
               </div>
             ) : null}
           </div>

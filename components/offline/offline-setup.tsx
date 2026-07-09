@@ -324,14 +324,21 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
           description: f.description,
           pointsOnSubmit: f.pointsOnSubmit,
           contributionType: f.slug,
-          fields: f.fields.map((ff) => ({
-            id: ff.fieldId,
-            label: ff.label,
-            type: ff.type,
-            required: ff.required,
-            placeholder: "",
-            help: "",
-            options: [],
+          fields: f.fields.map((ff: Record<string, unknown>) => ({
+            id: (ff.fieldId as string) || (ff.id as string) || "",
+            label: (ff.label as string) || "",
+            type: (ff.type as string) || "text",
+            required: !!ff.required,
+            placeholder: (ff.placeholder as string) || "",
+            help: (ff.helpText as string) || "",
+            options: (() => {
+              try {
+                const opts = ff.options;
+                if (typeof opts === "string") return JSON.parse(opts);
+                if (Array.isArray(opts)) return opts;
+                return [];
+              } catch { return []; }
+            })(),
           })),
           cachedAt: Date.now(),
         }));
