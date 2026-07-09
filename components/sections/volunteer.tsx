@@ -136,11 +136,11 @@ export function VolunteerActivities() {
       </p>
 
       <div className="mt-10 grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-7">
+        <div className="flex flex-col lg:col-span-7">
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <ul className="mt-3 grid gap-3 md:grid-cols-2">
+          <ul className="mt-3 grid gap-3 md:grid-cols-2 flex-1">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
               return (
@@ -223,7 +223,7 @@ export function VolunteerActivities() {
           )}
         </div>
 
-        <div className="card flex flex-col bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 lg:col-span-5">
+        <div className="card flex flex-col bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 lg:col-span-5 h-full">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-ink">
               {t("volunteer.submitProject")}
