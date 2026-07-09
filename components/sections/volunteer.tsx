@@ -140,7 +140,8 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <ul className="mt-3 grid gap-3 md:grid-cols-2 flex-1">
+          <div className="mt-3 flex-1">
+            <ul className="grid gap-3 md:grid-cols-2 h-full">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
               return (
@@ -188,6 +189,7 @@ export function VolunteerActivities() {
               );
             })}
           </ul>
+          </div>
           {totalActPages > 1 && (
             <div className="mt-3 flex items-center justify-center gap-1">
               <button
