@@ -17,8 +17,15 @@ export default function HomePage() {
       <PartnerSection />
       <LearningHub />
       <MediaSection />
-      <FeaturedProjects />
-      <DonateSection />
+
+      <section className="bg-gradient-to-b from-emerald-50/50 to-white py-20 dark:from-emerald-950/20 dark:to-slate-900">
+        <div className="container-page">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-10 xl:gap-16">
+            <FeaturedProjects />
+            <DonateSection />
+          </div>
+        </div>
+      </section>
     </>
   );
 }

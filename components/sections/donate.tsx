@@ -51,8 +51,8 @@ export function DonateSection() {
 
   if (done) return (
     <div id="donate">
-      <div className="mx-auto max-w-md text-center">
-        <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500" />
+      <div>
+        <CheckCircle2 className="h-12 w-12 text-emerald-500" />
         <h3 className="mt-4 text-xl font-bold">Permintaan Donasi Terkirim</h3>
         <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Xendit yang terbuka.</p>
       </div>
@@ -61,11 +61,11 @@ export function DonateSection() {
 
   return (
     <div id="donate">
-      <div className="mx-auto max-w-lg">
-        <h2 className="text-center text-3xl font-extrabold md:text-4xl">
+      <div>
+        <h2 className="text-3xl font-extrabold md:text-4xl">
           {t("donate.title")} <span className="text-brand-600">{t("donate.titleAccent")}</span>
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-sm text-ink-muted">
+        <p className="mt-3 text-sm text-ink-muted">
           {t("donate.description")}
         </p>
 
@@ -158,7 +158,7 @@ export function DonateSection() {
             )}
           </button>
 
-          <p className="text-center text-xs text-ink-subtle">
+          <p className="text-xs text-ink-subtle">
             {t("donate.paymentMethods")}
           </p>
         </form>

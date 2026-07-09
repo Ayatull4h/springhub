@@ -72,18 +72,18 @@ export function FeaturedProjects() {
   const visible = allProjects.slice(start, start + PER_PAGE);
 
   return (
-    <section className="bg-gradient-to-b from-emerald-50/50 to-white py-20 dark:from-emerald-950/20 dark:to-slate-900">
-      <div className="container-page">
-        <div className="text-center">
+    <>
+      <div>
+        <div className="text-center lg:text-left">
           <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
             Proyek Unggulan
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-ink-muted">
-            Proyek konservasi yang sedang berjalan dan butuh dukungan Anda
+          <p className="mt-3 text-sm text-ink-muted">
+            Proyek konservasi yang sedang berjalan
           </p>
         </div>
 
-        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2">
           {visible.map((p) => {
             const info = TYPE_INFO[p.typeId] || { icon: TreePine, label: p.typeId };
             const Icon = info.icon;
@@ -187,6 +187,6 @@ export function FeaturedProjects() {
           </Link>
         </div>
       </div>
-    </section>
+    </>
   );
 }
