@@ -9,6 +9,7 @@ export {
   SpringDetailSkeleton,
   AdminDashboardSkeleton,
   ProfileSkeleton,
+  FeaturedProjectsSkeleton,
   ProjectsListSkeleton,
   FormSkeleton,
   LearnSkeleton,

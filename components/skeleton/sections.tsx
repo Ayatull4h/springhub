@@ -204,6 +204,22 @@ export function ProjectsListSkeleton() {
   );
 }
 
+export function FeaturedProjectsSkeleton() {
+  return (
+    <section className="bg-gradient-to-b from-emerald-50 to-white py-20 dark:from-emerald-950/50 dark:to-slate-900">
+      <div className="container-page text-center">
+        <Skeleton className="mx-auto h-8 w-48" />
+        <Skeleton className="mx-auto mt-3 h-5 w-72" />
+        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** Form page skeleton */
 export function FormSkeleton() {
   return (

@@ -1,17 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft,
-  MapPin,
-  TreePine,
-  Droplets,
-  Users,
-  Calendar,
-  Loader2,
-  MessageSquare,
+  ArrowLeft, MapPin, TreePine, Droplets, Users,
+  Calendar, Loader2, MessageSquare, Heart,
 } from "lucide-react";
 import { CommentsSection } from "@/components/projects/CommentsSection";
 import { formatNumber } from "@/lib/utils";
@@ -26,99 +20,88 @@ type ProjectDetail = {
   raisedAmount: number;
   typeId: string;
   createdAt: string;
-};
-
-const DUMMY_PROJECTS: Record<string, ProjectDetail> = {
-  "proyek-dummy-1": {
-    id: "proyek-dummy-1",
-    title: "Restorasi Mata Air Cikole",
-    summary: "Merestorasi mata air Cikole yang mengalami sedimentasi berat akibat erosi. Target pengerukan 50 m³ sedimen dan penanaman 200 pohon di area tangkapan air.",
-    region: "Bandung, Jawa Barat",
-    status: "approved",
-    goalAmount: 50_000_000,
-    raisedAmount: 32_500_000,
-    typeId: "restorasi",
-    createdAt: "2026-05-01",
-  },
-  "proyek-dummy-2": {
-    id: "proyek-dummy-2",
-    title: "Program Penghijauan DAS Code",
-    summary: "Menanam 5.000 bibit pohon endemic di sepanjang Daerah Aliran Sungai Code untuk memperkuat resapan air dan mencegah longsor.",
-    region: "Sleman, DI Yogyakarta",
-    status: "approved",
-    goalAmount: 25_000_000,
-    raisedAmount: 18_200_000,
-    typeId: "tanam-pohon",
-    createdAt: "2026-04-15",
-  },
-  "proyek-dummy-3": {
-    id: "proyek-dummy-3",
-    title: "Pembangunan 100 Rorak di Lereng Merbabu",
-    summary: "Membangun 100 rorak (trench) di area resapan lereng Gunung Merbabu untuk meningkatkan infiltrasi air tanah dan mencegah erosi.",
-    region: "Magelang, Jawa Tengah",
-    status: "approved",
-    goalAmount: 75_000_000,
-    raisedAmount: 45_000_000,
-    typeId: "rorak",
-    createdAt: "2026-03-20",
-  },
-  "proyek-dummy-4": {
-    id: "proyek-dummy-4",
-    title: "Monitoring Mata Air di Gunung Kidul",
-    summary: "Program monitoring partisipatif terhadap 25 mata air di kawasan karst Gunung Kidul yang rawan kering saat kemarau.",
-    region: "Gunung Kidul, DI Yogyakarta",
-    status: "draft",
-    goalAmount: 15_000_000,
-    raisedAmount: 0,
-    typeId: "monitoring",
-    createdAt: "2026-06-01",
-  },
-  "proyek-dummy-5": {
-    id: "proyek-dummy-5",
-    title: "Pembibitan Tanaman Konservasi",
-    summary: "Membangun nursery untuk memproduksi 10.000 bibit pohon konservasi per tahun untuk mendukung program restorasi mata air.",
-    region: "Bogor, Jawa Barat",
-    status: "approved",
-    goalAmount: 30_000_000,
-    raisedAmount: 12_750_000,
-    typeId: "bibit",
-    createdAt: "2026-02-10",
-  },
+  user: { username: string } | null;
+  _count: { donations: number; comments: number };
 };
 
 const TYPE_INFO: Record<string, { icon: typeof TreePine; label: string }> = {
-  restorasi: { icon: Droplets, label: "Restorasi Mata Air" },
-  "tanam-pohon": { icon: TreePine, label: "Tanam Pohon" },
-  rorak: { icon: Users, label: "Rorak / Trench" },
-  monitoring: { icon: MapPin, label: "Monitoring" },
-  bibit: { icon: TreePine, label: "Pembibitan" },
+  spring_restoration: { icon: Droplets, label: "Restorasi Mata Air" },
+  "spring-restoration": { icon: Droplets, label: "Restorasi Mata Air" },
+  tree_planting: { icon: TreePine, label: "Tanam Pohon" },
+  "tree-planting": { icon: TreePine, label: "Tanam Pohon" },
+  trench_development: { icon: Users, label: "Rorak / Trench" },
+  "trench-development": { icon: Users, label: "Rorak / Trench" },
+  monitoring_expedition: { icon: MapPin, label: "Monitoring" },
+  "monitoring-expedition": { icon: MapPin, label: "Monitoring" },
+  "seedling-stock": { icon: TreePine, label: "Pembibitan" },
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  pending: "Menunggu",
+  under_review: "Ditinjau",
+  approved: "Aktif",
+  rejected: "Ditolak",
+  completed: "Selesai",
 };
 
 export default function ProjectDetailPage() {
   const params = useParams();
   const [project, setProject] = useState<ProjectDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [liking, setLiking] = useState(false);
+
+  const fetchDetail = useCallback(async () => {
+    const id = params?.id as string;
+    try {
+      // Fetch like status in parallel
+      const [detailRes, likeRes] = await Promise.all([
+        fetch(`/api/projects/${id}`),
+        fetch(`/api/projects/${id}/like`),
+      ]);
+      if (!detailRes.ok) {
+        setNotFound(true);
+        return;
+      }
+      const detailData = await detailRes.json();
+      if (detailData.project) {
+        setProject(detailData.project);
+      } else {
+        setNotFound(true);
+        return;
+      }
+      const likeData = await likeRes.json();
+      setLiked(likeData.liked ?? false);
+      setLikeCount(likeData.likes ?? 0);
+    } catch {
+      setNotFound(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [params?.id]);
 
   useEffect(() => {
-    const id = params?.id as string;
+    fetchDetail();
+  }, [fetchDetail]);
 
-    // First try the real API
-    fetch(`/api/projects/${id}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.project) {
-          setProject(data.project);
-        } else if (DUMMY_PROJECTS[id]) {
-          setProject(DUMMY_PROJECTS[id]);
-        } else {
-          setProject(null);
-        }
-      })
-      .catch(() => {
-        setProject(DUMMY_PROJECTS[id] || null);
-      })
-      .finally(() => setLoading(false));
-  }, [params?.id]);
+  async function handleLike() {
+    if (liking) return;
+    setLiking(true);
+    try {
+      const res = await fetch(`/api/projects/${params?.id}/like`, { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        setLiked(data.liked);
+        setLikeCount(data.likes);
+      }
+    } catch {
+      // silent
+    } finally {
+      setLiking(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -128,7 +111,7 @@ export default function ProjectDetailPage() {
     );
   }
 
-  if (!project) {
+  if (notFound || !project) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
@@ -165,10 +148,26 @@ export default function ProjectDetailPage() {
                 <span className="chip bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
                   {typeInfo.label}
                 </span>
+                {project.status && (
+                  <span className={`chip text-xs ${
+                    project.status === "approved"
+                      ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                      : project.status === "completed"
+                      ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                      : "bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                  }`}>
+                    {STATUS_LABEL[project.status] || project.status}
+                  </span>
+                )}
               </div>
               <h1 className="mt-1 text-3xl font-extrabold tracking-tight md:text-4xl">
                 {project.title}
               </h1>
+              {project.user?.username && (
+                <p className="mt-1 text-sm text-ink-muted">
+                  oleh {project.user.username}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -191,9 +190,33 @@ export default function ProjectDetailPage() {
                 <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
                   <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                   <p className="mt-1 text-sm font-medium text-ink">Dibuat</p>
-                  <p className="text-sm text-ink-muted">{project.createdAt}</p>
+                  <p className="text-sm text-ink-muted">
+                    {new Date(project.createdAt).toLocaleDateString("id-ID", {
+                      year: "numeric", month: "long", day: "numeric",
+                    })}
+                  </p>
                 </div>
               </div>
+            </div>
+
+            {/* Likes & Comments stats */}
+            <div className="mt-6 flex items-center gap-4 text-sm text-ink-muted">
+              <button
+                onClick={handleLike}
+                disabled={liking}
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 transition-colors ${
+                  liked
+                    ? "border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400"
+                    : "border-ink-line hover:border-red-200 hover:text-red-600 dark:hover:border-red-800 dark:hover:text-red-400"
+                }`}
+              >
+                <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
+                {likeCount}
+              </button>
+              <span className="inline-flex items-center gap-1.5">
+                <MessageSquare className="h-4 w-4" />
+                {project._count?.comments ?? 0}
+              </span>
             </div>
           </div>
 

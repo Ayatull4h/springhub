@@ -1,4 +1,4 @@
-import { HeroSkeleton, ImpactDashboardSkeleton, SpringMapSkeleton, VolunteerActivitiesSkeleton, LearningHubSkeleton, MediaSectionSkeleton } from "@/components/skeleton";
+import { HeroSkeleton, ImpactDashboardSkeleton, SpringMapSkeleton, VolunteerActivitiesSkeleton, FeaturedProjectsSkeleton, LearningHubSkeleton, MediaSectionSkeleton } from "@/components/skeleton";
 
 export default function HomeLoading() {
   return (
@@ -7,6 +7,7 @@ export default function HomeLoading() {
       <ImpactDashboardSkeleton />
       <SpringMapSkeleton />
       <VolunteerActivitiesSkeleton />
+      <FeaturedProjectsSkeleton />
       <LearningHubSkeleton />
       <MediaSectionSkeleton />
     </>

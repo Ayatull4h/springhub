@@ -23,13 +23,27 @@ export async function GET() {
     const projects = await prisma.project.findMany({
       where: { status: { in: ["approved", "under_review"] } },
       orderBy: { createdAt: "desc" },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        summary: true,
+        region: true,
+        status: true,
+        goalAmount: true,
+        raisedAmount: true,
+        typeId: true,
+        likes: true,
+        createdAt: true,
         user: { select: { username: true } },
-        _count: { select: { donations: true } },
+        _count: { select: { donations: true, commentList: true } },
       },
     });
 
-    return NextResponse.json({ projects });
+    const normalized = projects.map((p) => ({
+      ...p,
+      _count: { donations: p._count.donations, comments: p._count.commentList },
+    }));
+    return NextResponse.json({ projects: normalized });
   } catch (err) {
     console.error("[Projects GET]", err);
     await logError({ message: "Projects GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});

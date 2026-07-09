@@ -17,74 +17,21 @@ type ProjectItem = {
   createdAt: string;
 };
 
-const DUMMY_PROJECTS: ProjectItem[] = [
-  {
-    id: "proyek-dummy-1",
-    title: "Restorasi Mata Air Cikole",
-    summary: "Merestorasi mata air Cikole yang mengalami sedimentasi berat akibat erosi. Target pengerukan 50 m³ sedimen dan penanaman 200 pohon di area tangkapan air.",
-    region: "Bandung, Jawa Barat",
-    status: "approved",
-    goalAmount: 50_000_000,
-    raisedAmount: 32_500_000,
-    typeId: "restorasi",
-    createdAt: "2026-05-01",
-  },
-  {
-    id: "proyek-dummy-2",
-    title: "Program Penghijauan DAS Code",
-    summary: "Menanam 5.000 bibit pohon endemic di sepanjang Daerah Aliran Sungai Code untuk memperkuat resapan air dan mencegah longsor.",
-    region: "Sleman, DI Yogyakarta",
-    status: "approved",
-    goalAmount: 25_000_000,
-    raisedAmount: 18_200_000,
-    typeId: "tanam-pohon",
-    createdAt: "2026-04-15",
-  },
-  {
-    id: "proyek-dummy-3",
-    title: "Pembangunan 100 Rorak di Lereng Merbabu",
-    summary: "Membangun 100 rorak (trench) di area resapan lereng Gunung Merbabu untuk meningkatkan infiltrasi air tanah dan mencegah erosi.",
-    region: "Magelang, Jawa Tengah",
-    status: "approved",
-    goalAmount: 75_000_000,
-    raisedAmount: 45_000_000,
-    typeId: "rorak",
-    createdAt: "2026-03-20",
-  },
-  {
-    id: "proyek-dummy-4",
-    title: "Monitoring Mata Air di Gunung Kidul",
-    summary: "Program monitoring partisipatif terhadap 25 mata air di kawasan karst Gunung Kidul yang rawan kering saat kemarau.",
-    region: "Gunung Kidul, DI Yogyakarta",
-    status: "draft",
-    goalAmount: 15_000_000,
-    raisedAmount: 0,
-    typeId: "monitoring",
-    createdAt: "2026-06-01",
-  },
-  {
-    id: "proyek-dummy-5",
-    title: "Pembibitan Tanaman Konservasi",
-    summary: "Membangun nursery untuk memproduksi 10.000 bibit pohon konservasi per tahun untuk mendukung program restorasi mata air.",
-    region: "Bogor, Jawa Barat",
-    status: "approved",
-    goalAmount: 30_000_000,
-    raisedAmount: 12_750_000,
-    typeId: "bibit",
-    createdAt: "2026-02-10",
-  },
-];
-
 const TYPE_ICONS: Record<string, typeof TreePine> = {
-  restorasi: Droplets,
-  "tanam-pohon": TreePine,
-  rorak: Users,
-  monitoring: MapPin,
-  bibit: TreePine,
+  spring_restoration: Droplets,
+  "spring-restoration": Droplets,
+  tree_planting: TreePine,
+  "tree-planting": TreePine,
+  trench_development: Users,
+  "trench-development": Users,
+  monitoring_expedition: MapPin,
+  "monitoring-expedition": MapPin,
+  "seedling-stock": TreePine,
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  draft: "Draft",
+  pending: "Menunggu",
+  under_review: "Ditinjau",
   approved: "Aktif",
   completed: "Selesai",
   rejected: "Ditolak",
@@ -98,13 +45,11 @@ export default function ProjectsPage() {
     fetch("/api/projects")
       .then((r) => r.json())
       .then((data) => {
-        if (data.projects?.length) {
+        if (data.projects) {
           setProjects(data.projects);
-        } else {
-          setProjects(DUMMY_PROJECTS);
         }
       })
-      .catch(() => setProjects(DUMMY_PROJECTS))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

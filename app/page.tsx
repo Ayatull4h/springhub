@@ -2,6 +2,7 @@ import { Hero } from "@/components/sections/hero";
 import { ImpactDashboard } from "@/components/sections/impact-dashboard";
 import { SpringMap } from "@/components/sections/spring-map";
 import { VolunteerActivities } from "@/components/sections/volunteer";
+import { FeaturedProjects } from "@/components/sections/featured-projects";
 import { PartnerSection } from "@/_senior/components/PartnerSection";
 import { LearningHub } from "@/components/sections/learning-hub";
 import { MediaSection } from "@/components/sections/media";
@@ -13,6 +14,7 @@ export default function HomePage() {
       <ImpactDashboard />
       <SpringMap />
       <VolunteerActivities />
+      <FeaturedProjects />
       <PartnerSection />
       <LearningHub />
       <MediaSection />
