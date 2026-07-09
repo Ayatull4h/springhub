@@ -33,7 +33,7 @@ export function SiteFooter() {
     {
       title: t("footer.platform"),
       links: [
-        { label: t("map.title"), href: "#map" },
+        { label: t("map.title"), href: "/#map" },
         { label: t("dashboard.title"), href: "#dashboard" },
         { label: t("volunteer.title"), href: "#community" },
         { label: t("learn.title"), href: "#learn" },

@@ -174,13 +174,13 @@ function PhotoModal({
           </svg>
         </button>
         <Image
-          src={photo.url}
-          alt="Foto lapangan"
-          width={photo.width || 1280}
-          height={photo.height || 720}
-          className="max-h-[80vh] w-auto object-contain"
-         
-        />
+           src={photo.url}
+           alt="Foto lapangan"
+           width={photo.width || 1280}
+           height={photo.height || 720}
+           className="max-h-[80vh] w-auto object-contain"
+           unoptimized
+         />
         {(photo.reportDate || photo.reportAuthor) && (
           <div className="flex items-center gap-3 border-t border-ink-line px-4 py-2 text-xs text-ink-muted dark:border-slate-700">
             {photo.reportDate && (
@@ -488,14 +488,14 @@ export default function SpringDetailPage() {
                             className="group relative w-full overflow-hidden rounded-lg border border-ink-line/40 dark:border-slate-600"
                             style={{ aspectRatio: "16/9", maxHeight: 200 }}
                           >
-                            <Image
-                              src={displayPhoto.url}
-                              alt=""
-                              fill
-                              className="object-cover transition duration-200 group-hover:scale-105"
-                             
-                              sizes="(max-width: 640px) 100vw, 50vw"
-                            />
+                              <Image
+                               src={displayPhoto.url}
+                               alt=""
+                               fill
+                               className="object-cover transition duration-200 group-hover:scale-105"
+                               unoptimized
+                               sizes="(max-width: 640px) 100vw, 50vw"
+                             />
                           </button>
                           {otherPhotos.length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -512,13 +512,13 @@ export default function SpringDetailPage() {
                                   className="group relative h-12 w-12 flex-none overflow-hidden rounded-md border border-ink-line/30 dark:border-slate-600"
                                 >
                                   <Image
-                                    src={photo.url}
-                                    alt=""
-                                    fill
-                                    className="object-cover transition duration-200 group-hover:scale-110"
-                                   
-                                    sizes="48px"
-                                  />
+                                     src={photo.url}
+                                     alt=""
+                                     fill
+                                     className="object-cover transition duration-200 group-hover:scale-110"
+                                     unoptimized
+                                     sizes="48px"
+                                   />
                                 </button>
                               ))}
                               {otherPhotos.length > 4 && (
@@ -560,13 +560,13 @@ export default function SpringDetailPage() {
                     className="group relative aspect-square overflow-hidden rounded-lg border border-ink-line/40 dark:border-slate-600"
                   >
                     <Image
-                      src={photo.url}
-                      alt=""
-                      fill
-                      className="object-cover transition duration-200 group-hover:scale-110"
-                     
-                      sizes="(max-width: 640px) 50vw, 33vw"
-                    />
+                     src={photo.url}
+                     alt=""
+                     fill
+                     className="object-cover transition duration-200 group-hover:scale-110"
+                     unoptimized
+                     sizes="(max-width: 640px) 50vw, 33vw"
+                   />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/20">
                       <Camera className="h-6 w-6 text-white opacity-0 transition group-hover:opacity-100" aria-hidden="true" />
                     </div>
