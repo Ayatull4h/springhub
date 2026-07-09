@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { offlineDB, type FormDefinition, type OfflineConfig } from "@/lib/offline-db";
-import { getFormTitle } from "@/lib/forms";
+import { getFormTitle, FORMS } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { ErrorBoundary } from "./error-boundary";
@@ -233,7 +233,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
         }
       })
       .catch(() => {
-        // Fallback to cached forms if offline
+        // Fallback 1: cached forms dari IndexedDB
         offlineDB.getAllForms().then((cached) => {
           if (cached.length > 0) {
             setForms(
@@ -252,6 +252,25 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
                 })),
               }))
             );
+          } else {
+            // Fallback 2: static built-in forms (selalu ada, walau offline)
+            const staticForms = (FORMS as Array<Record<string, unknown>>).map((f: Record<string, unknown>) => ({
+              id: f.slug as string,
+              slug: f.slug as string,
+              title: f.title as string,
+              description: (f.description as string) || "",
+              pointsOnSubmit: f.pointsOnSubmit as number,
+              isActive: true,
+              fields: ((f.fields || []) as Array<Record<string, unknown>>).map((ff: Record<string, unknown>) => ({
+                fieldId: ff.id as string,
+                label: ff.label as string,
+                type: ff.type as string,
+                required: !!ff.required,
+              })),
+            }));
+            setForms(staticForms);
+            // Auto-select all static forms
+            setSelectedForms(new Set(staticForms.map((f) => f.slug)));
           }
         });
       })

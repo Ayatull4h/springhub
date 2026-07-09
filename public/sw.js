@@ -11,7 +11,7 @@
  * - Static assets → Cache-First (installed at SW install)
  * - Navigations → Network-First with cache fallback
  * - Map tiles → Cache-First (pre-cached by area setup)
- * - API calls → Network-Only (not cached)
+ * - API calls → Network-first (forms cached for offline)
  */
 
 const CACHE_NAMES = {
@@ -19,6 +19,7 @@ const CACHE_NAMES = {
   PAGES: "springhub-pages-v3",
   TILES: "springhub-tiles-v3",
   ASSETS: "springhub-assets-v3",
+  API: "springhub-api-v1",
 };
 
 const ALL_CACHES = Object.values(CACHE_NAMES);
@@ -73,8 +74,13 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // ── API calls: never cache ────────────────────────────────────────────
+  // ── API calls: cache forms, sisanya network-only ──────────────────────
   if (url.pathname.startsWith("/api/")) {
+    // Cache form definitions untuk offline use
+    if (url.pathname === "/api/forms" || url.pathname.startsWith("/api/forms/")) {
+      event.respondWith(networkFirstWithCache(event.request, CACHE_NAMES.API));
+      return;
+    }
     return; // network-only
   }
 
@@ -109,6 +115,25 @@ self.addEventListener("fetch", (event) => {
 });
 
 // ─── STRATEGY IMPLEMENTATIONS ─────────────────────────────────────────────
+
+/** API forms: network-first, cache fallback (biar offline bisa pilih form) */
+async function networkFirstWithCache(request, cacheName) {
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(cacheName || CACHE_NAMES.API);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await caches.match(request, { cacheName: cacheName || CACHE_NAMES.API });
+    if (cached) return cached;
+    return new Response(
+      JSON.stringify({ error: "Offline - tidak ada data tersimpan" }),
+      { status: 503, headers: { "Content-Type": "application/json" } }
+    );
+  }
+}
 
 /** Static assets (_next/static): cache-first, network fallback */
 async function staticStrategy(request) {
