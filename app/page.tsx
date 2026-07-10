@@ -18,10 +18,10 @@ export default function HomePage() {
       <section className="container-page py-16">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
-            Ayo Dukung Konservasi
+            Aksi Nyata
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-ink-muted">
-            Setiap donasi Anda mendanai proyek restorasi mata air yang nyata dan terverifikasi
+            Jelajahi proyek yang berjalan dan dukung langsung restorasi mata air Indonesia
           </p>
         </div>
 

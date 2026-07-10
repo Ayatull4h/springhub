@@ -86,10 +86,10 @@ export function FeaturedProjects() {
             return (
               <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
                 <article className="card flex flex-col overflow-hidden transition-all hover:shadow-lg">
-                  <div className="flex h-32 items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/20">
-                    <Icon className="h-12 w-12 text-emerald-400/50 dark:text-emerald-500/30" />
+                  <div className="flex h-20 items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/20">
+                    <Icon className="h-8 w-8 text-emerald-400/50 dark:text-emerald-500/30" />
                   </div>
-                  <div className="flex flex-1 flex-col px-4 pb-4 pt-3">
+                  <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
                     <span className="mb-2 inline-flex w-fit rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
                       {info.label}
                     </span>
