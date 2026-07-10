@@ -16,14 +16,12 @@ export default function HomePage() {
       <VolunteerActivities />
 
       <section className="container-page py-16">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
-            Aksi Nyata
-          </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-ink-muted">
-            Melindungi mata air berharga Indonesia berarti menjaga ekosistem penopangnya—pohon yang mengikat air dan tanah yang menyimpannya. Melalui SpringHub, Anda tidak hanya menyumbang, tetapi memantau dan mendanai langsung proyek restorasi berbasis komunitas secara transparan.
-          </p>
-        </div>
+        <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
+          Aksi Nyata
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+          Pantau dan danai langsung proyek restorasi mata air berbasis komunitas secara transparan
+        </p>
 
         <div className="mt-10 lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-12">
           <div className="lg:border-r lg:border-ink-line lg:pr-8 xl:pr-12">
