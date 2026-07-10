@@ -77,6 +77,9 @@ export function FeaturedProjects() {
         <h3 className="text-lg font-bold tracking-tight text-ink">
           Proyek Unggulan
         </h3>
+        <p className="mt-1 text-xs text-ink-muted">
+          Dukung proyek unggulan kami, pantau perkembangannya secara transparan, dan salurkan donasi Anda sekarang.
+        </p>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
           {visible.map((p) => {
