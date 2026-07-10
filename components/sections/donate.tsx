@@ -57,35 +57,31 @@ export function DonateSection() {
   );
 
   return (
-    <div id="donate" className="card overflow-hidden">
-      <div className="flex h-20 items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/20">
-        <Heart className="h-8 w-8 text-emerald-400/50 dark:text-emerald-500/30" />
-      </div>
-
-      <div className="px-5 pb-5 pt-4">
-        <div className="mb-4 flex items-center gap-5 text-sm">
+    <div id="donate" className="card h-full flex flex-col">
+      <div className="flex flex-1 flex-col px-6 pb-6 pt-6">
+        <div className="mb-5 flex items-center gap-5 text-sm">
           <div>
             <p className="text-[11px] text-ink-muted">Terkumpul</p>
-            <p className="text-base font-bold text-emerald-600 dark:text-emerald-400">Rp 48,2 Juta</p>
+            <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Rp 48,2 Juta</p>
           </div>
-          <div className="h-7 w-px bg-ink-line" />
+          <div className="h-8 w-px bg-ink-line" />
           <div>
             <p className="text-[11px] text-ink-muted">Donatur</p>
-            <p className="text-base font-bold text-ink">324</p>
+            <p className="text-lg font-bold text-ink">324</p>
           </div>
-          <div className="h-7 w-px bg-ink-line" />
+          <div className="h-8 w-px bg-ink-line" />
           <div>
             <p className="text-[11px] text-ink-muted">Proyek</p>
-            <p className="text-base font-bold text-ink">12</p>
+            <p className="text-lg font-bold text-ink">12</p>
           </div>
         </div>
 
-        <h3 className="text-base font-bold text-ink">
+        <h3 className="text-lg font-bold text-ink">
           {t("donate.title")} <span className="text-brand-600">{t("donate.titleAccent")}</span>
         </h3>
-        <p className="mt-1 text-xs text-ink-muted">{t("donate.description")}</p>
+        <p className="mt-1 text-sm text-ink-muted">{t("donate.description")}</p>
 
-        <form onSubmit={submit} className="mt-4 space-y-3">
+        <form onSubmit={submit} className="mt-5 flex flex-1 flex-col justify-between space-y-3">
           <select
             value={tierId}
             onChange={e => { setTierId(e.target.value); setError(""); }}
