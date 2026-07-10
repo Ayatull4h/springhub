@@ -260,10 +260,10 @@ Gunakan terminal untuk test ini.
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
-| 15.1 | Course selesai dapet poin | Buka Learning Hub → selesaikan 1 course → cek poin harus bertambah 25 | ✅ PASS |
-| 15.2 | Admin edit poin course | Buka `/admin/points` → edit "Course Selesai" → selesaikan course → poin sesuai yang diedit | ✅ PASS |
-| 15.3 | Admin edit poin form | Buka `/admin/points` → edit "Spring Monitoring" → submit form → approve → poin sesuai yang diedit | ✅ PASS |
-| 15.4 | Poin dari DB form | Edit `pointsOnSubmit` di `/admin/forms` → submit → approve → poin sesuai (PointRule override) | ✅ PASS |
+| 15.1 | Course selesai dapet poin | Buka Learning Hub → selesaikan 1 course → cek poin harus bertambah 25 | |
+| 15.2 | Admin edit poin course | Buka `/admin/points` → edit "Course Selesai" → selesaikan course → poin sesuai yang diedit | |
+| 15.3 | Admin edit poin form | Buka `/admin/points` → edit "Spring Monitoring" → submit form → approve → poin sesuai yang diedit | |
+| 15.4 | Poin dari DB form | Edit `pointsOnSubmit` di `/admin/forms` → submit → approve → poin sesuai (PointRule override) | |
 
 ---
 
@@ -271,9 +271,9 @@ Gunakan terminal untuk test ini.
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
-| 16.1 | Route map terbuka | Buka `www.springhub.id/api-routes.html` — harusnya graph dengan 103 route node + 25 model + 126 koneksi | ✅ PASS |
-| 16.2 | Filter by type | Klik filter "Admin" — graph harus filter cuma node merah + model terkait | ✅ PASS |
-| 16.3 | Klik node | Klik salah satu node — detail panel harus muncul (method, auth, models) | ✅ PASS |
+| 16.1 | Route map terbuka | Buka `www.springhub.id/api-routes.html` — harusnya graph dengan 103 route node + 25 model + 126 koneksi | |
+| 16.2 | Filter by type | Klik filter "Admin" — graph harus filter cuma node merah + model terkait | |
+| 16.3 | Klik node | Klik salah satu node — detail panel harus muncul (method, auth, models) | |
 
 ---
 
@@ -281,12 +281,12 @@ Gunakan terminal untuk test ini.
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
-| 17.1 | FeaturedProjects di landing | Buka `/` — scroll ke section "Proyek Unggulan" — harus ada 2 card proyek + pagination dots | ✅ PASS |
-| 17.2 | FeaturedProjects paging | Klik next/prev pagination — harus ganti 2 card lain | ✅ PASS |
-| 17.3 | Halaman /projects | Buka `/projects` — harus daftar proyek dari API (bukan dummy) + pagination 9/page | ✅ PASS |
-| 17.4 | Detail proyek | Klik salah satu proyek → `/projects/[id]` — harus muncul detail + progress + like button + komentar | ✅ PASS |
-| 17.5 | Like toggle | Klik tombol like (❤️) — harus toggle filled/outline + counter berubah | ✅ PASS |
-| 17.6 | Komentar | Scroll ke bagian komentar — isi teks + submit — harus muncul di list | ✅ PASS |
+| 17.1 | FeaturedProjects di landing | Buka `/` — scroll ke section "Proyek Unggulan" — harus ada 2 card proyek + pagination dots | |
+| 17.2 | FeaturedProjects paging | Klik next/prev pagination — harus ganti 2 card lain | |
+| 17.3 | Halaman /projects | Buka `/projects` — harus daftar proyek dari API (bukan dummy) + pagination 9/page | |
+| 17.4 | Detail proyek | Klik salah satu proyek → `/projects/[id]` — harus muncul detail + progress + like button + komentar | |
+| 17.5 | Like toggle | Klik tombol like (❤️) — harus toggle filled/outline + counter berubah | |
+| 17.6 | Komentar | Scroll ke bagian komentar — isi teks + submit — harus muncul di list | |
 
 ---
 
@@ -294,14 +294,14 @@ Gunakan terminal untuk test ini.
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
-| 18.1 | `GET /api/projects` | Buka di browser/postman — harus return 200 + array projects | ✅ PASS (7 projects) |
-| 18.2 | `GET /api/projects/[id]` | Buka di browser — harus return 200 + detail project | ✅ PASS |
-| 18.3 | `GET /api/projects/[id]/like` | Buka di browser — harus return `{liked, likes}` | ✅ PASS |
-| 18.4 | `GET /api/courses` | Buka di browser — harus return 200 + array courses | ✅ PASS (3 courses) |
-| 18.5 | `PUT /api/courses/progress` | Complete course → harus return `pointsAwarded: 25` | ✅ PASS |
-| 18.6 | Duplicate course points | Complete course kedua kali → `pointsAwarded: 0` | ✅ PASS |
-| 18.7 | `GET /api/auth/me` | Tanpa session → return `{user: null}` | ✅ PASS |
-| 18.8 | `POST /api/donations/invoice` | Tanpa CSRF → return 403 | ✅ PASS |
+| 18.1 | `GET /api/projects` | Buka di browser/postman — harus return 200 + array projects | (7 projects) |
+| 18.2 | `GET /api/projects/[id]` | Buka di browser — harus return 200 + detail project | |
+| 18.3 | `GET /api/projects/[id]/like` | Buka di browser — harus return `{liked, likes}` | |
+| 18.4 | `GET /api/courses` | Buka di browser — harus return 200 + array courses | (3 courses) |
+| 18.5 | `PUT /api/courses/progress` | Complete course → harus return `pointsAwarded: 25` | |
+| 18.6 | Duplicate course points | Complete course kedua kali → `pointsAwarded: 0` | |
+| 18.7 | `GET /api/auth/me` | Tanpa session → return `{user: null}` | |
+| 18.8 | `POST /api/donations/invoice` | Tanpa CSRF → return 403 | |
 
 ---
 
@@ -309,10 +309,10 @@ Gunakan terminal untuk test ini.
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
-| 19.1 | Shared header | Buka `/` — scroll ke section "Aksi Nyata" dengan brand accent | ✅ PASS |
-| 19.2 | Project cards blue theme | Card proyek harus dominan warna biru (sky) — header, badge, progress bar | ✅ PASS |
-| 19.3 | Donasi card premium | Card donasi harus punya `card` class + social proof stats (Terkumpul, Donatur, Proyek) | ✅ PASS |
-| 19.4 | Donasi card compact | Form field harus rapat tanpa ruang kosong berlebih | ✅ PASS |
+| 19.1 | Shared header | Buka `/` — scroll ke section "Aksi Nyata" dengan brand accent | |
+| 19.2 | Project cards blue theme | Card proyek harus dominan warna biru (sky) — header, badge, progress bar | |
+| 19.3 | Donasi card premium | Card donasi harus punya `card` class + social proof stats (Terkumpul, Donatur, Proyek) | |
+| 19.4 | Donasi card compact | Form field harus rapat tanpa ruang kosong berlebih | |
 
 ---
 
@@ -339,4 +339,4 @@ Gunakan terminal untuk test ini.
 | Test 17 — Project & Like (6) | 6 | 0 | |
 | Test 18 — API Routing (8) | 8 | 0 | |
 | Test 19 — Aksi Nyata Section (4) | 4 | 0 | |
-| **TOTAL** | **135** | **0** | **All PASS** |
+| **TOTAL** | **/** | **/** | |
