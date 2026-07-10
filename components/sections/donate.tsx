@@ -62,105 +62,79 @@ export function DonateSection() {
   return (
     <div id="donate">
       <div>
-        <h2 className="text-3xl font-extrabold md:text-4xl">
+        <h2 className="text-2xl font-extrabold tracking-tight md:text-3xl">
           {t("donate.title")} <span className="text-brand-600">{t("donate.titleAccent")}</span>
         </h2>
-        <p className="mt-3 text-sm text-ink-muted">
+        <p className="mt-2 text-sm text-ink-muted">
           {t("donate.description")}
         </p>
 
-        <form onSubmit={submit} className="card mt-8 space-y-5">
-          {/* Impact dropdown */}
+        <form onSubmit={submit} className="mt-6 space-y-4">
           <div>
-            <label className="text-sm font-semibold text-ink">{t("donate.selectImpact")}</label>
             <select
               value={tierId}
               onChange={e => { setTierId(e.target.value); setError(""); }}
-              className="mt-1.5 w-full rounded-lg border border-ink-line bg-white px-4 py-3 text-sm transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:bg-slate-800"
+              className="w-full rounded-lg border border-ink-line bg-white px-3.5 py-2.5 text-sm dark:bg-slate-800"
               required
             >
-              <option value="">— {t("donate.chooseImpact")} —</option>
+              <option value="">{t("donate.chooseImpact")}</option>
               {DONATION_TIERS.map(t => (
-                <option key={t.id} value={t.id}>
-                  {t.impact} — {t.label}
-                </option>
+                <option key={t.id} value={t.id}>{t.impact}</option>
               ))}
               <option value="custom">{t("donate.customOption")}</option>
             </select>
           </div>
 
-          {/* Selected impact summary */}
           {tier && (
-            <div className="rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-800 dark:bg-brand-900/30 dark:text-brand-300">
-              {tierIcons[tier.id]} {t("donate.supporting")} <strong>{tier.impact}</strong>
-              <br />
-              {t("donate.forAmount")} <strong>{tier.label}</strong>
+            <div className="rounded-lg bg-brand-50 px-3.5 py-2.5 text-sm text-brand-800 dark:bg-brand-900/30 dark:text-brand-300">
+              {tierIcons[tier.id]} <strong>{tier.impact}</strong> — {tier.label}
             </div>
           )}
 
-          {/* Custom amount input */}
           {tierId === "custom" && (
-            <div>
-              <label className="text-xs font-medium text-ink-muted">{t("donate.customAmount")}</label>
-              <input
-                type="number"
-                value={customAmount}
-                onChange={e => setCustomAmount(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm dark:bg-slate-800"
-                placeholder={t("donate.customAmountPlaceholder")}
-                min={1000}
-                required
-              />
-            </div>
+            <input
+              type="number"
+              value={customAmount}
+              onChange={e => setCustomAmount(e.target.value)}
+              className="w-full rounded-lg border border-ink-line px-3.5 py-2.5 text-sm dark:bg-slate-800"
+              placeholder="Jumlah donasi (Rp)"
+              min={1000}
+              required
+            />
           )}
 
-          {/* Name + Email */}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="text-xs font-medium text-ink-muted">{t("donate.fullName")} *</label>
-              <input
-                required
-                value={name}
-                onChange={e => setName(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:bg-slate-800"
-                placeholder={t("donate.fullNamePlaceholder")}
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-ink-muted">{t("donate.email")}</label>
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:bg-slate-800"
-                placeholder={t("donate.emailPlaceholder")}
-              />
-            </div>
+          <div className="flex gap-3">
+            <input
+              required
+              value={name}
+              onChange={e => setName(e.target.value)}
+              className="flex-1 rounded-lg border border-ink-line px-3.5 py-2.5 text-sm dark:bg-slate-800"
+              placeholder="Nama"
+            />
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="flex-1 rounded-lg border border-ink-line px-3.5 py-2.5 text-sm dark:bg-slate-800"
+              placeholder="Email"
+            />
           </div>
 
-          {/* Error */}
           {error && (
-            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            <div className="rounded-lg bg-red-50 px-3.5 py-2.5 text-xs text-red-700 dark:bg-red-900/30 dark:text-red-300">
               {error}
             </div>
           )}
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={loading || !name || (tierId !== "custom" && !tier) || (tierId === "custom" && !customAmount)}
-            className="btn-primary w-full justify-center gap-2 py-3 text-base"
+            className="btn-primary w-full justify-center gap-2 py-2.5 text-sm"
           >
-            {loading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <><Heart className="h-5 w-5" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
+              <><Heart className="h-4 w-4" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>
             )}
           </button>
-
-          <p className="text-xs text-ink-subtle">
-            {t("donate.paymentMethods")}
-          </p>
         </form>
       </div>
     </div>
