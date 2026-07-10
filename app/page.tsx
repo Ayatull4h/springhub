@@ -20,7 +20,7 @@ export default function HomePage() {
           Aksi Nyata
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
-          Pantau dan danai langsung proyek restorasi mata air berbasis komunitas secara transparan
+          Melindungi mata air berharga Indonesia berarti menjaga ekosistem penopangnya—pohon yang mengikat air dan tanah yang menyimpannya. Melalui SpringHub, Anda tidak hanya menyumbang, tetapi memantau dan mendanai langsung proyek restorasi berbasis komunitas secara transparan.
         </p>
 
         <div className="mt-10 lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-12">
