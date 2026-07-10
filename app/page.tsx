@@ -21,7 +21,7 @@ export default function HomePage() {
             Aksi Nyata
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-ink-muted">
-            Jelajahi proyek yang berjalan dan dukung langsung restorasi mata air Indonesia
+            Melindungi mata air berharga Indonesia berarti menjaga ekosistem penopangnya—pohon yang mengikat air dan tanah yang menyimpannya. Melalui SpringHub, Anda tidak hanya menyumbang, tetapi memantau dan mendanai langsung proyek restorasi berbasis komunitas secara transparan.
           </p>
         </div>
 
