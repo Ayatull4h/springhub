@@ -89,40 +89,44 @@ export function FeaturedProjects() {
             return (
               <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
                 <article className="card flex flex-col overflow-hidden transition-all hover:shadow-lg">
-                  <div className="flex h-20 items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/20">
-                    <Icon className="h-8 w-8 text-emerald-400/50 dark:text-emerald-500/30" />
+                  <div className="flex h-24 items-center justify-center bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
+                    <Icon className="h-10 w-10 text-sky-400/50 dark:text-sky-500/30" />
                   </div>
                   <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-                    <span className="mb-2 inline-flex w-fit rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                    <span className="mb-2 inline-flex w-fit rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-900/30 dark:text-sky-300">
                       {info.label}
                     </span>
-                    <h3 className="text-sm font-semibold text-ink group-hover:text-emerald-600 transition-colors">
+                    <h3 className="text-base font-semibold text-ink group-hover:text-sky-600 transition-colors">
                       {p.title}
                     </h3>
-                    <p className="mt-1 text-xs leading-relaxed text-ink-muted line-clamp-2">
+                    <p className="mt-1 text-sm leading-relaxed text-ink-muted line-clamp-2">
                       {p.summary}
                     </p>
                     <div className="mt-2 flex items-center gap-1 text-xs text-ink-subtle">
-                      <MapPin className="h-3 w-3 shrink-0" />
+                      <MapPin className="h-3.5 w-3.5 shrink-0" />
                       {p.region}
                     </div>
                     {p.goalAmount > 0 && (
-                      <div className="mt-3">
+                      <div className="mt-4">
                         <div className="flex items-center justify-between text-xs text-ink-muted">
-                          <span>Rp {formatNumber(p.raisedAmount)}</span>
+                          <span>Target</span>
                           <span>Rp {formatNumber(p.goalAmount)}</span>
                         </div>
-                        <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
-                          <div className="h-full rounded-full bg-emerald-400 transition-all" style={{ width: `${Math.min(progress, 100)}%` }} />
+                        <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-sky-100 dark:bg-sky-950">
+                          <div className="h-full rounded-full bg-sky-500 transition-all" style={{ width: `${Math.min(progress, 100)}%` }} />
+                        </div>
+                        <div className="mt-1 flex items-center justify-between text-xs">
+                          <span className="text-ink-muted">Terkumpul Rp {formatNumber(p.raisedAmount)}</span>
+                          <span className="font-semibold text-sky-600 dark:text-sky-400">{progress}%</span>
                         </div>
                       </div>
                     )}
-                    <div className="mt-3 flex items-center gap-3 text-xs text-ink-muted">
-                      <span className="inline-flex items-center gap-1"><Heart className="h-3 w-3 text-rose-400" />{p.likes ?? 0}</span>
-                      <span className="inline-flex items-center gap-1"><MessageSquare className="h-3 w-3 text-sky-400" />{p.comments ?? 0}</span>
+                    <div className="mt-3 flex items-center gap-4 text-xs text-ink-muted">
+                      <span className="inline-flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-rose-400" />{p.likes ?? 0}</span>
+                      <span className="inline-flex items-center gap-1.5"><MessageSquare className="h-3.5 w-3.5 text-sky-400" />{p.comments ?? 0}</span>
                     </div>
-                    <div className="mt-auto pt-3 flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                      Lihat Detail <ArrowRight className="h-3 w-3" />
+                    <div className="mt-auto pt-3 flex items-center gap-1 text-sm font-medium text-sky-600 dark:text-sky-400">
+                      Lihat Detail <ArrowRight className="h-4 w-4" />
                     </div>
                   </div>
                 </article>
@@ -141,7 +145,7 @@ export function FeaturedProjects() {
             <div className="flex items-center gap-1.5">
               {Array.from({ length: totalPages }).map((_, i) => (
                 <button key={i} onClick={() => setPage(i)}
-                  className={`h-1.5 rounded-full transition-all ${i === safePage ? "w-4 bg-emerald-500" : "w-1.5 bg-slate-300 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-500"}`}
+                  className={`h-1.5 rounded-full transition-all ${i === safePage ? "w-4 bg-sky-500" : "w-1.5 bg-slate-300 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-500"}`}
                 />
               ))}
             </div>
@@ -154,7 +158,7 @@ export function FeaturedProjects() {
         )}
 
         <div className="mt-5">
-          <Link href="/projects" className="text-xs font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400">
+          <Link href="/projects" className="text-xs font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400">
             Lihat Semua Proyek <ArrowRightCircle className="h-3 w-3 inline" />
           </Link>
         </div>

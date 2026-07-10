@@ -57,9 +57,9 @@ export function DonateSection() {
   );
 
   return (
-    <div id="donate" className="card h-full flex flex-col">
-      <div className="flex flex-1 flex-col px-6 pb-6 pt-6">
-        <div className="mb-5 flex items-center gap-5 text-sm">
+    <div id="donate" className="card">
+      <div className="px-5 pb-5 pt-5">
+        <div className="mb-4 flex items-center gap-5 text-sm">
           <div>
             <p className="text-[11px] text-ink-muted">Terkumpul</p>
             <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Rp 48,2 Juta</p>
@@ -81,11 +81,11 @@ export function DonateSection() {
         </h3>
         <p className="mt-1 text-sm text-ink-muted">{t("donate.description")}</p>
 
-        <form onSubmit={submit} className="mt-5 flex flex-1 flex-col justify-between space-y-3">
+        <form onSubmit={submit} className="mt-3 space-y-2">
           <select
             value={tierId}
             onChange={e => { setTierId(e.target.value); setError(""); }}
-            className="w-full rounded-lg border border-ink-line bg-white px-3.5 py-2.5 text-sm dark:bg-slate-800"
+            className="w-full rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
             required
           >
             <option value="">{t("donate.chooseImpact")}</option>
@@ -96,7 +96,7 @@ export function DonateSection() {
           </select>
 
           {tier && (
-            <div className="rounded-lg bg-brand-50 px-3.5 py-2.5 text-sm text-brand-800 dark:bg-brand-900/30 dark:text-brand-300">
+            <div className="rounded-lg bg-brand-50 px-3 py-2 text-sm text-brand-800 dark:bg-brand-900/30 dark:text-brand-300">
               {tierIcons[tier.id]} <strong>{tier.impact}</strong> — {tier.label}
             </div>
           )}
@@ -106,7 +106,7 @@ export function DonateSection() {
               type="number"
               value={customAmount}
               onChange={e => setCustomAmount(e.target.value)}
-              className="w-full rounded-lg border border-ink-line bg-white px-3.5 py-2.5 text-sm dark:bg-slate-800"
+              className="w-full rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
               placeholder="Jumlah donasi (Rp)"
               min={1000}
               required
@@ -118,20 +118,20 @@ export function DonateSection() {
               required
               value={name}
               onChange={e => setName(e.target.value)}
-              className="flex-1 min-w-0 rounded-lg border border-ink-line bg-white px-3.5 py-2.5 text-sm dark:bg-slate-800"
+              className="flex-1 min-w-0 rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
               placeholder="Nama Anda"
             />
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="flex-1 min-w-0 rounded-lg border border-ink-line bg-white px-3.5 py-2.5 text-sm dark:bg-slate-800"
+              className="flex-1 min-w-0 rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
               placeholder="Email"
             />
           </div>
 
           {error && (
-            <div className="rounded-lg bg-red-50 px-3.5 py-2.5 text-xs text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            <div className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-900/30 dark:text-red-300">
               {error}
             </div>
           )}
@@ -139,7 +139,7 @@ export function DonateSection() {
           <button
             type="submit"
             disabled={loading || !name || (tierId !== "custom" && !tier) || (tierId === "custom" && !customAmount)}
-            className="btn-primary w-full justify-center gap-2 py-3 text-sm"
+            className="btn-primary w-full justify-center gap-2 py-2.5 text-sm"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
               <><Heart className="h-4 w-4" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>

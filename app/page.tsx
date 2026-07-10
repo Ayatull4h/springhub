@@ -17,7 +17,7 @@ export default function HomePage() {
 
       <section className="container-page py-16">
         <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
-          Aksi Nyata
+          Aksi <span className="text-brand-600">Nyata</span>
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
           Melindungi mata air berharga Indonesia berarti menjaga ekosistem penopangnya—pohon yang mengikat air dan tanah yang menyimpannya. Melalui SpringHub, Anda tidak hanya menyumbang, tetapi memantau dan mendanai langsung proyek restorasi berbasis komunitas secara transparan.

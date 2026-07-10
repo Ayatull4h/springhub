@@ -108,7 +108,7 @@ export default function ProjectDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-sky-600" />
       </div>
     );
   }
@@ -133,7 +133,7 @@ export default function ProjectDetailPage() {
 
   return (
     <main className="min-h-screen">
-      <section className="bg-gradient-to-b from-emerald-50 to-white py-12 dark:from-emerald-950 dark:to-slate-900">
+      <section className="bg-gradient-to-b from-sky-50 to-white py-12 dark:from-sky-950 dark:to-slate-900">
         <div className="container-page">
           <Link
             href="/projects"
@@ -142,18 +142,18 @@ export default function ProjectDetailPage() {
             <ArrowLeft className="h-4 w-4" /> Kembali ke Proyek
           </Link>
           <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/50">
-              <Icon className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-100 dark:bg-sky-900/50">
+              <Icon className="h-7 w-7 text-sky-600 dark:text-sky-400" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="chip bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                <span className="chip bg-sky-50 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300">
                   {typeInfo.label}
                 </span>
                 {project.status && (
                   <span className={`chip text-xs ${
                     project.status === "approved"
-                      ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                      ? "bg-sky-50 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300"
                       : project.status === "completed"
                       ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
                       : "bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
@@ -185,12 +185,12 @@ export default function ProjectDetailPage() {
               <h2 className="text-xl font-bold text-ink">Detail</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-                  <MapPin className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  <MapPin className="h-5 w-5 text-sky-600 dark:text-sky-400" />
                   <p className="mt-1 text-sm font-medium text-ink">Lokasi</p>
                   <p className="text-sm text-ink-muted">{project.region}</p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-                  <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  <Calendar className="h-5 w-5 text-sky-600 dark:text-sky-400" />
                   <p className="mt-1 text-sm font-medium text-ink">Dibuat</p>
                   <p className="text-sm text-ink-muted">
                     {new Date(project.createdAt).toLocaleDateString("id-ID", {
@@ -228,14 +228,14 @@ export default function ProjectDetailPage() {
               {project.goalAmount > 0 && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="font-semibold text-sky-600 dark:text-sky-400">
                       Rp {formatNumber(project.raisedAmount)}
                     </span>
                     <span className="text-ink-muted">dari Rp {formatNumber(project.goalAmount)}</span>
                   </div>
                   <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                     <div
-                      className="h-full rounded-full bg-emerald-500 transition-all"
+                      className="h-full rounded-full bg-sky-500 transition-all"
                       style={{ width: `${Math.min(progress, 100)}%` }}
                     />
                   </div>
@@ -249,7 +249,7 @@ export default function ProjectDetailPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>Terkumpul</span>
-                  <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                  <span className="font-medium text-sky-600 dark:text-sky-400">
                     Rp {formatNumber(project.raisedAmount)}
                   </span>
                 </div>
