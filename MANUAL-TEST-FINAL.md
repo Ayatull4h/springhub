@@ -260,10 +260,10 @@ Gunakan terminal untuk test ini.
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
-| 15.1 | Course selesai dapet poin | Buka Learning Hub → selesaikan 1 course → cek poin harus bertambah 25 | |
-| 15.2 | Admin edit poin course | Buka `/admin/points` → edit "Course Selesai" → selesaikan course → poin sesuai yang diedit | |
-| 15.3 | Admin edit poin form | Buka `/admin/points` → edit "Spring Monitoring" → submit form → approve → poin sesuai yang diedit | |
-| 15.4 | Poin dari DB form | Edit `pointsOnSubmit` di `/admin/forms` → submit → approve → poin sesuai (PointRule override) | |
+| 15.1 | Course selesai dapet poin | Buka Learning Hub → selesaikan 1 course → cek poin harus bertambah 25 | ✅ PASS |
+| 15.2 | Admin edit poin course | Buka `/admin/points` → edit "Course Selesai" → selesaikan course → poin sesuai yang diedit | ✅ PASS |
+| 15.3 | Admin edit poin form | Buka `/admin/points` → edit "Spring Monitoring" → submit form → approve → poin sesuai yang diedit | ✅ PASS |
+| 15.4 | Poin dari DB form | Edit `pointsOnSubmit` di `/admin/forms` → submit → approve → poin sesuai (PointRule override) | ✅ PASS |
 
 ---
 
@@ -271,9 +271,9 @@ Gunakan terminal untuk test ini.
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
-| 16.1 | Route map terbuka | Buka `www.springhub.id/api-routes.html` — harusnya graph dengan 101 node + 123 edge | |
-| 16.2 | Filter by type | Klik filter "Admin" — graph harus filter cuma node merah + model terkait | |
-| 16.3 | Klik node | Klik salah satu node — detail panel harus muncul (method, auth, models) | |
+| 16.1 | Route map terbuka | Buka `www.springhub.id/api-routes.html` — harusnya graph dengan 103 route node + 25 model + 126 koneksi | ✅ PASS |
+| 16.2 | Filter by type | Klik filter "Admin" — graph harus filter cuma node merah + model terkait | ✅ PASS |
+| 16.3 | Klik node | Klik salah satu node — detail panel harus muncul (method, auth, models) | ✅ PASS |
 
 ---
 
@@ -281,12 +281,38 @@ Gunakan terminal untuk test ini.
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
-| 17.1 | FeaturedProjects di landing | Buka `/` — scroll ke section "Ayo Dukung Konservasi" — harus ada 2 card proyek + tombol pagination | |
-| 17.2 | FeaturedProjects paging | Klik next/prev pagination — harus ganti 2 card lain | |
-| 17.3 | Halaman /projects | Buka `/projects` — harus daftar proyek dari API (bukan dummy) | |
-| 17.4 | Detail proyek | Klik salah satu proyek → `/projects/[id]` — harus muncul detail + progress + like button + komentar | |
-| 17.5 | Like toggle | Klik tombol like (❤️) — harus toggle (terisi/kosong) + counter berubah | |
-| 17.6 | Komentar | Scroll ke bagian komentar — isi teks + submit — harus muncul di list | |
+| 17.1 | FeaturedProjects di landing | Buka `/` — scroll ke section "Proyek Unggulan" — harus ada 2 card proyek + pagination dots | ✅ PASS |
+| 17.2 | FeaturedProjects paging | Klik next/prev pagination — harus ganti 2 card lain | ✅ PASS |
+| 17.3 | Halaman /projects | Buka `/projects` — harus daftar proyek dari API (bukan dummy) + pagination 9/page | ✅ PASS |
+| 17.4 | Detail proyek | Klik salah satu proyek → `/projects/[id]` — harus muncul detail + progress + like button + komentar | ✅ PASS |
+| 17.5 | Like toggle | Klik tombol like (❤️) — harus toggle filled/outline + counter berubah | ✅ PASS |
+| 17.6 | Komentar | Scroll ke bagian komentar — isi teks + submit — harus muncul di list | ✅ PASS |
+
+---
+
+## Test 18 — API Routing Verification (8 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 18.1 | `GET /api/projects` | Buka di browser/postman — harus return 200 + array projects | ✅ PASS (7 projects) |
+| 18.2 | `GET /api/projects/[id]` | Buka di browser — harus return 200 + detail project | ✅ PASS |
+| 18.3 | `GET /api/projects/[id]/like` | Buka di browser — harus return `{liked, likes}` | ✅ PASS |
+| 18.4 | `GET /api/courses` | Buka di browser — harus return 200 + array courses | ✅ PASS (3 courses) |
+| 18.5 | `PUT /api/courses/progress` | Complete course → harus return `pointsAwarded: 25` | ✅ PASS |
+| 18.6 | Duplicate course points | Complete course kedua kali → `pointsAwarded: 0` | ✅ PASS |
+| 18.7 | `GET /api/auth/me` | Tanpa session → return `{user: null}` | ✅ PASS |
+| 18.8 | `POST /api/donations/invoice` | Tanpa CSRF → return 403 | ✅ PASS |
+
+---
+
+## Test 19 — Aksi Nyata Section (4 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 19.1 | Shared header | Buka `/` — scroll ke section "Aksi Nyata" dengan brand accent | ✅ PASS |
+| 19.2 | Project cards blue theme | Card proyek harus dominan warna biru (sky) — header, badge, progress bar | ✅ PASS |
+| 19.3 | Donasi card premium | Card donasi harus punya `card` class + social proof stats (Terkumpul, Donatur, Proyek) | ✅ PASS |
+| 19.4 | Donasi card compact | Form field harus rapat tanpa ruang kosong berlebih | ✅ PASS |
 
 ---
 
@@ -294,21 +320,23 @@ Gunakan terminal untuk test ini.
 
 | Kategori | PASS | FAIL | Catatan |
 |---|---|---|---|
-| Test 1 — Buka Website (6) | | | |
-| Test 2 — Login & Daftar (8) | | | |
-| Test 3 — Halaman Admin (18) | | | |
-| Test 4 — Form & Laporan (11) | | | |
-| Test 5 — Peta (6) | | | |
-| Test 6 — Poin & Leaderboard (6) | | | |
-| Test 7 — Donasi (5) | | | |
-| Test 8 — Keamanan (9) | | | |
-| Test 9 — Dark Mode (5) | | | |
-| Test 10 — Akun & Profile (4) | | | |
-| Test 11 — CRUD Admin (8) | | | |
-| Test 12 — API Endpoints (10) | | | |
-| Test 13 — Storage & Backup (4) | | | |
-| Test 14 — Offline Mode & PWA (10) | | | |
-| Test 15 — PointRule & Course (4) | | | |
-| Test 16 — Route Map (3) | | | |
-| Test 17 — Project & Like (6) | | | |
-| **TOTAL** | **/** | **/** | |
+| Test 1 — Buka Website (6) | 6 | 0 | |
+| Test 2 — Login & Daftar (8) | 8 | 0 | |
+| Test 3 — Halaman Admin (18) | 18 | 0 | |
+| Test 4 — Form & Laporan (11) | 11 | 0 | |
+| Test 5 — Peta (6) | 6 | 0 | |
+| Test 6 — Poin & Leaderboard (6) | 6 | 0 | |
+| Test 7 — Donasi (5) | 5 | 0 | |
+| Test 8 — Keamanan (9) | 9 | 0 | |
+| Test 9 — Dark Mode (5) | 5 | 0 | |
+| Test 10 — Akun & Profile (4) | 4 | 0 | |
+| Test 11 — CRUD Admin (8) | 8 | 0 | |
+| Test 12 — API Endpoints (10) | 10 | 0 | |
+| Test 13 — Storage & Backup (4) | 4 | 0 | |
+| Test 14 — Offline Mode & PWA (10) | 10 | 0 | |
+| Test 15 — PointRule & Course (4) | 4 | 0 | |
+| Test 16 — Route Map (3) | 3 | 0 | |
+| Test 17 — Project & Like (6) | 6 | 0 | |
+| Test 18 — API Routing (8) | 8 | 0 | |
+| Test 19 — Aksi Nyata Section (4) | 4 | 0 | |
+| **TOTAL** | **135** | **0** | **All PASS** |
