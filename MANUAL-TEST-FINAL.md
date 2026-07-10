@@ -277,6 +277,19 @@ Gunakan terminal untuk test ini.
 
 ---
 
+## Test 17 — Project & Like (6 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 17.1 | FeaturedProjects di landing | Buka `/` — scroll ke section "Ayo Dukung Konservasi" — harus ada 2 card proyek + tombol pagination | |
+| 17.2 | FeaturedProjects paging | Klik next/prev pagination — harus ganti 2 card lain | |
+| 17.3 | Halaman /projects | Buka `/projects` — harus daftar proyek dari API (bukan dummy) | |
+| 17.4 | Detail proyek | Klik salah satu proyek → `/projects/[id]` — harus muncul detail + progress + like button + komentar | |
+| 17.5 | Like toggle | Klik tombol like (❤️) — harus toggle (terisi/kosong) + counter berubah | |
+| 17.6 | Komentar | Scroll ke bagian komentar — isi teks + submit — harus muncul di list | |
+
+---
+
 ## Ringkasan Hasil
 
 | Kategori | PASS | FAIL | Catatan |
@@ -297,4 +310,5 @@ Gunakan terminal untuk test ini.
 | Test 14 — Offline Mode & PWA (10) | | | |
 | Test 15 — PointRule & Course (4) | | | |
 | Test 16 — Route Map (3) | | | |
+| Test 17 — Project & Like (6) | | | |
 | **TOTAL** | **/** | **/** | |

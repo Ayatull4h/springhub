@@ -425,15 +425,17 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 | projects | approved | create (>=20K pts) | ALL |
 | points_log | — | riwayat sendiri | ALL |
 
-### 📋 Route Map (Updated 1 Juni 2026)
+### 📋 Route Map (Updated 9 Juli 2026)
 
 | Route | Status | Fungsi |
 |---|---|---|
-| `/` | PASS Siap | Landing page |
+| `/` | PASS Siap | Landing page — Hero, ImpactDashboard, SpringMap, Volunteer, Partner, LearningHub, Media, **FeaturedProjects + Donate** |
+| `/projects` | PASS Siap | Daftar proyek approved/under_review dari API |
+| `/projects/[id]` | PASS Siap | Detail proyek — like, komentar, progress donasi |
+| `/projects/new` | PASS Siap | Multi-step project proposal (20K pts gate) |
 | `/report/[slug]` | PASS Siap | 5 form — submit ke POST /api/reports PASS |
 | `/sign-in` | PASS Siap | Login |
 | `/join` | PASS Siap | Register |
-| `/projects/new` | PASS Siap | Multi-step project proposal |
 | `/profile` | PASS Siap | Profile user |
 | `/admin` | PASS Siap | Dashboard admin |
 | `/admin/users` | PASS Siap | Manajemen user |
@@ -450,7 +452,10 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 | `/api/reports/[id]/photos` | PASS Siap | Upload foto |
 | `/api/donations/invoice` | PASS Siap | Xendit invoice |
 | `/api/donations/webhook` | PASS Siap | Xendit callback (HMAC) |
-| `/api/projects` | PASS Siap | GET list / POST create |
+| `/api/projects` | PASS Siap | GET list (approved/under_review) + POST create |
+| `/api/projects/[id]` | PASS Siap | GET detail proyek (dengan user + _count) |
+| `/api/projects/[id]/like` | PASS Siap | GET cek status like + POST toggle like/unlike (Like model) |
+| `/api/projects/[id]/comments` | PASS Siap | GET list komen + POST tambah komen |
 | `/api/leaderboard` | PASS Siap | Top 20 |
 | `/api/user/profile` | PASS Siap | GET/PUT profile |
 | `/api/user/points` | PASS Siap | Riwayat poin |
@@ -468,6 +473,12 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 - `components/skeleton/sections.tsx` — 14 layout-specific skeletons
 - `components/skeleton/index.ts` — barrel export
 - `lib/use-data-saver.tsx` — data saver hook + context/provider
+
+### 📦 New Files (Sesi 10 — Project Feature)
+- `app/api/projects/[id]/route.ts` — GET detail proyek
+- `app/api/projects/[id]/like/route.ts` — GET/POST toggle like (Like model)
+- `components/sections/featured-projects.tsx` — FeaturedProjects section landing page
+- `prisma/migrations/*_add_like_model/` — Migration Like table
 - `prisma/fix-ui.sql` — tambah manual test UI items
 - `prisma/fix-ucup.sql` — (fixed) akun ucup + updatedAt
 
@@ -478,7 +489,7 @@ courses_progress (id UUID PK, user_id FK, course_slug, completed_modules,
 | Landing page UI | 100% | Semua section, i18n, dark mode PASS |
 | Form UI | 100% | 5 form + dynamic forms + Zod validation PASS |
 | Map UI | 100% | Leaflet + filter + location picker PASS |
-| Backend API | 100% | 52 route.ts — auth, reports, donations, projects, courses, admin, dll PASS |
+| Backend API | 100% | 54 route.ts — auth, reports, donations, projects (+like/+comments), courses, admin, dll PASS |
 | Database | 100% | Prisma 14 models + Supabase PostgreSQL PASS |
 | Auth | 100% | Login, Register, Logout, Forgot/Reset password, Session PASS |
 | Donasi | 100% | Xendit invoice + webhook + HMAC verification PASS |
