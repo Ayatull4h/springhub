@@ -74,14 +74,9 @@ export function FeaturedProjects() {
   return (
     <>
       <div>
-        <div className="text-left">
-          <h2 className="text-2xl font-extrabold tracking-tight md:text-3xl">
-            Proyek Unggulan
-          </h2>
-          <p className="mt-2 text-sm text-ink-muted">
-            Proyek konservasi yang sedang berjalan
-          </p>
-        </div>
+        <h3 className="text-lg font-bold tracking-tight text-ink">
+          Proyek Unggulan
+        </h3>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
           {visible.map((p) => {

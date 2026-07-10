@@ -16,9 +16,22 @@ export default function HomePage() {
       <VolunteerActivities />
 
       <section className="container-page py-16">
-        <div className="lg:grid lg:grid-cols-2 lg:gap-10 xl:gap-16">
-          <FeaturedProjects />
-          <DonateSection />
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+            Ayo Dukung Konservasi
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-ink-muted">
+            Setiap donasi Anda mendanai proyek restorasi mata air yang nyata dan terverifikasi
+          </p>
+        </div>
+
+        <div className="mt-10 lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-12">
+          <div className="lg:border-r lg:border-ink-line lg:pr-8 xl:pr-12">
+            <FeaturedProjects />
+          </div>
+          <div className="lg:pl-8 xl:pl-12">
+            <DonateSection />
+          </div>
         </div>
       </section>
 

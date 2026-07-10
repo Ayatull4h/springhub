@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, ArrowRight, CheckCircle2, Loader2, Sprout, Layers, Droplets, Telescope } from "lucide-react";
+import { Heart, CheckCircle2, Loader2, Sprout, Layers, Droplets, Telescope } from "lucide-react";
 import { DONATION_TIERS } from "@/lib/xendit";
 import { useI18n } from "@/lib/i18n";
 import Link from "next/link";
@@ -62,14 +62,26 @@ export function DonateSection() {
   return (
     <div id="donate">
       <div>
-        <h2 className="text-2xl font-extrabold tracking-tight md:text-3xl">
-          {t("donate.title")} <span className="text-brand-600">{t("donate.titleAccent")}</span>
-        </h2>
-        <p className="mt-2 text-sm text-ink-muted">
-          {t("donate.description")}
-        </p>
+        <div className="mb-4 flex items-center gap-6 text-sm">
+          <div>
+            <p className="text-xs text-ink-muted">Terkumpul</p>
+            <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Rp 48,2 Juta</p>
+          </div>
+          <div className="h-8 w-px bg-ink-line" />
+          <div>
+            <p className="text-xs text-ink-muted">Donatur</p>
+            <p className="text-lg font-bold text-ink">324</p>
+          </div>
+          <div className="h-8 w-px bg-ink-line" />
+          <div>
+            <p className="text-xs text-ink-muted">Proyek</p>
+            <p className="text-lg font-bold text-ink">12</p>
+          </div>
+        </div>
 
-        <form onSubmit={submit} className="mt-6 space-y-4">
+        <h3 className="text-base font-semibold text-ink">Donasi Sekarang</h3>
+
+        <form onSubmit={submit} className="mt-3 space-y-3">
           <div>
             <select
               value={tierId}
@@ -103,19 +115,19 @@ export function DonateSection() {
             />
           )}
 
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <input
               required
               value={name}
               onChange={e => setName(e.target.value)}
-              className="flex-1 rounded-lg border border-ink-line px-3.5 py-2.5 text-sm dark:bg-slate-800"
-              placeholder="Nama"
+              className="flex-1 min-w-0 rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
+              placeholder="Nama Anda"
             />
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="flex-1 rounded-lg border border-ink-line px-3.5 py-2.5 text-sm dark:bg-slate-800"
+              className="flex-1 min-w-0 rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
               placeholder="Email"
             />
           </div>
