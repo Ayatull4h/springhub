@@ -52,15 +52,32 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
   useEffect(() => {
     if (selectedForm && typeof navigator !== "undefined" && "geolocation" in navigator) {
       setGpsStatus("getting");
+      setGpsCoords(null);
+
+      let gpsResolved = false;
+      // Safety timeout — some mobile browsers never fire error callback
+      const gpsTimeout = setTimeout(() => {
+        if (!gpsResolved) {
+          gpsResolved = true;
+          setGpsStatus("error");
+        }
+      }, 15000);
+
       navigator.geolocation.getCurrentPosition(
         (pos) => {
+          if (gpsResolved) return;
+          gpsResolved = true;
+          clearTimeout(gpsTimeout);
           setGpsCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
           setGpsStatus("got");
         },
         () => {
+          if (gpsResolved) return;
+          gpsResolved = true;
+          clearTimeout(gpsTimeout);
           setGpsStatus("error");
         },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
       );
     }
   }, [selectedForm]);

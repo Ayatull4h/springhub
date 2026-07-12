@@ -833,7 +833,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
           </div>
         )}
 
-        {/* Error state — retry button */}
+        {/* Error state — retry button + force finish */}
         {isError && (
           <div className="mt-6 space-y-3">
             {/* Online status indicator */}
@@ -860,6 +860,25 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
               >
                 <RefreshCw className="h-4 w-4" />
                 {t("offline.sync.retry")}
+              </button>
+            </div>
+
+            {/* Force finish — skip failed items, tetap selesai */}
+            <div className="border-t border-ink-line pt-4">
+              <p className="mb-2 text-center text-xs text-ink-muted">
+                Beberapa data gagal diupload. Kamu bisa menyelesaikan sesi — data akan tetap tersimpan dan dicoba lagi otomatis oleh QueueWorker.
+              </p>
+              <button
+                onClick={async () => {
+                  try {
+                    await offlineDB.clearSessionData();
+                  } catch {}
+                  setPhase("done");
+                }}
+                className="btn-secondary w-full inline-flex items-center justify-center gap-2"
+              >
+                <CheckCircle2 className="h-4 w-4" />
+                Selesai Paksa (data tetap aman)
               </button>
             </div>
           </div>

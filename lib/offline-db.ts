@@ -381,6 +381,26 @@ export const offlineDB = {
     return countItems("pending-reports");
   },
 
+  /**
+   * Simpan report ke pending-reports + submission-queue sekaligus.
+   * QueueWorker auto-sync dari submission-queue.
+   */
+  async saveReportAndQueue(
+    report: PendingReport,
+    photoBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>
+  ): Promise<void> {
+    await addItem("pending-reports", report);
+    await addItem("submission-queue", {
+      id: report.id,
+      formSlug: report.formSlug,
+      fieldData: report.fieldData,
+      photoBlobs,
+      csrfToken: report.csrfToken,
+      createdAt: report.createdAt,
+      retryCount: 0,
+    });
+  },
+
   // ── Tracking Points ────────────────────────────────────────────────────
   saveTrackingPoint(point: OfflineTrackingPoint) {
     return addItem("tracking-points", point);

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { offlineDB } from "@/lib/offline-db";
+import { offlineDB, type QueuedSubmission } from "@/lib/offline-db";
 import { useToast } from "@/components/toast";
 
 const MAX_RETRIES = 5;
@@ -44,125 +44,157 @@ export function QueueWorker() {
     }
   }
 
-  /** Helper: fetch CSRF token */
+  /** Helper: fetch CSRF token — retry 3x kalo gagal */
   async function getCsrfToken(): Promise<string> {
+    for (let i = 0; i < 3; i++) {
+      try {
+        const res = await fetch("/api/csrf", { signal: AbortSignal.timeout(5000) });
+        const data = await res.json();
+        if (data.token) return data.token;
+      } catch {
+        if (i === 2) return "";
+        await new Promise((r) => setTimeout(r, 500));
+      }
+    }
+    return "";
+  }
+
+  /** Helper: submit satu item dari queue ke server */
+  async function submitQueueItem(item: QueuedSubmission): Promise<boolean> {
+    const csrfToken = await getCsrfToken();
+    if (!csrfToken) return false;
+
     try {
-      const res = await fetch("/api/csrf");
+      const formData = new FormData();
+      formData.set("form_slug", item.formSlug);
+      formData.set("_captured_at", (item.fieldData._captured_at as string) || new Date().toISOString());
+      formData.set("_submit_time", String(Date.now()));
+      formData.set("_website", "");
+      for (const [key, value] of Object.entries(item.fieldData)) {
+        if (key === "_captured_at") continue;
+        formData.set(key, String(value ?? ""));
+      }
+
+      const res = await fetch("/api/reports", {
+        method: "POST",
+        headers: { "x-csrf-token": csrfToken },
+        body: formData,
+      });
+
+      if (!res.ok) return false;
+
       const data = await res.json();
-      return data.token || "";
+
+      // Upload photos AFTER report sukses
+      if (data.report?.id && item.photoBlobs?.length > 0) {
+        const reportId = data.report.id;
+        for (const pb of item.photoBlobs) {
+          try {
+            const photoCsrf = await getCsrfToken();
+            const blob = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
+            const photoPayload = new FormData();
+            photoPayload.append("photo", blob, pb.fileName || `photo-${Date.now()}.jpg`);
+            photoPayload.append("field_id", pb.fieldId);
+
+            await fetch(`/api/reports/${reportId}/photos`, {
+              method: "POST",
+              headers: photoCsrf ? { "x-csrf-token": photoCsrf } : {},
+              body: photoPayload,
+              signal: AbortSignal.timeout(30_000),
+            });
+          } catch {
+            // Photo gagal — report sudah tersimpan, foto bisa diupload manual
+          }
+        }
+      }
+
+      // Bersihin pending-reports / drafts yg mungkin tersisa (pakai item.id yg sama)
+      try { await offlineDB.deleteReport(item.id); } catch {}
+      try { await offlineDB.deleteDraft(item.id); } catch {}
+
+      return true;
     } catch {
-      return "";
+      return false;
     }
   }
 
+  /** Helper: proses submission-queue + pending-reports */
+  async function processAllQueues() {
+    // Proses submission-queue dulu
+    const queue = await offlineDB.getAllQueued();
+    let successCount = 0;
+
+    for (const item of queue) {
+      const ok = await submitQueueItem(item);
+      if (ok) {
+        await offlineDB.deleteQueued(item.id);
+        successCount++;
+      } else {
+        // Retry logic — jangan hapus item kalo gagal total
+        item.retryCount = (item.retryCount || 0) + 1;
+        if (item.retryCount >= MAX_RETRIES) {
+          // Tetap simpan di queue (jangan dihapus) — biar user bisa retry manual
+          await offlineDB.queueSubmission({ ...item, retryCount: MAX_RETRIES });
+        } else {
+          await offlineDB.queueSubmission(item);
+        }
+        await offlineDB.deleteQueued(item.id);
+      }
+    }
+
+    // Juga proses pending-reports (dari OfflineSurveyMap)
+    const pending = await offlineDB.getAllReports();
+    for (const report of pending) {
+      const queueItem: QueuedSubmission = {
+        id: report.id,
+        formSlug: report.formSlug,
+        fieldData: report.fieldData as Record<string, unknown>,
+        photoBlobs: [],
+        csrfToken: "",
+        createdAt: report.createdAt,
+        retryCount: 0,
+      };
+
+      // Ambil foto dari photo-blobs yang related
+      try {
+        const photos = await offlineDB.getPhotosByReport(report.id);
+        for (const p of photos) {
+          queueItem.photoBlobs.push({
+            fieldId: p.fieldId,
+            blob: p.blob,
+            fileName: p.fileName,
+            mimeType: p.mimeType,
+          });
+        }
+      } catch {}
+
+      const ok = await submitQueueItem(queueItem);
+      if (ok) {
+        await offlineDB.deleteReport(report.id);
+        successCount++;
+      }
+    }
+
+    return successCount;
+  }
+
   useEffect(() => {
-    const processQueue = async () => {
+    const processQueue = async () => { // eslint-disable-line react-hooks/exhaustive-deps
       if (processingRef.current) return;
       processingRef.current = true;
       try {
-        // ── Ambil CSRF token fresh ────────────────────────────────
-        const freshCsrfToken = await getCsrfToken();
-        if (!freshCsrfToken) {
-          // CSRF token not available, retry later
-          processingRef.current = false;
-          return;
-        }
-
         const queue = await offlineDB.getAllQueued();
-        if (queue.length === 0) return;
-
-        toast(`Menyinkronkan ${queue.length} laporan offline...`, "info");
-        let successCount = 0;
-
-        for (const item of queue) {
-          try {
-            const formData = new FormData();
-            formData.set("form_slug", item.formSlug);
-            formData.set("_captured_at", (item.fieldData._captured_at as string) || new Date().toISOString());
-            formData.set("_submit_time", String(Date.now()));
-            formData.set("_website", "");
-            for (const [key, value] of Object.entries(item.fieldData)) {
-              if (key === "_captured_at") continue;
-              formData.set(key, String(value ?? ""));
-            }
-
-            const res = await fetch("/api/reports", {
-              method: "POST",
-              headers: { "x-csrf-token": freshCsrfToken },
-              body: formData,
-            });
-
-            if (res.ok) {
-              const data = await res.json();
-
-              // ── Upload photos AFTER report sukses ───────────────
-              if (data.report?.id && item.photoBlobs && item.photoBlobs.length > 0) {
-                const reportId = data.report.id;
-                let photoFailedCount = 0;
-
-                for (const pb of item.photoBlobs) {
-                  try {
-                    const blob = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
-                    const photoPayload = new FormData();
-                    photoPayload.append("photo", blob, pb.fileName || `photo-${Date.now()}.jpg`);
-                    photoPayload.append("field_id", pb.fieldId);
-
-                    const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
-                      method: "POST",
-                      headers: { "x-csrf-token": freshCsrfToken },
-                      body: photoPayload,
-                    });
-
-                    if (!photoRes.ok) photoFailedCount++;
-                  } catch {
-                    photoFailedCount++;
-                  }
-                }
-
-                if (photoFailedCount > 0) {
-                  console.warn(`[QueueWorker] ${photoFailedCount}/${item.photoBlobs.length} foto gagal diupload untuk report ${reportId}`);
-                }
-              }
-
-              // Hapus queue item — report sudah di server
-              await offlineDB.deleteQueued(item.id);
-              successCount++;
-
-              // Bersihin pending-reports / drafts yg mungkin tersisa
-              try { await offlineDB.deleteReport(item.id); } catch {}
-              try { await offlineDB.deleteDraft(item.id); } catch {}
-
-              // Notif sukses (silent fail jika endpoint notif error)
-              try {
-                await fetch("/api/notifications", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    type: "submission-sent",
-                    title: "Laporan terkirim!",
-                    body: `Laporan ${item.formSlug} berhasil dikirim.`,
-                  }),
-                });
-              } catch {}
-            } else {
-              // Report gagal — retry nanti
-              item.retryCount = (item.retryCount || 0) + 1;
-              if (item.retryCount < MAX_RETRIES) {
-                await offlineDB.queueSubmission(item);
-              }
-              await offlineDB.deleteQueued(item.id);
-            }
-          } catch {
-            item.retryCount = (item.retryCount || 0) + 1;
-            if (item.retryCount < MAX_RETRIES) {
-              await offlineDB.queueSubmission(item);
-            }
-            await offlineDB.deleteQueued(item.id);
-          }
+        if (queue.length === 0) {
+          // Cek pending-reports sekalian
+          const pending = await offlineDB.getAllReports();
+          if (pending.length === 0) return;
         }
+
+        toast(`Menyinkronkan laporan offline...`, "info");
+        const successCount = await processAllQueues();
 
         if (successCount > 0) {
-          // Bersihin semua store pendukung setelah sukses
+          // Bersihin tracking points lama setelah sukses
           try {
             const tracks = await offlineDB.getAllTrackingPoints();
             if (tracks.length > 0) {
@@ -171,7 +203,7 @@ export function QueueWorker() {
                 if (t.recordedAt < dayAgo) await offlineDB.deleteTrackingPoint(t.id);
               }
             }
-          } catch { /* non-critical */ }
+          } catch {}
 
           toast(`${successCount} laporan offline berhasil dikirim!`, "success");
         }
