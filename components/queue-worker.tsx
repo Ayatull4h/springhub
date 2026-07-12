@@ -92,7 +92,10 @@ export function QueueWorker() {
       try {
         res = await fetch("/api/reports", {
           method: "POST",
-          headers: { "x-csrf-token": csrfToken },
+          headers: {
+            "x-csrf-token": csrfToken,
+            "x-queue-worker": "true",
+          },
           body: formData,
           signal: controller.signal,
         });
@@ -122,7 +125,7 @@ export function QueueWorker() {
 
             await fetch(`/api/reports/${reportId}/photos`, {
               method: "POST",
-              headers: photoCsrf ? { "x-csrf-token": photoCsrf } : {},
+              headers: { ...(photoCsrf ? { "x-csrf-token": photoCsrf } : {}), "x-queue-worker": "true" },
               body: photoPayload,
               signal: (() => { const c = new AbortController(); setTimeout(() => c.abort(), 30000); return c.signal; })(),
             });

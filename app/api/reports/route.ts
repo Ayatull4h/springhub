@@ -16,10 +16,14 @@ const GUEST_DAILY_LIMIT = 5; // guest only — volunteer & admin unlimited
 
 export async function POST(request: Request) {
   try {
-    // CSRF check
-    const csrfToken = request.headers.get("x-csrf-token");
-    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
-      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    // CSRF check — QueueWorker bypass (custom header gak bisa dikirim cross-origin tanpa preflight)
+    const isQueueWorker = request.headers.get("x-queue-worker") === "true";
+
+    if (!isQueueWorker) {
+      const csrfToken = request.headers.get("x-csrf-token");
+      if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+        return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+      }
     }
 
     const session = await getSession();
