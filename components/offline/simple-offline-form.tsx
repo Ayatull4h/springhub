@@ -66,6 +66,17 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
             })),
           }));
           setForms(normalized);
+
+          // Bersihin queue item lama yang pake field ID numerik (sebelum fix)
+          const queue = await offlineDB.getAllQueued();
+          for (const item of queue) {
+            const keys = Object.keys(item.fieldData);
+            const hasNumericKey = keys.some(k => /^\d+$/.test(k));
+            if (hasNumericKey) {
+              console.warn("[Offline] Hapus item queue lama (field ID numerik):", item.id);
+              await offlineDB.deleteQueued(item.id);
+            }
+          }
         }
       } catch (err) {
         console.error("Failed to load forms:", err);
