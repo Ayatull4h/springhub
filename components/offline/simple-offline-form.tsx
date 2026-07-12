@@ -317,6 +317,11 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
             ))}
           </div>
         )}
+
+        {/* ── Versi code — biar tau user pake code terbaru ──────────── */}
+        <p className="mt-6 text-center text-[10px] text-ink-subtle">
+          v{typeof window !== "undefined" ? localStorage.getItem("sw_version") || "?" : "?"}
+        </p>
       </div>
     );
   }

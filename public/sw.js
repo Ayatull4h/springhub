@@ -236,18 +236,12 @@ async function syncPendingReports() {
 self.addEventListener("message", (event) => {
   if (event.data?.type === "precache-tiles") {
     event.waitUntil(precacheTiles(event.data.tiles));
-  }
-
-  if (event.data?.type === "clear-tiles") {
-    event.waitUntil(
-      caches.delete(CACHE_NAMES.TILES)
-    );
-  }
-
-  if (event.data?.type === "clear-all") {
-    event.waitUntil(
-      Promise.all(ALL_CACHES.map((name) => caches.delete(name)))
-    );
+  } else if (event.data?.type === "clear-tiles") {
+    event.waitUntil(caches.delete(CACHE_NAMES.TILES));
+  } else if (event.data?.type === "clear-all") {
+    event.waitUntil(Promise.all(ALL_CACHES.map((name) => caches.delete(name))));
+  } else if (event.data?.type === "SKIP_WAITING") {
+    self.skipWaiting();
   }
 });
 

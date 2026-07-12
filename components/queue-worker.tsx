@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { offlineDB, type QueuedSubmission } from "@/lib/offline-db";
 import { useToast } from "@/components/toast";
 
+const SW_VERSION = "2026-07-12-v5"; // Bump this when SW changes — user perlu reopen PWA
 const MAX_RETRIES = 5;
 const POLL_INTERVAL_MS = 10_000;
 const STALE_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 hari
@@ -78,10 +79,10 @@ export function QueueWorker() {
       const formData = new FormData();
       formData.set("form_slug", item.formSlug);
       formData.set("_captured_at", (item.fieldData._captured_at as string) || new Date().toISOString());
-      formData.set("_submit_time", String(Date.now()));
+      formData.set("_submit_time", String(Date.now() - 10000)); // 10 detik lalu — hindari time gate anti-spam
       formData.set("_website", "");
       for (const [key, value] of Object.entries(item.fieldData)) {
-        if (key === "_captured_at") continue;
+        if (key === "_captured_at" || key === "_submit_time") continue;
         formData.set(key, String(value ?? ""));
       }
 
@@ -252,8 +253,23 @@ export function QueueWorker() {
       }
     };
 
-    // Jalankan cleanup stale dulu, baru process queue
-    cleanupStale().finally(() => processQueue());
+    // ── Simpan versi code ke localStorage — biar bisa cek user pake code terbaru ──
+    try { localStorage.setItem("sw_version", SW_VERSION); } catch {}
+
+    // ── Cek update service worker ──
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then((reg) => {
+        // Check for SW updates every 60 seconds
+        setInterval(() => { reg.update(); }, 60000);
+        // If waiting, activate immediately
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: "SKIP_WAITING" });
+        }
+      }).catch(() => {});
+    }
+
+    // ── Sync pertama jalan — delay 2 detik biar page stabil dulu ──
+    cleanupStale().finally(() => setTimeout(processQueue, 2000));
 
     const handleOnline = () => { processQueue(); };
     window.addEventListener("online", handleOnline);
