@@ -57,7 +57,15 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       try {
         const cached = await offlineDB.getAllForms();
         if (cached && cached.length > 0) {
-          setForms(cached);
+          const normalized = cached.map((form: any) => ({
+            ...form,
+            fields: form.fields.map((f: any) => ({
+              ...f,
+              // DB pake id numerik + fieldId string — HTML name harus pake string identifier
+              id: typeof f.id === "number" && f.fieldId ? f.fieldId : String(f.id),
+            })),
+          }));
+          setForms(normalized);
         }
       } catch (err) {
         console.error("Failed to load forms:", err);
