@@ -130,15 +130,14 @@ export function QueueWorker() {
         await offlineDB.deleteQueued(item.id);
         successCount++;
       } else {
-        // Retry logic — jangan hapus item kalo gagal total
-        item.retryCount = (item.retryCount || 0) + 1;
-        if (item.retryCount >= MAX_RETRIES) {
-          // Tetap simpan di queue (jangan dihapus) — biar user bisa retry manual
-          await offlineDB.queueSubmission({ ...item, retryCount: MAX_RETRIES });
-        } else {
-          await offlineDB.queueSubmission(item);
+        // Retry: update retryCount in place — queueSubmission upsert (sama key),
+        // jadi TIDAK usah deleteQueued agar item tetap di queue.
+        const updatedRetry = (item.retryCount || 0) + 1;
+        item.retryCount = updatedRetry;
+        await offlineDB.queueSubmission(item);
+        if (updatedRetry >= MAX_RETRIES) {
+          console.warn(`[QueueWorker] Item ${item.id} gagal ${MAX_RETRIES}x, tetap disimpan di queue untuk retry manual.`);
         }
-        await offlineDB.deleteQueued(item.id);
       }
     }
 
