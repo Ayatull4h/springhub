@@ -236,8 +236,17 @@ export function QueueWorker() {
           toast(`Gagal sinkron (${failedCount} antrean) — cek koneksi internet`, "error");
           console.error("[QueueWorker] Failed queue items:", remainingQueued.map(i => ({ id: i.id, slug: i.formSlug, retry: i.retryCount })));
         }
+        // Simpan status ke localStorage biar kelihatan di HP
+        if (failedCount > 0) {
+          const oldest = remainingQueued[0];
+          const lastError = `Gagal: ${oldest.formSlug} (retry ${oldest.retryCount}/${MAX_RETRIES})`;
+          offlineDB.saveSyncStatus({ ok: false, message: lastError, time: Date.now() });
+        } else {
+          offlineDB.clearSyncStatus();
+        }
       } catch (err) {
         console.error("[QueueWorker] Unexpected error:", err);
+        offlineDB.saveSyncStatus({ ok: false, message: `Error: ${err instanceof Error ? err.message : "unknown"}`, time: Date.now() });
       } finally {
         processingRef.current = false;
       }

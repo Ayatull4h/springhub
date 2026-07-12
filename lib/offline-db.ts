@@ -652,4 +652,20 @@ export const offlineDB = {
       return { used: 0, quota: null };
     }
   },
+
+  // ── Sync Status (localStorage) — kelihatan di HP ────────────────────────
+  saveSyncStatus(status: { ok: boolean; message: string; time: number }) {
+    try { localStorage.setItem("springhub_sync_status", JSON.stringify(status)); } catch {}
+  },
+
+  getSyncStatus(): { ok: boolean; message: string; time: number } | null {
+    try {
+      const raw = localStorage.getItem("springhub_sync_status");
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  },
+
+  clearSyncStatus() {
+    try { localStorage.removeItem("springhub_sync_status"); } catch {}
+  },
 };

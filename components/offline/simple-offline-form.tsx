@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send, RefreshCw, AlertCircle, XCircle } from "lucide-react";
 import { offlineDB } from "@/lib/offline-db";
 import { getForm, getFormTitle, type FormField, type FormSchema } from "@/lib/forms";
 import { INDONESIAN_PROVINCES } from "@/lib/provinces";
@@ -21,8 +21,28 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
   const [submitError, setSubmitError] = useState("");
   const [gpsStatus, setGpsStatus] = useState<"idle" | "getting" | "got" | "error">("idle");
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [syncStatus, setSyncStatus] = useState<{ ok: boolean; message: string; time: number } | null>(null);
+  const [queueCount, setQueueCount] = useState(0);
 
   const handleExit = onExit || (() => { if (typeof window !== "undefined") window.location.href = "/"; });
+
+  // ── Sync status (refresh tiap 5 detik) ──────────────────────────
+  const refreshSyncStatus = useCallback(async () => {
+    const s = offlineDB.getSyncStatus();
+    setSyncStatus(s);
+    const q = await offlineDB.getAllQueued();
+    setQueueCount(q.length);
+    // Cek juga pending-reports
+    const p = await offlineDB.getAllReports();
+    if (p.length > 0) setQueueCount(prev => prev + p.length);
+  }, []);
+
+  useEffect(() => {
+    refreshSyncStatus();
+    const iv = setInterval(refreshSyncStatus, 5000);
+    window.addEventListener("online", refreshSyncStatus);
+    return () => { clearInterval(iv); window.removeEventListener("online", refreshSyncStatus); };
+  }, [refreshSyncStatus]);
 
   // Real-time timestamp (captured saat komponen mount)
   const [capturedAt] = useState(() => new Date().toISOString());
@@ -209,6 +229,46 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
 
         <h1 className="text-2xl font-extrabold text-ink">Mode Offline</h1>
         <p className="mt-1 text-sm text-ink-muted">Pilih form yang ingin diisi:</p>
+
+        {/* ── Sync Status — kelihatan langsung di HP ────────────── */}
+        {queueCount > 0 && (
+          <div className={`mt-4 rounded-xl border p-4 ${
+            syncStatus?.ok === false
+              ? "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20"
+              : "border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20"
+          }`}>
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start gap-2">
+                {syncStatus?.ok === false ? (
+                  <XCircle className="mt-0.5 h-5 w-5 flex-none text-red-500" />
+                ) : (
+                  <Loader2 className="mt-0.5 h-5 w-5 flex-none animate-spin text-amber-500" />
+                )}
+                <div>
+                  <p className="text-sm font-semibold text-ink">
+                    {syncStatus?.ok === false ? "Sync Gagal" : "Menunggu Sync"}
+                  </p>
+                  <p className="mt-0.5 text-xs text-ink-muted">
+                    {queueCount} laporan antrean
+                    {syncStatus?.ok === false && ` — ${syncStatus.message}`}
+                  </p>
+                  {syncStatus?.ok === false && (
+                    <p className="mt-1 text-[11px] text-red-600 dark:text-red-400">
+                      Buka console browser (F12) untuk detail error, atau laporkan ke admin.
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => { offlineDB.clearSyncStatus(); setSyncStatus(null); window.dispatchEvent(new Event("online")); }}
+                className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1.5 text-xs font-medium text-ink shadow-sm ring-1 ring-ink-line hover:bg-slate-50 dark:bg-slate-800"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                Sync
+              </button>
+            </div>
+          </div>
+        )}
 
         {forms.length === 0 ? (
           <div className="card mt-6 py-8 text-center">
