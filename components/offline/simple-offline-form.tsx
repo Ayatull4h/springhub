@@ -67,14 +67,19 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
           }));
           setForms(normalized);
 
-          // Bersihin queue item lama yang pake field ID numerik (sebelum fix)
-          const queue = await offlineDB.getAllQueued();
-          for (const item of queue) {
-            const keys = Object.keys(item.fieldData);
-            const hasNumericKey = keys.some(k => /^\d+$/.test(k));
-            if (hasNumericKey) {
-              console.warn("[Offline] Hapus item queue lama (field ID numerik):", item.id);
+          // Bersihin queue + pending-reports lama yang pake field ID numerik (sebelum fix)
+          const oldQueue = await offlineDB.getAllQueued();
+          for (const item of oldQueue) {
+            if (Object.keys(item.fieldData).some(k => /^\d+$/.test(k))) {
+              console.warn("[Offline] Hapus queue item lama (field ID numerik):", item.id);
               await offlineDB.deleteQueued(item.id);
+            }
+          }
+          const oldPending = await offlineDB.getAllReports();
+          for (const item of oldPending) {
+            if (Object.keys(item.fieldData).some(k => /^\d+$/.test(k))) {
+              console.warn("[Offline] Hapus pending-report lama (field ID numerik):", item.id);
+              await offlineDB.deleteReport(item.id);
             }
           }
         }
