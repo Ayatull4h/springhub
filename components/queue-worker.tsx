@@ -44,25 +44,35 @@ export function QueueWorker() {
     }
   }
 
-  /** Helper: fetch CSRF token — retry 3x kalo gagal */
+  /** Helper: fetch CSRF token — retry 3x kalo gagal, pake AbortController manual biar kompatibel browser lawas */
   async function getCsrfToken(): Promise<string> {
     for (let i = 0; i < 3; i++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
       try {
-        const res = await fetch("/api/csrf", { signal: AbortSignal.timeout(5000) });
+        const res = await fetch("/api/csrf", { signal: controller.signal });
+        clearTimeout(timeoutId);
         const data = await res.json();
         if (data.token) return data.token;
-      } catch {
-        if (i === 2) return "";
+      } catch (err) {
+        clearTimeout(timeoutId);
+        if (i === 2) {
+          console.error("[QueueWorker] CSRF fetch failed after 3 retries:", err);
+          return "";
+        }
         await new Promise((r) => setTimeout(r, 500));
       }
     }
     return "";
   }
 
-  /** Helper: submit satu item dari queue ke server */
-  async function submitQueueItem(item: QueuedSubmission): Promise<boolean> {
+  /** Helper: submit satu item dari queue ke server — return { ok, error? } */
+  async function submitQueueItem(item: QueuedSubmission): Promise<{ ok: boolean; error?: string }> {
     const csrfToken = await getCsrfToken();
-    if (!csrfToken) return false;
+    if (!csrfToken) {
+      console.error("[QueueWorker] No CSRF token — skipping", item.id);
+      return { ok: false, error: "CSRF token tidak tersedia" };
+    }
 
     try {
       const formData = new FormData();
@@ -75,13 +85,26 @@ export function QueueWorker() {
         formData.set(key, String(value ?? ""));
       }
 
-      const res = await fetch("/api/reports", {
-        method: "POST",
-        headers: { "x-csrf-token": csrfToken },
-        body: formData,
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      let res: Response;
+      try {
+        res = await fetch("/api/reports", {
+          method: "POST",
+          headers: { "x-csrf-token": csrfToken },
+          body: formData,
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
-      if (!res.ok) return false;
+      if (!res.ok) {
+        let errBody = "";
+        try { const e = await res.json(); errBody = e.error || JSON.stringify(e); } catch { errBody = `HTTP ${res.status}`; }
+        console.error(`[QueueWorker] API ${res.status} for ${item.id}:`, errBody);
+        return { ok: false, error: errBody };
+      }
 
       const data = await res.json();
 
@@ -100,7 +123,7 @@ export function QueueWorker() {
               method: "POST",
               headers: photoCsrf ? { "x-csrf-token": photoCsrf } : {},
               body: photoPayload,
-              signal: AbortSignal.timeout(30_000),
+              signal: (() => { const c = new AbortController(); setTimeout(() => c.abort(), 30000); return c.signal; })(),
             });
           } catch {
             // Photo gagal — report sudah tersimpan, foto bisa diupload manual
@@ -112,9 +135,10 @@ export function QueueWorker() {
       try { await offlineDB.deleteReport(item.id); } catch {}
       try { await offlineDB.deleteDraft(item.id); } catch {}
 
-      return true;
-    } catch {
-      return false;
+      return { ok: true };
+    } catch (err) {
+      console.error("[QueueWorker] Network error submitting", item.id, err);
+      return { ok: false, error: err instanceof Error ? err.message : "Network error" };
     }
   }
 
@@ -125,18 +149,16 @@ export function QueueWorker() {
     let successCount = 0;
 
     for (const item of queue) {
-      const ok = await submitQueueItem(item);
-      if (ok) {
+      const result = await submitQueueItem(item);
+      if (result.ok) {
         await offlineDB.deleteQueued(item.id);
         successCount++;
       } else {
-        // Retry: update retryCount in place — queueSubmission upsert (sama key),
-        // jadi TIDAK usah deleteQueued agar item tetap di queue.
         const updatedRetry = (item.retryCount || 0) + 1;
         item.retryCount = updatedRetry;
         await offlineDB.queueSubmission(item);
         if (updatedRetry >= MAX_RETRIES) {
-          console.warn(`[QueueWorker] Item ${item.id} gagal ${MAX_RETRIES}x, tetap disimpan di queue untuk retry manual.`);
+          console.warn(`[QueueWorker] Item ${item.id} gagal ${MAX_RETRIES}x: ${result.error}. Tetap disimpan.`);
         }
       }
     }
@@ -167,8 +189,8 @@ export function QueueWorker() {
         }
       } catch {}
 
-      const ok = await submitQueueItem(queueItem);
-      if (ok) {
+      const result = await submitQueueItem(queueItem);
+      if (result.ok) {
         await offlineDB.deleteReport(report.id);
         successCount++;
       }
@@ -192,8 +214,11 @@ export function QueueWorker() {
         toast(`Menyinkronkan laporan offline...`, "info");
         const successCount = await processAllQueues();
 
-        if (successCount > 0) {
-          // Bersihin tracking points lama setelah sukses
+        // Cek apakah masih ada item yg gagal
+        const remainingQueued = await offlineDB.getAllQueued();
+        const failedCount = remainingQueued.length;
+
+        if (successCount > 0 && failedCount === 0) {
           try {
             const tracks = await offlineDB.getAllTrackingPoints();
             if (tracks.length > 0) {
@@ -203,11 +228,16 @@ export function QueueWorker() {
               }
             }
           } catch {}
-
           toast(`${successCount} laporan offline berhasil dikirim!`, "success");
+        } else if (successCount > 0 && failedCount > 0) {
+          toast(`${successCount} terkirim, ${failedCount} gagal (akan dicoba lagi)`, "info");
+        } else if (failedCount > 0) {
+          const oldest = remainingQueued[0];
+          toast(`Gagal sinkron (${failedCount} antrean) — cek koneksi internet`, "error");
+          console.error("[QueueWorker] Failed queue items:", remainingQueued.map(i => ({ id: i.id, slug: i.formSlug, retry: i.retryCount })));
         }
-      } catch {
-        // Silently fail — will retry when online event fires
+      } catch (err) {
+        console.error("[QueueWorker] Unexpected error:", err);
       } finally {
         processingRef.current = false;
       }
