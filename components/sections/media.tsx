@@ -40,16 +40,20 @@ const mediaStyles: Record<string, { gradient: string; icon: React.ReactNode; lab
   },
 };
 
-function getYoutubeThumb(url: string): string | null {
+function getYoutubeId(url: string): string | null {
   if (!url) return null;
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : null;
+  return match ? match[1] : null;
+}
+
+function getYoutubeThumb(url: string): string | null {
+  const id = getYoutubeId(url);
+  return id ? `/api/ytthumb?videoId=${id}&quality=maxresdefault` : null;
 }
 
 function getYoutubeFallback(url: string): string | null {
-  if (!url) return null;
-  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-  return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null;
+  const id = getYoutubeId(url);
+  return id ? `/api/ytthumb?videoId=${id}&quality=hqdefault` : null;
 }
 
 function MediaThumb({ item }: { item: MediaItem }) {

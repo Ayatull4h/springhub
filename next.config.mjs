@@ -49,7 +49,7 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.openstreetmap.org https://*.basemaps.cartocdn.com https://static.cloudflareinsights.com",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://*.r2.dev https://images.unsplash.com https://*.greennetwork.id https://upload.wikimedia.org https://img.youtube.com https://i.ytimg.com https://www.springhub.id https://static.cloudflareinsights.com",
+              "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://*.r2.dev https://images.unsplash.com https://*.greennetwork.id https://upload.wikimedia.org https://img.youtube.com https://i.ytimg.com https://www.springhub.id https://static.cloudflareinsights.com https://placehold.co",
               "font-src 'self' data:",
               "connect-src 'self' https://api.xendit.co https://*.r2.dev https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://static.cloudflareinsights.com",
               "media-src 'self' https://*.r2.dev",

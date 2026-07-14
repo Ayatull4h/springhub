@@ -25,26 +25,26 @@ export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
     );
   }
 
+  const thumbSrc = `/api/ytthumb?videoId=${videoId}&quality=maxresdefault`;
+
   function handleImgError(e: React.SyntheticEvent<HTMLImageElement>) {
-    // Fallback to hqdefault if maxresdefault doesn't exist
-    (e.target as HTMLImageElement).src = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+    (e.target as HTMLImageElement).src = `/api/ytthumb?videoId=${videoId}&quality=hqdefault`;
   }
 
   return (
     <button
       type="button"
       onClick={() => setLoaded(true)}
-      className="group absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center bg-slate-800"
+      className="group absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center bg-slate-900"
       aria-label={`Play video: ${title}`}
     >
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900" />
       <img
         ref={imgRef}
-        src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`}
+        src={thumbSrc}
         alt={title}
         onError={handleImgError}
-        referrerPolicy="no-referrer"
         className="absolute inset-0 h-full w-full object-cover"
-        loading="lazy"
       />
       {/* Play button overlay */}
       <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-brand-600/90 shadow-lg transition group-hover:bg-brand-700 group-hover:scale-110">
