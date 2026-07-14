@@ -102,7 +102,15 @@ export function QueueWorker() {
 
       if (!res.ok) {
         let errBody = "";
-        try { const e = await res.json(); errBody = e.error || JSON.stringify(e); } catch { errBody = `HTTP ${res.status}`; }
+        let details = "";
+        try {
+          const e = await res.json();
+          errBody = e.error || JSON.stringify(e);
+          if (e.details) {
+            details = JSON.stringify(e.details);
+            errBody += ` — ${details}`;
+          }
+        } catch { errBody = `HTTP ${res.status}`; }
         console.error(`[QueueWorker] API ${res.status} for ${item.id}:`, errBody);
         return { ok: false, error: errBody };
       }
