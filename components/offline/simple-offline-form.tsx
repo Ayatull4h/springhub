@@ -67,19 +67,19 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
           }));
           setForms(normalized);
 
-          // Bersihin queue + pending-reports lama yang pake field ID numerik (sebelum fix)
-          const oldQueue = await offlineDB.getAllQueued();
-          for (const item of oldQueue) {
-            if (Object.keys(item.fieldData).some(k => /^\d+$/.test(k))) {
-              console.warn("[Offline] Hapus queue item lama (field ID numerik):", item.id);
-              await offlineDB.deleteQueued(item.id);
-            }
-          }
-          const oldPending = await offlineDB.getAllReports();
-          for (const item of oldPending) {
-            if (Object.keys(item.fieldData).some(k => /^\d+$/.test(k))) {
-              console.warn("[Offline] Hapus pending-report lama (field ID numerik):", item.id);
-              await offlineDB.deleteReport(item.id);
+          // Bersihin queue + pending-reports lama yang pake field ID numeric/UUID (sebelum fix)
+          for (const store of [
+            { getAll: () => offlineDB.getAllQueued(), del: (id: string) => offlineDB.deleteQueued(id) },
+            { getAll: () => offlineDB.getAllReports(), del: (id: string) => offlineDB.deleteReport(id) },
+          ]) {
+            const items = await store.getAll();
+            for (const item of items) {
+              const keys = Object.keys(item.fieldData);
+              const isBad = keys.some(k => /^[0-9a-f]{8}-[0-9a-f]{4}/i.test(k) || /^\d+$/.test(k));
+              if (isBad) {
+                console.warn("[Offline] Hapus item lama (non-fieldId key):", item.id);
+                await store.del(item.id);
+              }
             }
           }
         }
@@ -297,20 +297,24 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                     {queueCount} laporan antrean
                     {syncStatus?.ok === false && ` — ${syncStatus.message}`}
                   </p>
-                  {syncStatus?.ok === false && (
-                    <p className="mt-1 text-[11px] text-red-600 dark:text-red-400">
-                      Buka console browser (F12) untuk detail error, atau laporkan ke admin.
-                    </p>
-                  )}
                 </div>
               </div>
-              <button
-                onClick={() => { offlineDB.clearSyncStatus(); setSyncStatus(null); window.dispatchEvent(new Event("online")); }}
-                className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1.5 text-xs font-medium text-ink shadow-sm ring-1 ring-ink-line hover:bg-slate-50 dark:bg-slate-800"
-              >
-                <RefreshCw className="h-3.5 w-3.5" />
-                Sync
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => { offlineDB.clearSyncStatus(); setSyncStatus(null); }}
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-xs text-ink-muted hover:text-ink"
+                  aria-label="Tutup"
+                >
+                  ✕
+                </button>
+                <button
+                  onClick={() => { offlineDB.clearSyncStatus(); setSyncStatus(null); window.dispatchEvent(new Event("online")); }}
+                  className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1.5 text-xs font-medium text-ink shadow-sm ring-1 ring-ink-line hover:bg-slate-50 dark:bg-slate-800"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  Sync
+                </button>
+              </div>
             </div>
           </div>
         )}
