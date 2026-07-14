@@ -69,17 +69,14 @@ export function QueueWorker() {
 
   /** Helper: submit satu item dari queue ke server — return { ok, error? } */
   async function submitQueueItem(item: QueuedSubmission): Promise<{ ok: boolean; error?: string }> {
+    // Coba dapetin CSRF token (best-effort — server bypass pake x-queue-worker kalo gak ada)
     const csrfToken = await getCsrfToken();
-    if (!csrfToken) {
-      console.error("[QueueWorker] No CSRF token — skipping", item.id);
-      return { ok: false, error: "CSRF token tidak tersedia" };
-    }
 
     try {
       const formData = new FormData();
       formData.set("form_slug", item.formSlug);
       formData.set("_captured_at", (item.fieldData._captured_at as string) || new Date().toISOString());
-      formData.set("_submit_time", String(Date.now() - 10000)); // 10 detik lalu — hindari time gate anti-spam
+      formData.set("_submit_time", String(Date.now() - 10000));
       formData.set("_website", "");
       for (const [key, value] of Object.entries(item.fieldData)) {
         if (key === "_captured_at" || key === "_submit_time") continue;
@@ -93,7 +90,7 @@ export function QueueWorker() {
         res = await fetch("/api/reports", {
           method: "POST",
           headers: {
-            "x-csrf-token": csrfToken,
+            ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
             "x-queue-worker": "true",
           },
           body: formData,
@@ -160,6 +157,7 @@ export function QueueWorker() {
       } else {
         const updatedRetry = (item.retryCount || 0) + 1;
         item.retryCount = updatedRetry;
+        item.lastError = result.error;
         await offlineDB.queueSubmission(item);
         if (updatedRetry >= MAX_RETRIES) {
           console.warn(`[QueueWorker] Item ${item.id} gagal ${MAX_RETRIES}x: ${result.error}. Tetap disimpan.`);
@@ -208,9 +206,11 @@ export function QueueWorker() {
       if (processingRef.current) return;
       processingRef.current = true;
       try {
+        // Jangan sync kalo offline — tunggu online event
+        if (!navigator.onLine) return;
+
         const queue = await offlineDB.getAllQueued();
         if (queue.length === 0) {
-          // Cek pending-reports sekalian
           const pending = await offlineDB.getAllReports();
           if (pending.length === 0) return;
         }
@@ -237,16 +237,23 @@ export function QueueWorker() {
           toast(`${successCount} terkirim, ${failedCount} gagal (akan dicoba lagi)`, "info");
         } else if (failedCount > 0) {
           const oldest = remainingQueued[0];
-          toast(`Gagal sinkron (${failedCount} antrean) — cek koneksi internet`, "error");
+          toast(`Gagal sinkron (${failedCount} antrean, retry ${oldest.retryCount}/${MAX_RETRIES})`, "error");
           console.error("[QueueWorker] Failed queue items:", remainingQueued.map(i => ({ id: i.id, slug: i.formSlug, retry: i.retryCount })));
         }
         // Simpan status ke localStorage biar kelihatan di HP
         if (failedCount > 0) {
           const oldest = remainingQueued[0];
-          const lastError = `Gagal: ${oldest.formSlug} (retry ${oldest.retryCount}/${MAX_RETRIES})`;
-          offlineDB.saveSyncStatus({ ok: false, message: lastError, time: Date.now() });
+          const errMsg = oldest.lastError ? ` — ${oldest.lastError}` : "";
+          const statusMsg = `Gagal: ${oldest.formSlug} (retry ${oldest.retryCount}/${MAX_RETRIES})${errMsg}`;
+          offlineDB.saveSyncStatus({ ok: false, message: statusMsg, time: Date.now() });
         } else {
           offlineDB.clearSyncStatus();
+        }
+
+        if (failedCount > 0) {
+          for (const item of remainingQueued) {
+            console.error(`[QueueWorker] Masih gagal: ${item.formSlug} (${item.retryCount}x) error: ${item.lastError || "?"}`);
+          }
         }
       } catch (err) {
         console.error("[QueueWorker] Unexpected error:", err);

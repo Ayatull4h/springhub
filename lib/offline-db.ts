@@ -54,6 +54,7 @@ export type QueuedSubmission = {
   csrfToken: string;
   createdAt: number;
   retryCount: number;
+  lastError?: string;
 };
 
 type DBSchema = {
