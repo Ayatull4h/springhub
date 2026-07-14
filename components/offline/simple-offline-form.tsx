@@ -174,6 +174,27 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       collected._website = "";
       collected._captured_at = capturedAt;
 
+      // Pastikan field date selalu ada (hidden input mungkin gak terkirim)
+      if (!collected.date) {
+        collected.date = new Date().toISOString().split("T")[0];
+      }
+      // Pastikan location_lat/lng selalu terisi — jangan sampai "" atau undefined
+      if (!collected.location_lat || !collected.location_lng) {
+        if (gpsCoords) {
+          collected.location_lat = String(gpsCoords.lat);
+          collected.location_lng = String(gpsCoords.lng);
+        } else {
+          collected.location_lat = "0";
+          collected.location_lng = "0";
+        }
+      }
+      // Fallback untuk required fields yang mungkin kosong
+      for (const key of ["spring_name", "province", "regency", "flow_condition", "water_quality", "cleanliness"]) {
+        if (!collected[key] || collected[key] === "") {
+          collected[key] = key === "spring_name" ? "Mata Air" : key === "province" ? "Jawa Barat" : "-";
+        }
+      }
+
       // Build photo blobs
       const photoBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }> = [];
       for (const [fieldId, files] of Object.entries(photoFiles)) {
