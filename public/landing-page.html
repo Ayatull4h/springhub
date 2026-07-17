@@ -62,20 +62,20 @@ section{padding:3.5rem 0}
 .form-list a:hover{border-color:var(--biru)}
 .form-list a .pts{font-size:.65rem;color:var(--abu-muda)}
 
-/* dual button — kotak */
+/* dual button — persegi sempurna */
 .dual{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-top:.75rem}
 @media(max-width:480px){.dual{grid-template-columns:1fr}}
-.btn-card{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.75rem;border-radius:var(--radius);text-decoration:none;transition:all .2s;cursor:pointer;border:1.5px solid var(--abu-tipis);font-family:inherit;font-size:.82rem;text-align:center;width:100%;line-height:1.4;aspect-ratio:1;background:var(--putih);color:var(--hitam)}
-.btn-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.btn-card strong{display:block;font-weight:600;font-size:.82rem}
-.btn-card span{display:block;font-size:.65rem;color:var(--abu);margin-top:.15rem}
-.btn-bibit{border-color:#a7f3d0;color:#065f46}
+.btn-card{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:.6rem;border-radius:var(--radius);text-decoration:none;transition:all .2s;cursor:pointer;border:1px solid transparent;font-family:inherit;font-size:.82rem;width:100%;line-height:1.4;aspect-ratio:1}
+.btn-card:hover{transform:translateY(-2px)}
+.btn-card strong{display:block;font-weight:600;font-size:.8rem}
+.btn-card span{display:block;font-size:.62rem;opacity:.7;margin-top:.1rem}
+.btn-bibit{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
 .btn-bibit:hover{border-color:#6ee7b7}
-.btn-offline{border-color:var(--abu-tipis);color:var(--biru-tua)}
+.btn-offline{background:var(--biru-muda);border-color:var(--abu-tipis);color:var(--biru-tua)}
 .btn-offline:hover{border-color:var(--biru)}
 @media(prefers-color-scheme:dark){
-.btn-bibit{border-color:#065f46;color:#a7f3d0}
-.btn-offline{border-color:var(--abu-tipis);color:var(--biru)}
+.btn-bibit{background:#064e3b;border-color:#065f46;color:#a7f3d0}
+.btn-offline{background:var(--biru-muda);border-color:var(--abu-tipis);color:var(--biru)}
 }
 
 /* volunteer */
