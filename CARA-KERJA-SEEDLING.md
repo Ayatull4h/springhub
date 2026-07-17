@@ -313,7 +313,159 @@ Poin kamu ↑
 
 ---
 
-## 6. Yang Perlu Dibuat Biar Seedlings Jadi Fitur Resmi
+## 6. Cara Kerja API (Routing)
+
+API itu kayak **pelayan restoran**. Kamu (frontend) duduk di meja, pengen minta sesuatu, pelayan (API) yang ambil ke dapur (database) dan bawain balik.
+
+### Cara komunikasinya:
+
+```
+KAMU (Browser/HP)
+  │  ┌─ GET  → "ambilin data"
+  │  ├─ POST → "simpen data baru"
+  │  ├─ PUT  → "ubah data"
+  │  └─ DELETE → "hapus data"
+  │
+  ▼
+API (pelayan)
+  │
+  ▼
+DATABASE (dapur)
+```
+
+### API yang perlu dibuat untuk Seedlings:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                    API SEEDLINGS                           │
+├──────────────────────────────────────────────────────────┤
+│                                                           │
+│  GET    /api/seedlings                                    │
+│         → Ambil semua bibit yang tersedia (Marketplace)   │
+│         → Filter: provinsi, jenis, stok > 0               │
+│                                                           │
+│  GET    /api/seedlings?mine=1                             │
+│         → Ambil bibit milikku sendiri (Bibitku)           │
+│                                                           │
+│  GET    /api/seedlings/:id                                │
+│         → Ambil detail satu bibit (untuk overlay)         │
+│                                                           │
+│  POST   /api/seedlings                                    │
+│         → Lapor bibit baru (isi: jenis, jumlah, foto,     │
+│           lokasi)                                         │
+│         → Wajib login                                     │
+│         → Status langsung: "MENUNGGU" (review admin)      │
+│                                                           │
+│  POST   /api/seedlings/:id/request                        │
+│         → Minta bibit (isi: jumlah, pesan)                │
+│         → Wajib login                                     │
+│                                                           │
+│  POST   /api/admin/seedlings/:id/approve                  │
+│         → Admin setujui laporan bibit                     │
+│         → Bibit muncul di Marketplace                     │
+│                                                           │
+│  POST   /api/admin/seedlings/:id/reject                   │
+│         → Admin tolak laporan bibit                       │
+│                                                           │
+│  POST   /api/admin/seedlings/:id/approve-request          │
+│         → Admin setujui permintaan bibit                  │
+│         → Notif ke pemilik                                 │
+│                                                           │
+│  POST   /api/seedlings/:id/confirm-give                   │
+│         → Pemilik (A) klik "Selesai"                      │
+│         → "Bibit sudah saya berikan"                      │
+│         → Stok belum berkurang (nunggu B konfirmasi)      │
+│                                                           │
+│  POST   /api/seedlings/:id/confirm-receive                │
+│         → Peminta (B) klik "Terima"                       │
+│         → "Bibit sudah saya terima"                       │
+│         → Stok beneran berkurang ✅                       │
+│                                                           │
+│  GET    /api/seedlings/:id/requests                       │
+│         → Lihat siapa aja yang minta bibitku               │
+│         → Hanya pemilik yang bisa lihat                   │
+│                                                           │
+│  GET    /api/seedlings/my-requests                        │
+│         → Lihat semua bibit yang pernah aku minta         │
+│                                                           │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Analogi sederhana:
+
+| Yang Kamu Lakukan | API yang Dipanggil | Yang Terjadi di DB |
+|---|---|---|
+| Buka Marketplace | `GET /api/seedlings` | Ambil semua bibit yang stok > 0 |
+| Klik "Laporkan Bibit" | `POST /api/seedlings` | Simpan bibit baru, status MENUNGGU |
+| Admin setujui laporan | `POST /api/admin/seedlings/1/approve` | Status jadi AKTIF, muncul di Marketplace |
+| Kamu klik "Minta" | `POST /api/seedlings/1/request` | Simpan permintaan, notif ke pemilik |
+| Admin setujui permintaan | `POST /api/admin/seedlings/1/approve-request` | Status jadi DISETUJUI |
+| Pemilik klik "Selesai" | `POST /api/seedlings/1/confirm-give` | Step 1 dari 2 selesai |
+| Kamu klik "Terima" | `POST /api/seedlings/1/confirm-receive` | Step 2 selesai, stok berkurang |
+
+### Siapa yang boleh akses API mana:
+
+| API | Publik | Volunteer | Admin |
+|---|---|---|---|
+| GET /api/seedlings | ✅ lihat aja | ✅ | ✅ |
+| POST /api/seedlings (lapor) | ❌ | ✅ | ✅ |
+| POST /api/seedlings/:id/request (minta) | ❌ | ✅ | ✅ |
+| POST confirmation (Selesai/Terima) | ❌ | ✅ (yg terkait) | ✅ |
+| POST /api/admin/* | ❌ | ❌ | ✅ |
+
+### Alur data dari ujung ke ujung:
+
+```
+Kamu isi form "Lapor Bibit"
+  │
+  ▼
+Frontend (seedlings.html / halaman Next.js)
+  │
+  ├── Kirim POST /api/seedlings
+  │   { jenis: "Jati", jumlah: 50, foto: ..., lokasi: "Bandung" }
+  │
+  ▼
+API (app/api/seedlings/route.ts)
+  │
+  ├── Cek: login? CSRF token valid? Data lengkap?
+  ├── Simpan ke database (tabel Seedling)
+  │   { id: 1, jenis: "Jati", jumlah: 50, stok: 50, status: "pending" }
+  │
+  ▼
+Database (PostgreSQL)
+  │
+  ├── Data tersimpan, status "MENUNGGU"
+  │
+  ▼
+Admin buka panel review
+  │
+  ├── Lihat laporan baru
+  ├── Klik "Setuju" → POST /api/admin/seedlings/1/approve
+  │
+  ▼
+Database update: status jadi "AKTIF"
+  │
+  ▼
+Marketplace — semua orang bisa lihat bibit Jati (stok 50)
+```
+
+### Cara bacanya:
+
+```
+POST   /api/seedlings/123/request
+^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│      └── alamat endpoint (siapa + apa yang dilakuin)
+│
+└── method HTTP:
+    POST   = buat data baru
+    GET    = ambil data
+    PUT    = ubah data
+    DELETE = hapus data
+```
+
+---
+
+## 7. Yang Perlu Dibuat Biar Seedlings Jadi Fitur Resmi
 
 | No | Yang Harus Dibuat | Status |
 |---|---|---|
