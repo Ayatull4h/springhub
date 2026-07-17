@@ -93,7 +93,7 @@ export default function SeedlingDetailPage() {
               <FileText className="h-4 w-4 text-green-600" />
               Keterangan
             </h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{s.notes}</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{s.notes || "Tidak ada catatan"}</p>
           </div>
         </div>
 

@@ -409,7 +409,7 @@ function buka(id){
   else{document.getElementById("dKontak").textContent="-"}
   document.getElementById("dTanggal").textContent=b.tgl
   document.getElementById("dLokasi").textContent=b.kota+", "+b.prov
-  document.getElementById("dCatatan").textContent=b.cat
+  document.getElementById("dCatatan").textContent=b.cat||"Tidak ada catatan"
   document.getElementById("qty").max=b.sisa;document.getElementById("qty").value=1
   document.getElementById("msg").value=""
   document.getElementById("lapisan").classList.add("buka");document.body.style.overflow="hidden"
