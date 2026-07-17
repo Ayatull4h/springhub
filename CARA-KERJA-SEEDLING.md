@@ -315,139 +315,19 @@ Poin kamu ↑
 
 ## 6. Cara Kerja API (Routing)
 
-API itu kayak **pelayan restoran**. Kamu (frontend) duduk di meja, pengen minta sesuatu, pelayan (API) yang ambil ke dapur (database) dan bawain balik.
+Routing itu kayak resepsionis di kantor. Waktu kamu datang ke kantor, resepsionis bakal nanya "ada perlu apa?". Terus dia ngarahin kamu ke ruangan yang bener. Kalau kamu mau ngurus KTP, kamu gak mungkin diarahin ke ruangan dapur. Begitu juga di web. Waktu kamu klik sesuatu, sistem punya resepsionis sendiri yang tugasin ngarahin perintah kamu ke tempat yang tepat. Resepsionis ini kerjanya cuma cocokin "kamu mau apa" sama "daftar tugas yang udah ditentuin".
 
-### Cara komunikasinya:
+Misalnya kamu buka Marketplace. Klik menu bibit. Saat itu juga browser kamu kirim sinyal ke server. Resepsionis di server ngecek "oh, orang ini mau lihat daftar bibit". Resepsionis langsung ambil data dari database. Semua bibit yang stoknya masih ada dikirim balik ke browser kamu. Kamu tinggal lihat. Gak ada data yang diubah, cuma dibaca doang.
 
-```
-KAMU (Browser/HP)
-  │  ┌─ GET  → "ambilin data"
-  │  ├─ POST → "simpen data baru"
-  │  ├─ PUT  → "ubah data"
-  │  └─ DELETE → "hapus data"
-  │
-  ▼
-API (pelayan)
-  │
-  ▼
-DATABASE (dapur)
-```
+Sekarang kamu klik "Lapor Bibit". Kamu isi form, upload foto, masukin jumlah. Begitu kamu klik kirim, browser kirim sinyal lagi. Sekarang resepsionis ngecek "oh, orang ini mau nyimpen data baru, bukan cuma baca". Resepsionis juga ngecek: "kamu udah login belum? kalau belum, gabisa". Abis itu data kamu disimpen ke database dengan status "MENUNGGU". Nanti admin yang ngecek.
 
-### API yang perlu dibuat untuk Seedlings:
+Terus kamu klik "Minta Bibit". Kamu lihat bibit Jati punya si Asep, kamu mau 10 batang. Browser kirim sinyal lagi. Sekarang resepsionis nyimpen permintaan kamu. Terus resepsionis ngirim notifikasi ke si Asep. Kadang resepsionis juga ngecek "stoknya masih cukup?" sebelum nyimpen. Kalau cukup, permintaan masuk. Kalau gak cukup, kamu dikasih tahu "stok kurang".
 
-Ada 12 jalur komunikasi yang perlu dibuat. Ini semuanya dalam kalimat:
+Nah, resepsionis ini bisa bedain mana perintah yang boleh dikerjain sama siapa. Kalau kamu mau setujui atau tolak sesuatu, kamu harus jadi admin dulu. Resepsionis bakal nolak kalau kamu bukan admin. Kalau kamu cuma lihat-lihat doang, resepsionis izinin aja. Tapi kalau kamu mau nyimpen data atau ngubah data, resepsionis minta kamu login dulu.
 
-**1. Lihat semua bibit yang tersedia**
-Kalau kamu buka Marketplace, sistem bakal ngambil semua bibit dari database yang stoknya masih ada dan sudah disetujui admin. Kamu juga bisa filter berdasarkan provinsi atau jenis bibit.
+Ada satu hal penting. Waktu si Asep klik "Selesai" karena udah ngasih bibit ke kamu, sistem nyatetnya sebagai langkah pertama, bukan langkah terakhir. Stok bibit di database belum dikurangin. Nunggu kamu juga klik "Terima" sebagai tanda kamu udah beneran nerima bibitnya. Baru setelah itu stok dikurangin. Kenapa? Biar adil. Asep gak bisa bohong "udah dikasih" padahal belum, dan kamu juga gak bisa bohong "udah diterima" padahal belum.
 
-**2. Lihat bibit milikku sendiri**
-Waktu kamu buka tab "Bibitku", sistem ngambil semua bibit yang pernah kamu laporkan. Cuma kamu yang bisa lihat ini.
-
-**3. Lihat detail satu bibit**
-Waktu kamu klik kartu bibit di Marketplace, sistem ngambil detail lengkap bibit itu — nama, jumlah, pemilik, lokasi, catatan — biar muncul di overlay.
-
-**4. Lapor bibit baru**
-Kalau kamu punya bibit dan mau lapor, kamu isi form (jenis, jumlah, foto, lokasi) lalu kirim. Sistem nyimpen ke database dengan status "MENUNGGU". Butuh login dulu. Nanti admin yang review.
-
-**5. Minta bibit**
-Waktu kamu klik "Minta" di halaman detail bibit, kamu isi jumlah dan pesan, lalu kirim. Sistem nyimpen permintaan itu dan ngasih notifikasi ke pemilik bibit. Butuh login.
-
-**6. Admin setujui laporan bibit**
-Admin lihat laporan bibit baru, kalau beneran ada dan jujur, admin klik setuju. Bibitnya langsung muncul di Marketplace.
-
-**7. Admin tolak laporan bibit**
-Kalau laporannya palsu atau gak jelas, admin klik tolak. Bibitnya gak jadi muncul.
-
-**8. Admin setujui permintaan bibit**
-Admin juga harus setujui dulu kalau ada orang minta bibit. Biar gak sembarangan.
-
-**9. Pemilik nyatakan "Selesai" (sudah dikasih)**
-Pemilik (sebut A) udah ketemuan dan ngasih bibitnya ke peminta (B). A klik "Selesai" sebagai tanda "bibit sudah saya berikan". Tapi stok di database belum berkurang — masih nunggu B konfirmasi.
-
-**10. Peminta nyatakan "Terima" (sudah diterima)**
-B sudah terima bibitnya, B klik "Terima". Baru setelah ini stok bibit A beneran berkurang di database. Transaksi selesai.
-
-**11. Lihat siapa aja yang minta bibitku**
-Pemilik bisa lihat daftar orang yang minta bibitnya — siapa, minta berapa, statusnya apa. Cuma pemilik yang bisa akses ini.
-
-**12. Lihat semua bibit yang pernah aku minta**
-Kamu bisa lihat history permintaan bibit yang pernah kamu ajukan — statusnya menunggu, disetujui, ditolak, atau selesai.
-
----
-
-### Analogi sederhana:
-
-| Kejadian di Layar | Yang Terjadi di Belakang |
-|---|---|
-| Kamu buka Marketplace | Database ngirim semua bibit yang stoknya > 0 |
-| Kamu klik "Laporkan Bibit" dan kirim | Database nyimpen bibit baru, status "MENUNGGU" |
-| Admin setujui laporan | Database ngubah status jadi "AKTIF", bibit muncul |
-| Kamu klik "Minta" | Database nyimpen permintaan, ngirim notif ke pemilik |
-| Admin setujui permintaan | Database ngubah status jadi "DISETUJUI" |
-| Pemilik klik "Selesai" | Database nyatet langkah 1 dari 2 udah selesai |
-| Kamu klik "Terima" | Database ngurangin stok. Selesai ✅ |
-
-### Siapa yang boleh akses:
-
-| Data ini | Bisa Dilihat Sama |
-|---|---|
-| Daftar bibit yang tersedia | Semua orang (publik) |
-| Detail bibit | Semua orang |
-| Lapor bibit baru | Volunteer yang sudah login |
-| Minta bibit | Volunteer yang sudah login |
-| Data bibit milikku | Cuma diriku sendiri |
-| Siapa yang minta bibitku | Cuma pemilik bibit |
-| Setujui/Tolak apapun | Admin doang |
-
-### Alur data dari ujung ke ujung:
-
-```
-Kamu isi form "Lapor Bibit"
-  │
-  ▼
-Frontend (seedlings.html / halaman Next.js)
-  │
-  ├── Kirim POST /api/seedlings
-  │   { jenis: "Jati", jumlah: 50, foto: ..., lokasi: "Bandung" }
-  │
-  ▼
-API (app/api/seedlings/route.ts)
-  │
-  ├── Cek: login? CSRF token valid? Data lengkap?
-  ├── Simpan ke database (tabel Seedling)
-  │   { id: 1, jenis: "Jati", jumlah: 50, stok: 50, status: "pending" }
-  │
-  ▼
-Database (PostgreSQL)
-  │
-  ├── Data tersimpan, status "MENUNGGU"
-  │
-  ▼
-Admin buka panel review
-  │
-  ├── Lihat laporan baru
-  ├── Klik "Setuju" → POST /api/admin/seedlings/1/approve
-  │
-  ▼
-Database update: status jadi "AKTIF"
-  │
-  ▼
-Marketplace — semua orang bisa lihat bibit Jati (stok 50)
-```
-
-### Cara bacanya:
-
-```
-POST   /api/seedlings/123/request
-^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-│      └── alamat endpoint (siapa + apa yang dilakuin)
-│
-└── method HTTP:
-    POST   = buat data baru
-    GET    = ambil data
-    PUT    = ubah data
-    DELETE = hapus data
-```
+Intinya, API itu cuma perantara. Tugasnya nerima perintah, ngecek siapa yang ngasih perintah, ngecek perintahnya masuk akal atau gak, terus jalanin. Kalau perintahnya "ambilin data", dia ambil. Kalau "simpen data", dia simpen. Kalau "ubah data", dia ubah. Gak lebih. Gak kurang. Selebihnya urusan database.
 
 ---
 
