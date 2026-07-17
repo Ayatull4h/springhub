@@ -106,6 +106,7 @@ export default function SeedlingDetailPage() {
               <hr className="my-1.5 border-ink-line" />
               <div className="flex items-center gap-2 text-ink-muted"><MapPin className="h-3.5 w-3.5" />{s.regency}, {s.province}</div>
               <div className="flex items-center gap-2 text-ink-muted"><User className="h-3.5 w-3.5" />{s.owner} · ⭐ {s.trustScore}</div>
+              {s.ownerPhone && <a href={`https://wa.me/${s.ownerPhone.replace(/[^0-9]/g, '')}`} target="_blank" className="flex items-center gap-1.5 text-sm font-medium text-green-600 hover:text-green-700 mt-1"><Phone className="h-3.5 w-3.5" /> WhatsApp</a>}
               <div className="flex items-center gap-2 text-ink-muted"><Calendar className="h-3.5 w-3.5" />{s.createdAt}</div>
             </div>
           </div>
