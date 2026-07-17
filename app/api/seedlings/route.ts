@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     const seedlings = await prisma.seedling.findMany({
       where,
       include: {
-        user: { select: { id: true, username: true, points: true } },
+        user: { select: { id: true, username: true, points: true, phone: true } },
         photos: { select: { storagePath: true } },
         _count: { select: { requests: true } },
       },

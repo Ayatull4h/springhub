@@ -305,6 +305,7 @@ select.filter:focus{border-color:var(--biru)}
       <span class="label">Jumlah</span><span class="value" id="dJumlah"></span>
       <span class="label">Tersedia</span><span class="value" id="dSisa" style="color:var(--biru);font-weight:600"></span>
       <span class="label">Pemilik</span><span class="value" id="dPemilik"></span>
+      <span class="label">Kontak</span><span class="value" id="dKontak"></span>
       <span class="label">Dilaporkan</span><span class="value" id="dTanggal"></span>
       <span class="label">Lokasi</span><span class="value" id="dLokasi"></span>
       <div class="lebar"><span class="label">Keterangan</span><div class="value" id="dCatatan"></div></div>
@@ -329,16 +330,16 @@ select.filter:focus{border-color:var(--biru)}
 
 <script>
 const BIBIT = [
-  {id:1,jenis:"Jati",jml:50,sisa:40,prov:"Jawa Barat",kota:"Bandung",org:"Asep",trust:85,tgl:"10 Jul 2026",cat:"Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm. Dari biji unggul."},
-  {id:2,jenis:"Bambu Petung",jml:30,sisa:28,prov:"Jawa Barat",kota:"Bogor",org:"Sari",trust:92,tgl:"12 Jul 2026",cat:"Diamater 2-3cm. Dari rumpun induk adaptif. Cocok konservasi tebing."},
-  {id:3,jenis:"Mahoni",jml:100,sisa:95,prov:"Jawa Barat",kota:"Garut",org:"Budi",trust:78,tgl:"8 Jul 2026",cat:"Persemaian kelompok tani. Tinggi 30-60cm. Kayu berkualitas."},
-  {id:4,jenis:"Sengon",jml:25,sisa:20,prov:"Jawa Timur",kota:"Malang",org:"Dewi",trust:88,tgl:"14 Jul 2026",cat:"Umur 2 bulan. Tinggi 30-40cm. Tumbuh cepat untuk agroforestri."},
-  {id:5,jenis:"Suren",jml:40,sisa:40,prov:"Jawa Tengah",kota:"Solo",org:"Joko",trust:90,tgl:"5 Jul 2026",cat:"Hasil penangkaran. Adaptasi lokal. Pohon peneduh dengan kayu bernilai."},
-  {id:6,jenis:"Kaliandra",jml:200,sisa:180,prov:"Jawa Timur",kota:"Banyuwangi",org:"Rina",trust:95,tgl:"13 Jul 2026",cat:"Kaliandra merah. Pakan ternak, reboisasi, nektar lebah."},
-  {id:7,jenis:"Acacia",jml:75,sisa:70,prov:"Jawa Barat",kota:"Sukabumi",org:"Agus",trust:82,tgl:"11 Jul 2026",cat:"Acacia mangium. Cepat tumbuh, cocok lahan kritis."},
-  {id:8,jenis:"Albasia",jml:60,sisa:55,prov:"Jawa Tengah",kota:"Semarang",org:"Fitri",trust:87,tgl:"9 Jul 2026",cat:"Ukuran seragam, tinggi ~45cm. Kayu ringan untuk perkakas."},
-  {id:9,jenis:"Gamal",jml:150,sisa:150,prov:"Banten",kota:"Pandeglang",org:"Ujang",trust:80,tgl:"15 Jul 2026",cat:"Stok melimpah! Pakan ternak, pagar hidup, konservasi tanah."},
-  {id:10,jenis:"Saga",jml:35,sisa:30,prov:"Bali",kota:"Tabanan",org:"Nyoman",trust:91,tgl:"7 Jul 2026",cat:"Biji merah. Penghijauan lahan kering. Bisa untuk kerajinan."},
+  {id:1,jenis:"Jati",jml:50,sisa:40,prov:"Jawa Barat",kota:"Bandung",org:"Asep",telp:"6281234567890",trust:85,tgl:"10 Jul 2026",cat:"Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm. Dari biji unggul."},
+  {id:2,jenis:"Bambu Petung",jml:30,sisa:28,prov:"Jawa Barat",kota:"Bogor",org:"Sari",telp:"6281234567891",trust:92,tgl:"12 Jul 2026",cat:"Diamater 2-3cm. Dari rumpun induk adaptif. Cocok konservasi tebing."},
+  {id:3,jenis:"Mahoni",jml:100,sisa:95,prov:"Jawa Barat",kota:"Garut",org:"Budi",telp:"",trust:78,tgl:"8 Jul 2026",cat:"Persemaian kelompok tani. Tinggi 30-60cm. Kayu berkualitas."},
+  {id:4,jenis:"Sengon",jml:25,sisa:20,prov:"Jawa Timur",kota:"Malang",org:"Dewi",telp:"6281234567892",trust:88,tgl:"14 Jul 2026",cat:"Umur 2 bulan. Tinggi 30-40cm. Tumbuh cepat untuk agroforestri."},
+  {id:5,jenis:"Suren",jml:40,sisa:40,prov:"Jawa Tengah",kota:"Solo",org:"Joko",telp:"",trust:90,tgl:"5 Jul 2026",cat:"Hasil penangkaran. Adaptasi lokal. Pohon peneduh dengan kayu bernilai."},
+  {id:6,jenis:"Kaliandra",jml:200,sisa:180,prov:"Jawa Timur",kota:"Banyuwangi",org:"Rina",telp:"6281234567893",trust:95,tgl:"13 Jul 2026",cat:"Kaliandra merah. Pakan ternak, reboisasi, nektar lebah."},
+  {id:7,jenis:"Acacia",jml:75,sisa:70,prov:"Jawa Barat",kota:"Sukabumi",org:"Agus",telp:"",trust:82,tgl:"11 Jul 2026",cat:"Acacia mangium. Cepat tumbuh, cocok lahan kritis."},
+  {id:8,jenis:"Albasia",jml:60,sisa:55,prov:"Jawa Tengah",kota:"Semarang",org:"Fitri",telp:"6281234567894",trust:87,tgl:"9 Jul 2026",cat:"Ukuran seragam, tinggi ~45cm. Kayu ringan untuk perkakas."},
+  {id:9,jenis:"Gamal",jml:150,sisa:150,prov:"Banten",kota:"Pandeglang",org:"Ujang",telp:"6281234567895",trust:80,tgl:"15 Jul 2026",cat:"Stok melimpah! Pakan ternak, pagar hidup, konservasi tanah."},
+  {id:10,jenis:"Saga",jml:35,sisa:30,prov:"Bali",kota:"Tabanan",org:"Nyoman",telp:"",trust:91,tgl:"7 Jul 2026",cat:"Biji merah. Penghijauan lahan kering. Bisa untuk kerajinan."},
 ]
 const LISTINGKU = [
   {jenis:"Jati",jml:50,req:[{dari:"Budi",qty:10,msg:"Mau tanam di kebun",st:"pending",tgl:"2 hr"},{dari:"Sari",qty:5,msg:"Penghijauan RT",st:"approved",tgl:"1 hr"},{dari:"Doni",qty:3,msg:"Kelompok tani",st:"fulfilled",tgl:"5 hr"}]},
@@ -404,6 +405,8 @@ function buka(id){
   document.getElementById("dJumlah").textContent=b.jml+" bibit"
   document.getElementById("dSisa").textContent=b.sisa+" bibit"
   document.getElementById("dPemilik").textContent=b.org+" · "+b.trust+"%"
+  if(b.telp){document.getElementById("dKontak").innerHTML='<a href="https://wa.me/'+b.telp.replace(/[^0-9]/g,'')+'" target="_blank" class="btn btn-lunak btn-kecil"><i data-lucide="phone" style="width:.7rem;height:.7rem"></i> WhatsApp</a>'}
+  else{document.getElementById("dKontak").textContent="-"}
   document.getElementById("dTanggal").textContent=b.tgl
   document.getElementById("dLokasi").textContent=b.kota+", "+b.prov
   document.getElementById("dCatatan").textContent=b.cat
