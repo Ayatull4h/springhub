@@ -366,4 +366,38 @@ Intinya, API itu cuma perantara. Tugasnya nerima perintah, ngecek siapa yang nga
 
 ---
 
+## 7. Hubungan Seedlings dengan Bagian Lain
+
+Seedlings gak berdiri sendiri. Dia terhubung ke hampir semua bagian SpringHub. Ini hubungannya satu per satu.
+
+### Hubungan dengan Form
+
+Seedlings lahir dari form, persis seperti laporan monitoring atau laporan tanam pohon. Bedanya, form untuk bibit punya isian yang sedikit beda — jenis bibit, jumlah, foto bibit, dan lokasi. Form ini bisa dibuat lewat admin panel, sama seperti form-form lain. Jadi kalau admin mau nambah form "Laporan Bibit" baru dengan field yang beda, bisa lewat situ. Data yang dikirim dari form bakal diterima oleh API bibit, dicek dulu, terus disimpen ke database.
+
+### Hubungan dengan Admin
+
+Admin pegang peran penting di sini. Ada dua hal yang admin harus setujui. Pertama, admin harus setujui laporan bibit baru — ini biar bibit beneran muncul di Marketplace. Kedua, admin juga harus setujui permintaan bibit dari orang lain — ini biar gak sembarangan orang minta bibit. Admin lihat semua laporan dan permintaan yang butuh persetujuan di panel admin, sama seperti dia lihat laporan monitoring atau laporan tanam pohon.
+
+### Hubungan dengan User dan Profile
+
+Setiap bibit dan setiap permintaan nyambung ke akun orang yang bikin. Waktu kamu lapor bibit, data kamu (username, poin, rating kepercayaan) ikut tercatat. Waktu orang lain lihat bibit kamu, mereka bisa lihat nama kamu dan rating kepercayaan kamu. Ini penting biar orang tahu siapa pemilik bibitnya, apakah terpercaya atau enggak. Waktu kamu minta bibit, data kamu juga tercatat — pemilik bisa lihat siapa yang minta.
+
+### Hubungan dengan Poin
+
+Setiap laporan bibit yang disetujui admin bakal dapet poin. Besarnya 15 poin, sama kayak form Tree Seedling Stock yang udah ada. Poin ini nambah ke total poin kamu. Makin banyak laporan kamu disetujui, makin tinggi poin kamu. Poin penting karena kalau udah 20.000, kamu bisa buat proyek restorasi sendiri.
+
+### Hubungan dengan Notifikasi
+
+Notifikasi dipake di beberapa momen. Waktu admin setujui laporan bibit kamu, kamu dapet notifikasi "bibit kamu udah aktif". Waktu ada orang minta bibit kamu, kamu dapet notifikasi "si Budi minta Jati 10 batang". Waktu permintaan kamu disetujui, kamu dapet notifikasi "permintaan kamu disetujui, hubungi pemilik". Waktu pemilik klik Selesai, kamu dapet notifikasi "bibit udah dikasih, klik Terima untuk konfirmasi". Waktu kamu klik Terima, pemilik dapet notifikasi "bibit udah diterima, transaksi selesai".
+
+### Hubungan dengan Database
+
+Bibit butuh tabel baru di database. Tabel ini nyambung ke tabel Profile (siapa pemiliknya), ke tabel Form (form mana yang dipake buat lapor), dan ke tabel PointsLog (catatan poin yang didapet). Permintaan bibit juga butuh tabel baru — ini nyambung ke tabel bibit, ke tabel Profile pemilik, dan ke tabel Profile peminta. Setiap kali ada transaksi selesai, stok di tabel bibit berkurang.
+
+### Hubungan dengan Landing Page
+
+Di halaman depan springhub.id, ada bagian "Report Your Contribution" yang ngelist semua form. Nanti form bibit juga muncul di situ. Terus di bawah form, ada tombol "Bibit" yang lagi-lagi saya taruh bersisian sama tombol "Mode Offline". Jadi orang bisa langsung klik dari halaman depan tanpa harus nyari-nyari.
+
+---
+
 > **Kesimpulan:** `seedlings.html` sekarang adalah **tampilan (mockup)** yang sudah jadi. Biar jadi fitur beneran, perlu disambungin ke backend SpringHub — database, API, login, poin, dan notifikasi. Semua infrastruktur backend (database, auth, API routing) sudah tersedia di SpringHub, tinggal bikin model baru untuk bibit dan endpoint-endpoint-nya.
