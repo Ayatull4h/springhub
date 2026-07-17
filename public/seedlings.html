@@ -238,7 +238,18 @@ select.filter:focus{border-color:var(--biru)}
       <option>Kalimantan Selatan</option><option>Papua</option>
     </select>
   </div>
-  <div id="kisi" class="grid"></div>
+  <div id="kisi" class="grid">
+    <div class="card" data-id="1"><h3>Jati</h3><div class="lokasi"><i data-lucide="map-pin"></i>Bandung, Jawa Barat</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Asep</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="2"><h3>Bambu Petung</h3><div class="lokasi"><i data-lucide="map-pin"></i>Bogor, Jawa Barat</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Sari</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="3"><h3>Mahoni</h3><div class="lokasi"><i data-lucide="map-pin"></i>Garut, Jawa Barat</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Budi</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="4"><h3>Sengon</h3><div class="lokasi"><i data-lucide="map-pin"></i>Malang, Jawa Timur</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Dewi</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="5"><h3>Suren</h3><div class="lokasi"><i data-lucide="map-pin"></i>Solo, Jawa Tengah</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Joko</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="6"><h3>Kaliandra</h3><div class="lokasi"><i data-lucide="map-pin"></i>Banyuwangi, Jawa Timur</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Rina</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="7"><h3>Acacia</h3><div class="lokasi"><i data-lucide="map-pin"></i>Sukabumi, Jawa Barat</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Agus</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="8"><h3>Albasia</h3><div class="lokasi"><i data-lucide="map-pin"></i>Semarang, Jawa Tengah</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Fitri</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="9"><h3>Gamal</h3><div class="lokasi"><i data-lucide="map-pin"></i>Pandeglang, Banten</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Ujang</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="10"><h3>Saga</h3><div class="lokasi"><i data-lucide="map-pin"></i>Tabanan, Bali</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Nyoman</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+  </div>
   <div id="skel" class="grid" style="display:none">
     <div class="card-skel"><div class="skel-garis skel"></div><div class="skel-garis pendek skel" style="margin-top:.6rem"></div><div class="skel-garis skel" style="width:40%;margin-top:.75rem"></div></div>
     <div class="card-skel"><div class="skel-garis skel"></div><div class="skel-garis pendek skel" style="margin-top:.6rem"></div><div class="skel-garis skel" style="width:40%;margin-top:.75rem"></div></div>
@@ -362,7 +373,7 @@ function renderKartu(d){
   if(!d||!d.length){k.innerHTML="";ko.style.display="block";return}
   ko.style.display="none"
   k.innerHTML=d.map((b,i)=>`
-    <div class="card" onclick="buka(${b.id})" style="animation:naik .35s ease-out ${i*60}ms both">
+    <div class="card" data-id="${b.id}" style="animation:naik .35s ease-out ${i*60}ms both">
       <h3>${b.jenis}</h3>
       <div class="lokasi"><i data-lucide="map-pin"></i>${b.kota}, ${b.prov}</div>
       <div class="kaki">
@@ -379,6 +390,11 @@ function filter(){
   renderKartu(BIBIT.filter(b=>(!p||b.prov===p)&&(!q||b.jenis.toLowerCase().includes(q)||b.kota.toLowerCase().includes(q))))
 }
 function reset(){document.getElementById("cari").value="";document.getElementById("prov").value="";filter()}
+
+// Click card via delegation
+document.getElementById("kisi").addEventListener("click",function(e){
+  const card=e.target.closest(".card");if(card&&card.dataset.id)buka(parseInt(card.dataset.id))
+})
 
 let dt=null
 function buka(id){
