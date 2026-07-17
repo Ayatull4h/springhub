@@ -335,83 +335,69 @@ DATABASE (dapur)
 
 ### API yang perlu dibuat untuk Seedlings:
 
-```
-┌──────────────────────────────────────────────────────────┐
-│                    API SEEDLINGS                           │
-├──────────────────────────────────────────────────────────┤
-│                                                           │
-│  GET    /api/seedlings                                    │
-│         → Ambil semua bibit yang tersedia (Marketplace)   │
-│         → Filter: provinsi, jenis, stok > 0               │
-│                                                           │
-│  GET    /api/seedlings?mine=1                             │
-│         → Ambil bibit milikku sendiri (Bibitku)           │
-│                                                           │
-│  GET    /api/seedlings/:id                                │
-│         → Ambil detail satu bibit (untuk overlay)         │
-│                                                           │
-│  POST   /api/seedlings                                    │
-│         → Lapor bibit baru (isi: jenis, jumlah, foto,     │
-│           lokasi)                                         │
-│         → Wajib login                                     │
-│         → Status langsung: "MENUNGGU" (review admin)      │
-│                                                           │
-│  POST   /api/seedlings/:id/request                        │
-│         → Minta bibit (isi: jumlah, pesan)                │
-│         → Wajib login                                     │
-│                                                           │
-│  POST   /api/admin/seedlings/:id/approve                  │
-│         → Admin setujui laporan bibit                     │
-│         → Bibit muncul di Marketplace                     │
-│                                                           │
-│  POST   /api/admin/seedlings/:id/reject                   │
-│         → Admin tolak laporan bibit                       │
-│                                                           │
-│  POST   /api/admin/seedlings/:id/approve-request          │
-│         → Admin setujui permintaan bibit                  │
-│         → Notif ke pemilik                                 │
-│                                                           │
-│  POST   /api/seedlings/:id/confirm-give                   │
-│         → Pemilik (A) klik "Selesai"                      │
-│         → "Bibit sudah saya berikan"                      │
-│         → Stok belum berkurang (nunggu B konfirmasi)      │
-│                                                           │
-│  POST   /api/seedlings/:id/confirm-receive                │
-│         → Peminta (B) klik "Terima"                       │
-│         → "Bibit sudah saya terima"                       │
-│         → Stok beneran berkurang ✅                       │
-│                                                           │
-│  GET    /api/seedlings/:id/requests                       │
-│         → Lihat siapa aja yang minta bibitku               │
-│         → Hanya pemilik yang bisa lihat                   │
-│                                                           │
-│  GET    /api/seedlings/my-requests                        │
-│         → Lihat semua bibit yang pernah aku minta         │
-│                                                           │
-└──────────────────────────────────────────────────────────┘
-```
+Ada 12 jalur komunikasi yang perlu dibuat. Ini semuanya dalam kalimat:
+
+**1. Lihat semua bibit yang tersedia**
+Kalau kamu buka Marketplace, sistem bakal ngambil semua bibit dari database yang stoknya masih ada dan sudah disetujui admin. Kamu juga bisa filter berdasarkan provinsi atau jenis bibit.
+
+**2. Lihat bibit milikku sendiri**
+Waktu kamu buka tab "Bibitku", sistem ngambil semua bibit yang pernah kamu laporkan. Cuma kamu yang bisa lihat ini.
+
+**3. Lihat detail satu bibit**
+Waktu kamu klik kartu bibit di Marketplace, sistem ngambil detail lengkap bibit itu — nama, jumlah, pemilik, lokasi, catatan — biar muncul di overlay.
+
+**4. Lapor bibit baru**
+Kalau kamu punya bibit dan mau lapor, kamu isi form (jenis, jumlah, foto, lokasi) lalu kirim. Sistem nyimpen ke database dengan status "MENUNGGU". Butuh login dulu. Nanti admin yang review.
+
+**5. Minta bibit**
+Waktu kamu klik "Minta" di halaman detail bibit, kamu isi jumlah dan pesan, lalu kirim. Sistem nyimpen permintaan itu dan ngasih notifikasi ke pemilik bibit. Butuh login.
+
+**6. Admin setujui laporan bibit**
+Admin lihat laporan bibit baru, kalau beneran ada dan jujur, admin klik setuju. Bibitnya langsung muncul di Marketplace.
+
+**7. Admin tolak laporan bibit**
+Kalau laporannya palsu atau gak jelas, admin klik tolak. Bibitnya gak jadi muncul.
+
+**8. Admin setujui permintaan bibit**
+Admin juga harus setujui dulu kalau ada orang minta bibit. Biar gak sembarangan.
+
+**9. Pemilik nyatakan "Selesai" (sudah dikasih)**
+Pemilik (sebut A) udah ketemuan dan ngasih bibitnya ke peminta (B). A klik "Selesai" sebagai tanda "bibit sudah saya berikan". Tapi stok di database belum berkurang — masih nunggu B konfirmasi.
+
+**10. Peminta nyatakan "Terima" (sudah diterima)**
+B sudah terima bibitnya, B klik "Terima". Baru setelah ini stok bibit A beneran berkurang di database. Transaksi selesai.
+
+**11. Lihat siapa aja yang minta bibitku**
+Pemilik bisa lihat daftar orang yang minta bibitnya — siapa, minta berapa, statusnya apa. Cuma pemilik yang bisa akses ini.
+
+**12. Lihat semua bibit yang pernah aku minta**
+Kamu bisa lihat history permintaan bibit yang pernah kamu ajukan — statusnya menunggu, disetujui, ditolak, atau selesai.
+
+---
 
 ### Analogi sederhana:
 
-| Yang Kamu Lakukan | API yang Dipanggil | Yang Terjadi di DB |
-|---|---|---|
-| Buka Marketplace | `GET /api/seedlings` | Ambil semua bibit yang stok > 0 |
-| Klik "Laporkan Bibit" | `POST /api/seedlings` | Simpan bibit baru, status MENUNGGU |
-| Admin setujui laporan | `POST /api/admin/seedlings/1/approve` | Status jadi AKTIF, muncul di Marketplace |
-| Kamu klik "Minta" | `POST /api/seedlings/1/request` | Simpan permintaan, notif ke pemilik |
-| Admin setujui permintaan | `POST /api/admin/seedlings/1/approve-request` | Status jadi DISETUJUI |
-| Pemilik klik "Selesai" | `POST /api/seedlings/1/confirm-give` | Step 1 dari 2 selesai |
-| Kamu klik "Terima" | `POST /api/seedlings/1/confirm-receive` | Step 2 selesai, stok berkurang |
+| Kejadian di Layar | Yang Terjadi di Belakang |
+|---|---|
+| Kamu buka Marketplace | Database ngirim semua bibit yang stoknya > 0 |
+| Kamu klik "Laporkan Bibit" dan kirim | Database nyimpen bibit baru, status "MENUNGGU" |
+| Admin setujui laporan | Database ngubah status jadi "AKTIF", bibit muncul |
+| Kamu klik "Minta" | Database nyimpen permintaan, ngirim notif ke pemilik |
+| Admin setujui permintaan | Database ngubah status jadi "DISETUJUI" |
+| Pemilik klik "Selesai" | Database nyatet langkah 1 dari 2 udah selesai |
+| Kamu klik "Terima" | Database ngurangin stok. Selesai ✅ |
 
-### Siapa yang boleh akses API mana:
+### Siapa yang boleh akses:
 
-| API | Publik | Volunteer | Admin |
-|---|---|---|---|
-| GET /api/seedlings | ✅ lihat aja | ✅ | ✅ |
-| POST /api/seedlings (lapor) | ❌ | ✅ | ✅ |
-| POST /api/seedlings/:id/request (minta) | ❌ | ✅ | ✅ |
-| POST confirmation (Selesai/Terima) | ❌ | ✅ (yg terkait) | ✅ |
-| POST /api/admin/* | ❌ | ❌ | ✅ |
+| Data ini | Bisa Dilihat Sama |
+|---|---|
+| Daftar bibit yang tersedia | Semua orang (publik) |
+| Detail bibit | Semua orang |
+| Lapor bibit baru | Volunteer yang sudah login |
+| Minta bibit | Volunteer yang sudah login |
+| Data bibit milikku | Cuma diriku sendiri |
+| Siapa yang minta bibitku | Cuma pemilik bibit |
+| Setujui/Tolak apapun | Admin doang |
 
 ### Alur data dari ujung ke ujung:
 
