@@ -426,7 +426,6 @@ export default function ProfilePage() {
           <ArrowRight className="ml-auto h-4 w-4 text-ink-subtle" />
         </Link>
       </div>
-
       {/* Reports */}
       <div className="mt-8">
         <h2 className="text-lg font-bold text-ink">{t("profile.myReports")}</h2>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dokumen Perencanaan Billing & Infrastruktur Web</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 15mm;
+    }
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11pt;
+      line-height: 1.5;
+      color: #111;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #fff;
+    }
+    .header-line {
+      border: none;
+      border-top: 3px double #000;
+      margin: 20px 0;
+    }
+    h1 {
+      font-size: 14pt;
+      text-align: center;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 30px 0 10px;
+    }
+    h2 {
+      font-size: 12pt;
+      font-weight: bold;
+      margin: 25px 0 10px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 4px;
+    }
+    h3 {
+      font-size: 11pt;
+      font-weight: bold;
+      margin: 15px 0 8px;
+    }
+    .section-block {
+      margin: 15px 0;
+      padding-left: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 10pt;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    table th, table td {
+      border: 1px solid #333;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    table th {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+    table td.num {
+      text-align: right;
+    }
+    .grand-total {
+      font-weight: bold;
+      background: #e8e8e8;
+    }
+    ol, ul {
+      margin: 5px 0 10px 20px;
+      padding: 0;
+    }
+    li {
+      margin: 4px 0;
+    }
+    .note {
+      margin-top: 25px;
+      padding: 10px;
+      border: 1px dashed #666;
+      font-size: 9pt;
+      color: #444;
+      break-inside: avoid;
+    }
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 9pt;
+      border-top: 1px solid #999;
+      padding-top: 10px;
+    }
+    .right {
+      text-align: right;
+    }
+    .center {
+      text-align: center;
+    }
+    .indent {
+      padding-left: 20px;
+    }
+    .badge-done {
+      color: #080;
+      font-weight: bold;
+    }
+    .badge-pending {
+      color: #c00;
+      font-weight: bold;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        margin: 0;
+        max-width: none;
+      }
+      table { break-inside: avoid; page-break-inside: avoid; }
+      tr { break-inside: avoid; page-break-inside: avoid; }
+      h2, h3 { break-after: avoid; page-break-after: avoid; }
+      .note, .footer { break-inside: avoid; page-break-inside: avoid; }
+      .grand-total { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>DOKUMEN PERENCANAAN<br>BILLING &amp; INFRASTRUKTUR WEB</h1>
+
+  <hr class="header-line">
+
+  <!-- A. SPESIFIKASI INFRASTRUKTUR -->
+  <h2>A. SPESIFIKASI INFRASTRUKTUR <span style="font-weight:normal;font-size:10pt;">(PRODUCTION)</span></h2>
+
+  <table>
+    <tr><td style="width:35%"><strong>Penyedia Server</strong></td><td>Hostinger Indonesia</td></tr>
+    <tr><td><strong>Jenis Layanan</strong></td><td>VPS <em>(Kernel-based Virtual Machine)</em></td></tr>
+    <tr><td><strong>Nama Paket</strong></td><td>KVM 4 &mdash; 4 vCPU, 8GB RAM, 200GB NVMe</td></tr>
+    <tr><td><strong>Model Pembayaran</strong></td><td>Bulanan <em>(tidak perlu bayar 24 bulan di muka)</em></td></tr>
+    <tr><td><strong>Lokasi Server</strong></td><td>Indonesia &mdash; Latensi terbaik ~13&nbsp;ms</td></tr>
+    <tr><td><strong>Fasilitas Tambahan</strong></td><td>Gratis Domain 1 Tahun + hPanel + Proteksi Privasi WHOIS</td></tr>
+    <tr><td><strong>Alternatif Lebih Hemat</strong></td><td><strong>IdCloudHost VPS 4</strong> &mdash; Rp199.000/bln (4 vCPU, 8GB, 100GB NVMe, DC Jakarta)</td></tr>
+  </table>
+
+  <!-- B. RINCIAN BIAYA & ALOKASI DANA -->
+  <h2>B. RINCIAN BIAYA &amp; ALOKASI DANA</h2>
+
+  <h3>1. Biaya Server <span style="font-weight:normal;">(Bulanan)</span></h3>
+
+  <table>
+    <tr>
+      <th style="width:55%">Komponen</th>
+      <th style="width:25%" class="num">Nominal</th>
+      <th style="width:20%">Keterangan</th>
+    </tr>
+    <tr>
+      <td>Hostinger KVM 4 (per bulan)</td>
+      <td class="num">Rp350.000</td>
+      <td>Bayar tiap bulan</td>
+    </tr>
+    <tr>
+      <td>Domain springhub.id</td>
+      <td class="num">Rp0</td>
+      <td>Free 1 tahun dari Hostinger</td>
+    </tr>
+    <tr>
+      <td><strong>Total Server per Bulan</strong></td>
+      <td class="num"><strong>Rp350.000</strong></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <h3>2. Biaya Operasional <span style="font-weight:normal;">(Gaji Pengelola)</span></h3>
+
+  <table>
+    <tr>
+      <th style="width:35%">Item</th>
+      <th style="width:25%" class="num">Nominal</th>
+      <th>Keterangan</th>
+    </tr>
+    <tr>
+      <td>Gaji Bulanan</td>
+      <td class="num">Rp2.500.000</td>
+      <td>Pengelola &amp; Pengembang</td>
+    </tr>
+    <tr>
+      <td><span class="indent">Penerima</span></td>
+      <td colspan="2">Ayatullah Reza Chalid</td>
+    </tr>
+    <tr>
+      <td><span class="indent">Bank Tujuan</span></td>
+      <td colspan="2">BANK BRI</td>
+    </tr>
+    <tr>
+      <td><span class="indent">Nomor Rekening</span></td>
+      <td colspan="2">359001035332531</td>
+    </tr>
+  </table>
+
+  <h3>3. Cloudflare R2 <span style="font-weight:normal;">(Object Storage &mdash; Foto &amp; Aset)</span></h3>
+
+  <table>
+    <tr>
+      <th style="width:35%">Parameter</th>
+      <th style="width:25%" class="num">Nilai</th>
+      <th>Keterangan</th>
+    </tr>
+    <tr>
+      <td>Estimasi Penyimpanan</td>
+      <td class="num">5 GB</td>
+      <td>Foto kompresi 720p ~200 KB/file</td>
+    </tr>
+    <tr>
+      <td>Biaya Storage</td>
+      <td class="num">$0,075 / bln</td>
+      <td>$0,015/GB &times; 5 GB</td>
+    </tr>
+    <tr>
+      <td>Biaya Egress (Transfer Out)</td>
+      <td class="num">$0 / bln</td>
+      <td>Gratis &mdash; tanpa biaya egress</td>
+    </tr>
+    <tr>
+      <td><strong>Total Estimasi R2</strong></td>
+      <td class="num"><strong>$0,075 / bln</strong></td>
+      <td><strong>~Rp1.200 / bulan</strong> <em>(masih dalam free tier)</em></td>
+    </tr>
+  </table>
+
+  <h3>4. Layanan Pendukung <span style="font-weight:normal;">(Gratis)</span></h3>
+
+  <table>
+    <tr>
+      <th style="width:45%">Layanan</th>
+      <th style="width:25%" class="num">Biaya</th>
+      <th>Catatan</th>
+    </tr>
+    <tr>
+      <td>Cloudflare CDN &amp; SSL</td>
+      <td class="num">Rp0</td>
+      <td>Free tier &mdash; CDN global, SSL, DDoS protection</td>
+    </tr>
+    <tr>
+      <td>Amazon SES (Email API)</td>
+      <td class="num">Rp0 &ndash; Rp16.000</td>
+      <td>Pay-per-use &mdash; $0,10/1.000 email. 200 email/bln = Rp0. 50.000 email/bln = Rp16.000. Setup sekali, tanpa biaya bulanan tetap.</td>
+    </tr>
+    <tr>
+      <td>Xendit (Payment Gateway)</td>
+      <td class="num">Rp0</td>
+      <td>Fee per transaksi, tanpa biaya bulanan</td>
+    </tr>
+    <tr>
+      <td>Sentry (Error Tracking)</td>
+      <td class="num">Rp0</td>
+      <td>Free tier cukup untuk development</td>
+    </tr>
+  </table>
+
+  <!-- C. REKAPITULASI BULANAN -->
+  <h2>C. REKAPITULASI BIAYA BULANAN</h2>
+
+  <table>
+    <tr>
+      <th style="width:55%">Komponen</th>
+      <th style="width:25%" class="num">Per Bulan</th>
+      <th>% Gaji (Rp2,5JT)</th>
+    </tr>
+    <tr>
+      <td>Server Hostinger KVM 4</td>
+      <td class="num">Rp350.000</td>
+      <td class="num">14%</td>
+    </tr>
+    <tr>
+      <td>Cloudflare R2</td>
+      <td class="num">Rp1.200</td>
+      <td class="num">&lt;1%</td>
+    </tr>
+    <tr style="border-top:1px solid #333;">
+      <td><strong>Total Infrastruktur</strong></td>
+      <td class="num"><strong>Rp351.200</strong></td>
+      <td class="num"><strong>14%</strong></td>
+    </tr>
+    <tr>
+      <td>Gaji Pengelola</td>
+      <td class="num">Rp2.500.000</td>
+      <td class="num">-</td>
+    </tr>
+  </table>
+
+  <p><em>Catatan: Server bayar bulanan (bukan 24 bulan di muka). Domain gratis tahun pertama.</em></p>
+
+  <!-- D. PROGRES PROYEK -->
+  <h2>D. PROGRES PROYEK <span style="font-weight:normal;font-size:10pt;">(PER 21 JUNI 2026)</span></h2>
+
+  <table>
+    <tr>
+      <th style="width:45%">Komponen</th>
+      <th style="width:15%" class="center">Progres</th>
+      <th style="width:40%">Keterangan</th>
+    </tr>
+    <tr>
+      <td>Landing Page UI</td>
+      <td class="center">100%</td>
+      <td>Semua section, i18n, dark mode</td>
+    </tr>
+    <tr>
+      <td>Form Laporan (5 jenis + dynamic)</td>
+      <td class="center">100%</td>
+      <td>Zod validation, anti-spam, min 3 / max 5 foto</td>
+    </tr>
+    <tr>
+      <td>Map &amp; Spring Detail</td>
+      <td class="center">100%</td>
+      <td>OSM Leaflet, filter, mini map, timeline, gallery</td>
+    </tr>
+    <tr>
+      <td>Backend API</td>
+      <td class="center">100%</td>
+      <td>65 route.ts &mdash; semua pakai error handling (<em>getErrorMessage</em>)</td>
+    </tr>
+    <tr>
+      <td>Database &amp; RLS</td>
+      <td class="center">100%</td>
+      <td>14 model Prisma, PostgreSQL, RLS aktif</td>
+    </tr>
+    <tr>
+      <td>Auth System</td>
+      <td class="center">100%</td>
+      <td>Login, register, logout, forgot/reset password, session</td>
+    </tr>
+    <tr>
+      <td>Admin Panel</td>
+      <td class="center">100%</td>
+      <td>10 tab &mdash; Users, Reports, Donations, Forms, Points, Courses, Content, Feedback, Review, Projects</td>
+    </tr>
+    <tr>
+      <td>Donasi (Xendit)</td>
+      <td class="center">100%</td>
+      <td>Invoice + webhook + HMAC &mdash; backend siap, tinggal isi API key</td>
+    </tr>
+    <tr>
+      <td>Points Engine</td>
+      <td class="center">100%</td>
+      <td>Base + bonus + milestone + streak + trust score + auto-block</td>
+    </tr>
+    <tr>
+      <td>PWA &amp; Offline Mode</td>
+      <td class="center">98%</td>
+      <td>Service worker, IndexedDB, langsung form (skip setup), QueueWorker, panduan install PWA</td>
+    </tr>
+    <tr>
+      <td>Dark Mode</td>
+      <td class="center">98%</td>
+      <td>Semua halaman &amp; komponen</td>
+    </tr>
+    <tr>
+      <td>Error Handling &amp; Anti-Spam</td>
+      <td class="center">100%</td>
+      <td>52 route pakai getErrorMessage, CSRF, rate limit, honey pot, time gate</td>
+    </tr>
+    <tr>
+      <td>Testing &amp; UAT</td>
+      <td class="center">85%</td>
+      <td>88 test case UAT, 3 unit test, 17 E2E, 5 k6 scenario</td>
+    </tr>
+    <tr class="grand-total">
+      <td><strong>TOTAL PROGRES</strong></td>
+      <td class="center"><strong>~95%</strong></td>
+      <td><strong>5% tersisa</strong></td>
+    </tr>
+  </table>
+
+  <h3>Yang Tersisa</h3>
+  <table>
+    <tr>
+      <th style="width:30%">Item</th>
+      <th style="width:25%">Status</th>
+      <th>Keterangan</th>
+    </tr>
+    <tr>
+      <td>Xendit &amp; Email API Key Real</td>
+      <td class="badge-pending">❌ Placeholder</td>
+      <td>Tinggal ganti .env &mdash; backend sudah siap 100%</td>
+    </tr>
+    <tr>
+      <td>Migrasi ke VPS (Hostinger/IdCloudHost)</td>
+      <td class="badge-pending">❌ Belum</td>
+      <td>Tinggal beli &amp; eksekusi &mdash; panduan lengkap di MIGRASI.md</td>
+    </tr>
+    <tr>
+      <td>Manual Test (88 TC)</td>
+      <td style="color:#e80;">🟡 75/88</td>
+      <td>75✅, 3❌ (legacy PWA), 10⬜ (belum diceklis)</td>
+    </tr>
+  </table>
+
+  <!-- E. CATATAN -->
+  <h2>E. CATATAN</h2>
+  <ol>
+    <li><strong>Server bayar bulanan</strong> &mdash; tidak perlu bayar 24 bulan di muka. Rp350.000/bulan, bisa berhenti kapan saja.</li>
+    <li><strong>Domain gratis 1 tahun</strong> dari Hostinger. Tahun kedua ~Rp20.000.</li>
+    <li>Cloudflare R2 <strong>gratis</strong> untuk 10 GB pertama &mdash; cukup untuk ribuan foto.</li>
+    <li>Biaya <strong>Xendit</strong> hanya fee per transaksi (misal: 2% + Rp2.000), tanpa biaya bulanan.</li>
+    <li><strong>Alternatif lebih hemat:</strong> IdCloudHost VPS 4 (Rp199.000/bln) &mdash; spek 4 vCPU, 8GB, 100GB NVMe, DC Jakarta.</li>
+    <li><strong>Amazon SES</strong> pay-per-use &mdash; $0,10/1.000 email. Setup 1 jam (DNS verification), setelah itu gak perlu disentuh lagi. Cocok untuk skala kecil sampai besar tanpa upgrade plan.</li>
+  </ol>
+
+  <!-- F. SPESIFIKASI VPS -->
+  <h2>F. SPESIFIKASI VPS</h2>
+
+  <table>
+    <tr><td style="width:35%"><strong>Penyedia</strong></td><td>Hostinger Indonesia</td></tr>
+    <tr><td><strong>Paket</strong></td><td>KVM 4</td></tr>
+    <tr><td><strong>Lokasi</strong></td><td>Jakarta, Indonesia</td></tr>
+    <tr><td><strong>Sistem Operasi</strong></td><td>Ubuntu 24.04 LTS</td></tr>
+    <tr><td><strong>vCPU</strong></td><td>4 core AMD EPYC</td></tr>
+    <tr><td><strong>RAM</strong></td><td>16 GB</td></tr>
+    <tr><td><strong>Storage</strong></td><td>200 GB NVMe SSD</td></tr>
+    <tr><td><strong>Bandwidth</strong></td><td>16 TB / bulan</td></tr>
+    <tr><td><strong>Port Speed</strong></td><td>1 Gbps</td></tr>
+    <tr><td><strong>Dedicated IP</strong></td><td>1x IPv4</td></tr>
+    <tr><td><strong>Backup</strong></td><td>Mingguan otomatis + snapshot manual</td></tr>
+    <tr><td><strong>DDoS Protection</strong></td><td>BitNinja + Wanguard</td></tr>
+    <tr><td><strong>Biaya</strong></td><td>Rp350.000 / bulan</td></tr>
+  </table>
+
+  <div class="footer">
+    Dokumen diperbarui: 21 Juni 2026 &mdash; SpringHub oleh Jaga Semesta
+  </div>
+
+</body>
+</html>

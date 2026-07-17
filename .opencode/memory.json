@@ -1,0 +1,40 @@
+{
+  "memories": [
+    {
+      "id": "session-1",
+      "date": "2026-05-15",
+      "session": "Sesi 1",
+      "content": "Arsitektur: Vercel (frontend) + Supabase (backend). Prioritas fitur: Form -> Donasi -> Point. Anti-spam berlapis (Zod + rate limit + honey pot + time gate + trust score). RLS-first untuk data privacy. Publik bisa lihat, login wajib isi form. Points system: dasar (15-100) + bonus (streak, kualitas, discovery, milestone, event). Status: POC."
+    },
+    {
+      "id": "session-2",
+      "date": "2026-05-15",
+      "session": "Sesi 2",
+      "content": "Setup persistensi chat via AGENTS.md. Buka opencode dari folder proyek agar konteks terbaca. User ingin fokus penuh ke SpringHub."
+    },
+    {
+      "id": "session-3",
+      "date": "2026-05-15",
+      "session": "Sesi 3 - Audit Lengkap",
+      "content": "Audit menyeluruh. Critical issues: POST /api/reports 404, Xendit Checkout tidak jalan, field donasi tidak kebaca, createInvoice() stub, /sign-in dan /join 404, /projects/new 404, Start Course inert, Newsletter form tidak jalan."
+    },
+    {
+      "id": "session-4",
+      "date": "2026-05-15",
+      "session": "Sesi 4",
+      "content": "Memori pertama dibuat. User mengkonfirmasi setup SpringHub via batch file. Konteks harus terbawa antar sesi."
+    },
+    {
+      "id": "session-5",
+      "date": "2026-06-15",
+      "session": "Sesi 5 - MCP Fix + Code Audit",
+      "content": "User minta review MANUAL-TEST-UAT.md dan seluruh kode. Ditemukan 2 MCP mati karena path masih指向 drive Y: padahal proyek pindah ke C:. Fix: filesystem path, memory path, dan SUPABASE_SERVICE_ROLE_KEY diisi dari .env. Semua MCP enabled=true. Audit code selesai — 92% progress, 23 temuan."
+    },
+    {
+      "id": "session-10",
+      "date": "2026-07-01",
+      "session": "Sesi 10 - Bugfix Batch + E2E Testing + Laporan Client",
+      "content": "4 bug fixed: OG image 404 (static PNG instead of Vercel OG), 404 page title client-side, offline sync tidak end session, tracking field name compatibility (markerType/name dan isSpringMarker/springName). Connection pooling hardening. Python test runner (71/72 PASS), Playwright E2E (44/44 PASS). Docker healthcheck, CSP header, fail2ban DOCKER-NGINX, backup cron, heartbeat monitoring. Aksesibilitas WCAG AA. Security: no PII in logs, CSRF working, CSP/HSTS/XSS headers. Resend email configured. CLIENT-REPORT.pdf dibuat versi non-teknis untuk client (panggil 'mbak', tanpa sudut pandang pertama, bahasa santai). Sudah di-push ke GitHub."
+    }
+  ]
+}

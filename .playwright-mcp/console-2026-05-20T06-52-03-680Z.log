@@ -1,0 +1,23 @@
+[      58ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=PLclid3HLOe6zO45PGcmmBaVPoF8YE1y_9U70-1SUIKxvc01v_8jUI8pQQSSu8cr:0
+[     770ms] [ERROR] Error: No value provided for variable {scale}
+    at https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:1497
+    at String.replace (<anonymous>)
+    at M (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:1442)
+    at e.getTileUrl (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:117717)
+    at e.createTile (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:117460)
+    at e._addTile (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:115074)
+    at e._update (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:113763)
+    at e._setView (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:111510)
+    at e._resetView (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:110845)
+    at e.onAdd (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:106433) @ https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:0
+[     889ms] [ERROR] Error: Minified React error #310; visit https://react.dev/errors/310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at rF (https://springhub.vercel.app/_next/static/chunks/fd9d1056-6044f992b0626b6b.js:1:41400)
+    at Object.lt [as useMemo] (https://springhub.vercel.app/_next/static/chunks/fd9d1056-6044f992b0626b6b.js:1:46690)
+    at https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:2:31751
+    at D (https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:1:11350)
+    at rE (https://springhub.vercel.app/_next/static/chunks/fd9d1056-6044f992b0626b6b.js:1:40342)
+    at l$ (https://springhub.vercel.app/_next/static/chunks/fd9d1056-6044f992b0626b6b.js:1:59317)
+    at iZ (https://springhub.vercel.app/_next/static/chunks/fd9d1056-6044f992b0626b6b.js:1:117924)
+    at ia (https://springhub.vercel.app/_next/static/chunks/fd9d1056-6044f992b0626b6b.js:1:95163)
+    at https://springhub.vercel.app/_next/static/chunks/fd9d1056-6044f992b0626b6b.js:1:94985
+    at il (https://springhub.vercel.app/_next/static/chunks/fd9d1056-6044f992b0626b6b.js:1:94992) @ https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:0

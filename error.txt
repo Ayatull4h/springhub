@@ -1,0 +1,1891 @@
+
+    Error Context: test-results\04-admin-Admin-Panel-Projects-page-should-load-chromium\error-context.md
+
+  9) [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Review Queue page should load ──────────
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "**/" until "load"
+    ============================================================
+
+       9 |     await page.click('button[type="submit"]');
+      10 |     // Wait for redirect to home after successful login
+    > 11 |     await page.waitForURL("**/", { timeout: 15000 });
+         |                ^
+      12 |     await page.waitForLoadState("networkidle");
+      13 |   });
+      14 |
+        at C:\Users\ayatu\springhub\e2e\04-admin.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\04-admin-Admin-Panel-Review-Queue-page-should-load-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\04-admin-Admin-Panel-Review-Queue-page-should-load-chromium\error-context.md
+
+  10) [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Points page should load ───────────────
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "**/" until "load"
+    ============================================================
+
+       9 |     await page.click('button[type="submit"]');
+      10 |     // Wait for redirect to home after successful login
+    > 11 |     await page.waitForURL("**/", { timeout: 15000 });
+         |                ^
+      12 |     await page.waitForLoadState("networkidle");
+      13 |   });
+      14 |
+        at C:\Users\ayatu\springhub\e2e\04-admin.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\04-admin-Admin-Panel-Points-page-should-load-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\04-admin-Admin-Panel-Points-page-should-load-chromium\error-context.md
+
+  11) [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Courses page should load ──────────────
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "**/" until "load"
+    ============================================================
+
+       9 |     await page.click('button[type="submit"]');
+      10 |     // Wait for redirect to home after successful login
+    > 11 |     await page.waitForURL("**/", { timeout: 15000 });
+         |                ^
+      12 |     await page.waitForLoadState("networkidle");
+      13 |   });
+      14 |
+        at C:\Users\ayatu\springhub\e2e\04-admin.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\04-admin-Admin-Panel-Courses-page-should-load-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\04-admin-Admin-Panel-Courses-page-should-load-chromium\error-context.md
+
+  12) [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Forms page should load ────────────────
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "**/" until "load"
+    ============================================================
+
+       9 |     await page.click('button[type="submit"]');
+      10 |     // Wait for redirect to home after successful login
+    > 11 |     await page.waitForURL("**/", { timeout: 15000 });
+         |                ^
+      12 |     await page.waitForLoadState("networkidle");
+      13 |   });
+      14 |
+        at C:\Users\ayatu\springhub\e2e\04-admin.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\04-admin-Admin-Panel-Forms-page-should-load-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\04-admin-Admin-Panel-Forms-page-should-load-chromium\error-context.md
+
+  13) [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Feedback page should load ─────────────
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "**/" until "load"
+    ============================================================
+
+       9 |     await page.click('button[type="submit"]');
+      10 |     // Wait for redirect to home after successful login
+    > 11 |     await page.waitForURL("**/", { timeout: 15000 });
+         |                ^
+      12 |     await page.waitForLoadState("networkidle");
+      13 |   });
+      14 |
+        at C:\Users\ayatu\springhub\e2e\04-admin.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\04-admin-Admin-Panel-Feedback-page-should-load-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\04-admin-Admin-Panel-Feedback-page-should-load-chromium\error-context.md
+
+  14) [chromium] › e2e\04-admin.spec.ts:36:7 › Admin Panel › Admin sidebar should have menu items ──
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "**/" until "load"
+    ============================================================
+
+       9 |     await page.click('button[type="submit"]');
+      10 |     // Wait for redirect to home after successful login
+    > 11 |     await page.waitForURL("**/", { timeout: 15000 });
+         |                ^
+      12 |     await page.waitForLoadState("networkidle");
+      13 |   });
+      14 |
+        at C:\Users\ayatu\springhub\e2e\04-admin.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\04-admin-Admin-Panel-Admin-sidebar-should-have-menu-items-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\04-admin-Admin-Panel-Admin-sidebar-should-have-menu-items-chromium\error-context.md
+
+  15) [chromium] › e2e\05-api.spec.ts:4:7 › API Endpoints › GET /api/forms should return active forms
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      4 |   test("GET /api/forms should return active forms", async ({ request }) => {
+      5 |     const response = await request.get("/api/forms");
+    > 6 |     expect(response.ok()).toBeTruthy();
+        |                           ^
+      7 |     const data = await response.json();
+      8 |     expect(data.forms).toBeDefined();
+      9 |     expect(Array.isArray(data.forms)).toBeTruthy();
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:6:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-a-cfe31--should-return-active-forms-chromium\error-context.md
+
+  16) [chromium] › e2e\05-api.spec.ts:12:7 › API Endpoints › GET /api/reports should return approved reports
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      12 |   test("GET /api/reports should return approved reports", async ({ request }) => {
+      13 |     const response = await request.get("/api/reports");
+    > 14 |     expect(response.ok()).toBeTruthy();
+         |                           ^
+      15 |     const data = await response.json();
+      16 |     expect(data.reports).toBeDefined();
+      17 |   });
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:14:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-a-8d53e-uld-return-approved-reports-chromium\error-context.md
+
+  17) [chromium] › e2e\05-api.spec.ts:19:7 › API Endpoints › GET /api/courses should return courses
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      19 |   test("GET /api/courses should return courses", async ({ request }) => {
+      20 |     const response = await request.get("/api/courses");
+    > 21 |     expect(response.ok()).toBeTruthy();
+         |                           ^
+      22 |   });
+      23 |
+      24 |   test("GET /api/leaderboard should return rankings", async ({ request }) => {
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:21:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-api-courses-should-return-courses-chromium\error-context.md
+
+  18) [chromium] › e2e\05-api.spec.ts:24:7 › API Endpoints › GET /api/leaderboard should return rankings
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      24 |   test("GET /api/leaderboard should return rankings", async ({ request }) => {
+      25 |     const response = await request.get("/api/leaderboard");
+    > 26 |     expect(response.ok()).toBeTruthy();
+         |                           ^
+      27 |   });
+      28 |
+      29 |   test("POST /api/feedback with valid data should succeed", async ({ request }) => {
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:26:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-a-90903-oard-should-return-rankings-chromium\error-context.md
+
+  19) [chromium] › e2e\05-api.spec.ts:29:7 › API Endpoints › POST /api/feedback with valid data should succeed
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      35 |     });
+      36 |     const data = await response.json();
+    > 37 |     expect(response.status() === 200 || response.status() === 201 || response.status() === 429).toBeTruthy();
+         |                                                                                                 ^
+      38 |     if (response.ok) {
+      39 |       expect(data.success).toBeTruthy();
+      40 |     }
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:37:97
+
+    Error Context: test-results\05-api-API-Endpoints-POST--df8f9-h-valid-data-should-succeed-chromium\error-context.md
+
+  20) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Landing Page (/) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-55c94-g-Page-should-load-with-200-firefox\error-context.md
+
+  21) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Sign In (/sign-in) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-0a9d6-ign-in-should-load-with-200-firefox\error-context.md
+
+  22) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Join (/join) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-e0112-n-join-should-load-with-200-firefox\error-context.md
+
+  23) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › FAQ (/faq) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-a31fe-AQ-faq-should-load-with-200-firefox\error-context.md
+
+  24) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Help Center (/help) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-0360d-r-help-should-load-with-200-firefox\error-context.md
+
+  25) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Privacy Policy (/privacy) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-c92b1-rivacy-should-load-with-200-firefox\error-context.md
+
+  26) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Terms of Service (/terms) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-86181--terms-should-load-with-200-firefox\error-context.md
+
+  27) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Report Issue (/report-issue) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-0b4d9--issue-should-load-with-200-firefox\error-context.md
+
+  28) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Spring Monitoring (/report/spring-monitoring) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-44b7a-toring-should-load-with-200-firefox\error-context.md
+
+  29) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Spring Restoration (/report/spring-restoration) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-c520b-ration-should-load-with-200-firefox\error-context.md
+
+  30) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Trench Development (/report/trench-development) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-dee8c-opment-should-load-with-200-firefox\error-context.md
+
+  31) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Tree Planting (/report/tree-planting) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-09782-anting-should-load-with-200-firefox\error-context.md
+
+  32) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Seedling Stock (/report/seedling-stock) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-ca032--stock-should-load-with-200-firefox\error-context.md
+
+  33) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Admin Forms (/admin/forms) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-fbe17--forms-should-load-with-200-firefox\error-context.md
+
+  34) [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Admin Feedback (/admin/feedback) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-2f270-edback-should-load-with-200-firefox\error-context.md
+
+  35) [firefox] › e2e\01-content.spec.ts:13:7 › Content Integrity - All Pages › 404 page should show custom not-found
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-46363-hould-show-custom-not-found-firefox\error-context.md
+
+  36) [firefox] › e2e\01-content.spec.ts:21:7 › Content Integrity - All Pages › Favicon should be accessible
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-6ef0b-avicon-should-be-accessible-firefox\error-context.md
+
+  37) [firefox] › e2e\01-content.spec.ts:26:7 › Content Integrity - All Pages › Manifest should be accessible
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-60d22-nifest-should-be-accessible-firefox\error-context.md
+
+  38) [firefox] › e2e\02-auth.spec.ts:5:7 › Authentication › Sign-in page should render login form ─
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Sign-in-page-should-render-login-form-firefox\error-context.md
+
+  39) [firefox] › e2e\02-auth.spec.ts:12:7 › Authentication › Join page should render registration form
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Joi-14c47-ld-render-registration-form-firefox\error-context.md
+
+  40) [firefox] › e2e\02-auth.spec.ts:19:7 › Authentication › Should show error with wrong credentials
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Sho-e926a-rror-with-wrong-credentials-firefox\error-context.md
+
+  41) [firefox] › e2e\02-auth.spec.ts:27:7 › Authentication › Should login as admin successfully ───
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Should-login-as-admin-successfully-firefox\error-context.md
+
+  42) [firefox] › e2e\02-auth.spec.ts:36:7 › Authentication › Admin should access /admin without redirect
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Adm-cc690-cess-admin-without-redirect-firefox\error-context.md
+
+  43) [firefox] › e2e\02-auth.spec.ts:53:7 › Authentication › Unauthenticated user should be redirected from /profile
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Una-e2042--be-redirected-from-profile-firefox\error-context.md
+
+  44) [firefox] › e2e\02-auth.spec.ts:59:7 › Authentication › Unauthenticated user should be redirected from /projects/new
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Una-244da-edirected-from-projects-new-firefox\error-context.md
+
+  45) [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › spring-monitoring form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-spri-05024-rm-should-render-all-fields-firefox\error-context.md
+
+  46) [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › spring-restoration form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-spri-82e16-rm-should-render-all-fields-firefox\error-context.md
+
+  47) [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › trench-development form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-tren-fa253-rm-should-render-all-fields-firefox\error-context.md
+
+  48) [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › tree-planting form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-tree-8c9d4-rm-should-render-all-fields-firefox\error-context.md
+
+  49) [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › seedling-stock form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-seed-1aef4-rm-should-render-all-fields-firefox\error-context.md
+
+  50) [firefox] › e2e\03-forms.spec.ts:19:7 › Report Forms › Invalid form slug should show not found
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-Inva-4dc6f--slug-should-show-not-found-firefox\error-context.md
+
+  51) [firefox] › e2e\03-forms.spec.ts:25:7 › Report Forms › Anti-spam: honeypot field should be hidden
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-Anti-24fd6-ypot-field-should-be-hidden-firefox\error-context.md
+
+  52) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Dashboard page should load ─────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Dashboard-page-should-load-firefox\error-context.md
+
+  53) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Users page should load ─────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Users-page-should-load-firefox\error-context.md
+
+  54) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Reports page should load ───────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Reports-page-should-load-firefox\error-context.md
+
+  55) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Donations page should load ─────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Donations-page-should-load-firefox\error-context.md
+
+  56) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Projects page should load ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Projects-page-should-load-firefox\error-context.md
+
+  57) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Review Queue page should load ──────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Review-Queue-page-should-load-firefox\error-context.md
+
+  58) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Points page should load ────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Points-page-should-load-firefox\error-context.md
+
+  59) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Courses page should load ───────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Courses-page-should-load-firefox\error-context.md
+
+  60) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Forms page should load ─────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Forms-page-should-load-firefox\error-context.md
+
+  61) [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Feedback page should load ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Feedback-page-should-load-firefox\error-context.md
+
+  62) [firefox] › e2e\04-admin.spec.ts:36:7 › Admin Panel › Admin sidebar should have menu items ───
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Admin-sidebar-should-have-menu-items-firefox\error-context.md
+
+  63) [firefox] › e2e\05-api.spec.ts:4:7 › API Endpoints › GET /api/forms should return active forms
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      4 |   test("GET /api/forms should return active forms", async ({ request }) => {
+      5 |     const response = await request.get("/api/forms");
+    > 6 |     expect(response.ok()).toBeTruthy();
+        |                           ^
+      7 |     const data = await response.json();
+      8 |     expect(data.forms).toBeDefined();
+      9 |     expect(Array.isArray(data.forms)).toBeTruthy();
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:6:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-a-cfe31--should-return-active-forms-firefox\error-context.md
+
+  64) [firefox] › e2e\05-api.spec.ts:12:7 › API Endpoints › GET /api/reports should return approved reports
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      12 |   test("GET /api/reports should return approved reports", async ({ request }) => {
+      13 |     const response = await request.get("/api/reports");
+    > 14 |     expect(response.ok()).toBeTruthy();
+         |                           ^
+      15 |     const data = await response.json();
+      16 |     expect(data.reports).toBeDefined();
+      17 |   });
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:14:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-a-8d53e-uld-return-approved-reports-firefox\error-context.md
+
+  65) [firefox] › e2e\05-api.spec.ts:19:7 › API Endpoints › GET /api/courses should return courses ─
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      19 |   test("GET /api/courses should return courses", async ({ request }) => {
+      20 |     const response = await request.get("/api/courses");
+    > 21 |     expect(response.ok()).toBeTruthy();
+         |                           ^
+      22 |   });
+      23 |
+      24 |   test("GET /api/leaderboard should return rankings", async ({ request }) => {
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:21:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-api-courses-should-return-courses-firefox\error-context.md
+
+  66) [firefox] › e2e\05-api.spec.ts:24:7 › API Endpoints › GET /api/leaderboard should return rankings
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      24 |   test("GET /api/leaderboard should return rankings", async ({ request }) => {
+      25 |     const response = await request.get("/api/leaderboard");
+    > 26 |     expect(response.ok()).toBeTruthy();
+         |                           ^
+      27 |   });
+      28 |
+      29 |   test("POST /api/feedback with valid data should succeed", async ({ request }) => {
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:26:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-a-90903-oard-should-return-rankings-firefox\error-context.md
+
+  67) [firefox] › e2e\05-api.spec.ts:29:7 › API Endpoints › POST /api/feedback with valid data should succeed
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      35 |     });
+      36 |     const data = await response.json();
+    > 37 |     expect(response.status() === 200 || response.status() === 201 || response.status() === 429).toBeTruthy();
+         |                                                                                                 ^
+      38 |     if (response.ok) {
+      39 |       expect(data.success).toBeTruthy();
+      40 |     }
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:37:97
+
+    Error Context: test-results\05-api-API-Endpoints-POST--df8f9-h-valid-data-should-succeed-firefox\error-context.md
+
+  68) [firefox] › e2e\06-ui-responsive.spec.ts:4:7 › UI & Responsiveness › Navigation header should be visible on all pages
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\06-ui-responsive-UI-Respon-a4e3a-uld-be-visible-on-all-pages-firefox\error-context.md
+
+  69) [firefox] › e2e\06-ui-responsive.spec.ts:9:7 › UI & Responsiveness › Footer should have all links
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\06-ui-responsive-UI-Respon-d3b17-ooter-should-have-all-links-firefox\error-context.md
+
+  70) [firefox] › e2e\06-ui-responsive.spec.ts:18:7 › UI & Responsiveness › Mobile viewport should show hamburger menu
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\06-ui-responsive-UI-Respon-4cab1--should-show-hamburger-menu-firefox\error-context.md
+
+  71) [firefox] › e2e\06-ui-responsive.spec.ts:27:7 › UI & Responsiveness › Tablet viewport should work
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\06-ui-responsive-UI-Respon-13d49-Tablet-viewport-should-work-firefox\error-context.md
+
+  72) [firefox] › e2e\07-security-basics.spec.ts:4:7 › Security Basic Tests › Sign-in page should not leak passwords in URL
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\07-security-basics-Securit-5b1ce-d-not-leak-passwords-in-URL-firefox\error-context.md
+
+  73) [firefox] › e2e\07-security-basics.spec.ts:26:7 › Security Basic Tests › Report form should have no XSS vulnerability in text fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\07-security-basics-Securit-84620-ulnerability-in-text-fields-firefox\error-context.md
+
+  74) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Landing Page (/) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-55c94-g-Page-should-load-with-200-webkit\error-context.md
+
+  75) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Sign In (/sign-in) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-0a9d6-ign-in-should-load-with-200-webkit\error-context.md
+
+  76) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Join (/join) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-e0112-n-join-should-load-with-200-webkit\error-context.md
+
+  77) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › FAQ (/faq) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-a31fe-AQ-faq-should-load-with-200-webkit\error-context.md
+
+  78) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Help Center (/help) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-0360d-r-help-should-load-with-200-webkit\error-context.md
+
+  79) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Privacy Policy (/privacy) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-c92b1-rivacy-should-load-with-200-webkit\error-context.md
+
+  80) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Terms of Service (/terms) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-86181--terms-should-load-with-200-webkit\error-context.md
+
+  81) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Report Issue (/report-issue) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-0b4d9--issue-should-load-with-200-webkit\error-context.md
+
+  82) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Spring Monitoring (/report/spring-monitoring) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-44b7a-toring-should-load-with-200-webkit\error-context.md
+
+  83) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Spring Restoration (/report/spring-restoration) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-c520b-ration-should-load-with-200-webkit\error-context.md
+
+  84) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Trench Development (/report/trench-development) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-dee8c-opment-should-load-with-200-webkit\error-context.md
+
+  85) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Tree Planting (/report/tree-planting) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-09782-anting-should-load-with-200-webkit\error-context.md
+
+  86) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Seedling Stock (/report/seedling-stock) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-ca032--stock-should-load-with-200-webkit\error-context.md
+
+  87) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Admin Forms (/admin/forms) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-fbe17--forms-should-load-with-200-webkit\error-context.md
+
+  88) [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Admin Feedback (/admin/feedback) should load with 200
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-2f270-edback-should-load-with-200-webkit\error-context.md
+
+  89) [webkit] › e2e\01-content.spec.ts:13:7 › Content Integrity - All Pages › 404 page should show custom not-found
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-46363-hould-show-custom-not-found-webkit\error-context.md
+
+  90) [webkit] › e2e\01-content.spec.ts:21:7 › Content Integrity - All Pages › Favicon should be accessible
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-6ef0b-avicon-should-be-accessible-webkit\error-context.md
+
+  91) [webkit] › e2e\01-content.spec.ts:26:7 › Content Integrity - All Pages › Manifest should be accessible
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\01-content-Content-Integri-60d22-nifest-should-be-accessible-webkit\error-context.md
+
+  92) [webkit] › e2e\02-auth.spec.ts:5:7 › Authentication › Sign-in page should render login form ──
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Sign-in-page-should-render-login-form-webkit\error-context.md
+
+  93) [webkit] › e2e\02-auth.spec.ts:12:7 › Authentication › Join page should render registration form
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Joi-14c47-ld-render-registration-form-webkit\error-context.md
+
+  94) [webkit] › e2e\02-auth.spec.ts:19:7 › Authentication › Should show error with wrong credentials
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Sho-e926a-rror-with-wrong-credentials-webkit\error-context.md
+
+  95) [webkit] › e2e\02-auth.spec.ts:27:7 › Authentication › Should login as admin successfully ────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Should-login-as-admin-successfully-webkit\error-context.md
+
+  96) [webkit] › e2e\02-auth.spec.ts:36:7 › Authentication › Admin should access /admin without redirect
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Adm-cc690-cess-admin-without-redirect-webkit\error-context.md
+
+  97) [webkit] › e2e\02-auth.spec.ts:53:7 › Authentication › Unauthenticated user should be redirected from /profile
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Una-e2042--be-redirected-from-profile-webkit\error-context.md
+
+  98) [webkit] › e2e\02-auth.spec.ts:59:7 › Authentication › Unauthenticated user should be redirected from /projects/new
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\02-auth-Authentication-Una-244da-edirected-from-projects-new-webkit\error-context.md
+
+  99) [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › spring-monitoring form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-spri-05024-rm-should-render-all-fields-webkit\error-context.md
+
+  100) [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › spring-restoration form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-spri-82e16-rm-should-render-all-fields-webkit\error-context.md
+
+  101) [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › trench-development form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-tren-fa253-rm-should-render-all-fields-webkit\error-context.md
+
+  102) [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › tree-planting form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-tree-8c9d4-rm-should-render-all-fields-webkit\error-context.md
+
+  103) [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › seedling-stock form should render all fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-seed-1aef4-rm-should-render-all-fields-webkit\error-context.md
+
+  104) [webkit] › e2e\03-forms.spec.ts:19:7 › Report Forms › Invalid form slug should show not found
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-Inva-4dc6f--slug-should-show-not-found-webkit\error-context.md
+
+  105) [webkit] › e2e\03-forms.spec.ts:25:7 › Report Forms › Anti-spam: honeypot field should be hidden
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\03-forms-Report-Forms-Anti-24fd6-ypot-field-should-be-hidden-webkit\error-context.md
+
+  106) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Dashboard page should load ─────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Dashboard-page-should-load-webkit\error-context.md
+
+  107) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Users page should load ─────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Users-page-should-load-webkit\error-context.md
+
+  108) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Reports page should load ───────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Reports-page-should-load-webkit\error-context.md
+
+  109) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Donations page should load ─────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Donations-page-should-load-webkit\error-context.md
+
+  110) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Projects page should load ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Projects-page-should-load-webkit\error-context.md
+
+  111) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Review Queue page should load ──────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Review-Queue-page-should-load-webkit\error-context.md
+
+  112) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Points page should load ────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Points-page-should-load-webkit\error-context.md
+
+  113) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Courses page should load ───────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Courses-page-should-load-webkit\error-context.md
+
+  114) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Forms page should load ─────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Forms-page-should-load-webkit\error-context.md
+
+  115) [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Feedback page should load ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Feedback-page-should-load-webkit\error-context.md
+
+  116) [webkit] › e2e\04-admin.spec.ts:36:7 › Admin Panel › Admin sidebar should have menu items ───
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\04-admin-Admin-Panel-Admin-sidebar-should-have-menu-items-webkit\error-context.md
+
+  117) [webkit] › e2e\05-api.spec.ts:4:7 › API Endpoints › GET /api/forms should return active forms
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      4 |   test("GET /api/forms should return active forms", async ({ request }) => {
+      5 |     const response = await request.get("/api/forms");
+    > 6 |     expect(response.ok()).toBeTruthy();
+        |                           ^
+      7 |     const data = await response.json();
+      8 |     expect(data.forms).toBeDefined();
+      9 |     expect(Array.isArray(data.forms)).toBeTruthy();
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:6:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-a-cfe31--should-return-active-forms-webkit\error-context.md
+
+  118) [webkit] › e2e\05-api.spec.ts:12:7 › API Endpoints › GET /api/reports should return approved reports
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      12 |   test("GET /api/reports should return approved reports", async ({ request }) => {
+      13 |     const response = await request.get("/api/reports");
+    > 14 |     expect(response.ok()).toBeTruthy();
+         |                           ^
+      15 |     const data = await response.json();
+      16 |     expect(data.reports).toBeDefined();
+      17 |   });
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:14:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-a-8d53e-uld-return-approved-reports-webkit\error-context.md
+
+  119) [webkit] › e2e\05-api.spec.ts:19:7 › API Endpoints › GET /api/courses should return courses ─
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      19 |   test("GET /api/courses should return courses", async ({ request }) => {
+      20 |     const response = await request.get("/api/courses");
+    > 21 |     expect(response.ok()).toBeTruthy();
+         |                           ^
+      22 |   });
+      23 |
+      24 |   test("GET /api/leaderboard should return rankings", async ({ request }) => {
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:21:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-api-courses-should-return-courses-webkit\error-context.md
+
+  120) [webkit] › e2e\05-api.spec.ts:24:7 › API Endpoints › GET /api/leaderboard should return rankings
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      24 |   test("GET /api/leaderboard should return rankings", async ({ request }) => {
+      25 |     const response = await request.get("/api/leaderboard");
+    > 26 |     expect(response.ok()).toBeTruthy();
+         |                           ^
+      27 |   });
+      28 |
+      29 |   test("POST /api/feedback with valid data should succeed", async ({ request }) => {
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:26:27
+
+    Error Context: test-results\05-api-API-Endpoints-GET-a-90903-oard-should-return-rankings-webkit\error-context.md
+
+  121) [webkit] › e2e\05-api.spec.ts:29:7 › API Endpoints › POST /api/feedback with valid data should succeed
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      35 |     });
+      36 |     const data = await response.json();
+    > 37 |     expect(response.status() === 200 || response.status() === 201 || response.status() === 429).toBeTruthy();
+         |                                                                                                 ^
+      38 |     if (response.ok) {
+      39 |       expect(data.success).toBeTruthy();
+      40 |     }
+        at C:\Users\ayatu\springhub\e2e\05-api.spec.ts:37:97
+
+    Error Context: test-results\05-api-API-Endpoints-POST--df8f9-h-valid-data-should-succeed-webkit\error-context.md
+
+  122) [webkit] › e2e\06-ui-responsive.spec.ts:4:7 › UI & Responsiveness › Navigation header should be visible on all pages
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\06-ui-responsive-UI-Respon-a4e3a-uld-be-visible-on-all-pages-webkit\error-context.md
+
+  123) [webkit] › e2e\06-ui-responsive.spec.ts:9:7 › UI & Responsiveness › Footer should have all links
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\06-ui-responsive-UI-Respon-d3b17-ooter-should-have-all-links-webkit\error-context.md
+
+  124) [webkit] › e2e\06-ui-responsive.spec.ts:18:7 › UI & Responsiveness › Mobile viewport should show hamburger menu
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\06-ui-responsive-UI-Respon-4cab1--should-show-hamburger-menu-webkit\error-context.md
+
+  125) [webkit] › e2e\06-ui-responsive.spec.ts:27:7 › UI & Responsiveness › Tablet viewport should work
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\06-ui-responsive-UI-Respon-13d49-Tablet-viewport-should-work-webkit\error-context.md
+
+  126) [webkit] › e2e\07-security-basics.spec.ts:4:7 › Security Basic Tests › Sign-in page should not leak passwords in URL
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\07-security-basics-Securit-5b1ce-d-not-leak-passwords-in-URL-webkit\error-context.md
+
+  127) [webkit] › e2e\07-security-basics.spec.ts:26:7 › Security Basic Tests › Report form should have no XSS vulnerability in text fields
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ayatu\AppData\Local\ms-playwright\webkit-2287\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\07-security-basics-Securit-84620-ulnerability-in-text-fields-webkit\error-context.md
+
+  127 failed
+    [chromium] › e2e\02-auth.spec.ts:19:7 › Authentication › Should show error with wrong credentials
+    [chromium] › e2e\02-auth.spec.ts:27:7 › Authentication › Should login as admin successfully ────
+    [chromium] › e2e\02-auth.spec.ts:36:7 › Authentication › Admin should access /admin without redirect
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Dashboard page should load ──────────────
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Users page should load ──────────────────
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Reports page should load ────────────────
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Donations page should load ──────────────
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Projects page should load ───────────────
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Review Queue page should load ───────────
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Points page should load ─────────────────
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Courses page should load ────────────────
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Forms page should load ──────────────────
+    [chromium] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Feedback page should load ───────────────
+    [chromium] › e2e\04-admin.spec.ts:36:7 › Admin Panel › Admin sidebar should have menu items ────
+    [chromium] › e2e\05-api.spec.ts:4:7 › API Endpoints › GET /api/forms should return active forms
+    [chromium] › e2e\05-api.spec.ts:12:7 › API Endpoints › GET /api/reports should return approved reports
+    [chromium] › e2e\05-api.spec.ts:19:7 › API Endpoints › GET /api/courses should return courses ──
+    [chromium] › e2e\05-api.spec.ts:24:7 › API Endpoints › GET /api/leaderboard should return rankings
+    [chromium] › e2e\05-api.spec.ts:29:7 › API Endpoints › POST /api/feedback with valid data should succeed
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Landing Page (/) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Sign In (/sign-in) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Join (/join) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › FAQ (/faq) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Help Center (/help) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Privacy Policy (/privacy) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Terms of Service (/terms) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Report Issue (/report-issue) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Spring Monitoring (/report/spring-monitoring) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Spring Restoration (/report/spring-restoration) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Trench Development (/report/trench-development) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Tree Planting (/report/tree-planting) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Seedling Stock (/report/seedling-stock) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Admin Forms (/admin/forms) should load with 200
+    [firefox] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Admin Feedback (/admin/feedback) should load with 200
+    [firefox] › e2e\01-content.spec.ts:13:7 › Content Integrity - All Pages › 404 page should show custom not-found
+    [firefox] › e2e\01-content.spec.ts:21:7 › Content Integrity - All Pages › Favicon should be accessible
+    [firefox] › e2e\01-content.spec.ts:26:7 › Content Integrity - All Pages › Manifest should be accessible
+    [firefox] › e2e\02-auth.spec.ts:5:7 › Authentication › Sign-in page should render login form ───
+    [firefox] › e2e\02-auth.spec.ts:12:7 › Authentication › Join page should render registration form
+    [firefox] › e2e\02-auth.spec.ts:19:7 › Authentication › Should show error with wrong credentials
+    [firefox] › e2e\02-auth.spec.ts:27:7 › Authentication › Should login as admin successfully ─────
+    [firefox] › e2e\02-auth.spec.ts:36:7 › Authentication › Admin should access /admin without redirect
+    [firefox] › e2e\02-auth.spec.ts:53:7 › Authentication › Unauthenticated user should be redirected from /profile
+    [firefox] › e2e\02-auth.spec.ts:59:7 › Authentication › Unauthenticated user should be redirected from /projects/new
+    [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › spring-monitoring form should render all fields
+    [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › spring-restoration form should render all fields
+    [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › trench-development form should render all fields
+    [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › tree-planting form should render all fields
+    [firefox] › e2e\03-forms.spec.ts:13:9 › Report Forms › seedling-stock form should render all fields
+    [firefox] › e2e\03-forms.spec.ts:19:7 › Report Forms › Invalid form slug should show not found ─
+    [firefox] › e2e\03-forms.spec.ts:25:7 › Report Forms › Anti-spam: honeypot field should be hidden
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Dashboard page should load ───────────────
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Users page should load ───────────────────
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Reports page should load ─────────────────
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Donations page should load ───────────────
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Projects page should load ────────────────
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Review Queue page should load ────────────
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Points page should load ──────────────────
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Courses page should load ─────────────────
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Forms page should load ───────────────────
+    [firefox] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Feedback page should load ────────────────
+    [firefox] › e2e\04-admin.spec.ts:36:7 › Admin Panel › Admin sidebar should have menu items ─────
+    [firefox] › e2e\05-api.spec.ts:4:7 › API Endpoints › GET /api/forms should return active forms ─
+    [firefox] › e2e\05-api.spec.ts:12:7 › API Endpoints › GET /api/reports should return approved reports
+    [firefox] › e2e\05-api.spec.ts:19:7 › API Endpoints › GET /api/courses should return courses ───
+    [firefox] › e2e\05-api.spec.ts:24:7 › API Endpoints › GET /api/leaderboard should return rankings
+    [firefox] › e2e\05-api.spec.ts:29:7 › API Endpoints › POST /api/feedback with valid data should succeed
+    [firefox] › e2e\06-ui-responsive.spec.ts:4:7 › UI & Responsiveness › Navigation header should be visible on all pages
+    [firefox] › e2e\06-ui-responsive.spec.ts:9:7 › UI & Responsiveness › Footer should have all links
+    [firefox] › e2e\06-ui-responsive.spec.ts:18:7 › UI & Responsiveness › Mobile viewport should show hamburger menu
+    [firefox] › e2e\06-ui-responsive.spec.ts:27:7 › UI & Responsiveness › Tablet viewport should work
+    [firefox] › e2e\07-security-basics.spec.ts:4:7 › Security Basic Tests › Sign-in page should not leak passwords in URL
+    [firefox] › e2e\07-security-basics.spec.ts:26:7 › Security Basic Tests › Report form should have no XSS vulnerability in text fields
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Landing Page (/) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Sign In (/sign-in) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Join (/join) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › FAQ (/faq) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Help Center (/help) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Privacy Policy (/privacy) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Terms of Service (/terms) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Report Issue (/report-issue) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Spring Monitoring (/report/spring-monitoring) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Spring Restoration (/report/spring-restoration) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Trench Development (/report/trench-development) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Tree Planting (/report/tree-planting) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Form: Seedling Stock (/report/seedling-stock) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Admin Forms (/admin/forms) should load with 200
+    [webkit] › e2e\01-content.spec.ts:6:9 › Content Integrity - All Pages › Admin Feedback (/admin/feedback) should load with 200
+    [webkit] › e2e\01-content.spec.ts:13:7 › Content Integrity - All Pages › 404 page should show custom not-found
+    [webkit] › e2e\01-content.spec.ts:21:7 › Content Integrity - All Pages › Favicon should be accessible
+    [webkit] › e2e\01-content.spec.ts:26:7 › Content Integrity - All Pages › Manifest should be accessible
+    [webkit] › e2e\02-auth.spec.ts:5:7 › Authentication › Sign-in page should render login form ────
+    [webkit] › e2e\02-auth.spec.ts:12:7 › Authentication › Join page should render registration form
+    [webkit] › e2e\02-auth.spec.ts:19:7 › Authentication › Should show error with wrong credentials
+    [webkit] › e2e\02-auth.spec.ts:27:7 › Authentication › Should login as admin successfully ──────
+    [webkit] › e2e\02-auth.spec.ts:36:7 › Authentication › Admin should access /admin without redirect
+    [webkit] › e2e\02-auth.spec.ts:53:7 › Authentication › Unauthenticated user should be redirected from /profile
+    [webkit] › e2e\02-auth.spec.ts:59:7 › Authentication › Unauthenticated user should be redirected from /projects/new
+    [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › spring-monitoring form should render all fields
+    [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › spring-restoration form should render all fields
+    [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › trench-development form should render all fields
+    [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › tree-planting form should render all fields
+    [webkit] › e2e\03-forms.spec.ts:13:9 › Report Forms › seedling-stock form should render all fields
+    [webkit] › e2e\03-forms.spec.ts:19:7 › Report Forms › Invalid form slug should show not found ──
+    [webkit] › e2e\03-forms.spec.ts:25:7 › Report Forms › Anti-spam: honeypot field should be hidden
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Dashboard page should load ────────────────
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Users page should load ────────────────────
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Reports page should load ──────────────────
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Donations page should load ────────────────
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Projects page should load ─────────────────
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Review Queue page should load ─────────────
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Points page should load ───────────────────
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Courses page should load ──────────────────
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Forms page should load ────────────────────
+    [webkit] › e2e\04-admin.spec.ts:29:9 › Admin Panel › Feedback page should load ─────────────────
+    [webkit] › e2e\04-admin.spec.ts:36:7 › Admin Panel › Admin sidebar should have menu items ──────
+    [webkit] › e2e\05-api.spec.ts:4:7 › API Endpoints › GET /api/forms should return active forms ──
+    [webkit] › e2e\05-api.spec.ts:12:7 › API Endpoints › GET /api/reports should return approved reports
+    [webkit] › e2e\05-api.spec.ts:19:7 › API Endpoints › GET /api/courses should return courses ────
+    [webkit] › e2e\05-api.spec.ts:24:7 › API Endpoints › GET /api/leaderboard should return rankings
+    [webkit] › e2e\05-api.spec.ts:29:7 › API Endpoints › POST /api/feedback with valid data should succeed
+    [webkit] › e2e\06-ui-responsive.spec.ts:4:7 › UI & Responsiveness › Navigation header should be visible on all pages
+    [webkit] › e2e\06-ui-responsive.spec.ts:9:7 › UI & Responsiveness › Footer should have all links
+    [webkit] › e2e\06-ui-responsive.spec.ts:18:7 › UI & Responsiveness › Mobile viewport should show hamburger menu
+    [webkit] › e2e\06-ui-responsive.spec.ts:27:7 › UI & Responsiveness › Tablet viewport should work
+    [webkit] › e2e\07-security-basics.spec.ts:4:7 › Security Basic Tests › Sign-in page should not leak passwords in URL
+    [webkit] › e2e\07-security-basics.spec.ts:26:7 › Security Basic Tests › Report form should have no XSS vulnerability in text fields
+  41 passed (3.6m)

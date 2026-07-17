@@ -1,0 +1,11 @@
+[    1894ms] [ERROR] Error: No value provided for variable {scale}
+    at https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:1497
+    at String.replace (<anonymous>)
+    at M (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:1442)
+    at e.getTileUrl (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:117717)
+    at e.createTile (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:117460)
+    at e._addTile (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:115074)
+    at e._update (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:113763)
+    at e._setView (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:111510)
+    at e._resetView (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:110845)
+    at e.onAdd (https://springhub.vercel.app/_next/static/chunks/d0deef33.8939d2e5cad19017.js:1:106433) @ https://springhub.vercel.app/_next/static/chunks/7023-19040ea5e943cc7d.js:0

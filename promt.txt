@@ -1,0 +1,49 @@
+File map (click any file to open it)
+Standalone preview (no install needed)
+
+preview.html — single-file Tailwind + Leaflet preview
+README.md — architecture overview
+
+Build + config
+
+package.json
+tsconfig.json
+next.config.mjs
+tailwind.config.ts
+postcss.config.js
+next-env.d.ts
+.gitignore
+
+app/ — Next.js routes
+
+app/layout.tsx — root layout, header, footer, Inter font
+app/page.tsx — homepage composition
+app/globals.css — Tailwind + .btn-primary, .card, .chip etc.
+app/report/[slug]/page.tsx — dynamic field-report form renderer
+
+components/ — UI
+
+components/logo.tsx
+components/site-header.tsx
+components/site-footer.tsx — contacts (WA, Instagram, YouTube, TikTok, Facebook)
+components/map/leaflet-map.tsx — client-only Leaflet/OSM
+components/sections/hero.tsx — YouTube embed
+components/sections/impact-dashboard.tsx — 500+ / 30+ / 20,000 / 150 KPIs
+components/sections/spring-map.tsx — full-width map + Report Your Contribution
+components/sections/volunteer.tsx — eligibility gate (>20K pts)
+components/sections/donate.tsx — Xendit tiers + payment-method strip
+components/sections/learning-hub.tsx
+components/sections/media.tsx — events / publications / press
+
+lib/ — domain + helpers
+
+lib/data.ts — springs, projects, activities, project types, KPIs, courses, media items
+lib/forms.ts — 5 native form schemas (single source of truth)
+lib/geo.ts — 5 km grid snap + role-based location visibility
+lib/xendit.ts — DONATION_TIERS, PAYMENT_METHODS, createInvoice stub
+lib/contacts.ts — WA, IG, YT, TikTok, Facebook URLs
+lib/utils.ts — cn(), formatNumber()
+lib/epicollect.ts — deprecated marker for one-off historical CSV imports
+
+ZIP contents — 27 source files + config + preview + README, ~48KB compressed.
+If you'd rather have me push it to a GitHub repo, set up a Vercel deploy, or scaffold the backend (Postgres + Prisma + the /api/reports endpoint), say the word.
