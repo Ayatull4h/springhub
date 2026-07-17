@@ -62,6 +62,9 @@ model Profile {
   notifications  Notification[]
   userComments   Comment[]
   likes          Like[]
+  seedlings      Seedling[]
+  seedlingRequests  SeedlingRequest[] @relation("SeedlingRequests")
+  seedlingOwnedRequests SeedlingRequest[] @relation("SeedlingOwnedRequests")
 
   @@index([role])
   @@index([points(sort: Desc)])
@@ -527,8 +530,8 @@ model SeedlingRequest {
   updatedAt       DateTime      @updatedAt
 
   seedling  Seedling @relation(fields: [seedlingId], references: [id], onDelete: Cascade)
-  requester Profile  @relation(fields: [requesterId], references: [id])
-  owner     Profile  @relation(fields: [ownerId], references: [id])
+  requester Profile  @relation("SeedlingRequests", fields: [requesterId], references: [id])
+  owner     Profile  @relation("SeedlingOwnedRequests", fields: [ownerId], references: [id])
 
   @@index([seedlingId])
   @@index([requesterId])
