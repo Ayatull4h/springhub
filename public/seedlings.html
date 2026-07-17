@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bibit — SpringHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; }
+.container { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
+
+/* ── NAV ── */
+h1 { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; }
+h1 .accent { color: #059669; }
+.tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.tab {
+  padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500;
+  cursor: pointer; border: 1px solid #e2e8f0; background: white; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 0.375rem;
+}
+.tab:hover { border-color: #059669; }
+.tab.active { background: #059669; color: white; border-color: #059669; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── FILTER ── */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem; }
+.search-box { position: relative; flex: 1; min-width: 180px; }
+.search-box input {
+  width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+  border: 1px solid #e2e8f0; border-radius: 0.5rem; font-size: 0.875rem; background: white; outline: none;
+}
+.search-box input:focus { border-color: #059669; box-shadow: 0 0 0 3px rgba(5,150,105,0.1); }
+.search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+.filter-bar select {
+  padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;
+  font-size: 0.875rem; background: white; outline: none; cursor: pointer;
+}
+
+/* ── GRID ── */
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); }
+.card {
+  background: white; border-radius: 0.75rem; border: 1px solid #e2e8f0;
+  overflow: hidden; cursor: pointer; transition: border-color 0.2s;
+}
+.card:hover { border-color: #059669; }
+.card-img {
+  aspect-ratio: 16/9; background: #f1f5f9; display: flex; align-items: center;
+  justify-content: center; color: #94a3b8; font-size: 0.875rem;
+}
+.card-body { padding: 1rem; }
+.card-h { display: flex; justify-content: space-between; align-items: flex-start; }
+.card-h h3 { font-size: 1.125rem; font-weight: 600; }
+.badge { padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
+.badge-green { background: #ecfdf5; color: #059669; }
+.badge-amber { background: #fef3c7; color: #d97706; }
+.badge-blue { background: #dbeafe; color: #2563eb; }
+.loc { display: flex; align-items: center; gap: 0.25rem; color: #64748b; font-size: 0.875rem; margin-top: 0.5rem; }
+.cf {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid #f1f5f9; margin-top: 0.5rem; padding-top: 0.5rem;
+}
+.empty { text-align: center; padding: 4rem 0; color: #64748b; }
+
+/* ── OVERLAY (detail) ── */
+.overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  z-index: 100; padding: 1rem; overflow-y: auto;
+}
+.overlay.open { display: flex; align-items: flex-start; justify-content: center; padding-top: 2rem; }
+.overlay-content {
+  background: white; border-radius: 1rem; max-width: 900px; width: 100%;
+  padding: 1.5rem; position: relative;
+}
+.close {
+  position: absolute; top: 1rem; right: 1rem; width: 2rem; height: 2rem;
+  border-radius: 9999px; border: none; background: #f1f5f9; font-size: 1.25rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.close:hover { background: #e2e8f0; }
+.detail-grid { display: grid; gap: 1.5rem; grid-template-columns: 3fr 2fr; }
+@media (max-width: 640px) { .detail-grid { grid-template-columns: 1fr; } }
+.detail-main-img {
+  aspect-ratio: 16/9; background: #f1f5f9; border-radius: 0.75rem;
+  display: flex; align-items: center; justify-content: center; color: #94a3b8;
+}
+.thumbnails { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+.thumb {
+  width: 5rem; height: 4rem; background: #f1f5f9; border-radius: 0.5rem;
+  display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.75rem;
+}
+.detail-card { background: #f8fafc; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
+.detail-card h2 { font-size: 1.25rem; font-weight: 700; }
+.info-row { display: flex; justify-content: space-between; padding: 0.375rem 0; font-size: 0.875rem; }
+.info-l { color: #64748b; }
+.info-v { font-weight: 600; }
+.info-v.green { color: #16a34a; }
+.dl { border-top: 1px solid #e2e8f0; margin: 0.75rem 0; }
+.request-form label { font-size: 0.75rem; color: #64748b; display: block; margin-top: 0.75rem; }
+.request-form input, .request-form textarea {
+  width: 100%; margin-top: 0.25rem; padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0; border-radius: 0.5rem; font-size: 0.875rem; font-family: inherit; outline: none;
+}
+.request-form input:focus, .request-form textarea:focus { border-color: #059669; }
+.request-form textarea { resize: vertical; min-height: 4rem; }
+.btn-primary {
+  width: 100%; margin-top: 1rem; padding: 0.625rem;
+  background: #059669; color: white; border: none; border-radius: 0.5rem;
+  font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.2s;
+}
+.btn-primary:hover { background: #047857; }
+.detail-notes { margin-top: 1rem; }
+.detail-notes h3 { font-weight: 600; margin-bottom: 0.5rem; }
+.detail-notes p { font-size: 0.875rem; color: #64748b; line-height: 1.6; }
+
+/* ── LIST ── */
+.list-item {
+  display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+  background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem;
+  padding: 1rem; transition: border-color 0.2s; margin-bottom: 0.75rem;
+}
+.list-item:hover { border-color: #d1d5db; }
+.li-main { flex: 1; min-width: 200px; }
+.li-top { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.li-top strong { font-weight: 600; }
+.li-muted { color: #64748b; font-size: 0.875rem; }
+.li-sub { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
+.li-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+
+.btn-xs {
+  padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem;
+  border: none; cursor: pointer; transition: background 0.2s;
+}
+.btn-green { background: #059669; color: white; }
+.btn-green:hover { background: #047857; }
+.btn-red { border: 1px solid #fecaca; color: #dc2626; background: none; }
+.btn-red:hover { background: #fef2f2; }
+.btn-blue { background: #2563eb; color: white; }
+.btn-blue:hover { background: #1d4ed8; }
+
+/* ── LISTING GROUP ── */
+.lg { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
+.lg-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.lg-h h3 { font-weight: 600; }
+.lg-h .muted { font-size: 0.75rem; color: #64748b; }
+.empty-r { text-align: center; padding: 1rem 0; color: #94a3b8; font-size: 0.875rem; border-top: 1px solid #f1f5f9; }
+.ri { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; padding: 0.75rem 0; border-top: 1px solid #f1f5f9; }
+.ri:first-of-type { border-top: 1px solid #e2e8f0; }
+.chip { padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+.chip-pending { background: #fef3c7; color: #d97706; }
+.chip-approved { background: #d1fae5; color: #059669; }
+.chip-fulfilled { background: #dbeafe; color: #2563eb; }
+.chip-rejected { background: #fee2e2; color: #dc2626; }
+.chip-cancelled { background: #f1f5f9; color: #64748b; }
+
+/* ── NOTIF TOAST ── */
+.toast {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  background: #1e293b; color: white; padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem; font-size: 0.875rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(120%); transition: transform 0.3s; z-index: 200;
+}
+.toast.show { transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1><span class="accent">🌱</span> Bibit SpringHub</h1>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('marketplace',this)">🌱 Marketplace</div>
+    <div class="tab" onclick="showTab('listings',this)">📋 Bibitku</div>
+    <div class="tab" onclick="showTab('requests',this)">📨 Permintaanku</div>
+  </div>
+
+  <!-- ───────────── MARKETPLACE ───────────── -->
+  <div id="s-marketplace" class="section active">
+    <div class="filter-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Cari jenis bibit..." oninput="filterCards()">
+      </div>
+      <select id="provinceFilter" onchange="filterCards()">
+        <option value="">Semua Provinsi</option>
+        <option>Jawa Barat</option><option>Jawa Tengah</option><option>Jawa Timur</option>
+        <option>Banten</option><option>Sumatera Utara</option><option>Sumatera Barat</option>
+        <option>Sumatera Selatan</option><option>Lampung</option><option>Bali</option>
+        <option>NTB</option><option>NTT</option><option>Sulawesi Selatan</option>
+        <option>Kalimantan Barat</option><option>Kalimantan Timur</option>
+        <option>Kalimantan Selatan</option><option>Papua</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="emptyMarket" style="display:none">Tidak ada bibit ditemukan</div>
+  </div>
+
+  <!-- ───────────── BIBITKU ───────────── -->
+  <div id="s-listings" class="section">
+    <div id="listingsContainer"></div>
+  </div>
+
+  <!-- ───────────── PERMINTAANKU ───────────── -->
+  <div id="s-requests" class="section">
+    <div id="requestsContainer"></div>
+  </div>
+
+</div>
+
+<!-- ─── OVERLAY DETAIL ─── -->
+<div class="overlay" id="detailOverlay">
+  <div class="overlay-content">
+    <button class="close" onclick="closeDetail()">✕</button>
+    <div class="detail-grid">
+      <div>
+        <div class="detail-main-img">📷 Foto Utama Bibit</div>
+        <div class="thumbnails">
+          <div class="thumb">Foto 1</div>
+          <div class="thumb">Foto 2</div>
+          <div class="thumb">Foto 3</div>
+          <div class="thumb">Foto 4</div>
+        </div>
+        <div class="detail-notes"><h3>Keterangan</h3><p id="dNotes"></p></div>
+      </div>
+      <div>
+        <div class="detail-card">
+          <h2 id="dSpecies"></h2>
+          <div class="info-row" style="margin-top:0.75rem"><span class="info-l">Jumlah</span><span class="info-v" id="dCount"></span></div>
+          <div class="info-row"><span class="info-l">Tersedia</span><span class="info-v green" id="dAvail"></span></div>
+          <div class="dl"></div>
+          <div class="info-row"><span class="info-l">📍 Lokasi</span><span id="dLoc"></span></div>
+          <div class="info-row"><span class="info-l">👤 Pemilik</span><span id="dOwner"></span></div>
+          <div class="info-row"><span class="info-l">📅 Dilaporkan</span><span id="dDate"></span></div>
+        </div>
+        <div class="detail-card request-form">
+          <h3 style="font-size:0.875rem;margin-bottom:0.75rem">📨 Kirim Permintaan</h3>
+          <label>Jumlah</label>
+          <input type="number" id="dQty" value="1" min="1">
+          <label>Pesan (opsional)</label>
+          <textarea id="dMsg" placeholder="Contoh: Mau tanam di kebun..."></textarea>
+          <button class="btn-primary" onclick="toast('Permintaan terkirim!')">Kirim Permintaan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+const SEEDLINGS = [
+  { id:1, species:"Jati", count:50, avail:40, prov:"Jawa Barat", regency:"Bandung", owner:"Asep", trust:85, date:"2026-07-10", notes:"Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm." },
+  { id:2, species:"Bambu Petung", count:30, avail:28, prov:"Jawa Barat", regency:"Bogor", owner:"Sari", trust:92, date:"2026-07-12", notes:"Bambu petung kualitas bagus, siap tanam." },
+  { id:3, species:"Mahoni", count:100, avail:95, prov:"Jawa Barat", regency:"Garut", owner:"Budi", trust:78, date:"2026-07-08", notes:"Mahoni hasil persemaian kelompok tani." },
+  { id:4, species:"Sengon", count:25, avail:20, prov:"Jawa Timur", regency:"Malang", owner:"Dewi", trust:88, date:"2026-07-14", notes:"Sengon umur 2 bulan. Tinggi 30-40cm." },
+  { id:5, species:"Suren", count:40, avail:40, prov:"Jawa Tengah", regency:"Solo", owner:"Joko", trust:90, date:"2026-07-05", notes:"Bibit suren hasil penangkaran." },
+  { id:6, species:"Kaliandra", count:200, avail:180, prov:"Jawa Timur", regency:"Banyuwangi", owner:"Rina", trust:95, date:"2026-07-13", notes:"Kaliandra merah. Bagus untuk pakan ternak." },
+  { id:7, species:"Acacia", count:75, avail:70, prov:"Jawa Barat", regency:"Sukabumi", owner:"Agus", trust:82, date:"2026-07-11", notes:"Acacia mangium. Tumbuh cepat." },
+  { id:8, species:"Albasia", count:60, avail:55, prov:"Jawa Tengah", regency:"Semarang", owner:"Fitri", trust:87, date:"2026-07-09", notes:"Albasia siap salur." },
+  { id:9, species:"Gamal", count:150, avail:150, prov:"Banten", regency:"Pandeglang", owner:"Ujang", trust:80, date:"2026-07-15", notes:"Stok melimpah, hubungi langsung." },
+  { id:10, species:"Saga", count:35, avail:30, prov:"Bali", regency:"Tabanan", owner:"Nyoman", trust:91, date:"2026-07-07", notes:"Saga biji. Cocok untuk penghijauan." },
+];
+
+const MY_LISTINGS = [
+  { species:"Jati", count:50, requests:[
+    { from:"Budi", qty:10, msg:"Mau tanam di kebun", status:"pending", date:"2 hari lalu" },
+    { from:"Sari", qty:5, msg:"Buat penghijauan RT", status:"approved", date:"1 hari lalu" },
+    { from:"Doni", qty:3, msg:"Bibit buat kelompok tani", status:"fulfilled", date:"5 hari lalu" },
+  ]},
+  { species:"Bambu Petung", count:30, requests:[
+    { from:"Rudi", qty:8, msg:"Mau nanam di pinggir sungai", status:"pending", date:"3 hari lalu" },
+  ]},
+  { species:"Mahoni", count:100, requests:[] },
+];
+
+const MY_REQUESTS = [
+  { species:"Jati", qty:10, owner:"Asep", loc:"Bandung", status:"pending", date:"2 hari lalu" },
+  { species:"Bambu Petung", qty:5, owner:"Sari", loc:"Bogor", status:"approved", date:"1 hari lalu", phone:"0812-3456-7890" },
+  { species:"Mahoni", qty:2, owner:"Budi", loc:"Garut", status:"rejected", date:"3 hari lalu" },
+  { species:"Sengon", qty:15, owner:"Dewi", loc:"Malang", status:"fulfilled", date:"5 hari lalu" },
+  { species:"Kaliandra", qty:20, owner:"Rina", loc:"Banyuwangi", status:"cancelled", date:"7 hari lalu" },
+];
+
+const CHIP = { pending:'chip-pending', approved:'chip-approved', rejected:'chip-rejected', fulfilled:'chip-fulfilled', cancelled:'chip-cancelled' };
+const LBL = { pending:'Menunggu', approved:'Disetujui', rejected:'Ditolak', fulfilled:'Selesai', cancelled:'Dibatalkan' };
+
+// ── TABS ──
+function showTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('s-'+name).classList.add('active');
+}
+
+// ── MARKETPLACE ──
+function renderCards(list) {
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyMarket');
+  if (!list.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  grid.innerHTML = list.map(s => `
+    <div class="card" onclick="openDetail(${s.id})">
+      <div class="card-img">📷 Foto Bibit</div>
+      <div class="card-body">
+        <div class="card-h">
+          <h3>${s.species}</h3>
+          <span class="badge badge-green">${s.count} bibit</span>
+        </div>
+        <div class="loc">📍 ${s.regency}, ${s.prov}</div>
+        <div class="cf">
+          <span class="li-muted">👤 ${s.owner} · ⭐ ${s.trust}</span>
+          <span style="color:#059669;font-size:0.75rem;font-weight:500">Minta &rarr;</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const p = document.getElementById('provinceFilter').value;
+  renderCards(SEEDLINGS.filter(s => (!p||s.prov===p) && (!q||s.species.toLowerCase().includes(q))));
+}
+
+// ── DETAIL ──
+function openDetail(id) {
+  const s = SEEDLINGS.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('dSpecies').textContent = s.species;
+  document.getElementById('dCount').textContent = s.count + ' bibit';
+  document.getElementById('dAvail').textContent = s.avail + ' bibit';
+  document.getElementById('dLoc').textContent = s.regency + ', ' + s.prov;
+  document.getElementById('dOwner').textContent = s.owner + ' · ⭐ ' + s.trust;
+  document.getElementById('dDate').textContent = s.date;
+  document.getElementById('dNotes').textContent = s.notes;
+  document.getElementById('dQty').max = s.avail;
+  document.getElementById('detailOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── BIBITKU ──
+function renderListings() {
+  const c = document.getElementById('listingsContainer');
+  c.innerHTML = MY_LISTINGS.map(g => `
+    <div class="lg">
+      <div class="lg-h">
+        <div><h3>${g.species}</h3><div class="muted">${g.count} bibit dilaporkan</div></div>
+        <span class="badge badge-green">${g.requests.length} permintaan</span>
+      </div>
+      ${g.requests.length ? g.requests.map(r => `
+        <div class="ri">
+          <div style="flex:1;min-width:160px">
+            <div class="li-top">
+              <strong>${r.from}</strong><span class="li-muted">minta ${r.qty} bibit</span>
+              <span class="chip ${CHIP[r.status]}">${LBL[r.status]}</span>
+            </div>
+            ${r.msg ? `<div style="color:#64748b;font-size:.75rem;font-style:italic;margin-top:2px">"${r.msg}"</div>` : ''}
+            <div style="font-size:.625rem;color:#94a3b8;margin-top:2px">${r.date}</div>
+          </div>
+          <div style="display:flex;gap:.5rem">
+            ${r.status==='pending' ? `<button class="btn-xs btn-green" onclick="toast('Disetujui!')">✅ Setujui</button><button class="btn-xs btn-red" onclick="toast('Ditolak!')">❌ Tolak</button>` : ''}
+            ${r.status==='approved' ? `<button class="btn-xs btn-blue" onclick="toast('Selesai!')">✅ Tandai Selesai</button>` : ''}
+          </div>
+        </div>
+      `).join('') : `<div class="empty-r">Belum ada permintaan</div>`}
+    </div>
+  `).join('');
+}
+
+// ── PERMINTAANKU ──
+function renderRequests() {
+  const c = document.getElementById('requestsContainer');
+  c.innerHTML = MY_REQUESTS.map(r => {
+    let actions = '';
+    if (r.status==='pending') actions = `<button class="btn-xs btn-red" onclick="toast('Dibatalkan!')">Batalkan</button>`;
+    else if (r.status==='approved') actions = `<span style="font-size:.875rem;color:#64748b">📞 ${r.phone}</span> <a href="tel:${r.phone}" class="btn-xs btn-green" style="text-decoration:none;display:inline-flex">Hubungi</a>`;
+    return `
+      <div class="list-item">
+        <div class="li-main">
+          <div class="li-top">
+            <strong>${r.species}</strong><span class="li-muted">— ${r.qty} bibit</span>
+            <span class="chip ${CHIP[r.status]}">${LBL[r.status]}</span>
+          </div>
+          <div class="li-sub">Dari ${r.owner} · ${r.loc} · ${r.date}</div>
+        </div>
+        <div class="li-actions">${actions}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '✅ ' + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ──
+renderCards(SEEDLINGS);
+renderListings();
+renderRequests();
+
+// Tutup overlay klik di luar
+document.getElementById('detailOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeDetail();
+});
+</script>
+</body>
+</html>
