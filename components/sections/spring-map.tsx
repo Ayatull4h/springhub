@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   ClipboardList,
   Sparkles,
+  Sprout,
   Droplets,
   Loader2,
 } from "lucide-react";
@@ -20,6 +21,7 @@ import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
+import { OfflineEntryButton } from "@/components/offline/offline-entry-button";
 
 const LeafletMap = dynamic(
   () => import("@/components/map/leaflet-map").then((m) => m.LeafletMap),
@@ -473,6 +475,26 @@ export function SpringMap() {
                 </>
               )}
             </span>
+          </div>
+
+          <Link
+            href="/seedlings"
+            className="group mt-3 flex items-center justify-between rounded-xl border border-green-200 bg-gradient-to-r from-green-50 to-white px-4 py-3 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated hover:border-green-300 cursor-pointer dark:border-slate-700 dark:from-slate-800 dark:to-slate-800"
+          >
+            <span className="flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 transition-transform duration-200 group-hover:scale-110">
+                <Sprout className="h-4 w-4 text-green-600" />
+              </span>
+              <div>
+                <span className="font-semibold text-ink">{t("map.viewSeedlings") || "Lihat Bibit Tersedia"}</span>
+                <span className="block text-xs text-ink-muted">Minta bibit dari komunitas</span>
+              </div>
+            </span>
+            <ArrowRight className="h-4 w-4 flex-none text-green-500 transition-transform duration-200 group-hover:translate-x-0.5" />
+          </Link>
+
+          <div className="mt-3">
+            <OfflineEntryButton />
           </div>
         </div>
       </div>

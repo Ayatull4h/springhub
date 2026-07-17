@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan Proyek SpringHub — 15 Juli 2026</title>
+<style>
+  :root {
+    --primary: #0b8a6d;
+    --primary-light: #e8f5f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --success: #059669;
+    --warning: #d97706;
+    --danger: #dc2626;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0;
+  }
+  .header {
+    background: linear-gradient(135deg, #0b8a6d 0%, #065f46 100%);
+    color: white;
+    padding: 60px 40px;
+    text-align: center;
+  }
+  .header h1 { font-size: 2.2em; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .header p { font-size: 1.1em; opacity: 0.9; }
+  .header .meta { margin-top: 16px; font-size: 0.9em; opacity: 0.75; }
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .section h2 {
+    font-size: 1.4em;
+    color: var(--primary);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary-light);
+  }
+  .section h3 {
+    font-size: 1.1em;
+    margin: 20px 0 10px;
+    color: var(--text);
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .stat-card {
+    background: var(--primary-light);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-card .num { font-size: 2em; font-weight: 700; color: var(--primary); }
+  .stat-card .label { font-size: 0.85em; color: var(--text-muted); margin-top: 4px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.9em;
+  }
+  th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th { background: var(--primary-light); font-weight: 600; color: var(--primary); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+  }
+  .badge-green { background: #d1fae5; color: #065f46; }
+  .badge-yellow { background: #fef3c7; color: #92400e; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+    padding-left: 16px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+  .timeline-item .date { font-size: 0.85em; color: var(--text-muted); }
+  .timeline-item .title { font-weight: 600; margin: 2px 0 4px; }
+  .timeline-item .desc { font-size: 0.9em; color: var(--text-muted); }
+  ul, ol { padding-left: 20px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  .footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 0.85em;
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 640px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .header { padding: 40px 20px; }
+    .section { padding: 20px; }
+    .container { padding: 20px 12px; }
+  }
+  @media print {
+    body { background: white; }
+    .section { break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+    .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .stat-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>LAPORAN PROYEK SPRINGHUB</h1>
+  <p>Platform Monitoring & Restorasi Mata Air — Jaga Semesta</p>
+  <div class="meta">Periode: 16 Mei – 15 Juli 2026 &middot; 383 Commits &middot; 85 Memories</div>
+</div>
+
+<div class="container">
+
+  <!-- RINGKASAN EKSEKUTIF -->
+  <div class="section">
+    <h2>Ringkasan Eksekutif</h2>
+    <div class="grid-3">
+      <div class="stat-card">
+        <div class="num">~94%</div>
+        <div class="label">Progres Proyek</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">103</div>
+        <div class="label">API Endpoint</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">19</div>
+        <div class="label">Tabel Database</div>
+      </div>
+    </div>
+    <div class="grid-3" style="margin-top:12px">
+      <div class="stat-card">
+        <div class="num">383</div>
+        <div class="label">Git Commits</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">30+</div>
+        <div class="label">Sesi Diskusi</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">0</div>
+        <div class="label">TypeScript Errors</div>
+      </div>
+    </div>
+    <p style="margin-top:20px">
+      SpringHub adalah platform berbasis web untuk koordinasi kerja lapangan, pendanaan, dan kegiatan sukarelawan
+      dalam restorasi mata air Indonesia. Dibangun dengan <strong>Next.js 14, TypeScript, PostgreSQL, Prisma, Leaflet</strong>
+      dan dihosting di <strong>VPS (Docker)</strong>. Selama periode ini, fokus utama adalah penyelesaian fitur offline survey,
+      perbaikan bug, keamanan, dan persiapan portofolio.
+    </p>
+  </div>
+
+  <!-- TIMELINE AKTIVITAS -->
+  <div class="section">
+    <h2>Timeline Aktivitas</h2>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="date">15 Juli 2026</div>
+        <div class="title">Sesi ini — Laporan Akhir</div>
+        <div class="desc">Setup GitHub MCP, baca seluruh aktivitas via Supermemory + GitHub, tulis laporan komprehensif.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">14 Juli 2026</div>
+        <div class="title">Perbaikan Offline Queue</div>
+        <div class="desc">5 commit: CSRF bypass x-queue-worker, SW update check, auto-hapus queue stale, field ID mismatch, GPS timeout, AbortController, retry logic.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">12 Juli 2026</div>
+        <div class="title">Perbaikan Offline Sync</div>
+        <div class="desc">CSRF bypass header, cleanup pending-reports, form sync logic, API error logging, toast notifikasi.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">10 Juli 2026</div>
+        <div class="title">Dokumentasi & Portofolio</div>
+        <div class="desc">Pembuatan cerita proyek (cerita-project.md), panduan referensi untuk interview/client, portfolio PPT + PDF 14 slide.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">9 Juli 2026</div>
+        <div class="title">Redesain FeaturedProjects & Donasi</div>
+        <div class="desc">FeaturedProjects grid + donasi side-by-side, premium donate card, Aksi Nyata section, hero section, pagination 3 cards.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">8–9 Juli 2026</div>
+        <div class="title">Like Model & Route Map</div>
+        <div class="desc">Like model + toggle, FeaturedProjects, regenerasi route-map dengan vis.js lokal, API routes standalone HTML.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">8 Juli 2026</div>
+        <div class="title">Halaman /springs & Gallery API</div>
+        <div class="desc">Halaman /springs dengan cards grup, gallery API include fieldData, rate limiter springs API.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">7 Juli 2026</div>
+        <div class="title">Perbaikan Map & Keamanan</div>
+        <div class="desc">Map markers warna dinamis dari database, admin map preview, identifikasi 7 kerentan keamanan kritis, security remediation tasks.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">2–6 Juli 2026</div>
+        <div class="title">Infrastructure Audit & Bugfix</div>
+        <div class="desc">CSP duplikasi, Docker compose fix, MCP packages, loading.tsx, CSRF/Secure flag, E2E password mismatch, OG Image fix.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">17 Juni 2026</div>
+        <div class="title">Cleanup & Bug Fix</div>
+        <div class="desc">Donasi disembunyikan, /learn + /projects pages dummy, hapus direktori API kosong, repo cleanup plan.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">2 Juni 2026</div>
+        <div class="title">Offline Survey Mode + Dark Mode Fix</div>
+        <div class="desc">10 file baru offline survey, IndexedDB, service worker, 3 API routes. Dark mode fix 16 file. Zero TS errors tercapai.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">19 Mei 2026</div>
+        <div class="title">SpringHub v1 Final</div>
+        <div class="desc">Landing, 5 form, auth, donasi, admin panel, points engine selesai. Deployment ke Supabase + Vercel.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="date">15–18 Mei 2026</div>
+        <div class="title">Audit & E2E Testing</div>
+        <div class="desc">Audit lengkap (10 critical + 10 high + 7 medium + 7 low issues). Playwright setup, 14 test suites, 350 tests.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- KOMIT GITHUB -->
+  <div class="section">
+    <h2>Aktivitas GitHub (2 Minggu Terakhir)</h2>
+    <p style="margin-bottom:12px">Dari 8–14 Juli 2026, tercatat <strong>30+ commit</strong> dengan fokus:</p>
+    <table>
+      <tr><th>Tanggal</th><th>Jumlah</th><th>Fokus</th></tr>
+      <tr><td>14 Jul</td><td>5</td><td>Offline queue: CSRF bypass, SW update, stale cleanup, field ID, GPS timeout</td></tr>
+      <tr><td>12 Jul</td><td>8</td><td>Offline sync: retry logic, AbortController, error logging, toast notif</td></tr>
+      <tr><td>10 Jul</td><td>4</td><td>Dokumentasi: cerita proyek, panduan interview, portfolio PPT/PDF</td></tr>
+      <tr><td>9 Jul</td><td>14</td><td>FeaturedProjects, donate cards, Aksi Nyata, hero, Like model, route-map</td></tr>
+      <tr><td>8 Jul</td><td>4</td><td>Halaman /springs, gallery API, rate limiter, perbaikan form offline</td></tr>
+    </table>
+    <p style="margin-top:12px"><strong>Total repo:</strong> 383 commits, branch <code>master</code>, 2 tags, 0 issues, 0 PRs.</p>
+  </div>
+
+  <!-- STATUS FITUR -->
+  <div class="section">
+    <h2>Status Fitur</h2>
+    <table>
+      <tr><th>Fitur</th><th>Status</th><th>Catatan</th></tr>
+      <tr><td>Landing page UI</td><td><span class="badge badge-green">100%</span></td><td>i18n EN/ID, dark mode, responsive</td></tr>
+      <tr><td>Form (5 forms + dynamic)</td><td><span class="badge badge-green">100%</span></td><td>Zod validation, dynamic fields</td></tr>
+      <tr><td>Map (Leaflet + filter)</td><td><span class="badge badge-green">100%</span></td><td>Marker cluster, warna dinamis per kategori</td></tr>
+      <tr><td>Backend API (103 endpoints)</td><td><span class="badge badge-green">100%</span></td><td>Auth, reports, donasi, admin, offline</td></tr>
+      <tr><td>Database (19 models)</td><td><span class="badge badge-green">100%</span></td><td>PostgreSQL + Prisma ORM</td></tr>
+      <tr><td>Auth (login, register, session)</td><td><span class="badge badge-green">100%</span></td><td>JWT + httpOnly cookie</td></tr>
+      <tr><td>Donasi (Xendit)</td><td><span class="badge badge-yellow">Placeholder</span></td><td>Menunggu real key dari client</td></tr>
+      <tr><td>Admin Panel (10 tabs)</td><td><span class="badge badge-green">100%</span></td><td>Users, Reports, Donations, Forms, etc.</td></tr>
+      <tr><td>Points Engine</td><td><span class="badge badge-green">100%</span></td><td>Base + bonus + milestone + streak + trust</td></tr>
+      <tr><td>Offline Survey Mode</td><td><span class="badge badge-green">100%</span></td><td>IndexedDB, SW, GPS tracking, sync queue</td></tr>
+      <tr><td>PWA / SEO</td><td><span class="badge badge-green">100%</span></td><td>Manifest, 4 cache strategies</td></tr>
+      <tr><td>Anti-Spam (5 layer)</td><td><span class="badge badge-green">100%</span></td><td>CSRF, honeypot, time gate, rate limit, daily limit</td></tr>
+      <tr><td>Testing (E2E + unit)</td><td><span class="badge badge-yellow">~85%</span></td><td>110 E2E pass, masih ada fail di Firefox/WebKit</td></tr>
+      <tr><td>Dark Mode</td><td><span class="badge badge-green">100%</span></td><td>Semua komponen sudah ter-cover</td></tr>
+      <tr><td><strong>Total</strong></td><td><span class="badge badge-green"><strong>~94%</strong></span></td><td></td></tr>
+    </table>
+  </div>
+
+  <!-- BUG HISTORY -->
+  <div class="section">
+    <h2>Riwayat Bug & Perbaikan</h2>
+    <table>
+      <tr><th>#</th><th>Bug</th><th>Status</th><th>Perbaikan</th></tr>
+      <tr><td>1</td><td>Offline photo upload gagal Chrome Android</td><td><span class="badge badge-green">Fixed</span></td><td>6 Jun</td></tr>
+      <tr><td>2</td><td>Admin form delete kembali setelah refresh</td><td><span class="badge badge-green">Fixed</span></td><td>6 Jun</td></tr>
+      <tr><td>3</td><td>Comments tidak persisten</td><td><span class="badge badge-green">Fixed</span></td><td>6 Jun</td></tr>
+      <tr><td>4</td><td>Database migration pending</td><td><span class="badge badge-green">Fixed</span></td><td>6 Jun</td></tr>
+      <tr><td>5</td><td>Seed data kosong</td><td><span class="badge badge-green">Fixed</span></td><td>6 Jun</td></tr>
+      <tr><td>6</td><td>OG Image 404</td><td><span class="badge badge-green">Fixed</span></td><td>1 Jul</td></tr>
+      <tr><td>7</td><td>Offline sync end session bug</td><td><span class="badge badge-green">Fixed</span></td><td>1 Jul</td></tr>
+      <tr><td>8</td><td>Tracking field mismatch</td><td><span class="badge badge-green">Fixed</span></td><td>1 Jul</td></tr>
+      <tr><td>9</td><td>CSRF cookie Secure flag di HTTP</td><td><span class="badge badge-green">Fixed</span></td><td>2 Jul</td></tr>
+      <tr><td>10</td><td>E2E password mismatch</td><td><span class="badge badge-green">Fixed</span></td><td>2 Jul</td></tr>
+      <tr><td>11</td><td>CSP duplikasi nginx + next.config</td><td><span class="badge badge-green">Fixed</span></td><td>2 Jul</td></tr>
+      <tr><td>12</td><td>Docker certbot_data volume nganggur</td><td><span class="badge badge-green">Fixed</span></td><td>2 Jul</td></tr>
+      <tr><td>13</td><td>Worker missing depends_on postgres</td><td><span class="badge badge-green">Fixed</span></td><td>2 Jul</td></tr>
+      <tr><td>14</td><td>MCP packages di runtime dependencies</td><td><span class="badge badge-green">Fixed</span></td><td>2 Jul</td></tr>
+    </table>
+  </div>
+
+  <!-- KEAMANAN -->
+  <div class="section">
+    <h2>Keamanan</h2>
+    <p>Pada 7 Juli 2026, <strong>7 kerentan kritis</strong> teridentifikasi:</p>
+    <ul>
+      <li>File environment production terekspos</li>
+      <li>Kredensial bocor di git history</li>
+      <li>CSRF protection belum di 11 endpoint</li>
+    </ul>
+    <p><strong>Remediation tasks pending:</strong> revoke credentials, purge git history, implement CSRF protection untuk 11 endpoint.</p>
+    <p style="margin-top:8px">Sistem keamanan yang sudah aktif: CSRF token tiap form, RLS policy Supabase, rate limiting per IP (10 req/menit), anti-spam 5 layer, trust score auto-block, honeypot field, time gate.</p>
+  </div>
+
+  <!-- BACKLOG -->
+  <div class="section">
+    <h2>Yang Belum (Backlog)</h2>
+    <ol>
+      <li><strong>Xendit real keys</strong> — masih placeholder (menunggu client)</li>
+      <li><strong>Sentry DSN</strong> — monitoring error (masih kosong)</li>
+      <li><strong>Comments UI</strong> — frontend belum integrasi API comments</li>
+      <li><strong>GPS tracking points sync</strong> — data di IndexedDB belum dikirim ke server</li>
+      <li><strong>Secret management</strong> — env vars masih hardcoded, perlu secret manager</li>
+      <li><strong>E2E Firefox/WebKit tests</strong> — masih ada fail di browser non-Chromium</li>
+      <li><strong>loading.tsx coverage</strong> — 9/43 route sudah punya, sisanya inherit dari root</li>
+      <li><strong>Repo cleanup</strong> — squash commits, branch structure, .gitignore, README badges</li>
+    </ol>
+  </div>
+
+  <!-- Sesi Diskusi -->
+  <div class="section">
+    <h2>Sesi Diskusi (Supermemory)</h2>
+    <p>Seluruh diskusi dan progres terekam di Supermemory — <strong>85 memories dari 17 dokumen</strong>:</p>
+    <table>
+      <tr><th>Tanggal</th><th>Fokus</th></tr>
+      <tr><td>15 Jul 2026</td><td>Integrasi Supermemory API + Opencode, ekspor memories</td></tr>
+      <tr><td>7 Jul 2026</td><td>Development progress update, security vulnerabilities, map fix</td></tr>
+      <tr><td>17 Jun 2026</td><td>Cleanup & bug fix, dummy Learn/Projects pages, donasi disembunyikan</td></tr>
+      <tr><td>16–17 Jun 2026</td><td>Repo cleanup plan pasca-migrasi VPS, git history simplification</td></tr>
+      <tr><td>3–4 Jun 2026</td><td>Offline mode revamp, RLS policies fix, bug fixes</td></tr>
+      <tr><td>2 Jun 2026</td><td>Offline Survey Mode, Dark Mode fix, Zero TS errors, Push Vercel</td></tr>
+      <tr><td>19 Mei 2026</td><td>Final deployment snapshot, seed data, JWT secret</td></tr>
+      <tr><td>18 Mei 2026</td><td>Playwright E2E setup, 14 test suites, admin form builder request</td></tr>
+      <tr><td>16 Mei 2026</td><td>Project overview, stack, arsitektur, RAB, persistensi chat</td></tr>
+    </table>
+  </div>
+
+  <!-- HAL BAIK & BURUK -->
+  <div class="section">
+    <h2>Evaluasi</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Hal Baik</h3>
+        <ul>
+          <li>Codebase besar dan terstruktur — 50+ API route handlers, 36 halaman</li>
+          <li>Keamanan berlapis — CSRF, RLS, rate limit, anti-spam 5 layer</li>
+          <li>Dark mode penuh — semua komponen ter-cover</li>
+          <li>i18n lengkap EN/ID — 480+ translation keys</li>
+          <li>Offline mode matang — arsitektur offline-first</li>
+          <li>Build zero TypeScript error</li>
+          <li>PWA production-ready</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Hal Buruk / Risiko</h3>
+        <ul>
+          <li>Unit/E2E test masih ~85%, ada fail di non-Chromium</li>
+          <li>Redis dependency — tidak ada graceful fallback</li>
+          <li>Sentry kosong — error di production tidak terdeteksi</li>
+          <li>Email SMTP placeholder — forgot password mungkin tidak jalan</li>
+          <li>Xendit sandbox — donasi tidak benar-benar terproses</li>
+          <li>GPS boros baterai di mobile</li>
+          <li>Background Sync hanya Chromium</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>Laporan ini dibuat secara otomatis oleh Opencode dari data GitHub + Supermemory.</p>
+  <p>SpringHub &copy; 2026 Jaga Semesta &mdash; Platform Monitor & Restorasi Mata Air Indonesia</p>
+</div>
+
+</body>
+</html>

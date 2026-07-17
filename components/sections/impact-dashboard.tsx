@@ -5,7 +5,7 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { OfflineEntryButton } from "@/components/offline/offline-entry-button";
+
 
 const iconMap: Record<string, typeof Droplets> = {
   droplet: Droplets,
@@ -246,7 +246,7 @@ export function ImpactDashboard() {
 
       {/* Action Buttons */}
       <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
-        <OfflineEntryButton />
+
       </div>
     </section>
   );

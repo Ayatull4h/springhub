@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bibit — SpringHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/lucide@0.408.0/dist/esm/lucide.css" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.408.0/dist/umd/lucide.js" defer></script>
+<style>
+:root {
+  --biru: #0284c7;
+  --biru-tua: #0369a1;
+  --biru-muda: #f0f9ff;
+  --hitam: #0b0f15;
+  --abu: #475569;
+  --abu-muda: #94a3b8;
+  --abu-tipis: #e2e8f0;
+  --putih: #ffffff;
+  --bg: #f8fafc;
+  --shadow: 0 1px 3px rgba(11,15,21,.04), 0 2px 8px rgba(11,15,21,.04);
+  --shadow-naik: 0 4px 12px rgba(11,15,21,.06), 0 2px 4px rgba(11,15,21,.04);
+  --radius: 10px;
+  --font: 'Inter', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0f15;
+    --putih: #141a22;
+    --abu-tipis: #1c232d;
+    --abu: #94a3b8;
+    --abu-muda: #64748b;
+    --hitam: #f1f5f9;
+    --biru-muda: #0d2a3e;
+    --shadow: 0 1px 3px rgba(0,0,0,.15), 0 2px 8px rgba(0,0,0,.1);
+    --shadow-naik: 0 4px 12px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.15);
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--hitam);-webkit-font-smoothing:antialiased;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding:clamp(1.25rem,4vw,2.5rem) clamp(1rem,4vw,2rem)}
+
+/* header */
+.header{margin-bottom:2rem}
+.header h1{font-size:clamp(1.35rem,2.8vw,1.8rem);font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:.6rem;color:var(--hitam)}
+.header h1 svg{width:1.4rem;height:1.4rem;color:var(--biru)}
+.header p{font-size:.875rem;color:var(--abu);margin-top:.15rem}
+
+/* nav */
+.nav{display:flex;gap:2px;margin-top:1rem;background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);padding:3px}
+.nav-btn{flex:1;padding:.45rem .75rem;border:none;border-radius:7px;font-size:.8rem;font-weight:500;background:transparent;color:var(--abu);cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.35rem}
+.nav-btn:hover{color:var(--hitam);background:var(--bg)}
+.nav-btn.aktif{background:var(--biru);color:#fff}
+.nav-btn svg{width:.9rem;height:.9rem}
+
+/* search */
+.bar{display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.cari{position:relative;flex:1;min-width:160px}
+.cari svg{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:.9rem;height:.9rem;color:var(--abu-muda);pointer-events:none}
+.cari input{width:100%;padding:.5rem .75rem .5rem 2.25rem;border:1.5px solid var(--abu-tipis);border-radius:var(--radius);font-size:.825rem;background:var(--putih);color:var(--hitam);outline:none;transition:border-color .2s;font-family:inherit}
+.cari input:hover{border-color:var(--abu-muda)}
+.cari input:focus{border-color:var(--biru)}
+.cari input::placeholder{color:var(--abu-muda)}
+
+select.filter{padding:.5rem .75rem;height:2.5rem;border:1.5px solid var(--abu-tipis);border-radius:var(--radius);font-size:.8rem;background:var(--putih);color:var(--hitam);outline:none;cursor:pointer;font-family:inherit;min-width:130px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .6rem center;background-size:.85rem;padding-right:2rem}
+select.filter:hover{border-color:var(--abu-muda)}
+select.filter:focus{border-color:var(--biru)}
+@media(prefers-color-scheme:dark){select.filter{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")}}
+
+/* grid */
+.grid{display:grid;gap:.85rem;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+
+/* card */
+.card{background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);padding:1.15rem 1.2rem;cursor:pointer;transition:all .25s;box-shadow:var(--shadow);position:relative}
+.card:hover{box-shadow:var(--shadow-naik);border-color:var(--abu-muda)}
+.card:active{transform:scale(.98)}
+.card h3{font-size:.95rem;font-weight:610;letter-spacing:-.01em;margin-bottom:.15rem;color:var(--hitam)}
+.card .lokasi{font-size:.78rem;color:var(--abu);display:flex;align-items:center;gap:.25rem;margin-bottom:.45rem}
+.card .lokasi svg{width:.8rem;height:.8rem;flex:none;color:var(--abu-muda)}
+.card .kaki{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--abu-tipis);padding-top:.6rem;margin-top:.2rem;font-size:.78rem;color:var(--abu)}
+.card .kaki .pemilik{display:flex;align-items:center;gap:.25rem}
+.card .kaki .pemilik svg{width:.75rem;height:.75rem;color:var(--abu-muda)}
+.card .kaki .minta{color:var(--biru);font-weight:550;display:flex;align-items:center;gap:.2rem;transition:gap .2s}
+.card:hover .kaki .minta{gap:.4rem}
+
+/* badge stok */
+.badge{display:inline-flex;align-items:center;gap:.2rem;padding:.15rem .5rem;border-radius:999px;font-size:.65rem;font-weight:560;background:var(--biru-muda);color:var(--biru-tua);border:1px solid var(--abu-tipis)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font-size:.78rem;font-weight:530;padding:.4rem .85rem;border-radius:7px;border:none;cursor:pointer;transition:all .2s;font-family:inherit;text-decoration:none;white-space:nowrap;line-height:1.4}
+.btn:active{transform:scale(.97)}
+.btn-utama{background:var(--biru);color:#fff}
+.btn-utama:hover{background:var(--biru-tua)}
+.btn-lunak{background:var(--biru-muda);color:var(--biru-tua);border:1px solid var(--abu-tipis)}
+.btn-lunak:hover{background:#dbeafe}
+.btn-bahaya{background:#fef2f2;color:#b91c1c}
+.btn-bahaya:hover{background:#fee2e2}
+.btn-biru{background:#eff6ff;color:#1d4ed8}
+.btn-biru:hover{background:#dbeafe}
+.btn-kecil{padding:.3rem .65rem;font-size:.7rem}
+.btn-lebar{width:100%}
+
+/* labels */
+.label{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:999px;font-size:.65rem;font-weight:550;line-height:1.4}
+.label svg{width:.7rem;height:.7rem}
+.label-tunggu{background:#fef9c3;color:#a16207}
+.label-setuju{background:#dcfce7;color:#15803d}
+.label-tolak{background:#fee2e2;color:#b91c1c}
+.label-selesai{background:#dbeafe;color:#1d4ed8}
+.label-batal{background:var(--abu-tipis);color:var(--abu)}
+@media(prefers-color-scheme:dark){
+  .label-tunggu{background:#422006;color:#facc15}
+  .label-setuju{background:#0a2e1a;color:#4ade80}
+  .label-tolak{background:#2e0a0a;color:#f87171}
+  .label-selesai{background:#0a1e3a;color:#60a5fa}
+  .label-batal{background:var(--abu-tipis);color:var(--abu)}
+}
+
+/* sections */
+.bagian{display:none}
+.bagian.tampil{display:block;animation:naik .35s ease-out}
+
+/* empty state */
+.kosong{text-align:center;padding:4rem 1rem}
+.kosong svg{width:2.8rem;height:2.8rem;color:var(--abu-muda);margin:0 auto 1rem;display:block;opacity:.4}
+.kosong h3{font-size:1rem;font-weight:600;margin-bottom:.25rem}
+.kosong p{font-size:.825rem;color:var(--abu);margin-bottom:1rem}
+
+/* overlay */
+.lapisan{position:fixed;inset:0;background:rgba(11,15,21,.4);z-index:100;padding:1rem;overflow-y:auto;display:none;align-items:flex-start;justify-content:center;padding-top:2rem;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lapisan.buka{display:flex}
+.panel{background:var(--putih);border:1px solid var(--abu-tipis);border-radius:14px;max-width:600px;width:100%;padding:1.5rem;position:relative;animation:besar .3s ease-out;box-shadow:0 20px 60px rgba(11,15,21,.12)}
+.panel-tutup{position:absolute;top:.75rem;right:.75rem;width:2rem;height:2rem;border-radius:999px;border:none;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--abu);cursor:pointer;transition:all .2s}
+.panel-tutup:hover{background:var(--abu-tipis);color:var(--hitam)}
+.panel h2{font-size:1.2rem;font-weight:650;letter-spacing:-.015em}
+.panel .sub{font-size:.8rem;color:var(--abu);margin-top:.1rem;margin-bottom:1rem}
+.panel .info{display:grid;grid-template-columns:1fr 1fr;gap:.35rem .75rem;font-size:.825rem;background:var(--bg);border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:.85rem}
+.panel .info .label{color:var(--abu)}
+.panel .info .value{font-weight:550;text-align:right}
+.panel .info .lebar{grid-column:1/-1;border-top:1px solid var(--abu-tipis);padding-top:.35rem;margin-top:.1rem}
+.panel .info .lebar .value{text-align:left;font-weight:400;color:var(--abu);margin-top:.15rem;line-height:1.65;font-size:.8rem}
+.form-group label{font-size:.72rem;font-weight:520;color:var(--abu);display:block;margin-top:.75rem;margin-bottom:.2rem}
+.form-group input,.form-group textarea{width:100%;border:1.5px solid var(--abu-tipis);border-radius:7px;font-size:.825rem;background:var(--putih);color:var(--hitam);outline:none;transition:border-color .2s;font-family:inherit;padding:.45rem .7rem}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--biru)}
+.form-group textarea{resize:vertical;min-height:3rem}
+
+/* list items */
+.item{display:flex;flex-wrap:wrap;gap:.65rem;align-items:center;background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:.6rem;transition:all .2s;box-shadow:var(--shadow)}
+.item:hover{border-color:var(--abu-muda);box-shadow:var(--shadow-naik)}
+.item-utama{flex:1;min-width:160px}
+.item-atas{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.item-atas strong{font-weight:590;font-size:.875rem}
+.item-redup{color:var(--abu);font-size:.78rem}
+.item-bawah{font-size:.7rem;color:var(--abu);margin-top:.1rem;display:flex;align-items:center;gap:.3rem}
+.item-bawah svg{width:.7rem;height:.7rem}
+.item-aksi{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+
+/* listing group */
+.grup{background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);overflow:hidden;margin-bottom:.75rem;box-shadow:var(--shadow)}
+.grup-kepala{padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--abu-tipis)}
+.grup-kepala h3{font-weight:590;font-size:.875rem}
+.grup-kepala .kecil{font-size:.7rem;color:var(--abu);margin-top:.05rem}
+.req-item{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.65rem 1rem;border-bottom:1px solid var(--abu-tipis);transition:background .15s}
+.req-item:last-child{border-bottom:none}
+.req-item:hover{background:var(--bg)}
+.req-kosong{padding:1.25rem;text-align:center;color:var(--abu);font-size:.78rem}
+.req-kosong svg{width:1.25rem;height:1.25rem;color:var(--abu-muda);margin:0 auto .4rem;display:block}
+
+/* toast */
+.toast{position:fixed;bottom:1.25rem;right:1.25rem;max-width:360px;display:flex;align-items:center;gap:.6rem;background:var(--hitam);color:#fff;padding:.6rem .75rem .6rem .7rem;border-radius:var(--radius);box-shadow:0 10px 40px rgba(11,15,21,.2);font-size:.8rem;line-height:1.4;transform:translateY(calc(100% + 2rem));transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:300}
+.toast.muncul{transform:translateY(0)}
+.toast svg{width:1.1rem;height:1.1rem;flex:none}
+.toast .tp{background:none;border:none;color:rgba(255,255,255,.35);cursor:pointer;padding:.2rem;flex:none}
+.toast .tp:hover{color:#fff}
+
+/* skeleton */
+.skel{background:linear-gradient(110deg,var(--abu-tipis) 25%,#e8ecf0 37%,var(--abu-tipis) 63%);background-size:200% 100%;animation:kilau 1.6s ease-in-out infinite;border-radius:6px}
+@media(prefers-color-scheme:dark){.skel{background:linear-gradient(110deg,var(--abu-tipis) 25%,#1a222e 37%,var(--abu-tipis) 63%);background-size:200% 100%}}
+.skel-garis{height:.8rem;width:100%;margin-bottom:.5rem}
+.skel-garis.pendek{width:50%}
+.skel-garis.sangat-pendek{width:35%}
+
+/* skeleton card */
+.card-skel{background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);padding:1.15rem 1.2rem;box-shadow:var(--shadow)}
+
+@keyframes naik{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes besar{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes kilau{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+@media(max-width:480px){
+  .grid{gap:.65rem;grid-template-columns:1fr 1fr}
+  select.filter{min-width:0;flex:1}
+  .nav-btn{font-size:.72rem;padding:.35rem .5rem}
+  .nav-btn span{display:none}
+  .toast{left:1rem;right:1rem;max-width:none}
+  .lapisan{padding:.5rem}
+  .panel{padding:1.15rem}
+}
+@media(max-width:380px){.grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.card:hover{transform:none}.card:active{transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="header">
+  <h1><i data-lucide="sprout"></i> Bibit</h1>
+  <p>Cari, minta, dan bagikan bibit dari komunitas SpringHub</p>
+  <nav class="nav" role="tablist">
+    <button class="nav-btn aktif" data-tab="marketplace" onclick="pindah('marketplace',this)" role="tab" aria-selected="true">
+      <i data-lucide="store"></i> <span>Marketplace</span>
+    </button>
+    <button class="nav-btn" data-tab="listings" onclick="pindah('listings',this)" role="tab">
+      <i data-lucide="package"></i> <span>Bibitku</span>
+    </button>
+    <button class="nav-btn" data-tab="requests" onclick="pindah('requests',this)" role="tab">
+      <i data-lucide="inbox"></i> <span>Permintaanku</span>
+    </button>
+  </nav>
+</header>
+
+<!-- MARKETPLACE -->
+<section id="tab-marketplace" class="bagian tampil">
+  <div class="bar">
+    <div class="cari">
+      <i data-lucide="search"></i>
+      <input type="text" id="cari" placeholder="Cari jenis bibit..." oninput="tunda()">
+    </div>
+    <select class="filter" id="prov" onchange="filter()">
+      <option value="">Semua Provinsi</option>
+      <option>Jawa Barat</option><option>Jawa Tengah</option><option>Jawa Timur</option>
+      <option>Banten</option><option>Sumatera Utara</option><option>Sumatera Barat</option>
+      <option>Sumatera Selatan</option><option>Lampung</option><option>Bali</option>
+      <option>NTB</option><option>NTT</option><option>Sulawesi Selatan</option>
+      <option>Kalimantan Barat</option><option>Kalimantan Timur</option>
+      <option>Kalimantan Selatan</option><option>Papua</option>
+    </select>
+  </div>
+  <div id="kisi" class="grid">
+    <div class="card" data-id="1"><h3>Jati</h3><div class="lokasi"><i data-lucide="map-pin"></i>Bandung, Jawa Barat</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Asep</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="2"><h3>Bambu Petung</h3><div class="lokasi"><i data-lucide="map-pin"></i>Bogor, Jawa Barat</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Sari</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="3"><h3>Mahoni</h3><div class="lokasi"><i data-lucide="map-pin"></i>Garut, Jawa Barat</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Budi</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="4"><h3>Sengon</h3><div class="lokasi"><i data-lucide="map-pin"></i>Malang, Jawa Timur</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Dewi</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="5"><h3>Suren</h3><div class="lokasi"><i data-lucide="map-pin"></i>Solo, Jawa Tengah</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Joko</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="6"><h3>Kaliandra</h3><div class="lokasi"><i data-lucide="map-pin"></i>Banyuwangi, Jawa Timur</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Rina</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="7"><h3>Acacia</h3><div class="lokasi"><i data-lucide="map-pin"></i>Sukabumi, Jawa Barat</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Agus</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="8"><h3>Albasia</h3><div class="lokasi"><i data-lucide="map-pin"></i>Semarang, Jawa Tengah</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Fitri</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="9"><h3>Gamal</h3><div class="lokasi"><i data-lucide="map-pin"></i>Pandeglang, Banten</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Ujang</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+    <div class="card" data-id="10"><h3>Saga</h3><div class="lokasi"><i data-lucide="map-pin"></i>Tabanan, Bali</div><div class="kaki"><span class="pemilik"><i data-lucide="user"></i>Nyoman</span><span class="minta">Minta <i data-lucide="arrow-right"></i></span></div></div>
+  </div>
+  <div id="skel" class="grid" style="display:none">
+    <div class="card-skel"><div class="skel-garis skel"></div><div class="skel-garis pendek skel" style="margin-top:.6rem"></div><div class="skel-garis skel" style="width:40%;margin-top:.75rem"></div></div>
+    <div class="card-skel"><div class="skel-garis skel"></div><div class="skel-garis pendek skel" style="margin-top:.6rem"></div><div class="skel-garis skel" style="width:40%;margin-top:.75rem"></div></div>
+    <div class="card-skel"><div class="skel-garis skel"></div><div class="skel-garis pendek skel" style="margin-top:.6rem"></div><div class="skel-garis skel" style="width:40%;margin-top:.75rem"></div></div>
+  </div>
+  <div class="kosong" id="kosong" style="display:none">
+    <i data-lucide="search-x"></i>
+    <h3>Tidak ditemukan</h3>
+    <p>Coba ubah kata kunci atau filter</p>
+    <button class="btn btn-lunak" onclick="reset()">Reset</button>
+  </div>
+</section>
+
+<!-- BIBITKU -->
+<section id="tab-listings" class="bagian">
+  <div class="bar">
+    <div class="cari">
+      <i data-lucide="search"></i>
+      <input type="text" id="cariListing" placeholder="Cari..." oninput="renderList()">
+    </div>
+    <a href="#" class="btn btn-utama" onclick="ngasih('Fitur laporan bibit segera hadir!','construction');return false">
+      <i data-lucide="plus" style="width:.9rem;height:.9rem"></i> Laporkan
+    </a>
+  </div>
+  <div id="wadahList"></div>
+  <div class="kosong" id="kosongList" style="display:none">
+    <i data-lucide="package"></i>
+    <h3>Belum ada laporan</h3>
+    <p>Laporkan bibit yang kamu miliki</p>
+  </div>
+</section>
+
+<!-- PERMINTAANKU -->
+<section id="tab-requests" class="bagian">
+  <div id="wadahReq"></div>
+  <div class="kosong" id="kosongReq" style="display:none">
+    <i data-lucide="inbox"></i>
+    <h3>Belum ada permintaan</h3>
+    <p>Jelajahi marketplace dan minta bibit</p>
+    <button class="btn btn-lunak" onclick="pindah('marketplace',document.querySelector('[data-tab=marketplace]'))">Jelajahi</button>
+  </div>
+</section>
+
+</div>
+
+<!-- OVERLAY -->
+<div class="lapisan" id="lapisan">
+  <div class="panel">
+    <button class="panel-tutup" onclick="tutup()" aria-label="Tutup"><i data-lucide="x" style="width:1rem;height:1rem"></i></button>
+    <h2 id="dJenis"></h2>
+    <div class="sub" id="dSub"></div>
+    <div class="info">
+      <span class="label">Jumlah</span><span class="value" id="dJumlah"></span>
+      <span class="label">Tersedia</span><span class="value" id="dSisa" style="color:var(--biru);font-weight:600"></span>
+      <span class="label">Pemilik</span><span class="value" id="dPemilik"></span>
+      <span class="label">Dilaporkan</span><span class="value" id="dTanggal"></span>
+      <span class="label">Lokasi</span><span class="value" id="dLokasi"></span>
+      <div class="lebar"><span class="label">Keterangan</span><div class="value" id="dCatatan"></div></div>
+    </div>
+    <div class="form-group">
+      <label>Jumlah bibit</label>
+      <input type="number" id="qty" value="1" min="1">
+      <label>Pesan</label>
+      <textarea id="msg" rows="2" placeholder="Mau tanam di kebun..."></textarea>
+      <button class="btn btn-utama btn-lebar" style="margin-top:.75rem" onclick="kirim()">
+        <i data-lucide="send" style="width:.9rem;height:.9rem"></i> Kirim Permintaan
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <i data-lucide="check-circle" id="toastIkon" style="flex:none;color:var(--biru)"></i>
+  <span id="toastPesan" style="flex:1">Berhasil!</span>
+  <button class="tp" onclick="sembunyi()"><i data-lucide="x" style="width:.85rem;height:.85rem"></i></button>
+</div>
+
+<script>
+const BIBIT = [
+  {id:1,jenis:"Jati",jml:50,sisa:40,prov:"Jawa Barat",kota:"Bandung",org:"Asep",trust:85,tgl:"10 Jul 2026",cat:"Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm. Dari biji unggul."},
+  {id:2,jenis:"Bambu Petung",jml:30,sisa:28,prov:"Jawa Barat",kota:"Bogor",org:"Sari",trust:92,tgl:"12 Jul 2026",cat:"Diamater 2-3cm. Dari rumpun induk adaptif. Cocok konservasi tebing."},
+  {id:3,jenis:"Mahoni",jml:100,sisa:95,prov:"Jawa Barat",kota:"Garut",org:"Budi",trust:78,tgl:"8 Jul 2026",cat:"Persemaian kelompok tani. Tinggi 30-60cm. Kayu berkualitas."},
+  {id:4,jenis:"Sengon",jml:25,sisa:20,prov:"Jawa Timur",kota:"Malang",org:"Dewi",trust:88,tgl:"14 Jul 2026",cat:"Umur 2 bulan. Tinggi 30-40cm. Tumbuh cepat untuk agroforestri."},
+  {id:5,jenis:"Suren",jml:40,sisa:40,prov:"Jawa Tengah",kota:"Solo",org:"Joko",trust:90,tgl:"5 Jul 2026",cat:"Hasil penangkaran. Adaptasi lokal. Pohon peneduh dengan kayu bernilai."},
+  {id:6,jenis:"Kaliandra",jml:200,sisa:180,prov:"Jawa Timur",kota:"Banyuwangi",org:"Rina",trust:95,tgl:"13 Jul 2026",cat:"Kaliandra merah. Pakan ternak, reboisasi, nektar lebah."},
+  {id:7,jenis:"Acacia",jml:75,sisa:70,prov:"Jawa Barat",kota:"Sukabumi",org:"Agus",trust:82,tgl:"11 Jul 2026",cat:"Acacia mangium. Cepat tumbuh, cocok lahan kritis."},
+  {id:8,jenis:"Albasia",jml:60,sisa:55,prov:"Jawa Tengah",kota:"Semarang",org:"Fitri",trust:87,tgl:"9 Jul 2026",cat:"Ukuran seragam, tinggi ~45cm. Kayu ringan untuk perkakas."},
+  {id:9,jenis:"Gamal",jml:150,sisa:150,prov:"Banten",kota:"Pandeglang",org:"Ujang",trust:80,tgl:"15 Jul 2026",cat:"Stok melimpah! Pakan ternak, pagar hidup, konservasi tanah."},
+  {id:10,jenis:"Saga",jml:35,sisa:30,prov:"Bali",kota:"Tabanan",org:"Nyoman",trust:91,tgl:"7 Jul 2026",cat:"Biji merah. Penghijauan lahan kering. Bisa untuk kerajinan."},
+]
+const LISTINGKU = [
+  {jenis:"Jati",jml:50,req:[{dari:"Budi",qty:10,msg:"Mau tanam di kebun",st:"pending",tgl:"2 hr"},{dari:"Sari",qty:5,msg:"Penghijauan RT",st:"approved",tgl:"1 hr"},{dari:"Doni",qty:3,msg:"Kelompok tani",st:"fulfilled",tgl:"5 hr"}]},
+  {jenis:"Bambu Petung",jml:30,req:[{dari:"Rudi",qty:8,msg:"Mau nanam di pinggir sungai",st:"pending",tgl:"3 hr"}]},
+  {jenis:"Mahoni",jml:100,req:[]},
+]
+const REQUESTKU = [
+  {jenis:"Jati",qty:10,org:"Asep",lok:"Bandung",st:"pending",tgl:"2 hr"},
+  {jenis:"Bambu Petung",qty:5,org:"Sari",lok:"Bogor",st:"approved",tgl:"1 hr",telp:"0812-3456-7890"},
+  {jenis:"Mahoni",qty:2,org:"Budi",lok:"Garut",st:"rejected",tgl:"3 hr"},
+  {jenis:"Sengon",qty:15,org:"Dewi",lok:"Malang",st:"fulfilled",tgl:"5 hr"},
+  {jenis:"Kaliandra",qty:20,org:"Rina",lok:"Banyuwangi",st:"cancelled",tgl:"7 hr"},
+]
+const CLS={pending:"label-tunggu",approved:"label-setuju",rejected:"label-tolak",fulfilled:"label-selesai",cancelled:"label-batal"}
+const LBL={pending:"Menunggu",approved:"Disetujui",rejected:"Ditolak",fulfilled:"Selesai",cancelled:"Dibatalkan"}
+const IKN={pending:"clock",approved:"check-circle",rejected:"x-circle",fulfilled:"check-check",cancelled:"slash"}
+
+let tc;function tunda(){clearTimeout(tc);tc=setTimeout(filter,180)}
+function aksiBtn(r){if(r.st==="pending")return '<button class="btn btn-kecil btn-lunak" data-aksi="ok" onclick="event.stopPropagation();ngasih(this.dataset.aksi)"><i data-lucide="check" style="width:.75rem;height:.75rem"></i>Setujui</button><button class="btn btn-kecil btn-bahaya" data-aksi="x" onclick="event.stopPropagation();ngasih(this.dataset.aksi)"><i data-lucide="x" style="width:.75rem;height:.75rem"></i>Tolak</button>';if(r.st==="approved")return '<button class="btn btn-kecil btn-biru" data-aksi="done" onclick="event.stopPropagation();ngasih(this.dataset.aksi)"><i data-lucide="check-check" style="width:.75rem;height:.75rem"></i>Selesai</button>';return""}
+
+function pindah(n,b){
+  document.querySelectorAll(".nav-btn").forEach(t=>{t.classList.remove("aktif");t.setAttribute("aria-selected","false")})
+  document.querySelectorAll(".bagian").forEach(s=>s.classList.remove("tampil"))
+  b.classList.add("aktif");b.setAttribute("aria-selected","true")
+  document.getElementById("tab-"+n).classList.add("tampil")
+  setTimeout(()=>{if(typeof lucide!="undefined")lucide.createIcons()},30)
+}
+
+function renderKartu(d){
+  const k=document.getElementById("kisi"),ko=document.getElementById("kosong"),sk=document.getElementById("skel")
+  sk.style.display="none"
+  if(!d||!d.length){k.innerHTML="";ko.style.display="block";return}
+  ko.style.display="none"
+  k.innerHTML=d.map((b,i)=>`
+    <div class="card" data-id="${b.id}" style="animation:naik .35s ease-out ${i*60}ms both">
+      <h3>${b.jenis}</h3>
+      <div class="lokasi"><i data-lucide="map-pin"></i>${b.kota}, ${b.prov}</div>
+      <div class="kaki">
+        <span class="pemilik"><i data-lucide="user"></i>${b.org}</span>
+        <span class="minta">Minta <i data-lucide="arrow-right"></i></span>
+      </div>
+    </div>`).join("")
+  if(typeof lucide!="undefined")lucide.createIcons()
+}
+
+function filter(){
+  const q=document.getElementById("cari").value.toLowerCase()
+  const p=document.getElementById("prov").value
+  renderKartu(BIBIT.filter(b=>(!p||b.prov===p)&&(!q||b.jenis.toLowerCase().includes(q)||b.kota.toLowerCase().includes(q))))
+}
+function reset(){document.getElementById("cari").value="";document.getElementById("prov").value="";filter()}
+
+// Click card via delegation
+document.getElementById("kisi").addEventListener("click",function(e){
+  const card=e.target.closest(".card");if(card&&card.dataset.id)buka(parseInt(card.dataset.id))
+})
+
+let dt=null
+function buka(id){
+  const b=BIBIT.find(x=>x.id===id);if(!b)return;dt=b
+  document.getElementById("dJenis").textContent=b.jenis
+  document.getElementById("dSub").textContent=b.jml+" bibit · "+b.org
+  document.getElementById("dJumlah").textContent=b.jml+" bibit"
+  document.getElementById("dSisa").textContent=b.sisa+" bibit"
+  document.getElementById("dPemilik").textContent=b.org+" · "+b.trust+"%"
+  document.getElementById("dTanggal").textContent=b.tgl
+  document.getElementById("dLokasi").textContent=b.kota+", "+b.prov
+  document.getElementById("dCatatan").textContent=b.cat
+  document.getElementById("qty").max=b.sisa;document.getElementById("qty").value=1
+  document.getElementById("msg").value=""
+  document.getElementById("lapisan").classList.add("buka");document.body.style.overflow="hidden"
+}
+function tutup(){document.getElementById("lapisan").classList.remove("buka");document.body.style.overflow="";dt=null}
+function kirim(){
+  if(!dt)return
+  const q=parseInt(document.getElementById("qty").value)||0
+  if(q<1){ngasih("Jumlah minimal 1","alert-circle");return}
+  if(q>dt.sisa){ngasih("Jumlah melebihi stok","alert-circle");return}
+  ngasih("Permintaan "+q+" "+dt.jenis+" terkirim!","check-circle");tutup()
+}
+
+function renderList(){
+  const w=document.getElementById("wadahList"),k=document.getElementById("kosongList"),q=document.getElementById("cariListing").value.toLowerCase()
+  const h=LISTINGKU.filter(g=>!q||g.jenis.toLowerCase().includes(q))
+  if(!h.length){w.innerHTML="";k.style.display="block";return}
+  k.style.display="none"
+  w.innerHTML=h.map((g,gi)=>`
+    <div class="grup" style="animation:naik .35s ease-out ${gi*60}ms both">
+      <div class="grup-kepala">
+        <div><h3>${g.jenis}</h3><div class="kecil">${g.jml} bibit</div></div>
+        <span class="badge">${g.req.filter(r=>r.st==="pending").length} menunggu</span>
+      </div>
+      <div class="grup-badan">${g.req.length?g.req.map((r,ri)=>`
+        <div class="req-item" style="border-left:3px solid ${r.st==="pending"?"#eab308":r.st==="approved"?"#22c55e":r.st==="fulfilled"?"#3b82f6":"#94a3b8"}">
+          <div style="flex:1;min-width:140px">
+            <div class="item-atas"><strong>${r.dari}</strong><span class="item-redup">${r.qty}</span><span class="label ${CLS[r.st]}"><i data-lucide="${IKN[r.st]}" style="width:.7rem;height:.7rem"></i>${LBL[r.st]}</span></div>
+            ${r.msg?'<div style="color:var(--abu);font-size:.72rem;font-style:italic;margin-top:.05rem">&ldquo;'+r.msg+'&rdquo;</div>':''}
+            <div class="item-bawah"><i data-lucide="clock"></i>${r.tgl}</div>
+          </div>
+          <div class="item-aksi">${aksiBtn(r)}</div>
+        </div>`).join(""):'<div class="req-kosong"><i data-lucide="message-circle"></i>Belum ada permintaan</div>'}</div></div>`).join("")
+  if(typeof lucide!="undefined")lucide.createIcons()
+}
+
+function renderReq(){
+  const w=document.getElementById("wadahReq"),k=document.getElementById("kosongReq")
+  if(!REQUESTKU.length){w.innerHTML="";k.style.display="block";return}
+  k.style.display="none"
+  w.innerHTML=REQUESTKU.map((r,i)=>{let a=""
+    if(r.st==="pending") a='<button class="btn btn-kecil btn-bahaya" data-aksi="cancel" onclick="ngasih(this.dataset.aksi)"><i data-lucide="x" style="width:.75rem;height:.75rem"></i>Batalkan</button>'
+    else if(r.st==="approved") a='<span class="item-redup" style="display:flex;align-items:center;gap:.25rem"><i data-lucide="phone" style="width:.75rem;height:.75rem;color:var(--biru)"></i>'+r.telp+'</span><a href="tel:'+r.telp+'" class="btn btn-kecil btn-lunak"><i data-lucide="phone-call" style="width:.75rem;height:.75rem"></i>Hubungi</a>'
+    return `<div class="item" style="animation:naik .35s ease-out ${i*50}ms both">
+      <div class="item-utama">
+        <div class="item-atas"><strong>${r.jenis}</strong><span class="item-redup">${r.qty} bibit</span><span class="label ${CLS[r.st]}"><i data-lucide="${IKN[r.st]}" style="width:.7rem;height:.7rem"></i>${LBL[r.st]}</span></div>
+        <div class="item-bawah"><i data-lucide="user"></i>${r.org}<i data-lucide="map-pin" style="margin-left:.2rem"></i>${r.lok}<i data-lucide="clock" style="margin-left:.2rem"></i>${r.tgl}</div>
+      </div>
+      <div class="item-aksi">${a}</div>
+    </div>`
+  }).join("")
+  if(typeof lucide!="undefined")lucide.createIcons()
+}
+
+let tt;function ngasih(p,ik="check-circle"){
+  const t=document.getElementById("toast")
+  document.getElementById("toastPesan").textContent=p
+  document.getElementById("toastIkon").setAttribute("data-lucide",ik)
+  clearTimeout(tt);t.classList.add("muncul")
+  if(typeof lucide!="undefined")lucide.createIcons()
+  tt=setTimeout(()=>t.classList.remove("muncul"),3000)
+}
+function sembunyi(){document.getElementById("toast").classList.remove("muncul");clearTimeout(tt)}
+document.getElementById("lapisan").addEventListener("click",function(e){if(e.target===e.currentTarget)tutup()})
+
+filter();renderList();renderReq()
+document.addEventListener("DOMContentLoaded",function(){if(typeof lucide!="undefined")lucide.createIcons()})
+</script>
+</body>
+</html>
