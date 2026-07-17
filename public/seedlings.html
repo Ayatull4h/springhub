@@ -6,1910 +6,460 @@
 <title>Bibit — SpringHub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/lucide@0.408.0/dist/esm/lucide.css" rel="stylesheet">
 <script src="https://unpkg.com/lucide@0.408.0/dist/umd/lucide.js" defer></script>
-
 <style>
-/* ═══════════════════════════════════════════════════
-   ꧁༻  TAMAN BIBIT — SpringHub  ༺꧂
-   ───  Dibuat dengan sepenuh hati untuk alam
-   ═══════════════════════════════════════════════════ */
-
-/* ── RESET ── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-/* ── WARNA DASAR ── */
 :root {
-  /* Biru brand — dari langit pagi */
-  --b50: #f0f9ff;
-  --b100: #e0f2fe;
-  --b200: #bae6fd;
-  --b300: #7dd3fc;
-  --b400: #38bdf8;
-  --b500: #0ea5e9;
-  --b600: #0284c7;  /* ❤  jantung brand */
-  --b700: #0369a1;
-  --b800: #075985;
-  --b900: #0c4a6e;
-
-  /* Malam — buat dark mode nanti */ 
-  --mlm: #0b0f15;
-  --timah: #475569;
-  --perak: #94a3b8;
-  --garis: #e2e8f0;
-  --es: #f1f5f9;
-
-  /* Permukaan */
-  --latar: #f8fafc;
-  --kartu: #ffffff;
-  --tepi: var(--garis);
-  --teks: var(--mlm);
-  --teks-redup: var(--timah);
-  --teks-samar: var(--perak);
-
-  /* Bayangan — lembut, nggak teriak */
-  --sha-sm: 0 1px 3px rgba(11,15,21,0.04), 0 4px 16px rgba(11,15,21,0.04);
-  --sha-md: 0 4px 6px -1px rgba(11,15,21,0.06), 0 10px 28px -4px rgba(11,15,21,0.08);
-  --sha-lg: 0 20px 60px rgba(11,15,21,0.1), 0 8px 24px rgba(11,15,21,0.06);
-  --sha-xl: 0 32px 80px rgba(11,15,21,0.14);
-  --sha-blue: 0 4px 20px rgba(2,132,199,0.15);
-  --sha-glow: 0 0 40px rgba(2,132,199,0.08);
-
-  /* Sudut */
-  --r-sm: 8px;
-  --r: 12px;
-  --r-lg: 20px;
-  --r-xl: 28px;
-  --r-full: 9999px;
-
-  /* Font */
-  --font: 'Inter', system-ui, -apple-system, sans-serif;
-
-  /* Warna tanaman — setiap jenis punya jiwa sendiri */
-  --jati: #b45309;
-  --jati-muda: #fef3c7;
-  --bambu: #16a34a;
-  --bambu-muda: #dcfce7;
-  --mahoni: #b91c1c;
-  --mahoni-muda: #fee2e2;
-  --sengon: #0d9488;
-  --sengon-muda: #ccfbf1;
-  --suren: #7c3aed;
-  --suren-muda: #ede9fe;
-  --kaliandra: #db2777;
-  --kaliandra-muda: #fce7f3;
-  --acacia: #ca8a04;
-  --acacia-muda: #fef9c3;
-  --albasia: #0284c7;
-  --albasia-muda: #e0f2fe;
-  --gamal: #65a30d;
-  --gamal-muda: #ecfccb;
-  --saga: #dc2626;
-  --saga-muda: #fee2e2;
+  --biru: #0284c7;
+  --biru-tua: #0369a1;
+  --biru-muda: #f0f9ff;
+  --hitam: #0b0f15;
+  --abu: #475569;
+  --abu-muda: #94a3b8;
+  --abu-tipis: #e2e8f0;
+  --putih: #ffffff;
+  --bg: #f8fafc;
+  --shadow: 0 1px 3px rgba(11,15,21,.04), 0 2px 8px rgba(11,15,21,.04);
+  --shadow-naik: 0 4px 12px rgba(11,15,21,.06), 0 2px 4px rgba(11,15,21,.04);
+  --radius: 10px;
+  --font: 'Inter', system-ui, sans-serif;
 }
-
-/* ── GELAP (dark mode) — malam yang nyaman ── */
 @media (prefers-color-scheme: dark) {
   :root {
-    --latar: #0b0f15;
-    --kartu: #141a22;
-    --tepi: #1c232d;
-    --teks: #f1f5f9;
-    --teks-redup: #94a3b8;
-    --teks-samar: #64748b;
-    --garis: #1e293b;
-    --es: #1a212e;
-    --sha-sm: 0 1px 2px rgba(0,0,0,.25), 0 4px 16px rgba(0,0,0,.2);
-    --sha-md: 0 4px 6px -1px rgba(0,0,0,.3), 0 10px 28px -4px rgba(0,0,0,.25);
-    --sha-lg: 0 20px 60px rgba(0,0,0,.35);
-    --sha-xl: 0 32px 80px rgba(0,0,0,.45);
-    --sha-blue: 0 4px 20px rgba(14,165,233,0.1);
-    --sha-glow: 0 0 40px rgba(14,165,233,0.05);
-    --jati-muda: #1e1300;
-    --bambu-muda: #052e16;
-    --mahoni-muda: #2e0a0a;
-    --sengon-muda: #022c22;
-    --suren-muda: #0f0524;
-    --kaliandra-muda: #2e0518;
-    --acacia-muda: #1e1600;
-    --albasia-muda: #0a1e3a;
-    --gamal-muda: #0a1e00;
-    --saga-muda: #2e0a0a;
+    --bg: #0b0f15;
+    --putih: #141a22;
+    --abu-tipis: #1c232d;
+    --abu: #94a3b8;
+    --abu-muda: #64748b;
+    --hitam: #f1f5f9;
+    --biru-muda: #0d2a3e;
+    --shadow: 0 1px 3px rgba(0,0,0,.15), 0 2px 8px rgba(0,0,0,.1);
+    --shadow-naik: 0 4px 12px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.15);
   }
 }
-
-/* ── BASAL ── */
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--font);
-  background: var(--latar);
-  color: var(--teks);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-::selection { background: var(--b200); color: var(--b900); }
-@media (prefers-color-scheme: dark) {
-  ::selection { background: var(--b800); color: var(--b100); }
-}
-
-/* ── BUNGKUS ── */
-.bungkus {
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 0 clamp(1rem, 4vw, 2rem);
-}
-
-/* ═══════════════════════════════════════════════════
-   ꧁  KEPALA — langit biru, daun melayang  ꧂
-   ═══════════════════════════════════════════════════ */
-.kepala {
-  position: relative;
-  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1rem, 4vw, 2rem) clamp(1.5rem, 3vw, 2.25rem);
-  margin-bottom: 1.75rem;
-  overflow: hidden;
-}
-
-/* Latar gradient — biru dalem ke biru langit */
-.kepala::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: 
-    linear-gradient(160deg, 
-      #0c4a6e 0%, 
-      #075985 20%, 
-      #0284c7 50%, 
-      #0369a1 80%, 
-      #0c4a6e 100%
-    );
-  z-index: 0;
-}
-
-/* Gumpalan organik — biar nggak kaku */
-.kepala-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  pointer-events: none;
-  z-index: 1;
-}
-.kepala-blob.b1 {
-  width: min(500px, 60vw);
-  height: min(500px, 60vw);
-  background: radial-gradient(circle, rgba(56,189,248,0.2), transparent 70%);
-  top: -180px;
-  right: -100px;
-  animation: mengapung 12s ease-in-out infinite alternate;
-}
-.kepala-blob.b2 {
-  width: min(350px, 40vw);
-  height: min(350px, 40vw);
-  background: radial-gradient(circle, rgba(14,165,233,0.15), transparent 70%);
-  bottom: -120px;
-  left: -60px;
-  animation: mengapung 8s ease-in-out infinite alternate-reverse;
-}
-.kepala-blob.b3 {
-  width: min(200px, 25vw);
-  height: min(200px, 25vw);
-  background: radial-gradient(circle, rgba(186,230,253,0.12), transparent 70%);
-  top: 20%;
-  left: 40%;
-  animation: mengapung 15s ease-in-out infinite alternate;
-}
-
-/* Daun beterbangan — decorative particles */
-.daun-particle {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 0 50% 50% 50%;
-  transform: rotate(45deg);
-  pointer-events: none;
-  z-index: 1;
-  animation: daun-terbang linear infinite;
-}
-.daun-particle:nth-child(1) { top: 15%; left: 10%; animation-duration: 18s; animation-delay: 0s; width: 10px; height: 14px; }
-.daun-particle:nth-child(2) { top: 60%; left: 5%; animation-duration: 22s; animation-delay: 3s; width: 8px; height: 10px; background: rgba(255,255,255,0.05); }
-.daun-particle:nth-child(3) { top: 30%; left: 85%; animation-duration: 16s; animation-delay: 6s; width: 14px; height: 10px; }
-.daun-particle:nth-child(4) { top: 70%; left: 92%; animation-duration: 20s; animation-delay: 2s; width: 9px; height: 12px; background: rgba(255,255,255,0.06); }
-.daun-particle:nth-child(5) { top: 45%; left: 50%; animation-duration: 25s; animation-delay: 8s; width: 11px; height: 11px; }
-.daun-particle:nth-child(6) { top: 80%; left: 30%; animation-duration: 19s; animation-delay: 5s; width: 7px; height: 9px; background: rgba(255,255,255,0.04); }
-
-/* Garis spektrum di bawah header — pelangi tipis */
-.kepala::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, 
-    transparent 0%,
-    rgba(56,189,248,0.6) 15%,
-    rgba(14,165,233,0.8) 30%,
-    rgba(2,132,199,0.9) 50%,
-    rgba(14,165,233,0.8) 70%,
-    rgba(56,189,248,0.6) 85%,
-    transparent 100%
-  );
-  z-index: 2;
-}
-
-/* Isi header — di atas semua layer */
-.kepala-isi {
-  position: relative;
-  z-index: 3;
-}
-
-.kepala-atas {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.kepala-judul {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.kepala-icon {
-  display: flex;
-  width: 3rem;
-  height: 3rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 16px rgba(0,0,0,0.1);
-  flex-shrink: 0;
-}
-.kepala-icon svg { width: 1.4rem; height: 1.4rem; color: #fff; }
-
-.kepala-text h1 {
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
-  color: #fff;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.15);
-}
-.kepala-text p {
-  font-size: clamp(0.82rem, 1.5vw, 0.92rem);
-  color: rgba(255,255,255,0.7);
-  font-weight: 400;
-  margin-top: 0.15rem;
-  letter-spacing: 0.01em;
-}
-
-/* Tombol offline — di sebelah kanan header */
-.tombol-offline {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 1.1rem;
-  border-radius: var(--r-full);
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: rgba(255,255,255,0.85);
-  font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 520;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(.34, 1.56, .64, 1);
-  text-decoration: none;
-}
-.tombol-offline:hover {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.25);
-  transform: translateY(-1px);
-}
-.tombol-offline svg { width: 0.95rem; height: 0.95rem; flex: none; }
-
-/* ── TAB ── */
-.tab-nav {
-  display: flex;
-  gap: 2px;
-  margin-top: 1.5rem;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: calc(var(--r) + 4px);
-  padding: 3px;
-  position: relative;
-  overflow: hidden;
-  width: fit-content;
-}
-.tab-btn {
-  position: relative;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: var(--r);
-  font-size: 0.82rem;
-  font-weight: 520;
-  background: transparent;
-  color: rgba(255,255,255,0.5);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(.34, 1.56, .64, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  white-space: nowrap;
-  font-family: inherit;
-  -webkit-tap-highlight-color: transparent;
-}
-.tab-btn:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
-.tab-btn.aktif {
-  background: rgba(255,255,255,0.92);
-  color: var(--b700);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-}
-.tab-btn.aktif svg { color: var(--b600); }
-.tab-btn svg { width: 0.95rem; height: 0.95rem; flex: none; transition: transform 0.3s; }
-.tab-btn.aktif svg { transform: scale(1.1); }
-.tab-btn .tab-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.25rem;
-  height: 1.15rem;
-  padding: 0 0.3rem;
-  border-radius: var(--r-full);
-  background: rgba(255,255,255,0.1);
-  font-size: 0.62rem;
-  font-weight: 620;
-  line-height: 1;
-}
-.tab-btn.aktif .tab-badge {
-  background: var(--b100);
-  color: var(--b700);
-}
-
-/* ═══════════════════════════════════════════════════
-   ꧁  KONTEN — tab section  ꧂
-   ═══════════════════════════════════════════════════ */
-.tab-section { display: none; }
-.tab-section.tampil {
-  display: block;
-  animation: naik 0.45s ease-out;
-}
-
-/* ── SEARCH BAR ── */
-.cari-bar {
-  display: flex;
-  gap: 0.625rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-.cari-box {
-  position: relative;
-  flex: 1;
-  min-width: 200px;
-}
-.cari-box svg {
-  position: absolute;
-  left: 0.9rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0.95rem;
-  height: 0.95rem;
-  color: var(--teks-samar);
-  pointer-events: none;
-  z-index: 1;
-  transition: color 0.2s;
-}
-.cari-box:focus-within svg { color: var(--b500); }
-.cari-box input {
-  padding-left: 2.6rem;
-  padding-right: 1rem;
-  width: 100%;
-  height: 2.7rem;
-  border: 1.5px solid var(--tepi);
-  border-radius: var(--r);
-  font-size: 0.875rem;
-  background: var(--kartu);
-  color: var(--teks);
-  outline: none;
-  transition: all 0.25s;
-  font-family: inherit;
-}
-.cari-box input:hover { border-color: var(--b300); }
-.cari-box input:focus {
-  border-color: var(--b500);
-  box-shadow: 0 0 0 3px rgba(14,165,233,0.1), 0 0 0 1px var(--b500);
-}
-.cari-box input::placeholder { color: var(--teks-samar); }
-
-select.cari-select {
-  appearance: none;
-  -webkit-appearance: none;
-  padding: 0 2.5rem 0 1rem;
-  height: 2.7rem;
-  border: 1.5px solid var(--tepi);
-  border-radius: var(--r);
-  font-size: 0.825rem;
-  background: var(--kartu);
-  color: var(--teks);
-  outline: none;
-  cursor: pointer;
-  transition: all 0.25s;
-  font-family: inherit;
-  min-width: 150px;
-  flex: 0 1 auto;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 0.95rem;
-}
-select.cari-select:hover { border-color: var(--b300); }
-select.cari-select:focus {
-  border-color: var(--b500);
-  box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
-}
-@media (prefers-color-scheme: dark) {
-  select.cari-select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  }
-}
-
-/* ═══════════════════════════════════════════════════
-   ꧁  GRID KARTU — taman bibit  ꧂
-   ═══════════════════════════════════════════════════ */
-.grid-kartu {
-  display: grid;
-  gap: 1.25rem;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-}
-
-/* ── KARTU BIBIT ── */
-.kartu {
-  background: var(--kartu);
-  border: 1px solid var(--tepi);
-  border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-xl);
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(.34, 1.56, .64, 1);
-  box-shadow: var(--sha-sm);
-  position: relative;
-  -webkit-tap-highlight-color: transparent;
-  transform: rotate(var(--rot, 0deg));
-}
-.kartu:nth-child(3n+1) { --rot: -0.4deg; }
-.kartu:nth-child(3n+2) { --rot: 0.6deg; }
-.kartu:nth-child(3n+3) { --rot: -0.2deg; }
-.kartu:nth-child(5n+4) { --rot: 0.3deg; }
-.kartu:hover {
-  transform: translateY(-6px) scale(1.01) rotate(0deg);
-  box-shadow: var(--sha-lg), var(--sha-glow);
-  border-color: transparent;
-}
-.kartu:active { transform: translateY(-2px) scale(0.99) rotate(0deg); }
-
-/* Border accent — gradient yang hidup · tampil dari sudut */
-.kartu-batas {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-xl);
-  padding: 1px;
-  background: transparent;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  z-index: 2;
-  transition: opacity 0.5s;
-  opacity: 0;
-}
-.kartu:hover .kartu-batas {
-  opacity: 1;
-  background: linear-gradient(145deg, var(--b300), var(--b600), var(--b400), transparent 80%);
-}
-
-/* Notch miring — bukan centang tengah */
-.kartu::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 1.5rem;
-  width: 4.5rem;
-  height: 3px;
-  background: linear-gradient(90deg, var(--b400), var(--b600));
-  border-radius: 0 0 4px 4px;
-  z-index: 3;
-  opacity: 0.5;
-  transition: all 0.4s cubic-bezier(.34, 1.56, .64, 1);
-}
-.kartu:hover::after {
-  width: 6rem;
-  left: 2rem;
-  opacity: 1;
-  background: linear-gradient(90deg, var(--b300), var(--b500));
-}
-
-/* ── AKSEN ATAS — warna tanaman ── */
-.kartu-aksen {
-  height: 4px;
-  width: 100%;
-  transition: height 0.3s, filter 0.3s;
-  flex-shrink: 0;
-}
-.kartu:hover .kartu-aksen {
-  height: 5px;
-  filter: brightness(1.15);
-}
-
-/* ── BADAN KARTU ── */
-.kartu-badan {
-  padding: 1rem 1.25rem 1.3rem 1.15rem;
-  position: relative;
-}
-/* Variasi tinggi — biar gak seragam kayak pabrik */
-.kartu:nth-child(2n) .kartu-badan { padding-bottom: 1.6rem; }
-.kartu:nth-child(3n) .kartu-badan { padding-bottom: 1.15rem; }
-.kartu:nth-child(5n+2) .kartu-badan { padding-top: 0.85rem; }
-
-/* Sudut lipat kertas — pojok kanan bawah */
-.kartu::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 20px;
-  height: 20px;
-  background: linear-gradient(135deg, transparent 50%, var(--latar) 50%);
-  pointer-events: none;
-  z-index: 2;
-  opacity: 0.5;
-  transition: opacity 0.3s;
-}
-.kartu:hover::before {
-  opacity: 1;
-}
-
-.kartu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-.kartu-header h3 {
-  font-size: 1.05rem;
-  font-weight: 660;
-  letter-spacing: -0.015em;
-  line-height: 1.3;
-  color: var(--teks);
-  transition: color 0.3s;
-}
-.kartu:hover .kartu-header h3 { color: var(--b700); }
-
-.kartu-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.2rem 0.65rem;
-  border-radius: var(--r-full);
-  font-size: 0.7rem;
-  font-weight: 600;
-  white-space: nowrap;
-  line-height: 1.35;
-  background: var(--b50);
-  color: var(--b700);
-  border: 1px solid var(--b200);
-  transition: all 0.3s;
-  flex-shrink: 0;
-}
-.kartu:hover .kartu-badge {
-  background: var(--b100);
-  border-color: var(--b300);
-}
-.kartu-badge svg { width: 0.68rem; height: 0.68rem; }
-
-.kartu-lokasi {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.8rem;
-  color: var(--teks-redup);
-  margin-top: 0.45rem;
-  line-height: 1.4;
-}
-.kartu-lokasi svg { width: 0.85rem; height: 0.85rem; flex: none; color: var(--teks-samar); }
-
-/* Divider — garis gelombang, bukan garis lurus */
-.kartu-divider {
-  height: 6px;
-  margin: 0.7rem 0;
-  background: var(--tepi);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='6' viewBox='0 0 100 6'%3E%3Cpath d='M0,3 Q12.5,0 25,3 T50,3 T75,3 T100,3' stroke='black' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") repeat-x 0 0 / 100px 6px;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='6' viewBox='0 0 100 6'%3E%3Cpath d='M0,3 Q12.5,0 25,3 T50,3 T75,3 T100,3' stroke='black' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") repeat-x 0 0 / 100px 6px;
-  -webkit-mask-size: 80px 6px;
-  mask-size: 80px 6px;
-  transition: background 0.3s;
-}
-.kartu:hover .kartu-divider { background: var(--b200); }
-
-/* Footer kartu */
-.kartu-kaki {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.kartu-pemilik {
-  font-size: 0.8rem;
-  color: var(--teks-redup);
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-.kartu-pemilik svg { width: 0.8rem; height: 0.8rem; color: var(--teks-samar); }
-
-.kartu-trust {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.15rem;
-  font-weight: 550;
-  color: var(--b600);
-  font-size: 0.75rem;
-}
-.kartu-trust svg { width: 0.7rem; height: 0.7rem; fill: currentColor; }
-
-.kartu-minta {
-  color: var(--b600);
-  font-size: 0.72rem;
-  font-weight: 630;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  transition: all 0.3s cubic-bezier(.34, 1.56, .64, 1);
-  position: relative;
-}
-.kartu:hover .kartu-minta { gap: 0.6rem; }
-.kartu-minta svg { width: 0.75rem; height: 0.75rem; transition: transform 0.3s; }
-.kartu:hover .kartu-minta svg { transform: translateX(3px); }
-
-/* ═══════════════════════════════════════════════════
-   ꧁  TOMBOL  ꧂
-   ═══════════════════════════════════════════════════ */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  font-weight: 570;
-  padding: 0.5rem 1rem;
-  border-radius: var(--r);
-  border: none;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(.34, 1.56, .64, 1);
-  font-family: inherit;
-  text-decoration: none;
-  line-height: 1.4;
-  white-space: nowrap;
-  -webkit-tap-highlight-color: transparent;
-  position: relative;
-  overflow: hidden;
-}
-.btn:active { transform: scale(0.96); }
-.btn:focus-visible { outline: 2px solid var(--b500); outline-offset: 2px; }
-
-.btn-utama {
-  background: linear-gradient(135deg, var(--b600), var(--b700));
-  color: #fff;
-  box-shadow: 0 1px 3px rgba(2,132,199,0.2);
-}
-.btn-utama:hover {
-  box-shadow: 0 4px 16px rgba(2,132,199,0.3);
-  filter: brightness(1.08);
-  transform: translateY(-1px);
-}
-
-.btn-lunak {
-  background: var(--b50);
-  color: var(--b700);
-  border: 1px solid var(--b200);
-}
-.btn-lunak:hover { background: var(--b100); border-color: var(--b300); }
-
-.btn-bahaya { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-.btn-bahaya:hover { background: #fee2e2; }
-
-.btn-biru { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-.btn-biru:hover { background: #dbeafe; }
-
-.btn-hijau { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-.btn-hijau:hover { background: #dcfce7; }
-
-.btn-kecil { padding: 0.38rem 0.7rem; font-size: 0.7rem; }
-.btn-lebar { width: 100%; }
-.btn-ikon { padding: 0.45rem; min-width: 2rem; min-height: 2rem; }
-
-@media (prefers-color-scheme: dark) {
-  .btn-bahaya { background: #2e0a0a; color: #f87171; border-color: #561212; }
-  .btn-bahaya:hover { background: #3d0c0c; }
-  .btn-biru { background: #0a1e3a; color: #60a5fa; border-color: #143060; }
-  .btn-biru:hover { background: #0f284a; }
-  .btn-hijau { background: #0a2e1a; color: #4ade80; border-color: #144a2a; }
-  .btn-hijau:hover { background: #0e3a22; }
-}
-
-/* ═══════════════════════════════════════════════════
-   ꧁  LABEL STATUS  ꧂
-   ═══════════════════════════════════════════════════ */
-.label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.18rem 0.6rem;
-  border-radius: var(--r-full);
-  font-size: 0.68rem;
-  font-weight: 580;
-  line-height: 1.35;
-  white-space: nowrap;
-}
-.label svg { width: 0.7rem; height: 0.7rem; }
-.label-tunggu { background: #fef9c3; color: #a16207; }
-.label-setuju { background: #dcfce7; color: #15803d; }
-.label-tolak  { background: #fee2e2; color: #b91c1c; }
-.label-selesai { background: #dbeafe; color: #1d4ed8; }
-.label-batal  { background: var(--es); color: var(--teks-samar); border: 1px solid var(--tepi); }
-
-@media (prefers-color-scheme: dark) {
-  .label-tunggu { background: #422006; color: #facc15; }
-  .label-setuju { background: #0a2e1a; color: #4ade80; }
-  .label-tolak  { background: #2e0a0a; color: #f87171; }
-  .label-selesai { background: #0a1e3a; color: #60a5fa; }
-}
-
-/* ═══════════════════════════════════════════════════
-   ꧁  KOSONG — ilustrasi keadaan  ꧂
-   ═══════════════════════════════════════════════════ */
-.kosong {
-  text-align: center;
-  padding: 5rem 1rem;
-  animation: naik 0.5s ease-out;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.kosong-ikon {
-  position: relative;
-  margin-bottom: 1.25rem;
-}
-.kosong-ikon .utama {
-  width: 3rem;
-  height: 3rem;
-  color: var(--teks-samar);
-  opacity: 0.35;
-}
-.kosong-ikon .kecil {
-  position: absolute;
-  width: 1.2rem;
-  height: 1.2rem;
-  color: var(--teks-samar);
-  opacity: 0.2;
-}
-.kosong-ikon .k1 { top: -15px; right: -20px; }
-.kosong-ikon .k2 { bottom: -10px; left: -18px; transform: rotate(30deg); }
-.kosong h3 { font-size: 1.05rem; font-weight: 620; margin-bottom: 0.35rem; }
-.kosong p { font-size: 0.875rem; color: var(--teks-redup); margin-bottom: 1.1rem; max-width: 320px; }
-
-.kosong-ilustrasi {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-.kosong-ilustrasi .lingkar {
-  width: 5rem;
-  height: 5rem;
-  border-radius: 50%;
-  background: var(--es);
-  border: 2px dashed var(--tepi);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-.kosong-ilustrasi .lingkar svg { width: 2rem; height: 2rem; color: var(--teks-samar); opacity: 0.5; }
-.kosong-ilustrasi .lingkar:hover { border-color: var(--b300); background: var(--b50); }
-
-/* ═══════════════════════════════════════════════════
-   ꧁  OVERLAY — detail premium  ꧂
-   ═══════════════════════════════════════════════════ */
-.lapisan {
-  position: fixed;
-  inset: 0;
-  background: rgba(11,15,21,0.5);
-  z-index: 100;
-  padding: 1.5rem;
-  overflow-y: auto;
-  display: none;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: clamp(1.5rem, 5vh, 3rem);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-.lapisan.buka { display: flex; }
-
-.panel {
-  background: var(--kartu);
-  border: 1px solid var(--tepi);
-  border-radius: var(--r-xl);
-  max-width: 960px;
-  width: 100%;
-  padding: clamp(1.25rem, 3vw, 2.25rem);
-  position: relative;
-  animation: naik-besar 0.4s cubic-bezier(.34, 1.56, .64, 1) both;
-  box-shadow: var(--sha-xl);
-}
-.panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 2rem;
-  right: 2rem;
-  height: 3px;
-  background: linear-gradient(90deg, var(--b300), var(--b600), var(--b500), var(--b600), var(--b300));
-  border-radius: 0 0 6px 6px;
-  z-index: 1;
-}
-
-.tutup-panel {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: var(--r-full);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--es);
-  color: var(--teks-redup);
-  cursor: pointer;
-  transition: all 0.25s;
-  z-index: 5;
-}
-.tutup-panel:hover { background: var(--tepi); color: var(--teks); transform: rotate(90deg); }
-
-.panel-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 3fr 2fr;
-}
-@media (max-width: 700px) {
-  .panel-grid { grid-template-columns: 1fr; }
-}
-
-/* Galeri foto */
-.panel-foto {
-  aspect-ratio: 16 / 10;
-  border-radius: var(--r-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-}
-.panel-foto svg {
-  width: 2.5rem;
-  height: 2.5rem;
-  opacity: 0.6;
-  z-index: 1;
-}
-
-.panel-jempol {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-}
-.jempol-item {
-  width: 4.5rem;
-  height: 3.25rem;
-  border-radius: var(--r);
-  background: var(--es);
-  border: 1.5px solid var(--tepi);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  color: var(--teks-samar);
-  cursor: pointer;
-  transition: all 0.25s;
-  position: relative;
-  overflow: hidden;
-}
-.jempol-item:hover { border-color: var(--b300); transform: translateY(-2px); }
-.jempol-item.aktif { border-color: var(--b500); background: var(--b50); box-shadow: 0 0 0 2px var(--b200); }
-.jempol-item svg { width: 1rem; height: 1rem; }
-
-.panel-catatan {
-  background: var(--es);
-  border: 1px solid var(--tepi);
-  border-radius: var(--r-lg);
-  padding: 1.125rem;
-  margin-top: 1rem;
-}
-.panel-catatan h3 {
-  font-weight: 600;
-  font-size: 0.8rem;
-  margin-bottom: 0.4rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--teks-redup);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-.panel-catatan h3 svg { width: 0.85rem; height: 0.85rem; }
-.panel-catatan p { font-size: 0.82rem; color: var(--teks-redup); line-height: 1.75; }
-
-/* Side panel */
-.panel-sisi { display: flex; flex-direction: column; gap: 0.75rem; }
-
-.panel-info {
-  padding: 1.125rem;
-  border-radius: var(--r-lg);
-  background: var(--es);
-  border: 1px solid var(--tepi);
-}
-.panel-info h2 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-.panel-info .sub {
-  font-size: 0.82rem;
-  color: var(--teks-redup);
-  margin-top: 0.1rem;
-}
-
-.panel-baris {
-  margin-top: 0.85rem;
-  display: grid;
-  gap: 0.35rem;
-  font-size: 0.85rem;
-}
-.panel-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.25rem 0;
-}
-.panel-row span:first-child { color: var(--teks-redup); }
-.panel-row span:last-child { font-weight: 580; }
-.panel-grs { border-top: 1px solid var(--tepi); margin: 0.4rem 0; }
-
-.panel-form {
-  background: var(--kartu);
-  border: 1px solid var(--tepi);
-  border-radius: var(--r-lg);
-  padding: 1.125rem;
-}
-.panel-form h3 {
-  font-size: 0.82rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.9rem;
-  color: var(--teks);
-}
-.panel-form h3 svg { width: 0.95rem; height: 0.95rem; color: var(--b600); }
-.panel-form label {
-  font-size: 0.7rem;
-  font-weight: 530;
-  color: var(--teks-redup);
-  display: block;
-  margin-top: 0.75rem;
-  margin-bottom: 0.25rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.input {
-  width: 100%;
-  border: 1.5px solid var(--tepi);
-  border-radius: var(--r);
-  font-size: 0.875rem;
-  background: var(--kartu);
-  color: var(--teks);
-  outline: none;
-  transition: all 0.2s;
-  font-family: inherit;
-  padding: 0.55rem 0.85rem;
-}
-.input:hover { border-color: var(--b300); }
-.input:focus {
-  border-color: var(--b500);
-  box-shadow: 0 0 0 3px rgba(14,165,233,0.1), 0 0 0 1px var(--b500);
-}
-.input::placeholder { color: var(--teks-samar); }
-textarea.input { resize: vertical; min-height: 3.2rem; }
-
-/* ═══════════════════════════════════════════════════
-   ꧁  LISTING — grup permintaan  ꧂
-   ═══════════════════════════════════════════════════ */
-.grup {
-  background: var(--kartu);
-  border: 1px solid var(--tepi);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  margin-bottom: 0.9rem;
-  animation: naik 0.45s ease-out both;
-  box-shadow: var(--sha-sm);
-  transition: box-shadow 0.3s;
-}
-.grup:hover { box-shadow: var(--sha-md); }
-
-.grup-kepala {
-  padding: 1rem 1.25rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--tepi);
-  background: var(--es);
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-.grup-kepala h3 { font-weight: 640; font-size: 0.95rem; }
-.grup-kepala .kecil { font-size: 0.72rem; color: var(--teks-redup); margin-top: 0.05rem; }
-.grup-badan { padding: 0; }
-
-.req-item {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
-  align-items: center;
-  padding: 0.85rem 1.25rem;
-  border-bottom: 1px solid var(--tepi);
-  transition: all 0.2s;
-  position: relative;
-}
-.req-item:last-child { border-bottom: none; }
-.req-item:hover { background: var(--es); }
-
-/* Garis status di kiri */
-.req-item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  transition: opacity 0.2s;
-}
-.req-item:hover::before { opacity: 0.8; }
-
-/* Biru accent di item */
-.req-item .item-utama { flex: 1; min-width: 160px; }
-.req-item .item-atas {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-}
-.req-item .item-atas strong { font-weight: 620; font-size: 0.92rem; }
-.req-item .item-redup { color: var(--teks-redup); font-size: 0.8rem; }
-.req-item .item-bawah {
-  font-size: 0.7rem;
-  color: var(--teks-redup);
-  margin-top: 0.15rem;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  flex-wrap: wrap;
-}
-.req-item .item-bawah svg { width: 0.72rem; height: 0.72rem; }
-.req-item .item-aksi { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
-
-.req-kosong {
-  padding: 1.5rem;
-  text-align: center;
-  color: var(--teks-redup);
-  font-size: 0.8rem;
-}
-.req-kosong svg {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--teks-samar);
-  margin: 0 auto 0.5rem;
-  display: block;
-}
-
-/* ═══════════════════════════════════════════════════
-   ꧁  LIST — permintaanku  ꧂
-   ═══════════════════════════════════════════════════ */
-.item {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
-  background: var(--kartu);
-  border: 1px solid var(--tepi);
-  border-radius: var(--r-lg);
-  padding: 1rem 1.25rem;
-  transition: all 0.25s;
-  margin-bottom: 0.65rem;
-  animation: naik 0.4s ease-out both;
-  box-shadow: var(--sha-sm);
-  position: relative;
-  overflow: hidden;
-}
-.item:hover {
-  border-color: var(--b200);
-  box-shadow: var(--sha-md);
-  transform: translateX(3px);
-}
-.item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, var(--b400), var(--b600));
-  opacity: 0;
-  transition: opacity 0.25s;
-}
-.item:hover::before { opacity: 0.6; }
-
-.item-utama { flex: 1; min-width: 180px; }
-.item-atas {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-.item-atas strong { font-weight: 620; font-size: 0.92rem; }
-.item-redup { color: var(--teks-redup); font-size: 0.8rem; }
-.item-bawah {
-  font-size: 0.7rem;
-  color: var(--teks-redup);
-  margin-top: 0.2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  flex-wrap: wrap;
-}
-.item-bawah svg { width: 0.72rem; height: 0.72rem; }
-.item-aksi { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
-
-/* ═══════════════════════════════════════════════════
-   ꧁  TOAST — notifikasi penuh rasa  ꧂
-   ═══════════════════════════════════════════════════ */
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  max-width: 420px;
-  width: calc(100% - 2rem);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: var(--mlm);
-  color: #fff;
-  padding: 0.8rem 1rem 0.8rem 0.9rem;
-  border-radius: var(--r);
-  box-shadow: var(--sha-xl), 0 0 0 1px rgba(255,255,255,0.05);
-  font-size: 0.875rem;
-  line-height: 1.5;
-  transform: translateY(calc(100% + 3rem));
-  transition: transform 0.5s cubic-bezier(.34, 1.56, .64, 1), opacity 0.3s;
-  z-index: 300;
-  opacity: 0;
-}
-.toast.muncul {
-  transform: translateY(0);
-  opacity: 1;
-}
-.toast svg { width: 1.2rem; height: 1.2rem; flex: none; }
-.toast .tp {
-  background: none;
-  border: none;
-  color: rgba(255,255,255,0.35);
-  cursor: pointer;
-  padding: 0.25rem;
-  flex: none;
-  transition: color 0.2s;
-}
-.toast .tp:hover { color: #fff; }
-
-@media (max-width: 480px) {
-  .toast { left: 1rem; right: 1rem; max-width: none; bottom: 1rem; }
-  .kartu { --rot: 0deg !important; }
-  .kartu:hover { transform: none !important; }
-  .kartu:hover .kartu-gambar::after { transform: none !important; }
-  .kartu-icon { width: 2.2rem; height: 2.2rem; }
-  .kartu-icon svg { width: 1.1rem; height: 1.1rem; }
-  .grid-kartu { gap: 0.85rem; }
-  select.cari-select { min-width: 0; flex: 1; }
-  .tab-btn { font-size: 0.72rem; padding: 0.4rem 0.5rem; }
-  .tab-btn .label-tab { display: none; }
-  .lapisan { padding: 0.5rem; }
-  .panel { padding: 1rem; }
-}
-
-@media (prefers-color-scheme: dark) {
-  .toast { background: #1e293b; }
-}
-
-/* ═══════════════════════════════════════════════════
-   ꧁  SKELETON — hantu loading  ꧂
-   ═══════════════════════════════════════════════════ */
-.skel {
-  background: linear-gradient(110deg, var(--es) 30%, var(--tepi) 50%, var(--es) 70%);
-  background-size: 200% 100%;
-  animation: kilau 1.8s ease-in-out infinite;
-  border-radius: var(--r);
-}
-.skel-aksen {
-  height: 4px;
-  border-radius: 0;
-}
-.skel-badan { padding: 1rem 1.25rem 1.2rem; }
-.skel-garis { height: 0.85rem; width: 100%; margin-bottom: 0.5rem; border-radius: 4px; }
-.skel-garis.pendek { width: 50%; }
-.skel-garis.sangat-pendek { width: 30%; }
-
-/* ═══════════════════════════════════════════════════
-   ꧁  ANIMASI — gerak yang hidup  ꧂
-   ═══════════════════════════════════════════════════ */
-@keyframes naik {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes naik-besar {
-  from { opacity: 0; transform: translateY(30px) scale(0.96); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes kilau {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-@keyframes mengapung {
-  0%   { transform: translate(0, 0) scale(1); }
-  33%  { transform: translate(30px, -20px) scale(1.05); }
-  66%  { transform: translate(-20px, 15px) scale(0.95); }
-  100% { transform: translate(10px, -30px) scale(1.02); }
-}
-@keyframes daun-terbang {
-  0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { transform: translateY(-400px) rotate(720deg) scale(0); opacity: 0; }
-}
-@keyframes goyang {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-5deg); }
-  75% { transform: rotate(5deg); }
-}
-@keyframes muncul-geser {
-  from { opacity: 0; transform: translateY(10px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ═══════════════════════════════════════════════════
-   ꧁  RESPONSIF  ꧂
-   ═══════════════════════════════════════════════════ */
-@media (max-width: 640px) {
-  .grid-kartu { gap: 0.85rem; grid-template-columns: 1fr; }
-  select.cari-select { min-width: 0; flex: 1; }
-  .tab-btn { font-size: 0.7rem; padding: 0.45rem 0.65rem; }
-  .tab-btn span.label-tab { display: none; }
-  .lapisan { padding: 0.5rem; }
-  .panel { border-radius: var(--r-lg); }
-  .kepala { padding-top: 1.75rem; }
-  .tombol-offline span { display: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,*::before,*::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  .kartu:hover { transform: none; }
-  .item:hover { transform: none; }
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--hitam);-webkit-font-smoothing:antialiased;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding:clamp(1.25rem,4vw,2.5rem) clamp(1rem,4vw,2rem)}
+
+/* header */
+.header{margin-bottom:2rem}
+.header h1{font-size:clamp(1.35rem,2.8vw,1.8rem);font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:.6rem;color:var(--hitam)}
+.header h1 svg{width:1.4rem;height:1.4rem;color:var(--biru)}
+.header p{font-size:.875rem;color:var(--abu);margin-top:.15rem}
+
+/* nav */
+.nav{display:flex;gap:2px;margin-top:1rem;background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);padding:3px}
+.nav-btn{flex:1;padding:.45rem .75rem;border:none;border-radius:7px;font-size:.8rem;font-weight:500;background:transparent;color:var(--abu);cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.35rem}
+.nav-btn:hover{color:var(--hitam);background:var(--bg)}
+.nav-btn.aktif{background:var(--biru);color:#fff}
+.nav-btn svg{width:.9rem;height:.9rem}
+
+/* search */
+.bar{display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.cari{position:relative;flex:1;min-width:160px}
+.cari svg{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:.9rem;height:.9rem;color:var(--abu-muda);pointer-events:none}
+.cari input{width:100%;padding:.5rem .75rem .5rem 2.25rem;border:1.5px solid var(--abu-tipis);border-radius:var(--radius);font-size:.825rem;background:var(--putih);color:var(--hitam);outline:none;transition:border-color .2s;font-family:inherit}
+.cari input:hover{border-color:var(--abu-muda)}
+.cari input:focus{border-color:var(--biru)}
+.cari input::placeholder{color:var(--abu-muda)}
+
+select.filter{padding:.5rem .75rem;height:2.5rem;border:1.5px solid var(--abu-tipis);border-radius:var(--radius);font-size:.8rem;background:var(--putih);color:var(--hitam);outline:none;cursor:pointer;font-family:inherit;min-width:130px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .6rem center;background-size:.85rem;padding-right:2rem}
+select.filter:hover{border-color:var(--abu-muda)}
+select.filter:focus{border-color:var(--biru)}
+@media(prefers-color-scheme:dark){select.filter{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")}}
+
+/* grid */
+.grid{display:grid;gap:.85rem;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+
+/* card */
+.card{background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);padding:1.15rem 1.2rem;cursor:pointer;transition:all .25s;box-shadow:var(--shadow);position:relative}
+.card:hover{box-shadow:var(--shadow-naik);border-color:var(--abu-muda)}
+.card:active{transform:scale(.98)}
+.card h3{font-size:.95rem;font-weight:610;letter-spacing:-.01em;margin-bottom:.15rem;color:var(--hitam)}
+.card .lokasi{font-size:.78rem;color:var(--abu);display:flex;align-items:center;gap:.25rem;margin-bottom:.45rem}
+.card .lokasi svg{width:.8rem;height:.8rem;flex:none;color:var(--abu-muda)}
+.card .kaki{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--abu-tipis);padding-top:.6rem;margin-top:.2rem;font-size:.78rem;color:var(--abu)}
+.card .kaki .pemilik{display:flex;align-items:center;gap:.25rem}
+.card .kaki .pemilik svg{width:.75rem;height:.75rem;color:var(--abu-muda)}
+.card .kaki .minta{color:var(--biru);font-weight:550;display:flex;align-items:center;gap:.2rem;transition:gap .2s}
+.card:hover .kaki .minta{gap:.4rem}
+
+/* badge stok */
+.badge{display:inline-flex;align-items:center;gap:.2rem;padding:.15rem .5rem;border-radius:999px;font-size:.65rem;font-weight:560;background:var(--biru-muda);color:var(--biru-tua);border:1px solid var(--abu-tipis)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font-size:.78rem;font-weight:530;padding:.4rem .85rem;border-radius:7px;border:none;cursor:pointer;transition:all .2s;font-family:inherit;text-decoration:none;white-space:nowrap;line-height:1.4}
+.btn:active{transform:scale(.97)}
+.btn-utama{background:var(--biru);color:#fff}
+.btn-utama:hover{background:var(--biru-tua)}
+.btn-lunak{background:var(--biru-muda);color:var(--biru-tua);border:1px solid var(--abu-tipis)}
+.btn-lunak:hover{background:#dbeafe}
+.btn-bahaya{background:#fef2f2;color:#b91c1c}
+.btn-bahaya:hover{background:#fee2e2}
+.btn-biru{background:#eff6ff;color:#1d4ed8}
+.btn-biru:hover{background:#dbeafe}
+.btn-kecil{padding:.3rem .65rem;font-size:.7rem}
+.btn-lebar{width:100%}
+
+/* labels */
+.label{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:999px;font-size:.65rem;font-weight:550;line-height:1.4}
+.label svg{width:.7rem;height:.7rem}
+.label-tunggu{background:#fef9c3;color:#a16207}
+.label-setuju{background:#dcfce7;color:#15803d}
+.label-tolak{background:#fee2e2;color:#b91c1c}
+.label-selesai{background:#dbeafe;color:#1d4ed8}
+.label-batal{background:var(--abu-tipis);color:var(--abu)}
+@media(prefers-color-scheme:dark){
+  .label-tunggu{background:#422006;color:#facc15}
+  .label-setuju{background:#0a2e1a;color:#4ade80}
+  .label-tolak{background:#2e0a0a;color:#f87171}
+  .label-selesai{background:#0a1e3a;color:#60a5fa}
+  .label-batal{background:var(--abu-tipis);color:var(--abu)}
+}
+
+/* sections */
+.bagian{display:none}
+.bagian.tampil{display:block;animation:naik .35s ease-out}
+
+/* empty state */
+.kosong{text-align:center;padding:4rem 1rem}
+.kosong svg{width:2.8rem;height:2.8rem;color:var(--abu-muda);margin:0 auto 1rem;display:block;opacity:.4}
+.kosong h3{font-size:1rem;font-weight:600;margin-bottom:.25rem}
+.kosong p{font-size:.825rem;color:var(--abu);margin-bottom:1rem}
+
+/* overlay */
+.lapisan{position:fixed;inset:0;background:rgba(11,15,21,.4);z-index:100;padding:1rem;overflow-y:auto;display:none;align-items:flex-start;justify-content:center;padding-top:2rem;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lapisan.buka{display:flex}
+.panel{background:var(--putih);border:1px solid var(--abu-tipis);border-radius:14px;max-width:600px;width:100%;padding:1.5rem;position:relative;animation:besar .3s ease-out;box-shadow:0 20px 60px rgba(11,15,21,.12)}
+.panel-tutup{position:absolute;top:.75rem;right:.75rem;width:2rem;height:2rem;border-radius:999px;border:none;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--abu);cursor:pointer;transition:all .2s}
+.panel-tutup:hover{background:var(--abu-tipis);color:var(--hitam)}
+.panel h2{font-size:1.2rem;font-weight:650;letter-spacing:-.015em}
+.panel .sub{font-size:.8rem;color:var(--abu);margin-top:.1rem;margin-bottom:1rem}
+.panel .info{display:grid;grid-template-columns:1fr 1fr;gap:.35rem .75rem;font-size:.825rem;background:var(--bg);border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:.85rem}
+.panel .info .label{color:var(--abu)}
+.panel .info .value{font-weight:550;text-align:right}
+.panel .info .lebar{grid-column:1/-1;border-top:1px solid var(--abu-tipis);padding-top:.35rem;margin-top:.1rem}
+.panel .info .lebar .value{text-align:left;font-weight:400;color:var(--abu);margin-top:.15rem;line-height:1.65;font-size:.8rem}
+.form-group label{font-size:.72rem;font-weight:520;color:var(--abu);display:block;margin-top:.75rem;margin-bottom:.2rem}
+.form-group input,.form-group textarea{width:100%;border:1.5px solid var(--abu-tipis);border-radius:7px;font-size:.825rem;background:var(--putih);color:var(--hitam);outline:none;transition:border-color .2s;font-family:inherit;padding:.45rem .7rem}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--biru)}
+.form-group textarea{resize:vertical;min-height:3rem}
+
+/* list items */
+.item{display:flex;flex-wrap:wrap;gap:.65rem;align-items:center;background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:.6rem;transition:all .2s;box-shadow:var(--shadow)}
+.item:hover{border-color:var(--abu-muda);box-shadow:var(--shadow-naik)}
+.item-utama{flex:1;min-width:160px}
+.item-atas{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.item-atas strong{font-weight:590;font-size:.875rem}
+.item-redup{color:var(--abu);font-size:.78rem}
+.item-bawah{font-size:.7rem;color:var(--abu);margin-top:.1rem;display:flex;align-items:center;gap:.3rem}
+.item-bawah svg{width:.7rem;height:.7rem}
+.item-aksi{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+
+/* listing group */
+.grup{background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);overflow:hidden;margin-bottom:.75rem;box-shadow:var(--shadow)}
+.grup-kepala{padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--abu-tipis)}
+.grup-kepala h3{font-weight:590;font-size:.875rem}
+.grup-kepala .kecil{font-size:.7rem;color:var(--abu);margin-top:.05rem}
+.req-item{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.65rem 1rem;border-bottom:1px solid var(--abu-tipis);transition:background .15s}
+.req-item:last-child{border-bottom:none}
+.req-item:hover{background:var(--bg)}
+.req-kosong{padding:1.25rem;text-align:center;color:var(--abu);font-size:.78rem}
+.req-kosong svg{width:1.25rem;height:1.25rem;color:var(--abu-muda);margin:0 auto .4rem;display:block}
+
+/* toast */
+.toast{position:fixed;bottom:1.25rem;right:1.25rem;max-width:360px;display:flex;align-items:center;gap:.6rem;background:var(--hitam);color:#fff;padding:.6rem .75rem .6rem .7rem;border-radius:var(--radius);box-shadow:0 10px 40px rgba(11,15,21,.2);font-size:.8rem;line-height:1.4;transform:translateY(calc(100% + 2rem));transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:300}
+.toast.muncul{transform:translateY(0)}
+.toast svg{width:1.1rem;height:1.1rem;flex:none}
+.toast .tp{background:none;border:none;color:rgba(255,255,255,.35);cursor:pointer;padding:.2rem;flex:none}
+.toast .tp:hover{color:#fff}
+
+/* skeleton */
+.skel{background:linear-gradient(110deg,var(--abu-tipis) 25%,#e8ecf0 37%,var(--abu-tipis) 63%);background-size:200% 100%;animation:kilau 1.6s ease-in-out infinite;border-radius:6px}
+@media(prefers-color-scheme:dark){.skel{background:linear-gradient(110deg,var(--abu-tipis) 25%,#1a222e 37%,var(--abu-tipis) 63%);background-size:200% 100%}}
+.skel-garis{height:.8rem;width:100%;margin-bottom:.5rem}
+.skel-garis.pendek{width:50%}
+.skel-garis.sangat-pendek{width:35%}
+
+/* skeleton card */
+.card-skel{background:var(--putih);border:1px solid var(--abu-tipis);border-radius:var(--radius);padding:1.15rem 1.2rem;box-shadow:var(--shadow)}
+
+@keyframes naik{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes besar{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes kilau{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+@media(max-width:480px){
+  .grid{gap:.65rem;grid-template-columns:1fr 1fr}
+  select.filter{min-width:0;flex:1}
+  .nav-btn{font-size:.72rem;padding:.35rem .5rem}
+  .nav-btn span{display:none}
+  .toast{left:1rem;right:1rem;max-width:none}
+  .lapisan{padding:.5rem}
+  .panel{padding:1.15rem}
+}
+@media(max-width:380px){.grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.card:hover{transform:none}.card:active{transform:none}}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="bungkus">
+<header class="header">
+  <h1><i data-lucide="sprout"></i> Bibit</h1>
+  <p>Cari, minta, dan bagikan bibit dari komunitas SpringHub</p>
+  <nav class="nav" role="tablist">
+    <button class="nav-btn aktif" data-tab="marketplace" onclick="pindah('marketplace',this)" role="tab" aria-selected="true">
+      <i data-lucide="store"></i> <span>Marketplace</span>
+    </button>
+    <button class="nav-btn" data-tab="listings" onclick="pindah('listings',this)" role="tab">
+      <i data-lucide="package"></i> <span>Bibitku</span>
+    </button>
+    <button class="nav-btn" data-tab="requests" onclick="pindah('requests',this)" role="tab">
+      <i data-lucide="inbox"></i> <span>Permintaanku</span>
+    </button>
+  </nav>
+</header>
 
-  <!-- ═══════════════════════════════════════════════
-       ꧁ KEPALA — langit biru, tempat benih tumbuh ꧂
-       ═══════════════════════════════════════════════ -->
-  <header class="kepala">
-    <!-- Blob dekoratif -->
-    <div class="kepala-blob b1"></div>
-    <div class="kepala-blob b2"></div>
-    <div class="kepala-blob b3"></div>
-
-    <!-- Daun melayang -->
-    <div class="daun-particle"></div>
-    <div class="daun-particle"></div>
-    <div class="daun-particle"></div>
-    <div class="daun-particle"></div>
-    <div class="daun-particle"></div>
-    <div class="daun-particle"></div>
-
-    <div class="kepala-isi">
-      <div class="kepala-atas">
-        <div class="kepala-judul">
-          <div class="kepala-icon" aria-hidden="true">
-            <i data-lucide="sprout"></i>
-          </div>
-          <div class="kepala-text">
-            <h1>Bibit</h1>
-            <p>Bertukar &amp; berbagi aneka bibit dari komunitas</p>
-          </div>
-        </div>
-        <!-- Hanya dekoratif — link offline -->
-        <a href="/offline" class="tombol-offline" aria-label="Mode offline">
-          <i data-lucide="wifi-off"></i>
-          <span>Offline</span>
-        </a>
-      </div>
-
-      <!-- TAB NAV -->
-      <nav class="tab-nav" role="tablist">
-        <button class="tab-btn aktif" data-tab="marketplace" onclick="pindahTab('marketplace',this)" role="tab" aria-selected="true">
-          <i data-lucide="store"></i>
-          <span class="label-tab">Marketplace</span>
-          <span class="tab-badge" id="jmlMarket">10</span>
-        </button>
-        <button class="tab-btn" data-tab="listings" onclick="pindahTab('listings',this)" role="tab">
-          <i data-lucide="package"></i>
-          <span class="label-tab">Bibitku</span>
-          <span class="tab-badge" id="jmlListing">3</span>
-        </button>
-        <button class="tab-btn" data-tab="requests" onclick="pindahTab('requests',this)" role="tab">
-          <i data-lucide="inbox"></i>
-          <span class="label-tab">Permintaanku</span>
-          <span class="tab-badge" id="jmlRequest">5</span>
-        </button>
-      </nav>
+<!-- MARKETPLACE -->
+<section id="tab-marketplace" class="bagian tampil">
+  <div class="bar">
+    <div class="cari">
+      <i data-lucide="search"></i>
+      <input type="text" id="cari" placeholder="Cari jenis bibit..." oninput="tunda()">
     </div>
-  </header>
+    <select class="filter" id="prov" onchange="filter()">
+      <option value="">Semua Provinsi</option>
+      <option>Jawa Barat</option><option>Jawa Tengah</option><option>Jawa Timur</option>
+      <option>Banten</option><option>Sumatera Utara</option><option>Sumatera Barat</option>
+      <option>Sumatera Selatan</option><option>Lampung</option><option>Bali</option>
+      <option>NTB</option><option>NTT</option><option>Sulawesi Selatan</option>
+      <option>Kalimantan Barat</option><option>Kalimantan Timur</option>
+      <option>Kalimantan Selatan</option><option>Papua</option>
+    </select>
+  </div>
+  <div id="kisi" class="grid"></div>
+  <div id="skel" class="grid" style="display:none">
+    <div class="card-skel"><div class="skel-garis skel"></div><div class="skel-garis pendek skel" style="margin-top:.6rem"></div><div class="skel-garis skel" style="width:40%;margin-top:.75rem"></div></div>
+    <div class="card-skel"><div class="skel-garis skel"></div><div class="skel-garis pendek skel" style="margin-top:.6rem"></div><div class="skel-garis skel" style="width:40%;margin-top:.75rem"></div></div>
+    <div class="card-skel"><div class="skel-garis skel"></div><div class="skel-garis pendek skel" style="margin-top:.6rem"></div><div class="skel-garis skel" style="width:40%;margin-top:.75rem"></div></div>
+  </div>
+  <div class="kosong" id="kosong" style="display:none">
+    <i data-lucide="search-x"></i>
+    <h3>Tidak ditemukan</h3>
+    <p>Coba ubah kata kunci atau filter</p>
+    <button class="btn btn-lunak" onclick="reset()">Reset</button>
+  </div>
+</section>
 
-  <!-- ═══════════════════════════════════════════════
-       ꧁ MARKETPLACE — jelajahi taman ꧂
-       ═══════════════════════════════════════════════ -->
-  <section id="tab-marketplace" class="tab-section tampil">
-    <div class="cari-bar">
-      <div class="cari-box">
-        <i data-lucide="search"></i>
-        <input type="text" id="cariBibit" placeholder="Cari jenis bibit..." oninput="tundaCari()">
-      </div>
-      <select class="cari-select" id="filterProv" onchange="filterKartu()">
-        <option value="">Semua Provinsi</option>
-        <option>Jawa Barat</option><option>Jawa Tengah</option><option>Jawa Timur</option>
-        <option>Banten</option><option>Sumatera Utara</option><option>Sumatera Barat</option>
-        <option>Sumatera Selatan</option><option>Lampung</option><option>Bali</option>
-        <option>NTB</option><option>NTT</option><option>Sulawesi Selatan</option>
-        <option>Kalimantan Barat</option><option>Kalimantan Timur</option>
-        <option>Kalimantan Selatan</option><option>Papua</option>
-      </select>
+<!-- BIBITKU -->
+<section id="tab-listings" class="bagian">
+  <div class="bar">
+    <div class="cari">
+      <i data-lucide="search"></i>
+      <input type="text" id="cariListing" placeholder="Cari..." oninput="renderList()">
     </div>
+    <a href="#" class="btn btn-utama" onclick="ngasih('Fitur laporan bibit segera hadir!','construction');return false">
+      <i data-lucide="plus" style="width:.9rem;height:.9rem"></i> Laporkan
+    </a>
+  </div>
+  <div id="wadahList"></div>
+  <div class="kosong" id="kosongList" style="display:none">
+    <i data-lucide="package"></i>
+    <h3>Belum ada laporan</h3>
+    <p>Laporkan bibit yang kamu miliki</p>
+  </div>
+</section>
 
-    <!-- Grid kartu -->
-    <div id="kisi" class="grid-kartu"></div>
-
-    <!-- Skeleton loading -->
-    <div id="skel" class="grid-kartu" style="display:none">
-      <div class="kartu" style="cursor:default;pointer-events:none">
-        <div class="skel-aksen skel"></div>
-        <div class="skel-badan">
-          <div class="skel-garis skel"></div>
-          <div class="skel-garis pendek skel" style="margin-top:0.75rem"></div>
-          <div class="skel-garis sangat-pendek skel" style="margin-top:0.75rem"></div>
-        </div>
-      </div>
-      <div class="kartu" style="cursor:default;pointer-events:none">
-        <div class="skel-aksen skel"></div>
-        <div class="skel-badan">
-          <div class="skel-garis skel"></div>
-          <div class="skel-garis pendek skel" style="margin-top:0.75rem"></div>
-          <div class="skel-garis sangat-pendek skel" style="margin-top:0.75rem"></div>
-        </div>
-      </div>
-      <div class="kartu" style="cursor:default;pointer-events:none">
-        <div class="skel-aksen skel"></div>
-        <div class="skel-badan">
-          <div class="skel-garis skel"></div>
-          <div class="skel-garis pendek skel" style="margin-top:0.75rem"></div>
-          <div class="skel-garis sangat-pendek skel" style="margin-top:0.75rem"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Empty state -->
-    <div class="kosong" id="kosong" style="display:none">
-      <div class="kosong-ilustrasi">
-        <div class="lingkar"><i data-lucide="search-x"></i></div>
-      </div>
-      <h3>Bibit tidak ditemukan</h3>
-      <p>Belum ada bibit yang cocok dengan kata kunci atau filter yang kamu pilih</p>
-      <button class="btn btn-lunak" onclick="resetFilter()">Reset Pencarian</button>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════
-       ꧁ BIBITKU — koleksi pribadi ꧂
-       ═══════════════════════════════════════════════ -->
-  <section id="tab-listings" class="tab-section">
-    <div class="cari-bar">
-      <div class="cari-box">
-        <i data-lucide="search"></i>
-        <input type="text" id="cariListing" placeholder="Cari laporanmu..." oninput="renderListing()">
-      </div>
-      <a href="#" class="btn btn-utama" onclick="ngasihTau('Fitur laporan bibit segera hadir!','construction')">
-        <i data-lucide="plus" style="width:1rem;height:1rem"></i>
-        Laporkan Bibit
-      </a>
-    </div>
-
-    <div id="wadahListing"></div>
-
-    <div class="kosong" id="kosongListing" style="display:none">
-      <div class="kosong-ilustrasi">
-        <div class="lingkar"><i data-lucide="package"></i></div>
-      </div>
-      <h3>Belum ada laporan bibit</h3>
-      <p>Mulai dengan melaporkan bibit yang kamu miliki, bantu komunitas menanam!</p>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════
-       ꧁ PERMINTAANKU — permohonan dariku ꧂
-       ═══════════════════════════════════════════════ -->
-  <section id="tab-requests" class="tab-section">
-    <div id="wadahRequest"></div>
-
-    <div class="kosong" id="kosongRequest" style="display:none">
-      <div class="kosong-ilustrasi">
-        <div class="lingkar"><i data-lucide="inbox"></i></div>
-      </div>
-      <h3>Belum ada permintaan</h3>
-      <p>Kamu belum mengajukan permintaan bibit. Jelajahi marketplace dan mulai!</p>
-      <button class="btn btn-lunak" onclick="pindahTab('marketplace',document.querySelector('[data-tab=marketplace]'))">Jelajahi Marketplace</button>
-    </div>
-  </section>
+<!-- PERMINTAANKU -->
+<section id="tab-requests" class="bagian">
+  <div id="wadahReq"></div>
+  <div class="kosong" id="kosongReq" style="display:none">
+    <i data-lucide="inbox"></i>
+    <h3>Belum ada permintaan</h3>
+    <p>Jelajahi marketplace dan minta bibit</p>
+    <button class="btn btn-lunak" onclick="pindah('marketplace',document.querySelector('[data-tab=marketplace]'))">Jelajahi</button>
+  </div>
+</section>
 
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     ꧁ OVERLAY — detail bibit ꧂
-     ═══════════════════════════════════════════════ -->
+<!-- OVERLAY -->
 <div class="lapisan" id="lapisan">
   <div class="panel">
-    <button class="tutup-panel" onclick="tutupPanel()" aria-label="Tutup">
-      <i data-lucide="x" style="width:1.125rem;height:1.125rem"></i>
-    </button>
-
-    <div class="panel-grid">
-      <!-- Kiri: foto -->
-      <div>
-        <div class="panel-foto" id="panelFoto">
-          <i data-lucide="tree-pine" style="width:2.5rem;height:2.5rem"></i>
-        </div>
-        <div class="panel-jempol" id="panelJempol">
-          <div class="jempol-item aktif"><i data-lucide="image"></i></div>
-          <div class="jempol-item"><i data-lucide="image"></i></div>
-          <div class="jempol-item"><i data-lucide="image"></i></div>
-        </div>
-        <div class="panel-catatan">
-          <h3><i data-lucide="file-text"></i> Keterangan</h3>
-          <p id="dCatatan"></p>
-        </div>
-      </div>
-
-      <!-- Kanan: info + form -->
-      <div class="panel-sisi">
-        <div class="panel-info">
-          <h2 id="dJenis"></h2>
-          <div class="sub" id="dSubtitle"></div>
-          <div class="panel-baris">
-            <div class="panel-row"><span>Jumlah</span><span id="dJumlah"></span></div>
-            <div class="panel-row"><span>Tersedia</span><span id="dSisa" style="color:var(--b600);font-weight:650"></span></div>
-            <div class="panel-grs"></div>
-            <div class="panel-row"><span>Lokasi</span><span id="dLokasi"></span></div>
-            <div class="panel-row"><span>Pemilik</span><span id="dPemilik"></span></div>
-            <div class="panel-row"><span>Dilaporkan</span><span id="dTanggal"></span></div>
-          </div>
-        </div>
-
-        <div class="panel-form">
-          <h3><i data-lucide="send"></i> Kirim Permintaan</h3>
-          <label for="qty">Jumlah bibit</label>
-          <input type="number" class="input" id="qty" value="1" min="1">
-          <label for="msg">Pesan untuk pemilik</label>
-          <textarea class="input" id="msg" rows="3" placeholder="Contoh: Mau tanam di kebun belakang..."></textarea>
-          <button class="btn btn-utama btn-lebar" style="margin-top:0.9rem" onclick="kirimPermintaan()">
-            <i data-lucide="send" style="width:1rem;height:1rem"></i>
-            Kirim Permintaan
-          </button>
-        </div>
-      </div>
+    <button class="panel-tutup" onclick="tutup()" aria-label="Tutup"><i data-lucide="x" style="width:1rem;height:1rem"></i></button>
+    <h2 id="dJenis"></h2>
+    <div class="sub" id="dSub"></div>
+    <div class="info">
+      <span class="label">Jumlah</span><span class="value" id="dJumlah"></span>
+      <span class="label">Tersedia</span><span class="value" id="dSisa" style="color:var(--biru);font-weight:600"></span>
+      <span class="label">Pemilik</span><span class="value" id="dPemilik"></span>
+      <span class="label">Dilaporkan</span><span class="value" id="dTanggal"></span>
+      <span class="label">Lokasi</span><span class="value" id="dLokasi"></span>
+      <div class="lebar"><span class="label">Keterangan</span><div class="value" id="dCatatan"></div></div>
+    </div>
+    <div class="form-group">
+      <label>Jumlah bibit</label>
+      <input type="number" id="qty" value="1" min="1">
+      <label>Pesan</label>
+      <textarea id="msg" rows="2" placeholder="Mau tanam di kebun..."></textarea>
+      <button class="btn btn-utama btn-lebar" style="margin-top:.75rem" onclick="kirim()">
+        <i data-lucide="send" style="width:.9rem;height:.9rem"></i> Kirim Permintaan
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     ꧁ TOAST — notifikasi kecil penuh rasa ꧂
-     ═══════════════════════════════════════════════ -->
 <div class="toast" id="toast">
-  <i data-lucide="check-circle" id="toastIkon" style="flex:none"></i>
+  <i data-lucide="check-circle" id="toastIkon" style="flex:none;color:var(--biru)"></i>
   <span id="toastPesan" style="flex:1">Berhasil!</span>
-  <button class="tp" onclick="sembunyiToast()" aria-label="Tutup notifikasi">
-    <i data-lucide="x" style="width:1rem;height:1rem"></i>
-  </button>
+  <button class="tp" onclick="sembunyi()"><i data-lucide="x" style="width:.85rem;height:.85rem"></i></button>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     ꧁  JAVASCRIPT — logika taman  ꧂
-     ═══════════════════════════════════════════════ -->
 <script>
-/* ─── ꧁ DATA — bibit tersedia ꧂ ─── */
 const BIBIT = [
-  { id:1, jenis:"Jati",     ikon:"tree-pine",   jumlah:50, sisa:40, prov:"Jawa Barat",   kota:"Bandung",   pemilik:"Asep",  trust:85, tgl:"10 Jul 2026", catatan:"Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm. Lokasi di daerah Cimenyan, Bandung. Ditanam dari biji unggul." },
-  { id:2, jenis:"Bambu Petung", ikon:"flower-2",  jumlah:30, sisa:28, prov:"Jawa Barat",   kota:"Bogor",     pemilik:"Sari",  trust:92, tgl:"12 Jul 2026", catatan:"Bambu petung kualitas bagus, diameter 2-3cm. Berasal dari rumpun induk adaptif. Cocok untuk konservasi tebing." },
-  { id:3, jenis:"Mahoni",   ikon:"building-2",  jumlah:100, sisa:95, prov:"Jawa Barat",   kota:"Garut",     pemilik:"Budi",  trust:78, tgl:"8 Jul 2026",  catatan:"Mahoni hasil persemaian kelompok tani. Tinggi 30-60cm. Siap pindah polibag. Kayu berkualitas untuk masa depan." },
-  { id:4, jenis:"Sengon",   ikon:"zap",         jumlah:25, sisa:20, prov:"Jawa Timur",   kota:"Malang",    pemilik:"Dewi",  trust:88, tgl:"14 Jul 2026", catatan:"Sengon umur 2 bulan. Tinggi 30-40cm. Siap tanam di lahan terbuka. Tumbuh cepat, cocok untuk agroforestri." },
-  { id:5, jenis:"Suren",    ikon:"umbrella",    jumlah:40, sisa:40, prov:"Jawa Tengah",   kota:"Solo",      pemilik:"Joko",  trust:90, tgl:"5 Jul 2026",  catatan:"Bibit suren hasil penangkaran. Adaptasi lokal Solo Raya. Pohon peneduh yang indah dengan kayu bernilai." },
-  { id:6, jenis:"Kaliandra",  ikon:"flame",       jumlah:200, sisa:180, prov:"Jawa Timur", kota:"Banyuwangi", pemilik:"Rina", trust:95, tgl:"13 Jul 2026", catatan:"Kaliandra merah berbunga cantik. Bagus untuk pakan ternak, reboisasi, dan sumber nektar lebah." },
-  { id:7, jenis:"Acacia",   ikon:"sun",         jumlah:75, sisa:70, prov:"Jawa Barat",   kota:"Sukabumi",  pemilik:"Agus",  trust:82, tgl:"11 Jul 2026", catatan:"Acacia mangium. Tumbuh sangat cepat, cocok untuk lahan kritis dan reklamasi tambang." },
-  { id:8, jenis:"Albasia",  ikon:"cloud",       jumlah:60, sisa:55, prov:"Jawa Tengah",   kota:"Semarang",  pemilik:"Fitri", trust:87, tgl:"9 Jul 2026",  catatan:"Albasia ukuran seragam, siap salur. Tinggi ~45cm. Kayu ringan, cocok untuk industri perkakas." },
-  { id:9, jenis:"Gamal",    ikon:"leaf",        jumlah:150, sisa:150, prov:"Banten",      kota:"Pandeglang", pemilik:"Ujang", trust:80, tgl:"15 Jul 2026", catatan:"Gamal — stok melimpah! Cocok untuk pakan ternak, pagar hidup, dan konservasi tanah. Hubungi langsung." },
-  { id:10, jenis:"Saga",    ikon:"heart",       jumlah:35, sisa:30, prov:"Bali",         kota:"Tabanan",   pemilik:"Nyoman", trust:91, tgl:"7 Jul 2026",  catatan:"Saga biji merah, cocok untuk penghijauan lahan kering. Bijinya bisa untuk kerajinan tradisional." },
-];
-
-/* ─── DATA — listingku (laporan bibitku) ─── */
+  {id:1,jenis:"Jati",jml:50,sisa:40,prov:"Jawa Barat",kota:"Bandung",org:"Asep",trust:85,tgl:"10 Jul 2026",cat:"Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm. Dari biji unggul."},
+  {id:2,jenis:"Bambu Petung",jml:30,sisa:28,prov:"Jawa Barat",kota:"Bogor",org:"Sari",trust:92,tgl:"12 Jul 2026",cat:"Diamater 2-3cm. Dari rumpun induk adaptif. Cocok konservasi tebing."},
+  {id:3,jenis:"Mahoni",jml:100,sisa:95,prov:"Jawa Barat",kota:"Garut",org:"Budi",trust:78,tgl:"8 Jul 2026",cat:"Persemaian kelompok tani. Tinggi 30-60cm. Kayu berkualitas."},
+  {id:4,jenis:"Sengon",jml:25,sisa:20,prov:"Jawa Timur",kota:"Malang",org:"Dewi",trust:88,tgl:"14 Jul 2026",cat:"Umur 2 bulan. Tinggi 30-40cm. Tumbuh cepat untuk agroforestri."},
+  {id:5,jenis:"Suren",jml:40,sisa:40,prov:"Jawa Tengah",kota:"Solo",org:"Joko",trust:90,tgl:"5 Jul 2026",cat:"Hasil penangkaran. Adaptasi lokal. Pohon peneduh dengan kayu bernilai."},
+  {id:6,jenis:"Kaliandra",jml:200,sisa:180,prov:"Jawa Timur",kota:"Banyuwangi",org:"Rina",trust:95,tgl:"13 Jul 2026",cat:"Kaliandra merah. Pakan ternak, reboisasi, nektar lebah."},
+  {id:7,jenis:"Acacia",jml:75,sisa:70,prov:"Jawa Barat",kota:"Sukabumi",org:"Agus",trust:82,tgl:"11 Jul 2026",cat:"Acacia mangium. Cepat tumbuh, cocok lahan kritis."},
+  {id:8,jenis:"Albasia",jml:60,sisa:55,prov:"Jawa Tengah",kota:"Semarang",org:"Fitri",trust:87,tgl:"9 Jul 2026",cat:"Ukuran seragam, tinggi ~45cm. Kayu ringan untuk perkakas."},
+  {id:9,jenis:"Gamal",jml:150,sisa:150,prov:"Banten",kota:"Pandeglang",org:"Ujang",trust:80,tgl:"15 Jul 2026",cat:"Stok melimpah! Pakan ternak, pagar hidup, konservasi tanah."},
+  {id:10,jenis:"Saga",jml:35,sisa:30,prov:"Bali",kota:"Tabanan",org:"Nyoman",trust:91,tgl:"7 Jul 2026",cat:"Biji merah. Penghijauan lahan kering. Bisa untuk kerajinan."},
+]
 const LISTINGKU = [
-  { jenis:"Jati", jumlah:50, permintaan:[
-    { dari:"Budi", qty:10, pesan:"Mau tanam di kebun belakang", status:"pending", tgl:"2 hari lalu" },
-    { dari:"Sari", qty:5, pesan:"Buat penghijauan RT", status:"approved", tgl:"1 hari lalu" },
-    { dari:"Doni", qty:3, pesan:"Bibit buat kelompok tani", status:"fulfilled", tgl:"5 hari lalu" },
-  ]},
-  { jenis:"Bambu Petung", jumlah:30, permintaan:[
-    { dari:"Rudi", qty:8, pesan:"Mau nanam di pinggir sungai", status:"pending", tgl:"3 hari lalu" },
-  ]},
-  { jenis:"Mahoni", jumlah:100, permintaan:[] },
-];
-
+  {jenis:"Jati",jml:50,req:[{dari:"Budi",qty:10,msg:"Mau tanam di kebun",st:"pending",tgl:"2 hr"},{dari:"Sari",qty:5,msg:"Penghijauan RT",st:"approved",tgl:"1 hr"},{dari:"Doni",qty:3,msg:"Kelompok tani",st:"fulfilled",tgl:"5 hr"}]},
+  {jenis:"Bambu Petung",jml:30,req:[{dari:"Rudi",qty:8,msg:"Mau nanam di pinggir sungai",st:"pending",tgl:"3 hr"}]},
+  {jenis:"Mahoni",jml:100,req:[]},
+]
 const REQUESTKU = [
-  { jenis:"Jati", qty:10, pemilik:"Asep", lokasi:"Bandung", status:"pending", tgl:"2 hari lalu" },
-  { jenis:"Bambu Petung", qty:5, pemilik:"Sari", lokasi:"Bogor", status:"approved", tgl:"1 hari lalu", telp:"0812-3456-7890" },
-  { jenis:"Mahoni", qty:2, pemilik:"Budi", lokasi:"Garut", status:"rejected", tgl:"3 hari lalu" },
-  { jenis:"Sengon", qty:15, pemilik:"Dewi", lokasi:"Malang", status:"fulfilled", tgl:"5 hari lalu" },
-  { jenis:"Kaliandra", qty:20, pemilik:"Rina", lokasi:"Banyuwangi", status:"cancelled", tgl:"7 hari lalu" },
-];
+  {jenis:"Jati",qty:10,org:"Asep",lok:"Bandung",st:"pending",tgl:"2 hr"},
+  {jenis:"Bambu Petung",qty:5,org:"Sari",lok:"Bogor",st:"approved",tgl:"1 hr",telp:"0812-3456-7890"},
+  {jenis:"Mahoni",qty:2,org:"Budi",lok:"Garut",st:"rejected",tgl:"3 hr"},
+  {jenis:"Sengon",qty:15,org:"Dewi",lok:"Malang",st:"fulfilled",tgl:"5 hr"},
+  {jenis:"Kaliandra",qty:20,org:"Rina",lok:"Banyuwangi",st:"cancelled",tgl:"7 hr"},
+]
+const CLS={pending:"label-tunggu",approved:"label-setuju",rejected:"label-tolak",fulfilled:"label-selesai",cancelled:"label-batal"}
+const LBL={pending:"Menunggu",approved:"Disetujui",rejected:"Ditolak",fulfilled:"Selesai",cancelled:"Dibatalkan"}
+const IKN={pending:"clock",approved:"check-circle",rejected:"x-circle",fulfilled:"check-check",cancelled:"slash"}
 
-/* ─── PALET WARNA — setiap tanaman punya jiwa ─── */
-const WARNA_TAK = {
-  "Jati":         { accent:"#b45309" },
-  "Bambu Petung": { accent:"#16a34a" },
-  "Mahoni":       { accent:"#b91c1c" },
-  "Sengon":       { accent:"#0d9488" },
-  "Suren":        { accent:"#7c3aed" },
-  "Kaliandra":    { accent:"#db2777" },
-  "Acacia":       { accent:"#ca8a04" },
-  "Albasia":      { accent:"#0284c7" },
-  "Gamal":        { accent:"#65a30d" },
-  "Saga":         { accent:"#dc2626" },
-};
-const WARNA_DEFAULT = { accent:"var(--b600)" };
+let tc;function tunda(){clearTimeout(tc);tc=setTimeout(filter,180)}
 
-/* ─── HELPERS ─── */
-const CLS = { pending:'label-tunggu', approved:'label-setuju', rejected:'label-tolak', fulfilled:'label-selesai', cancelled:'label-batal' };
-const LBL = { pending:'Menunggu', approved:'Disetujui', rejected:'Ditolak', fulfilled:'Selesai', cancelled:'Dibatalkan' };
-const IKN = { pending:'clock', approved:'check-circle', rejected:'x-circle', fulfilled:'check-check', cancelled:'slash' };
-
-let timerCari;
-function tundaCari(){ clearTimeout(timerCari); timerCari = setTimeout(filterKartu, 180); }
-
-/* ─── ꧁ GANTI TAB ꧂ ─── */
-function pindahTab(nama, btn) {
-  document.querySelectorAll('.tab-btn').forEach(t => {
-    t.classList.remove('aktif');
-    t.setAttribute('aria-selected', 'false');
-  });
-  document.querySelectorAll('.tab-section').forEach(s => {
-    s.classList.remove('tampil');
-  });
-  btn.classList.add('aktif');
-  btn.setAttribute('aria-selected', 'true');
-  const el = document.getElementById('tab-'+nama);
-  el.classList.add('tampil');
-  setTimeout(() => { if(typeof lucide !== 'undefined') lucide.createIcons(); }, 30);
+function pindah(n,b){
+  document.querySelectorAll(".nav-btn").forEach(t=>{t.classList.remove("aktif");t.setAttribute("aria-selected","false")})
+  document.querySelectorAll(".bagian").forEach(s=>s.classList.remove("tampil"))
+  b.classList.add("aktif");b.setAttribute("aria-selected","true")
+  document.getElementById("tab-"+n).classList.add("tampil")
+  setTimeout(()=>{if(typeof lucide!="undefined")lucide.createIcons()},30)
 }
 
-/* ─── ꧁ RENDER KARTU MARKETPLACE ꧂ ─── */
-function renderKartu(data) {
-  const kisi = document.getElementById('kisi');
-  const kosong = document.getElementById('kosong');
-  const skel = document.getElementById('skel');
-  skel.style.display = 'none';
-
-  if (!data || !data.length) {
-    kisi.innerHTML = '';
-    kosong.style.display = 'flex';
-    return;
-  }
-  kosong.style.display = 'none';
-
-  // Update badge
-  document.getElementById('jmlMarket').textContent = data.length;
-
-  kisi.innerHTML = data.map((b, i) => {
-    const w = WARNA_TAK[b.jenis] || WARNA_DEFAULT;
-    return `
-    <div class="kartu" onclick="bukaDetail(${b.id})" style="animation:naik 0.45s ease-out ${60 + (i*47) + (i%3 * 15)}ms both">
-      <div class="kartu-batas"></div>
-      <div class="kartu-aksen" style="background:${w.accent}"></div>
-      <div class="kartu-badan">
-        <div class="kartu-header">
-          <h3>${b.jenis}</h3>
-          <span class="kartu-badge"><i data-lucide="package" style="width:0.68rem;height:0.68rem"></i>${b.jumlah}</span>
-        </div>
-        <div class="kartu-lokasi"><i data-lucide="map-pin"></i>${b.kota}, ${b.prov}</div>
-        <div class="kartu-divider"></div>
-        <div class="kartu-kaki">
-          <span class="kartu-pemilik">
-            <i data-lucide="user"></i> ${b.pemilik}
-            <span class="kartu-trust"><i data-lucide="star"></i>${b.trust}</span>
-          </span>
-          <span class="kartu-minta">
-            Minta <i data-lucide="arrow-right"></i>
-          </span>
-        </div>
+function renderKartu(d){
+  const k=document.getElementById("kisi"),ko=document.getElementById("kosong"),sk=document.getElementById("skel")
+  sk.style.display="none"
+  if(!d||!d.length){k.innerHTML="";ko.style.display="block";return}
+  ko.style.display="none"
+  k.innerHTML=d.map((b,i)=>`
+    <div class="card" onclick="buka(${b.id})" style="animation:naik .35s ease-out ${i*60}ms both">
+      <h3>${b.jenis}</h3>
+      <div class="lokasi"><i data-lucide="map-pin"></i>${b.kota}, ${b.prov}</div>
+      <div class="kaki">
+        <span class="pemilik"><i data-lucide="user"></i>${b.org}</span>
+        <span class="minta">Minta <i data-lucide="arrow-right"></i></span>
       </div>
-    </div>`;
-  }).join('');
-
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+    </div>`).join("")
+  if(typeof lucide!="undefined")lucide.createIcons()
 }
 
-function filterKartu() {
-  const q = document.getElementById('cariBibit').value.toLowerCase();
-  const p = document.getElementById('filterProv').value;
-  const hasil = BIBIT.filter(b =>
-    (!p || b.prov === p) &&
-    (!q || b.jenis.toLowerCase().includes(q) || b.kota.toLowerCase().includes(q) || b.pemilik.toLowerCase().includes(q))
-  );
-  renderKartu(hasil);
+function filter(){
+  const q=document.getElementById("cari").value.toLowerCase()
+  const p=document.getElementById("prov").value
+  renderKartu(BIBIT.filter(b=>(!p||b.prov===p)&&(!q||b.jenis.toLowerCase().includes(q)||b.kota.toLowerCase().includes(q))))
+}
+function reset(){document.getElementById("cari").value="";document.getElementById("prov").value="";filter()}
+
+let dt=null
+function buka(id){
+  const b=BIBIT.find(x=>x.id===id);if(!b)return;dt=b
+  document.getElementById("dJenis").textContent=b.jenis
+  document.getElementById("dSub").textContent=b.jml+" bibit · "+b.org
+  document.getElementById("dJumlah").textContent=b.jml+" bibit"
+  document.getElementById("dSisa").textContent=b.sisa+" bibit"
+  document.getElementById("dPemilik").textContent=b.org+" · "+b.trust+"%"
+  document.getElementById("dTanggal").textContent=b.tgl
+  document.getElementById("dLokasi").textContent=b.kota+", "+b.prov
+  document.getElementById("dCatatan").textContent=b.cat
+  document.getElementById("qty").max=b.sisa;document.getElementById("qty").value=1
+  document.getElementById("msg").value=""
+  document.getElementById("lapisan").classList.add("buka");document.body.style.overflow="hidden"
+}
+function tutup(){document.getElementById("lapisan").classList.remove("buka");document.body.style.overflow="";dt=null}
+function kirim(){
+  if(!dt)return
+  const q=parseInt(document.getElementById("qty").value)||0
+  if(q<1){ngasih("Jumlah minimal 1","alert-circle");return}
+  if(q>dt.sisa){ngasih("Jumlah melebihi stok","alert-circle");return}
+  ngasih("Permintaan "+q+" "+dt.jenis+" terkirim!","check-circle");tutup()
 }
 
-function resetFilter() {
-  document.getElementById('cariBibit').value = '';
-  document.getElementById('filterProv').value = '';
-  filterKartu();
-}
-
-/* ─── ꧁ DETAIL OVERLAY ꧂ ─── */
-let detailSaatIni = null;
-
-function bukaDetail(id) {
-  const b = BIBIT.find(x => x.id === id);
-  if (!b) return;
-  detailSaatIni = b;
-
-  const w = WARNA_TAK[b.jenis] || WARNA_DEFAULT;
-
-  // Isi data
-  document.getElementById('dJenis').textContent = b.jenis;
-  document.getElementById('dSubtitle').textContent = b.jumlah + ' bibit tersedia';
-  document.getElementById('dJumlah').textContent = b.jumlah + ' bibit';
-  document.getElementById('dSisa').textContent = b.sisa + ' bibit';
-  document.getElementById('dLokasi').textContent = b.kota + ', ' + b.prov;
-  document.getElementById('dPemilik').textContent = b.pemilik + ' · Kepercayaan ' + b.trust + '%';
-  document.getElementById('dTanggal').textContent = b.tgl;
-  document.getElementById('dCatatan').textContent = b.catatan;
-
-  // Foto gradient
-  const foto = document.getElementById('panelFoto');
-  foto.style.background = 'linear-gradient(135deg, ' + w.accent + '22, ' + w.accent + '44)';
-  foto.innerHTML = '<i data-lucide="sprout" style="width:2.5rem;height:2.5rem;z-index:1;opacity:0.5;color:' + w.accent + '"></i>';
-
-  // Reset form
-  document.getElementById('qty').max = b.sisa;
-  document.getElementById('qty').value = 1;
-  document.getElementById('msg').value = '';
-
-  // Buka overlay
-  document.getElementById('lapisan').classList.add('buka');
-  document.body.style.overflow = 'hidden';
-
-  setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 30);
-}
-
-function tutupPanel() {
-  document.getElementById('lapisan').classList.remove('buka');
-  document.body.style.overflow = '';
-  detailSaatIni = null;
-}
-
-function kirimPermintaan() {
-  if (!detailSaatIni) return;
-  const q = parseInt(document.getElementById('qty').value) || 0;
-  if (q < 1) { ngasihTau('Jumlah minimal 1 bibit', 'alert-circle'); return; }
-  if (q > detailSaatIni.sisa) { ngasihTau('Stok hanya ' + detailSaatIni.sisa + ' bibit', 'alert-circle'); return; }
-
-  const pesan = document.getElementById('msg').value.trim();
-  const extra = pesan ? ' dengan pesan "' + pesan.slice(0, 40) + (pesan.length > 40 ? '...' : '') + '"' : '';
-  ngasihTau('✧ ' + q + ' ' + detailSaatIni.jenis + ' diminta' + extra + '!', 'check-circle');
-  tutupPanel();
-}
-
-/* ─── ꧁ RENDER LISTING — Bibitku ꧂ ─── */
-function renderListing() {
-  const w = document.getElementById('wadahListing');
-  const k = document.getElementById('kosongListing');
-  const q = document.getElementById('cariListing').value.toLowerCase();
-  const h = LISTINGKU.filter(g => !q || g.jenis.toLowerCase().includes(q));
-
-  document.getElementById('jmlListing').textContent = LISTINGKU.length;
-
-  if (!h.length) { w.innerHTML = ''; k.style.display = 'flex'; return; }
-  k.style.display = 'none';
-
-  w.innerHTML = h.map((g, gi) => `
-    <div class="grup" style="animation-delay:${gi*80}ms">
+function renderList(){
+  const w=document.getElementById("wadahList"),k=document.getElementById("kosongList"),q=document.getElementById("cariListing").value.toLowerCase()
+  const h=LISTINGKU.filter(g=>!q||g.jenis.toLowerCase().includes(q))
+  if(!h.length){w.innerHTML="";k.style.display="block";return}
+  k.style.display="none"
+  w.innerHTML=h.map((g,gi)=>`
+    <div class="grup" style="animation:naik .35s ease-out ${gi*60}ms both">
       <div class="grup-kepala">
-        <div>
-          <h3>${g.jenis}</h3>
-          <div class="kecil">${g.jumlah} bibit · ${g.permintaan.length} permintaan</div>
-        </div>
-        <span class="kartu-badge" style="background:var(--es);color:var(--teks-redup);border-color:var(--tepi)">${g.permintaan.filter(r=>r.status==='pending').length} menunggu</span>
+        <div><h3>${g.jenis}</h3><div class="kecil">${g.jml} bibit</div></div>
+        <span class="badge">${g.req.filter(r=>r.st==="pending").length} menunggu</span>
       </div>
-      <div class="grup-badan">
-        ${g.permintaan.length ? g.permintaan.map((r, ri) => {
-          const colorMap = { pending:'#eab308', approved:'#22c55e', fulfilled:'#3b82f6', rejected:'#ef4444', cancelled:'#94a3b8' };
-          return `
-          <div class="req-item" style="animation:naik 0.3s ease-out ${(gi*3+ri)*50}ms both">
-            <div class="item-utama">
-              <div class="item-atas">
-                <strong>${r.dari}</strong>
-                <span class="item-redup">minta ${r.qty} bibit</span>
-                <span class="label ${CLS[r.status]}"><i data-lucide="${IKN[r.status]}" style="width:0.7rem;height:0.7rem"></i>${LBL[r.status]}</span>
-              </div>
-              ${r.pesan ? '<div style="color:var(--teks-redup);font-size:0.72rem;font-style:italic;margin-top:0.125rem">“' + r.pesan + '”</div>' : ''}
-              <div class="item-bawah" style="margin-top:0.1rem"><i data-lucide="clock"></i>${r.tgl}</div>
-            </div>
-            <div class="item-aksi">
-              ${r.status === 'pending' ?
-                '<button class="btn btn-kecil btn-hijau" onclick="event.stopPropagation();ngasihTau(\'✓ Permintaan ' + r.dari + ' disetujui! Hubungi untuk ambil\',\'check-circle\')\'"><i data-lucide="check" style="width:0.8rem;height:0.8rem"></i>Setujui</button>' +
-                '<button class="btn btn-kecil btn-bahaya" onclick="event.stopPropagation();ngasihTau(\'✗ Permintaan ' + r.dari + ' ditolak\',\'x-circle\')\'"><i data-lucide="x" style="width:0.8rem;height:0.8rem"></i>Tolak</button>'
-              : ''}
-              ${r.status === 'approved' ?
-                '<button class="btn btn-kecil btn-biru" onclick="event.stopPropagation();ngasihTau(\'✓ Bibit sudah diambil ' + r.dari + '!\',\'check-check\')\'"><i data-lucide="check-check" style="width:0.8rem;height:0.8rem"></i>Selesai</button>'
-              : ''}
-              ${r.status === 'fulfilled' ?
-                '<span style="font-size:0.7rem;color:var(--teks-samar);display:flex;align-items:center;gap:0.25rem"><i data-lucide="check-circle" style="width:0.72rem;height:0.72rem"></i>Selesai</span>'
-              : ''}
-              ${r.status === 'rejected' ?
-                '<span style="font-size:0.7rem;color:var(--teks-samar);display:flex;align-items:center;gap:0.25rem"><i data-lucide="x-circle" style="width:0.72rem;height:0.72rem"></i>Ditolak</span>'
-              : ''}
-            </div>
-          </div>`;
-        }).join('') : '<div class="req-kosong"><i data-lucide="message-circle"></i>Belum ada permintaan untuk bibit ini</div>'}
-      </div>
-    </div>
-  `).join('');
-
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+      <div class="grup-badan">${g.req.length?g.req.map((r,ri)=>`
+        <div class="req-item" style="border-left:3px solid ${r.st==="pending"?"#eab308":r.st==="approved"?"#22c55e":r.st==="fulfilled"?"#3b82f6":"#94a3b8"}">
+          <div style="flex:1;min-width:140px">
+            <div class="item-atas"><strong>${r.dari}</strong><span class="item-redup">${r.qty}</span><span class="label ${CLS[r.st]}"><i data-lucide="${IKN[r.st]}" style="width:.7rem;height:.7rem"></i>${LBL[r.st]}</span></div>
+            ${r.msg?'<div style="color:var(--abu);font-size:.72rem;font-style:italic;margin-top:.05rem">"'+r.msg+'"</div>':''}
+            <div class="item-bawah"><i data-lucide="clock"></i>${r.tgl}</div>
+          </div>
+          <div class="item-aksi">
+            ${r.st==="pending"?'<button class="btn btn-kecil btn-lunak" onclick="event.stopPropagation();ngasih(\\'✓ Disetujui!\\',\\'check-circle\\')"><i data-lucide="check" style="width:.75rem;height:.75rem"></i>Setujui</button><button class="btn btn-kecil btn-bahaya" onclick="event.stopPropagation();ngasih(\\'✗ Ditolak\\',\\'x-circle\\')"><i data-lucide="x" style="width:.75rem;height:.75rem"></i>Tolak</button>':""}
+            ${r.st==="approved"?'<button class="btn btn-kecil btn-biru" onclick="event.stopPropagation();ngasih(\\'✓ Selesai!\\',\\'check-check\\')"><i data-lucide="check-check" style="width:.75rem;height:.75rem"></i>Selesai</button>':""}
+          </div>
+        </div>`).join(""):'<div class="req-kosong"><i data-lucide="message-circle"></i>Belum ada permintaan</div>'}</div></div>`).join("")
+  if(typeof lucide!="undefined")lucide.createIcons()
 }
 
-/* ─── ꧁ RENDER REQUEST — Permintaanku ꧂ ─── */
-function renderRequest() {
-  const w = document.getElementById('wadahRequest');
-  const k = document.getElementById('kosongRequest');
-
-  document.getElementById('jmlRequest').textContent = REQUESTKU.length;
-
-  if (!REQUESTKU.length) { w.innerHTML = ''; k.style.display = 'flex'; return; }
-  k.style.display = 'none';
-
-  w.innerHTML = REQUESTKU.map((r, i) => {
-    let aksi = '';
-    if (r.status === 'pending') {
-      aksi = '<button class="btn btn-kecil btn-bahaya" onclick="ngasihTau(\'✗ Permintaan ' + r.jenis + ' dibatalkan\',\'x-circle\')"><i data-lucide="x" style="width:0.8rem;height:0.8rem"></i>Batalkan</button>';
-    } else if (r.status === 'approved') {
-      aksi = '<span style="font-size:0.78rem;color:var(--teks-redup);display:flex;align-items:center;gap:0.3rem"><i data-lucide="phone" style="width:0.78rem;height:0.78rem;color:var(--b600)"></i>' + r.telp + '</span><a href="tel:' + r.telp + '" class="btn btn-kecil btn-lunak"><i data-lucide="phone-call" style="width:0.8rem;height:0.8rem"></i>Hubungi</a>';
-    }
-
-    const warnaStatus = {
-      pending:'#eab308', approved:'#22c55e', rejected:'#ef4444',
-      fulfilled:'#3b82f6', cancelled:'#94a3b8'
-    };
-
-    return `
-    <div class="item" style="animation-delay:${i*60}ms">
+function renderReq(){
+  const w=document.getElementById("wadahReq"),k=document.getElementById("kosongReq")
+  if(!REQUESTKU.length){w.innerHTML="";k.style.display="block";return}
+  k.style.display="none"
+  w.innerHTML=REQUESTKU.map((r,i)=>{let a=""
+    if(r.st==="pending") a='<button class="btn btn-kecil btn-bahaya" onclick="ngasih(\\'Dibatalkan\\')"><i data-lucide="x" style="width:.75rem;height:.75rem"></i>Batalkan</button>'
+    else if(r.st==="approved") a='<span style="font-size:.78rem;color:var(--abu);display:flex;align-items:center;gap:.25rem"><i data-lucide="phone" style="width:.75rem;height:.75rem;color:var(--biru)"></i>'+r.telp+'</span><a href="tel:'+r.telp+'" class="btn btn-kecil btn-lunak"><i data-lucide="phone-call" style="width:.75rem;height:.75rem"></i>Hubungi</a>'
+    return `<div class="item" style="animation:naik .35s ease-out ${i*50}ms both">
       <div class="item-utama">
-        <div class="item-atas">
-          <strong>${r.jenis}</strong>
-          <span class="item-redup">${r.qty} bibit</span>
-          <span class="label ${CLS[r.status]}"><i data-lucide="${IKN[r.status]}" style="width:0.7rem;height:0.7rem"></i>${LBL[r.status]}</span>
-        </div>
-        <div class="item-bawah">
-          <i data-lucide="user"></i>${r.pemilik}
-          <i data-lucide="map-pin" style="margin-left:0.1rem"></i>${r.lokasi}
-          <i data-lucide="clock" style="margin-left:0.1rem"></i>${r.tgl}
-        </div>
+        <div class="item-atas"><strong>${r.jenis}</strong><span class="item-redup">${r.qty} bibit</span><span class="label ${CLS[r.st]}"><i data-lucide="${IKN[r.st]}" style="width:.7rem;height:.7rem"></i>${LBL[r.st]}</span></div>
+        <div class="item-bawah"><i data-lucide="user"></i>${r.org}<i data-lucide="map-pin" style="margin-left:.2rem"></i>${r.lok}<i data-lucide="clock" style="margin-left:.2rem"></i>${r.tgl}</div>
       </div>
-      <div class="item-aksi">${aksi}</div>
-    </div>`;
-  }).join('');
-
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+      <div class="item-aksi">${a}</div>
+    </div>`
+  }).join("")
+  if(typeof lucide!="undefined")lucide.createIcons()
 }
 
-/* ─── ꧁ TOAST — si notifikasi kecil ꧂ ─── */
-let timerToast;
-
-function ngasihTau(pesan, ikon = 'check-circle') {
-  const t = document.getElementById('toast');
-  document.getElementById('toastPesan').textContent = pesan;
-  document.getElementById('toastIkon').setAttribute('data-lucide', ikon);
-  clearTimeout(timerToast);
-  t.classList.remove('muncul');
-
-  // Force reflow biar animasi jalan ulang
-  void t.offsetWidth;
-
-  t.classList.add('muncul');
-  if (typeof lucide !== 'undefined') lucide.createIcons();
-  timerToast = setTimeout(() => t.classList.remove('muncul'), 3800);
+let tt;function ngasih(p,ik="check-circle"){
+  const t=document.getElementById("toast")
+  document.getElementById("toastPesan").textContent=p
+  document.getElementById("toastIkon").setAttribute("data-lucide",ik)
+  clearTimeout(tt);t.classList.add("muncul")
+  if(typeof lucide!="undefined")lucide.createIcons()
+  tt=setTimeout(()=>t.classList.remove("muncul"),3000)
 }
+function sembunyi(){document.getElementById("toast").classList.remove("muncul");clearTimeout(tt)}
+document.getElementById("lapisan").addEventListener("click",function(e){if(e.target===e.currentTarget)tutup()})
 
-function sembunyiToast() {
-  document.getElementById('toast').classList.remove('muncul');
-  clearTimeout(timerToast);
-}
-
-/* ─── ꧁ CLOSURE — klik di luar panel tutup ꧂ ─── */
-document.getElementById('lapisan').addEventListener('click', function(e) {
-  if (e.target === e.currentTarget) tutupPanel();
-});
-
-/* ─── ꧁ TOMBOL ESC — tutup panel ꧂ ─── */
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape' && document.getElementById('lapisan').classList.contains('buka')) {
-    tutupPanel();
-  }
-});
-
-/* ─── ꧁ INIT — pertama jalan ꧂ ─── */
-filterKartu();
-renderListing();
-renderRequest();
-
-document.addEventListener('DOMContentLoaded', function() {
-  if (typeof lucide !== 'undefined') lucide.createIcons();
-});
-
-/* ─── ꧁ SELESAI — selamat berkebun! ꧂ ─── */
+filter();renderList();renderReq()
+document.addEventListener("DOMContentLoaded",function(){if(typeof lucide!="undefined")lucide.createIcons()})
 </script>
-
 </body>
 </html>
