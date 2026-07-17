@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpringHub · Community-Driven Spring Restoration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/lucide@0.408.0/dist/esm/lucide.css" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.408.0/dist/umd/lucide.js" defer></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--b50:#f0f9ff;--b100:#e0f2fe;--b200:#bae6fd;--b300:#7dd3fc;--b400:#38bdf8;--b500:#0ea5e9;--b600:#0284c7;--b700:#0369a1;--b800:#075985;--b900:#0c4a6e;--ink:#0b0f15;--ink-muted:#475569;--ink-subtle:#94a3b8;--ink-line:#e2e8f0;--n0:#fff;--n50:#f8fafc;--n100:#f1f5f9;--n200:#e2e8f0;--n800:#1e293b;--n900:#0f172a;--night50:#f5f3ef;--night700:#1c232d;--night800:#141a22;--night900:#0b0f15;--shadow-sm:0 1px 2px rgba(11,15,21,.04),0 4px 16px rgba(11,15,21,.04);--shadow-md:0 4px 6px -1px rgba(11,15,21,.06),0 10px 28px -4px rgba(11,15,21,.08);--shadow-lg:0 20px 60px rgba(11,15,21,.12);--radius:12px;--radius-sm:8px;--font:'Inter',system-ui,-apple-system,sans-serif}
+@media(prefers-color-scheme:dark){
+:root{--ink:#f1f5f9;--ink-muted:#94a3b8;--ink-subtle:#64748b;--ink-line:#1e293b;--n0:#0f172a;--n50:#141a22;--n100:#1c232d;--n200:#1e293b;--b50:#0c2d4a;--b100:#0f3a5e;--shadow-sm:0 1px 2px rgba(0,0,0,.2),0 4px 16px rgba(0,0,0,.15);--shadow-md:0 4px 6px -1px rgba(0,0,0,.25),0 10px 28px -4px rgba(0,0,0,.2);--shadow-lg:0 20px 60px rgba(0,0,0,.35);--night50:#1a1f2e}
+}
+body{font-family:var(--font);background:var(--n50);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+.page{max-width:1120px;margin:0 auto;padding:0 1.5rem}
+
+/* ── Section ── */
+section{padding:4rem 0}
+.section-title{text-align:center;font-size:clamp(1.5rem,3vw,2rem);font-weight:800;letter-spacing:-.02em}
+.section-title span{color:var(--b600)}
+.section-desc{margin:.75rem auto 0;max-width:600px;text-align:center;color:var(--ink-muted);font-size:.9rem}
+.card{background:var(--n0);border:1px solid var(--ink-line);border-radius:var(--radius);padding:1rem;box-shadow:var(--shadow-sm)}
+.chip{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .55rem;border-radius:999px;font-size:.7rem;font-weight:550}
+
+/* ── Nav ── */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;flex-wrap:wrap;gap:.5rem}
+.nav-left{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:1.1rem}
+.nav-left svg{width:1.25rem;height:1.25rem;color:var(--b600)}
+.nav-links{display:flex;gap:.25rem;flex-wrap:wrap}
+.nav-links a{font-size:.8rem;color:var(--ink-muted);text-decoration:none;padding:.35rem .65rem;border-radius:var(--radius-sm);transition:all .2s}
+.nav-links a:hover{color:var(--ink);background:var(--n100)}
+.nav-lang{font-size:.75rem;padding:.25rem .5rem;border:1px solid var(--ink-line);border-radius:var(--radius-sm);cursor:pointer;background:none;color:var(--ink-muted)}
+@media(max-width:600px){.nav-links{display:none}}
+
+/* ── Hero ── */
+.hero{padding:5rem 0 4rem;text-align:center;position:relative}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.hero h1 span{background:linear-gradient(135deg,var(--b500),var(--b700));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{max-width:550px;margin:1rem auto 0;color:var(--ink-muted);font-size:.95rem;line-height:1.7}
+.hero-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.75rem}
+.btn{display:inline-flex;align-items:center;gap:.45rem;padding:.6rem 1.25rem;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600;text-decoration:none;transition:all .2s;font-family:inherit;border:none;cursor:pointer}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--b600);color:#fff;box-shadow:0 1px 3px rgba(2,132,199,.2)}
+.btn-primary:hover{background:var(--b700);box-shadow:0 3px 12px rgba(2,132,199,.3)}
+.btn-outline{border:1.5px solid var(--ink-line);color:var(--ink)}
+.btn-outline:hover{background:var(--n100);border-color:var(--ink-muted)}
+.hero-video{margin-top:2rem;border-radius:var(--radius);overflow:hidden;aspect-ratio:16/9;max-width:640px;margin-left:auto;margin-right:auto;background:var(--n100);display:flex;align-items:center;justify-content:center;color:var(--ink-subtle);border:1px solid var(--ink-line)}
+
+/* ── Dashboard Stats ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem}
+.stat-card{background:var(--n0);border:1px solid var(--ink-line);border-radius:var(--radius);padding:1.1rem;text-align:center;box-shadow:var(--shadow-sm)}
+.stat-card svg{width:1.5rem;height:1.5rem;color:var(--b600);margin-bottom:.35rem}
+.stat-card .num{font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
+.stat-card .lbl{font-size:.78rem;color:var(--ink-muted);margin-top:.15rem}
+.stat-card .delta{font-size:.65rem;color:var(--ink-subtle);margin-top:.05rem}
+
+/* ── Map Placeholder ── */
+.map-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2rem}
+@media(max-width:768px){.map-wrap{grid-template-columns:1fr}}
+.map-box{aspect-ratio:16/10;background:var(--n100);border:1px solid var(--ink-line);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--ink-subtle);flex-direction:column;gap:.5rem}
+.map-box svg{width:2rem;height:2rem}
+.map-side{display:flex;flex-direction:column;gap:.75rem}
+
+/* ── Forms + Bibit + Offline ── */
+.form-grid{display:grid;gap:.5rem;margin-top:.75rem}
+.form-grid a{display:flex;align-items:center;justify-content:space-between;padding:.55rem .75rem;border-radius:var(--radius-sm);border:1px solid var(--ink-line);text-decoration:none;color:var(--ink);transition:all .2s;font-size:.82rem;background:var(--n0)}
+.form-grid a:hover{border-color:var(--b300)}
+.form-grid a .pts{font-size:.68rem;color:var(--ink-subtle)}
+.form-grid a svg{width:.85rem;height:.85rem;color:var(--ink-subtle);flex:none}
+
+/* Dual buttons — Bibit + Offline side by side */
+.dual-btn{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.85rem}
+@media(max-width:480px){.dual-btn{grid-template-columns:1fr}}
+.btn-card{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;border-radius:var(--radius);text-decoration:none;transition:all .25s;cursor:pointer;border:none;font-family:inherit;font-size:.82rem;text-align:left;width:100%}
+.btn-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.btn-card .ico{width:2.2rem;height:2.2rem;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex:none;transition:transform .2s}
+.btn-card:hover .ico{transform:scale(1.1)}
+.btn-card .info{flex:1}
+.btn-card .info strong{display:block;font-weight:600;font-size:.85rem}
+.btn-card .info span{display:block;font-size:.7rem;opacity:.7}
+.btn-bibit{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid #a7f3d0;color:#065f46}
+.btn-bibit .ico{background:#10b981;color:#fff}
+.btn-bibit:hover{border-color:#6ee7b7}
+.btn-offline{background:linear-gradient(135deg,var(--b50),var(--b100));border:1px solid var(--b200);color:var(--b700)}
+.btn-offline .ico{background:var(--b600);color:#fff}
+.btn-offline:hover{border-color:var(--b300)}
+@media(prefers-color-scheme:dark){
+.btn-bibit{background:linear-gradient(135deg,#064e3b,#065f46);border-color:#065f46;color:#a7f3d0}
+.btn-bibit .ico{background:#059669}
+.btn-offline{background:linear-gradient(135deg,var(--b50),var(--b800));border-color:var(--b800);color:var(--b200)}
+}
+
+/* ── Volunteer ── */
+.vol-grid{display:grid;grid-template-columns:7fr 5fr;gap:1.25rem;margin-top:2rem}
+@media(max-width:768px){.vol-grid{grid-template-columns:1fr}}
+.activities{display:grid;gap:.75rem;grid-template-columns:1fr 1fr;margin-top:.75rem}
+@media(max-width:480px){.activities{grid-template-columns:1fr}}
+.activity-card{border:1px solid var(--ink-line);border-radius:var(--radius);padding:.75rem;background:var(--n0)}
+.activity-card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.5rem}
+.activity-card .user{font-size:.8rem;font-weight:600}
+.activity-card .action{font-size:.7rem;color:var(--ink-muted)}
+.activity-card .badge{font-size:.65rem;padding:.15rem .4rem;border-radius:999px;background:var(--b50);color:var(--b700);display:flex;align-items:center;gap:.2rem}
+.activity-card .thumb{aspect-ratio:16/9;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--b50),var(--b100));display:flex;align-items:center;justify-content:center;color:var(--b300)}
+.activity-card .foot{display:flex;justify-content:space-between;align-items:center;gap:.5rem;border-top:1px solid var(--ink-line);margin-top:.5rem;padding-top:.5rem;font-size:.68rem;color:var(--ink-muted)}
+
+/* ── Project card ── */
+.project-card{padding:1rem;border:1px solid var(--ink-line);border-radius:var(--radius);background:var(--n0)}
+.project-card h4{font-size:.9rem;font-weight:600;margin-bottom:.15rem}
+.project-card .meta{font-size:.72rem;color:var(--ink-muted);margin-bottom:.5rem;display:flex;align-items:center;gap:.35rem}
+.progress-bar{height:.5rem;border-radius:999px;background:var(--n100);overflow:hidden;margin:.5rem 0}
+.progress-bar div{height:100%;border-radius:999px;background:var(--b500)}
+.project-card .foot{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--ink-muted)}
+
+/* ── Donate ── */
+.donate-card{background:linear-gradient(135deg,var(--b600),var(--b800));color:#fff;border-radius:var(--radius);padding:1.25rem}
+.donate-card h3{font-weight:700;font-size:1rem;margin-bottom:.25rem}
+.donate-card p{font-size:.78rem;opacity:.8;margin-bottom:.75rem}
+.donate-card select{width:100%;padding:.5rem;border-radius:var(--radius-sm);border:none;font-size:.82rem;margin-bottom:.5rem}
+
+/* ── Footer ── */
+.footer{background:var(--night900);color:var(--night50);padding:3rem 0;margin-top:4rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:2rem;font-size:.8rem}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr;gap:1.5rem}}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr}}
+.footer h4{font-weight:600;margin-bottom:.5rem;font-size:.82rem}
+.footer a{display:block;color:rgba(255,255,255,.5);text-decoration:none;padding:.15rem 0;transition:color .2s}
+.footer a:hover{color:#fff}
+.footer .sosial{display:flex;gap:.5rem;margin-top:.5rem}
+.footer .sosial a{width:2rem;height:2rem;border-radius:999px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.footer .sosial a:hover{background:var(--b600)}
+.footer .sosial svg{width:.9rem;height:.9rem}
+.footer-bawah{border-top:1px solid rgba(255,255,255,.08);margin-top:2rem;padding-top:1.5rem;font-size:.75rem;color:rgba(255,255,255,.3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+
+@keyframes naik{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:naik .5s ease-out both}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <div class="nav-left"><i data-lucide="droplets"></i> SpringHub</div>
+  <div class="nav-links">
+    <a href="#">Map</a>
+    <a href="#">Dashboard</a>
+    <a href="#">Community</a>
+    <a href="#">Learn</a>
+    <a href="#">Media</a>
+  </div>
+  <button class="nav-lang">ID</button>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <h1>Community-Driven<br><span>Spring Restoration</span></h1>
+  <p>Join the grassroots movement to protect and restore Indonesia's precious artesian springs. Monitor, restore, and preserve our water sources for future generations.</p>
+  <div class="hero-actions">
+    <a href="#" class="btn btn-primary"><i data-lucide="map"></i> Start Monitoring</a>
+    <a href="#" class="btn btn-outline"><i data-lucide="external-link"></i> Back to Jaga Semesta</a>
+  </div>
+  <div class="hero-video"><i data-lucide="play-circle" style="width:3rem;height:3rem"></i></div>
+</section>
+
+<!-- ═══ DASHBOARD ═══ -->
+<section id="dashboard">
+  <h2 class="section-title">Real-Time <span>Impact Dashboard</span></h2>
+  <div class="stats" style="margin-top:2rem">
+    <div class="stat-card anim" style="animation-delay:0ms"><i data-lucide="droplets"></i><div class="num">127</div><div class="lbl">Mata Air Dipantau</div><div class="delta">↑ 12% bulan ini</div></div>
+    <div class="stat-card anim" style="animation-delay:60ms"><i data-lucide="sprout"></i><div class="num">3.420</div><div class="lbl">Pohon Ditanam</div><div class="delta">↑ 8% bulan ini</div></div>
+    <div class="stat-card anim" style="animation-delay:120ms"><i data-lucide="sparkles"></i><div class="num">Rp48,2Jt</div><div class="lbl">Donasi Terkumpul</div><div class="delta">↑ 15% bulan ini</div></div>
+    <div class="stat-card anim" style="animation-delay:180ms"><i data-lucide="layers"></i><div class="num">24</div><div class="lbl">Rorak Dibangun</div><div class="delta">↑ 3% bulan ini</div></div>
+  </div>
+</section>
+
+<!-- ═══ MAP + REPORT + BIBIT + OFFLINE ═══ -->
+<section id="map">
+  <h2 class="section-title">Interactive <span>Spring Map</span></h2>
+  <p class="section-desc">Explore springs across Indonesia. View their current status, community reports, and contribute your own observations.</p>
+  <div class="map-wrap">
+    <div class="map-box"><i data-lucide="map"></i> <span style="font-size:.8rem">OpenStreetMap</span></div>
+    <div class="map-side">
+      <div class="card" style="flex:1">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">
+          <h3 style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;font-weight:600"><i data-lucide="clipboard-list" style="width:1rem;height:1rem;color:var(--b600)"></i> Report Your Contribution</h3>
+          <span class="chip" style="background:var(--b50);color:var(--b700)"><i data-lucide="sparkles" style="width:.7rem;height:.7rem"></i> Earn points</span>
+        </div>
+        <p style="font-size:.78rem;color:var(--ink-muted);margin-top:.35rem">Lightweight, mobile-friendly forms hosted by SpringHub. No app install needed.</p>
+        <div class="form-grid">
+          <a href="#"><span>Spring Monitoring</span><span class="pts">+25 pts</span><i data-lucide="arrow-right"></i></a>
+          <a href="#"><span>Spring Restoration</span><span class="pts">+100 pts</span><i data-lucide="arrow-right"></i></a>
+          <a href="#"><span>Trench Development</span><span class="pts">+50 pts</span><i data-lucide="arrow-right"></i></a>
+          <a href="#"><span>Tree Planting</span><span class="pts">+50 pts</span><i data-lucide="arrow-right"></i></a>
+          <a href="#"><span>Tree Seedling Stock</span><span class="pts">+15 pts</span><i data-lucide="arrow-right"></i></a>
+        </div>
+
+        <!-- ═══ BIBIT + OFFLINE — BERSISIAN ═══ -->
+        <div class="dual-btn">
+          <a href="/seedlings" class="btn-card btn-bibit">
+            <div class="ico"><i data-lucide="sprout"></i></div>
+            <div class="info">
+              <strong>Lihat Bibit Tersedia</strong>
+              <span>Minta bibit dari komunitas</span>
+            </div>
+          </a>
+          <button class="btn-card btn-offline" onclick="alert('Mode offline akan segera hadir!')">
+            <div class="ico"><i data-lucide="wifi-off"></i></div>
+            <div class="info">
+              <strong>Mode Offline</strong>
+              <span>Survey tanpa internet</span>
+            </div>
+          </button>
+        </div>
+        <!-- ═══ END: BIBIT + OFFLINE ═══ -->
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ VOLUNTEER ═══ -->
+<section id="community">
+  <h2 class="section-title">Volunteer <span>Activities</span></h2>
+  <p class="section-desc">Join thousands of environmental heroes making a difference across Indonesia. Earn points, and unlock eligibility to submit your own spring restoration project once you reach 20.000 pts.</p>
+  <div class="vol-grid">
+    <div>
+      <h3 style="font-size:.82rem;font-weight:600;margin-bottom:.5rem">Recent Activities</h3>
+      <div class="activities">
+        <div class="activity-card anim" style="animation-delay:0ms">
+          <div class="top"><div><div class="user">Rina</div><div class="action">memantau mata air</div></div><span class="badge"><i data-lucide="sparkles" style="width:.6rem;height:.6rem"></i>+25</span></div>
+          <div class="thumb"><i data-lucide="eye" style="width:1.5rem;height:1.5rem"></i></div>
+          <div class="foot"><span><i data-lucide="map-pin" style="width:.65rem;height:.65rem"></i> Bandung · 2 jam lalu</span></div>
+        </div>
+        <div class="activity-card anim" style="animation-delay:60ms">
+          <div class="top"><div><div class="user">Budi</div><div class="action">menanam 50 pohon</div></div><span class="badge"><i data-lucide="sparkles" style="width:.6rem;height:.6rem"></i>+50</span></div>
+          <div class="thumb"><i data-lucide="tree-pine" style="width:1.5rem;height:1.5rem"></i></div>
+          <div class="foot"><span><i data-lucide="map-pin" style="width:.65rem;height:.65rem"></i> Garut · 5 jam lalu</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="background:linear-gradient(135deg,var(--b50),var(--n0));display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">
+        <h3 style="font-size:.9rem;font-weight:600">Submit your Project</h3>
+        <span class="chip" style="background:var(--n100);color:var(--ink-muted)"><i data-lucide="lock" style="width:.65rem;height:.65rem"></i> Locked</span>
+      </div>
+      <p style="font-size:.8rem;color:var(--ink-muted);margin-top:.35rem;line-height:1.6">Spring restoration, endemic tree planting, infiltration trenches, monitoring expeditions — share your initiative with the community.</p>
+      <div style="border:1px solid var(--ink-line);border-radius:var(--radius-sm);padding:.65rem;margin-top:.5rem">
+        <div style="display:flex;justify-content:space-between;font-size:.7rem"><span>Your points</span><span>0 / 20.000</span></div>
+        <div style="height:.35rem;border-radius:999px;background:var(--n100);overflow:hidden;margin-top:.35rem"><div style="width:0%;height:100%;background:var(--b500);border-radius:999px"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--ink-muted);margin-top:.25rem"><span><i data-lucide="shield-check" style="width:.6rem;height:.6rem"></i> Reviewed by admin</span><span style="color:var(--b600);font-weight:500">Cara Dapat Poin</span></div>
+      </div>
+      <button style="width:100%;margin-top:.65rem;padding:.5rem;border-radius:var(--radius-sm);border:1px solid var(--ink-line);background:var(--n0);color:var(--ink-muted);font-size:.78rem;font-weight:500;cursor:not-allowed;font-family:inherit" disabled>Earn 20.000 more pts to unlock</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ AKSI NYATA ═══ -->
+<section>
+  <h2 class="section-title">Aksi <span>Nyata</span></h2>
+  <p class="section-desc">Melindungi mata air berharga Indonesia berarti menjaga ekosistem penopangnya—pohon yang mengikat air dan tanah yang menyimpannya.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2rem">
+    <div>
+      <h3 style="font-size:.82rem;font-weight:600;margin-bottom:.75rem">Proyek Unggulan</h3>
+      <div class="project-card anim" style="animation-delay:0ms">
+        <div style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--ink-muted);margin-bottom:.25rem"><i data-lucide="droplets" style="width:.75rem;height:.75rem;color:var(--b600)"></i> Restorasi Mata Air</div>
+        <h4>Restore Cibeureum Spring</h4>
+        <div class="meta"><i data-lucide="map-pin" style="width:.65rem;height:.65rem"></i> Bogor, Jawa Barat</div>
+        <div class="progress-bar"><div style="width:73%"></div></div>
+        <div class="foot"><span>Target Rp25.000.000</span><span style="font-weight:600;color:var(--b600)">73%</span></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:.82rem;font-weight:600;color:var(--n0);margin-bottom:.75rem">.</h3>
+      <div class="donate-card">
+        <h3><i data-lucide="heart" style="width:1rem;height:1rem"></i> Support Conservation</h3>
+        <p>Donations are processed through Xendit. Every rupiah is tied to a measurable output.</p>
+        <select><option>1 tree seedling</option><option>1 trench (rorak)</option><option>Custom — IDR</option></select>
+        <button class="btn btn-primary" style="width:100%;justify-content:center">Continue to Donate</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+</div>
+
+<footer class="footer">
+  <div class="page">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:.5rem;font-weight:700;margin-bottom:.5rem"><i data-lucide="droplets" style="width:1.1rem;height:1.1rem"></i> SpringHub</div>
+        <p style="color:rgba(255,255,255,.4);font-size:.75rem;line-height:1.7">Empowering communities across Indonesia to protect and restore our precious water sources through collaborative conservation efforts.</p>
+        <div class="sosial">
+          <a href="#"><i data-lucide="instagram"></i></a>
+          <a href="#"><i data-lucide="youtube"></i></a>
+          <a href="#"><i data-lucide="facebook"></i></a>
+        </div>
+      </div>
+      <div><h4>Platform</h4><a href="#">Interactive Spring</a><a href="#">Real-Time Impact</a><a href="#">Volunteer</a><a href="#">Learning</a><a href="#">Latest</a></div>
+      <div><h4>Support</h4><a href="#">Help Center</a><a href="#">Contact Us</a><a href="#">Report Issue</a><a href="#">FAQ</a></div>
+      <div><h4>About</h4><a href="#">Our Mission</a><a href="#">Become a Partner</a><a href="#">Impact Report</a></div>
+      <div><h4>Legal</h4><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
+    </div>
+    <div class="footer-bawah">
+      <span>© 2026 SPRINGHUB by Jaga Semesta. All rights reserved.</span>
+      <span><i data-lucide="heart" style="width:.7rem;height:.7rem;color:var(--b400)"></i> @jaga_semesta</span>
+    </div>
+  </div>
+</footer>
+
+<script>document.addEventListener("DOMContentLoaded",function(){if(typeof lucide!="undefined")lucide.createIcons()})</script>
+</body>
+</html>
