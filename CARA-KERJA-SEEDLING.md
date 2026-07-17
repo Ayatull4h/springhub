@@ -133,17 +133,58 @@ Kamu klik "Kirim Permintaan"
 
 | Peran | Tugas |
 |---|---|
-| **Kamu (Peminta)** | Cari bibit → klik Minta → isi form → tunggu persetujuan → hubungi pemilik → ambil |
-| **Pemilik Bibit** | Lihat permintaan masuk → Setujui/Tolak → kasih bibit |
-| **Sistem** | Catat semua transaksi, update stok, kirim notifikasi |
+| **Volunteer A (Pemilik)** | Lapor bibit → Setujui/Tolak permintaan masuk → Kasih bibit → Klik "Selesai" |
+| **Volunteer B (Peminta)** | Cari bibit → Minta → Ambil bibit → Klik "Terima" |
+| **Admin** | Setujui/Tolak laporan bibit baru + Setujui/Tolak permintaan bibit |
+| **Sistem** | Catat transaksi, update stok, kirim notifikasi, kasih poin |
 
 ### Status permintaan:
 
 ```
-MENUNGGU  ──→  DISETUJUI  ──→  SELESAI
-  │                              (bibit sudah diambil)
-  └──→  DITOLAK
-  └──→  DIBATALKAN (kamu batalkan sendiri)
+VOLUNTEER A (pemilik) lapor bibit
+  │
+  ▼
+ADMIN verifikasi → SETUJU / TOLAK
+  │
+  ├── ✅ SETUJU → bibit masuk Marketplace
+  └── ❌ TOLAK  → laporan ditolak, gak muncul
+
+
+VOLUNTEER B (peminta) lihat Marketplace
+  │
+  ├── Klik "Minta" → isi jumlah + pesan
+  │
+  ▼
+ADMIN verifikasi → SETUJU / TOLAK
+  │  (cek: stok cukup? peminta beneran butuh?)
+  │
+  ├── ✅ SETUJU → notif ke A: "B minta bibit kamu"
+  └── ❌ TOLAK  → B dapet notif "permintaan ditolak"
+
+
+A (pemilik) lihat permintaan dari B
+  │
+  ├── ✅ SETUJUI → kasih nomor HP, B bisa hubungi
+  └── ❌ TOLAK  → B dapet notif "ditolak pemilik"
+
+
+B hubungi A → ambil bibit
+  │
+  ▼
+2 LANGKAH KONFIRMASI:
+  │
+  ├── ❶ A klik "Selesai"  →  "Bibit sudah saya berikan"
+  │     (stok sementara terkunci, belum berkurang)
+  │
+  └── ❷ B klik "Terima"   →  "Bibit sudah saya terima"
+        (stok beneran berkurang di database)
+        │
+        ▼
+  TRANSAKSI SELESAI ✅
+  │
+  ├── A dapet poin (+15)
+  ├── B dapet riwayat permintaan
+  └── Stok A berkurang otomatis
 ```
 
 ---
