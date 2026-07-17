@@ -461,6 +461,81 @@ model Like {
   @@index([projectId])
 }
 
+// ─── SEEDLING ────────────────────────────────────────────────────────────────
+
+enum SeedlingStatus {
+  pending     // menunggu review admin
+  active      // sudah disetujui, muncul di marketplace
+  rejected    // ditolak admin
+  exhausted   // stok habis
+}
+
+enum RequestStatus {
+  pending        // baru diminta, nunggu admin
+  admin_approved // admin setujui, nunggu pemilik setuju
+  owner_approved // pemilik setujui, peminta bisa ambil
+  given          // pemilik klik Selesai (step 1)
+  completed     // peminta klik Terima (step 2), stok berkurang
+  rejected      // ditolak (admin atau pemilik)
+  cancelled     // dibatalkan peminta
+}
+
+model Seedling {
+  id          String         @id @default(uuid())
+  userId      String
+  formSlug    String         @default("seedling-stock")
+  species     String         // jenis bibit (Jati, Bambu, dll)
+  quantity    Int            // jumlah awal
+  stock       Int            // stok tersisa
+  province    String
+  regency     String
+  notes       String         @default("")
+  status      SeedlingStatus @default(pending)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user     Profile           @relation(fields: [userId], references: [id])
+  photos   SeedlingPhoto[]
+  requests SeedlingRequest[]
+
+  @@index([status])
+  @@index([userId])
+  @@index([species])
+  @@index([province])
+}
+
+model SeedlingPhoto {
+  id          String   @id @default(uuid())
+  seedlingId  String
+  storagePath String
+  createdAt   DateTime @default(now())
+
+  seedling Seedling @relation(fields: [seedlingId], references: [id], onDelete: Cascade)
+
+  @@index([seedlingId])
+}
+
+model SeedlingRequest {
+  id              String        @id @default(uuid())
+  seedlingId      String
+  requesterId     String        // yang minta (Volunteer B)
+  ownerId         String        // pemilik (Volunteer A) — denormalized biar gampang query
+  quantity        Int           // jumlah diminta
+  message         String        @default("")
+  status          RequestStatus @default(pending)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  seedling  Seedling @relation(fields: [seedlingId], references: [id], onDelete: Cascade)
+  requester Profile  @relation(fields: [requesterId], references: [id])
+  owner     Profile  @relation(fields: [ownerId], references: [id])
+
+  @@index([seedlingId])
+  @@index([requesterId])
+  @@index([ownerId])
+  @@index([status])
+}
+
 model ContentBlock {
   id          String   @id @default(uuid())
   section     String // "media", "projects", "stats", "testimonials"
