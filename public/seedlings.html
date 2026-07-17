@@ -2,88 +2,105 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bibit — SpringHub</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/lucide@0.408.0/dist/esm/lucide.css" rel="stylesheet">
 <script src="https://unpkg.com/lucide@0.408.0/dist/umd/lucide.js" defer></script>
 <style>
-/* ═══════════════════════════════════════════════
-   T O K E N S   D E S A I N
-   — bumi, akar, daun, senja
-   ═══════════════════════════════════════════════ */
+/* ============================================
+   ROOT — brand springhub.id
+   ============================================ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root {
-  --tanah:   #2d1f14;
-  --tanah-muda: #4a3426;
-  --hutan:  #1a3a2a;
-  --daun:   #2f6b47;
-  --daun-muda: #4a9e6b;
-  --tunas:  #6bc47f;
-  --tunas-pucat: #b8e6c9;
-  --langit:  #f4f0e8;
-  --awan:   #e8e2d6;
-  --kertas:  #faf8f3;
-  --kertas-2: #f5f0e6;
-  --kadus:   #fffdf7;
-  --senja:   #c94a2a;
-  --senja-muda: #e87a5a;
-  --gading:  #d4a85c;
-  --abu:     #8a7f72;
-  --abu-muda:#b8aea0;
-  --abu-tipis:#d6cec0;
-  --jelaga:  #1a1410;
-  --kabut:   #c4bbb0;
-  --bayang:  0 2px 8px rgba(26,20,16,.06), 0 4px 24px rgba(26,20,16,.04);
-  --bayang-naik: 0 8px 32px rgba(26,20,16,.10), 0 2px 8px rgba(26,20,16,.06);
-  --bayang-dalam: 0 20px 60px rgba(26,20,16,.18), 0 4px 16px rgba(26,20,16,.08);
+  --b50: #f0f9ff;
+  --b100: #e0f2fe;
+  --b200: #bae6fd;
+  --b300: #7dd3fc;
+  --b400: #38bdf8;
+  --b500: #0ea5e9;
+  --b600: #0284c7;
+  --b700: #0369a1;
+  --b800: #075985;
+  --b900: #0c4a6e;
+
+  --ink: #0b0f15;
+  --ink-muted: #475569;
+  --ink-subtle: #94a3b8;
+  --ink-line: #e2e8f0;
+
+  --n0:  #ffffff;
+  --n50: #f8fafc;
+  --n100:#f1f5f9;
+  --n200:#e2e8f0;
+  --n300:#cbd5e1;
+  --n400:#94a3b8;
+  --n500:#64748b;
+  --n600:#475569;
+  --n700:#334155;
+  --n800:#1e293b;
+  --n900:#0f172a;
+
+  --night50: #f5f3ef;
+  --night100:#d4d0cb;
+  --night700:#1c232d;
+  --night800:#141a22;
+  --night900:#0b0f15;
+
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --card-border: #e2e8f0;
+
+  --shadow-sm: 0 1px 2px rgba(11,15,21,.04), 0 4px 16px rgba(11,15,21,.04);
+  --shadow-md: 0 4px 6px -1px rgba(11,15,21,.06), 0 10px 28px -4px rgba(11,15,21,.08);
+  --shadow-lg: 0 20px 60px rgba(11,15,21,.15);
   --radius: 12px;
-  --radius-besar: 20px;
+  --radius-lg: 20px;
   --font: 'Inter', system-ui, -apple-system, sans-serif;
-  --leading: 1.65;
+  --leading: 1.6;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --langit:  #16120e;
-    --awan:   #1e1914;
-    --kertas:  #1f1a15;
-    --kertas-2: #231e18;
-    --kadus:   #27211a;
-    --jelaga:  #f0e8de;
-    --abu:     #a0988c;
-    --abu-muda:#70685c;
-    --abu-tipis:#3d362e;
-    --kabut:   #5a5246;
-    --tanah:   #d4b8a0;
-    --tunas:   #5ab874;
-    --tunas-pucat: #2a4a34;
-    --bayang:  0 2px 8px rgba(0,0,0,.2), 0 4px 24px rgba(0,0,0,.12);
-    --bayang-naik: 0 8px 32px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.15);
-    --bayang-dalam: 0 20px 60px rgba(0,0,0,.35);
+    --bg: #0b0f15;
+    --card: #141a22;
+    --card-border: #1c232d;
+    --ink: #f1f5f9;
+    --ink-muted: #94a3b8;
+    --ink-subtle: #64748b;
+    --ink-line: #1e293b;
+    --n0:  #0f172a;
+    --n50: #141a22;
+    --n100:#1c232d;
+    --n200:#1e293b;
+    --b50: #0c2d4a;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.2), 0 4px 16px rgba(0,0,0,.15);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,.25), 0 10px 28px -4px rgba(0,0,0,.2);
+    --shadow-lg: 0 20px 60px rgba(0,0,0,.35);
   }
 }
 
 body {
   font-family: var(--font);
-  background: var(--langit);
-  color: var(--jelaga);
+  background: var(--bg);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   line-height: var(--leading);
 }
 
-/* ═══════════════════════════════════════════════
-   L A Y O U T
-   ═══════════════════════════════════════════════ */
+/* ── layout ── */
 .page {
   max-width: 1120px;
   margin: 0 auto;
   padding: clamp(1.25rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2rem);
 }
 
-/* ── HEADER ── */
+/* ============================================
+   MASTHEAD — akua biru springhub
+   ============================================ */
 .masthead {
   margin-bottom: 2rem;
   position: relative;
@@ -92,12 +109,14 @@ body {
   content: '';
   position: absolute;
   bottom: -1rem;
-  left: 10%;
-  right: 10%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--abu-tipis), transparent);
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 5%, var(--b200), var(--b400), var(--b600), var(--b400), var(--b200), transparent 95%);
+  border-radius: 2px;
+  opacity: .6;
 }
-.masthead-top {
+.masthead-atas {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -105,57 +124,65 @@ body {
   gap: .75rem;
 }
 .masthead h1 {
-  font-size: clamp(1.35rem, 2.8vw, 1.85rem);
-  font-weight: 780;
-  letter-spacing: -.025em;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
   display: flex;
   align-items: center;
-  gap: .625rem;
-  color: var(--jelaga);
+  gap: .75rem;
+  color: var(--ink);
 }
 .masthead h1 .glyph {
   display: flex;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius);
-  background: linear-gradient(145deg, var(--daun), var(--hutan));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+  background: linear-gradient(135deg, var(--b500), var(--b700));
+  box-shadow: 0 2px 8px rgba(2,132,199,.25), inset 0 1px 0 rgba(255,255,255,.15);
+  position: relative;
+  overflow: hidden;
 }
-.masthead h1 .glyph svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: #fff;
+.masthead h1 .glyph::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 70%);
+  pointer-events: none;
 }
+.masthead h1 .glyph svg { width: 1.3rem; height: 1.3rem; color: #fff; }
 .masthead p {
   font-size: .9rem;
-  color: var(--abu);
-  margin-top: .15rem;
+  color: var(--ink-muted);
+  margin-top: .1rem;
   font-weight: 420;
-  letter-spacing: .01em;
 }
 
-/* ── TAB NAV ── */
-.tab-nav {
+/* ── nav tab ── */
+.nav-tab {
   display: flex;
-  gap: .25rem;
+  gap: 2px;
   margin-top: 1.25rem;
-  background: var(--kertas);
-  border: 1px solid var(--abu-tipis);
-  border-radius: calc(var(--radius) + 2px);
-  padding: .25rem;
-  box-shadow: var(--bayang);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: calc(var(--radius) + 4px);
+  padding: 3px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
 }
 .tab-btn {
   flex: 1;
-  padding: .55rem .85rem;
+  padding: .55rem .9rem;
   border: none;
   border-radius: var(--radius);
   font-size: .825rem;
   font-weight: 520;
   background: transparent;
-  color: var(--abu);
+  color: var(--ink-muted);
   cursor: pointer;
   transition: all .25s cubic-bezier(.34, 1.56, .64, 1);
   display: flex;
@@ -165,17 +192,20 @@ body {
   white-space: nowrap;
   font-family: inherit;
   position: relative;
+  z-index: 1;
 }
-.tab-btn:hover { color: var(--jelaga); background: var(--awan); }
-.tab-btn.menor {
-  background: var(--daun);
+.tab-btn:hover { color: var(--ink); background: var(--b50); }
+.tab-btn.aktif {
+  background: linear-gradient(135deg, var(--b600), var(--b700));
   color: #fff;
-  box-shadow: 0 1px 4px rgba(47,107,71,.25);
+  box-shadow: 0 2px 6px rgba(2,132,199,.25);
 }
-.tab-btn.menor svg { color: #fff; }
+.tab-btn.aktif svg { color: #fff; }
 .tab-btn svg { width: 1rem; height: 1rem; flex: none; }
 
-/* ── SEARCH & FILTER ── */
+/* ============================================
+   SEARCH BAR
+   ============================================ */
 .bar {
   display: flex;
   gap: .625rem;
@@ -194,17 +224,37 @@ body {
   transform: translateY(-50%);
   width: 1rem;
   height: 1rem;
-  color: var(--abu-muda);
+  color: var(--ink-subtle);
   pointer-events: none;
+  z-index: 1;
 }
-.cari-bungkus input {
-  padding-left: 2.5rem;
+.cari-bungkus input { padding-left: 2.5rem; }
+
+.input {
+  width: 100%;
+  border: 1.5px solid var(--card-border);
+  border-radius: var(--radius);
+  font-size: .875rem;
+  background: var(--card);
+  color: var(--ink);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+  font-family: inherit;
+  padding: .55rem .85rem;
 }
+.input:hover { border-color: var(--b300); }
+.input:focus {
+  border-color: var(--b500);
+  box-shadow: 0 0 0 3px rgba(14,165,233,.1), 0 0 0 1px rgba(14,165,233,.2);
+  background: var(--bg);
+}
+.input::placeholder { color: var(--ink-subtle); }
+
 select.input {
   appearance: none;
   -webkit-appearance: none;
   padding: .55rem 2.25rem .55rem .85rem;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a7f72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right .65rem center;
   background-size: 1rem;
@@ -212,29 +262,15 @@ select.input {
   min-width: 140px;
   padding-right: 2.25rem;
 }
-
-.input {
-  width: 100%;
-  border: 1.5px solid var(--abu-tipis);
-  border-radius: var(--radius);
-  font-size: .875rem;
-  background: var(--kadus);
-  color: var(--jelaga);
-  outline: none;
-  transition: border-color .2s, box-shadow .2s;
-  font-family: inherit;
-  padding: .55rem .85rem;
+@media (prefers-color-scheme: dark) {
+  select.input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  }
 }
-.input:hover { border-color: var(--abu-muda); }
-.input:focus {
-  border-color: var(--daun);
-  box-shadow: 0 0 0 3px rgba(47,107,71,.12);
-}
-.input::placeholder { color: var(--abu-muda); }
 
-/* ═══════════════════════════════════════════════
-   G R I D   K A R T U
-   ═══════════════════════════════════════════════ */
+/* ============================================
+   GRID
+   ============================================ */
 .grid {
   display: grid;
   gap: 1.125rem;
@@ -243,13 +279,13 @@ select.input {
 
 /* ── KARTU ── */
 .kartu {
-  background: var(--kadus);
-  border: 1px solid var(--abu-tipis);
-  border-radius: var(--radius-besar);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   cursor: pointer;
   transition: all .35s cubic-bezier(.34, 1.56, .64, 1);
-  box-shadow: var(--bayang);
+  box-shadow: var(--shadow-sm);
   position: relative;
 }
 .kartu::before {
@@ -257,48 +293,89 @@ select.input {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(145deg, transparent 40%, rgba(255,255,255,.02));
+  background: linear-gradient(145deg, rgba(255,255,255,.03) 0%, transparent 50%);
   pointer-events: none;
+  z-index: 1;
 }
 .kartu:hover {
   transform: translateY(-4px);
-  box-shadow: var(--bayang-naik);
-  border-color: var(--tunas-pucat);
+  box-shadow: var(--shadow-md);
+  border-color: var(--b300);
 }
 .kartu:active {
   transform: translateY(-1px) scale(.995);
 }
 
+/* stripe biru di atas kartu */
+.kartu::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--b400), var(--b600), var(--b700));
+  opacity: 0;
+  transition: opacity .35s;
+  z-index: 2;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.kartu:hover::after { opacity: 1; }
+
 /* thumbnail */
 .thumb {
   aspect-ratio: 16 / 10;
-  background: linear-gradient(145deg, var(--awan), var(--langit));
+  background: linear-gradient(145deg, var(--b50), var(--b100));
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--abu-muda);
+  color: var(--b300);
   position: relative;
   overflow: hidden;
+  transition: background .35s;
+}
+.kartu:hover .thumb {
+  background: linear-gradient(145deg, var(--b100), var(--b200));
 }
 .thumb::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,.03));
+  background: linear-gradient(180deg, transparent 50%, rgba(11,15,21,.03));
   pointer-events: none;
 }
 .thumb svg {
   width: 2.25rem;
   height: 2.25rem;
   transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
+  opacity: .7;
 }
 .kartu:hover .thumb svg {
-  transform: scale(1.12) rotate(-2deg);
+  transform: scale(1.15) rotate(-3deg);
+  opacity: 1;
 }
 
-/* body kartu */
+/* decorative dots on thumb */
+.thumb::before {
+  content: '';
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56,189,248,.08) 0%, transparent 70%);
+  bottom: -20px;
+  right: -20px;
+  pointer-events: none;
+  transition: transform .4s;
+}
+.kartu:hover .thumb::before {
+  transform: scale(1.3);
+}
+
 .badan {
   padding: 1.125rem 1.25rem 1.25rem;
+  position: relative;
+  z-index: 1;
 }
 .badan-atas {
   display: flex;
@@ -311,33 +388,35 @@ select.input {
   font-weight: 650;
   letter-spacing: -.01em;
   line-height: 1.3;
-  color: var(--tanah);
+  color: var(--ink);
 }
-.label-stok {
+
+.badge {
   display: inline-flex;
   align-items: center;
   gap: .25rem;
   padding: .2rem .65rem;
   border-radius: 999px;
-  font-size: .75rem;
+  font-size: .72rem;
   font-weight: 620;
   white-space: nowrap;
-  background: linear-gradient(145deg, var(--tunas-pucat), color-mix(in srgb, var(--tunas-pucat) 80%, #fff));
-  color: var(--hutan);
   line-height: 1.35;
+  background: var(--b50);
+  color: var(--b700);
+  border: 1px solid var(--b200);
 }
-.label-stok svg { width: .75rem; height: .75rem; }
+.badge svg { width: .75rem; height: .75rem; }
 
 .lokasi {
   display: flex;
   align-items: center;
   gap: .35rem;
   font-size: .8125rem;
-  color: var(--abu);
+  color: var(--ink-muted);
   margin-top: .55rem;
   line-height: 1.4;
 }
-.lokasi svg { width: .875rem; height: .875rem; flex: none; color: var(--abu-muda); }
+.lokasi svg { width: .875rem; height: .875rem; flex: none; color: var(--ink-subtle); }
 
 .kaki-kartu {
   display: flex;
@@ -345,39 +424,41 @@ select.input {
   justify-content: space-between;
   margin-top: .85rem;
   padding-top: .85rem;
-  border-top: 1px solid var(--abu-tipis);
+  border-top: 1px solid var(--card-border);
 }
 .pemilik {
   font-size: .8125rem;
-  color: var(--abu);
+  color: var(--ink-muted);
   display: flex;
   align-items: center;
   gap: .35rem;
 }
-.pemilik svg { width: .8125rem; height: .8125rem; color: var(--abu-muda); }
-.trust-badge {
+.pemilik svg { width: .8125rem; height: .8125rem; color: var(--ink-subtle); }
+.trust {
   display: inline-flex;
   align-items: center;
   gap: .125rem;
   font-weight: 550;
-  color: var(--gading);
+  color: var(--b600);
 }
-.trust-badge svg { width: .6875rem; height: .6875rem; fill: currentColor; }
-.cta-minta {
-  color: var(--daun);
-  font-size: .75rem;
+.trust svg { width: .6875rem; height: .6875rem; fill: currentColor; }
+
+.cta {
+  color: var(--b600);
+  font-size: .72rem;
   font-weight: 640;
   display: flex;
   align-items: center;
   gap: .3rem;
   transition: gap .25s;
 }
-.kartu:hover .cta-minta { gap: .5rem; }
-.cta-minta svg { width: .75rem; height: .75rem; }
+.kartu:hover .cta { gap: .55rem; }
+.cta svg { width: .75rem; height: .75rem; transition: transform .25s; }
+.kartu:hover .cta svg { transform: translateX(2px); }
 
-/* ═══════════════════════════════════════════════
-   T O M B O L
-   ═══════════════════════════════════════════════ */
+/* ============================================
+   BUTTONS
+   ============================================ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -396,96 +477,96 @@ select.input {
   white-space: nowrap;
 }
 .btn:active { transform: scale(.96); }
-.btn-pokok {
-  background: linear-gradient(145deg, var(--daun), var(--hutan));
+.btn-utama {
+  background: linear-gradient(135deg, var(--b600), var(--b700));
   color: #fff;
-  box-shadow: 0 1px 3px rgba(47,107,71,.2);
+  box-shadow: 0 1px 3px rgba(2,132,199,.2);
 }
-.btn-pokok:hover {
-  box-shadow: 0 3px 10px rgba(47,107,71,.3);
-  filter: brightness(1.08);
+.btn-utama:hover {
+  box-shadow: 0 3px 12px rgba(2,132,199,.3);
+  filter: brightness(1.06);
 }
 .btn-lunak {
-  background: var(--awan);
-  color: var(--tanah-muda);
+  background: var(--b50);
+  color: var(--b700);
+  border: 1px solid var(--b200);
 }
-.btn-lunak:hover { background: var(--abu-tipis); }
+.btn-lunak:hover { background: var(--b100); }
 .btn-bahaya {
-  background: #fce8e0;
-  color: var(--senja);
+  background: #fef2f2;
+  color: #b91c1c;
 }
-.btn-bahaya:hover { background: #f8d5c8; }
+.btn-bahaya:hover { background: #fee2e2; }
 .btn-biru {
-  background: #e2eaf5;
-  color: #2a5a8a;
+  background: #eff6ff;
+  color: #1d4ed8;
 }
-.btn-biru:hover { background: #d0dcec; }
-.btn-kecil { padding: .38rem .75rem; font-size: .75rem; }
-.btn-penuh { width: 100%; }
+.btn-biru:hover { background: #dbeafe; }
+.btn-kecil { padding: .38rem .75rem; font-size: .72rem; }
+.btn-lebar { width: 100%; }
 
-/* ═══════════════════════════════════════════════
-   C H I P   S T A T U S
-   ═══════════════════════════════════════════════ */
-.chip {
+/* ============================================
+   LABEL STATUS
+   ============================================ */
+.label {
   display: inline-flex;
   align-items: center;
   gap: .3rem;
   padding: .18rem .65rem;
   border-radius: 999px;
-  font-size: .72rem;
+  font-size: .7rem;
   font-weight: 580;
   line-height: 1.4;
 }
-.chip svg { width: .75rem; height: .75rem; }
-.chip-tunggu { background: #fcf0d8; color: #8a6a1a; }
-.chip-setuju { background: #d8eddc; color: var(--hutan); }
-.chip-tolak  { background: #fce0d8; color: var(--senja); }
-.chip-selesai { background: #d8e4f0; color: #2a5a8a; }
-.chip-batal  { background: var(--awan); color: var(--abu); }
+.label svg { width: .75rem; height: .75rem; }
+.label-tunggu { background: #fef9c3; color: #a16207; }
+.label-setuju { background: #dcfce7; color: #15803d; }
+.label-tolak  { background: #fee2e2; color: #b91c1c; }
+.label-selesai { background: #dbeafe; color: #1d4ed8; }
+.label-batal  { background: var(--n100); color: var(--n500); }
 
-/* ═══════════════════════════════════════════════
-   BAGIAN SEMBUNYI
-   ═══════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  .label-tunggu { background: #422006; color: #facc15; }
+  .label-setuju { background: #0a2e1a; color: #4ade80; }
+  .label-tolak  { background: #2e0a0a; color: #f87171; }
+  .label-selesai { background: #0a1e3a; color: #60a5fa; }
+  .label-batal  { background: var(--n800); color: var(--n400); }
+}
+
+/* ============================================
+   SECTION STATE
+   ============================================ */
 .bagian-sembunyi { display: none; }
-.bagian-aktif { display: block; animation: munc .4s ease-out; }
+.bagian-aktif { display: block; animation: naik .4s ease-out; }
 
-/* ═══════════════════════════════════════════════
-   KOSONG
-   ═══════════════════════════════════════════════ */
+/* ============================================
+   EMPTY STATE
+   ============================================ */
 .kosong {
   text-align: center;
-  padding: 4.5rem 1rem;
-  animation: munc .5s ease-out;
+  padding: 5rem 1rem;
+  animation: naik .5s ease-out;
 }
 .kosong svg {
   width: 3.5rem;
   height: 3.5rem;
-  color: var(--abu-muda);
+  color: var(--ink-subtle);
   margin-bottom: 1rem;
   display: block;
   margin-left: auto;
   margin-right: auto;
-  opacity: .6;
+  opacity: .5;
 }
-.kosong h3 {
-  font-size: 1.05rem;
-  font-weight: 620;
-  color: var(--jelaga);
-  margin-bottom: .35rem;
-}
-.kosong p {
-  font-size: .875rem;
-  color: var(--abu);
-  margin-bottom: 1.1rem;
-}
+.kosong h3 { font-size: 1.05rem; font-weight: 620; color: var(--ink); margin-bottom: .35rem; }
+.kosong p { font-size: .875rem; color: var(--ink-muted); margin-bottom: 1.1rem; }
 
-/* ═══════════════════════════════════════════════
-   OVERLAY / DETAIL
-   ═══════════════════════════════════════════════ */
+/* ============================================
+   OVERLAY
+   ============================================ */
 .lapisan {
   position: fixed;
   inset: 0;
-  background: rgba(20,16,12,.4);
+  background: rgba(11,15,21,.45);
   z-index: 100;
   padding: clamp(1rem, 3vw, 2rem);
   overflow-y: auto;
@@ -498,15 +579,16 @@ select.input {
 }
 .lapisan.buka { display: flex; }
 
-.lapisan-dalam {
-  background: var(--kadus);
-  border-radius: var(--radius-besar);
+.panel {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
   max-width: 940px;
   width: 100%;
   padding: clamp(1.25rem, 3vw, 2.25rem);
   position: relative;
-  animation: besar .35s ease-out;
-  box-shadow: var(--bayang-dalam);
+  animation: membesar .35s ease-out;
+  box-shadow: var(--shadow-lg);
 }
 
 .tutup {
@@ -520,31 +602,30 @@ select.input {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--awan);
-  color: var(--abu);
+  background: var(--n100);
+  color: var(--ink-muted);
   cursor: pointer;
   transition: all .2s;
+  z-index: 2;
 }
-.tutup:hover { background: var(--abu-tipis); color: var(--jelaga); }
+.tutup:hover { background: var(--n200); color: var(--ink); }
 
 .grid-detail {
   display: grid;
   gap: 1.5rem;
   grid-template-columns: 3fr 2fr;
 }
-@media (max-width: 700px) {
-  .grid-detail { grid-template-columns: 1fr; }
-}
+@media (max-width: 700px) { .grid-detail { grid-template-columns: 1fr; } }
 
 .foto-detail {
   aspect-ratio: 16 / 10;
-  background: linear-gradient(145deg, var(--awan), var(--langit));
-  border-radius: var(--radius-besar);
+  background: linear-gradient(145deg, var(--b50), var(--b100));
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--abu-muda);
-  border: 1px solid var(--abu-tipis);
+  color: var(--b300);
+  border: 1px solid var(--b200);
 }
 .foto-detail svg { width: 2.5rem; height: 2.5rem; }
 
@@ -557,23 +638,23 @@ select.input {
   width: 4.5rem;
   height: 3.5rem;
   border-radius: var(--radius);
-  background: var(--awan);
-  border: 1.5px solid transparent;
+  background: var(--n50);
+  border: 1.5px solid var(--n200);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: .6875rem;
-  color: var(--abu-muda);
+  color: var(--ink-subtle);
   cursor: pointer;
   transition: all .2s;
 }
-.jempol-item:hover { border-color: var(--tunas-pucat); }
-.jempol-item.aktif { border-color: var(--daun); background: var(--tunas-pucat); }
+.jempol-item:hover { border-color: var(--b300); }
+.jempol-item.aktif { border-color: var(--b500); background: var(--b50); }
 
 .catatan {
-  background: var(--kertas-2);
-  border: 1px solid var(--abu-tipis);
-  border-radius: var(--radius-besar);
+  background: var(--n50);
+  border: 1px solid var(--n200);
+  border-radius: var(--radius-lg);
   padding: 1.125rem;
   margin-top: 1rem;
 }
@@ -584,26 +665,18 @@ select.input {
   display: flex;
   align-items: center;
   gap: .4rem;
-  color: var(--tanah-muda);
+  color: var(--ink-muted);
 }
 .catatan h3 svg { width: .875rem; height: .875rem; }
-.catatan p {
-  font-size: .8125rem;
-  color: var(--abu);
-  line-height: 1.75;
-}
+.catatan p { font-size: .8125rem; color: var(--ink-muted); line-height: 1.75; }
 
-.panel-sisi {
-  display: flex;
-  flex-direction: column;
-  gap: .75rem;
-}
+.panel-sisi { display: flex; flex-direction: column; gap: .75rem; }
 
 .info-detail {
   padding: 1.125rem;
-  border-radius: var(--radius-besar);
-  background: var(--kertas-2);
-  border: 1px solid var(--abu-tipis);
+  border-radius: var(--radius-lg);
+  background: var(--n50);
+  border: 1px solid var(--n200);
 }
 .info-detail h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
 
@@ -619,14 +692,14 @@ select.input {
   align-items: center;
   padding: .25rem 0;
 }
-.baris span:first-child { color: var(--abu); }
-.baris span:last-child { font-weight: 580; color: var(--jelaga); }
-.garis { border-top: 1px solid var(--abu-tipis); margin: .4rem 0; }
+.baris span:first-child { color: var(--ink-muted); }
+.baris span:last-child { font-weight: 580; color: var(--ink); }
+.garis-batas { border-top: 1px solid var(--n200); margin: .4rem 0; }
 
 .form-minta {
-  background: var(--kadus);
-  border: 1px solid var(--abu-tipis);
-  border-radius: var(--radius-besar);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
   padding: 1.125rem;
 }
 .form-minta h3 {
@@ -636,13 +709,13 @@ select.input {
   align-items: center;
   gap: .5rem;
   margin-bottom: .9rem;
-  color: var(--tanah-muda);
+  color: var(--ink);
 }
-.form-minta h3 svg { width: 1rem; height: 1rem; color: var(--daun); }
+.form-minta h3 svg { width: 1rem; height: 1rem; color: var(--b600); }
 .form-minta label {
-  font-size: .75rem;
+  font-size: .72rem;
   font-weight: 520;
-  color: var(--abu);
+  color: var(--ink-muted);
   display: block;
   margin-top: .75rem;
   margin-bottom: .25rem;
@@ -650,26 +723,40 @@ select.input {
 .form-minta .input { display: block; }
 .form-minta textarea.input { resize: vertical; min-height: 3.5rem; }
 
-/* ═══════════════════════════════════════════════
-   LIST ITEM
-   ═══════════════════════════════════════════════ */
-.item-daftar {
+/* ============================================
+   LIST ITEM (permintaanku)
+   ============================================ */
+.item {
   display: flex;
   flex-wrap: wrap;
   gap: .75rem;
   align-items: center;
-  background: var(--kadus);
-  border: 1px solid var(--abu-tipis);
-  border-radius: var(--radius-besar);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
   padding: 1rem 1.25rem;
   transition: all .25s;
   margin-bottom: .7rem;
-  animation: munc .4s ease-out both;
-  box-shadow: var(--bayang);
+  animation: naik .4s ease-out both;
+  box-shadow: var(--shadow-sm);
+  position: relative;
 }
-.item-daftar:hover {
-  border-color: var(--abu-muda);
-  box-shadow: var(--bayang-naik);
+.item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 3px;
+  background: linear-gradient(180deg, var(--b300), var(--b600));
+  border-radius: 0 3px 3px 0;
+  opacity: 0;
+  transition: opacity .25s;
+}
+.item:hover::before { opacity: 1; }
+.item:hover {
+  border-color: var(--b200);
+  box-shadow: var(--shadow-md);
 }
 .item-utama { flex: 1; min-width: 180px; }
 .item-atas {
@@ -678,11 +765,11 @@ select.input {
   gap: .5rem;
   flex-wrap: wrap;
 }
-.item-atas strong { font-weight: 620; font-size: .9375rem; color: var(--tanah); }
-.item-redup { color: var(--abu); font-size: .8125rem; }
+.item-atas strong { font-weight: 620; font-size: .9375rem; }
+.item-redup { color: var(--ink-muted); font-size: .8125rem; }
 .item-bawah {
-  font-size: .75rem;
-  color: var(--abu);
+  font-size: .72rem;
+  color: var(--ink-muted);
   margin-top: .2rem;
   display: flex;
   align-items: center;
@@ -691,61 +778,61 @@ select.input {
 .item-bawah svg { width: .75rem; height: .75rem; }
 .item-aksi { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 
-/* ═══════════════════════════════════════════════
-   GRUP LISTING
-   ═══════════════════════════════════════════════ */
+/* ============================================
+   GRUP LISTING (bibitku)
+   ============================================ */
 .grup {
-  background: var(--kadus);
-  border: 1px solid var(--abu-tipis);
-  border-radius: var(--radius-besar);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: 1rem;
-  animation: munc .4s ease-out both;
-  box-shadow: var(--bayang);
+  animation: naik .4s ease-out both;
+  box-shadow: var(--shadow-sm);
 }
 .grup-kepala {
   padding: 1rem 1.25rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--abu-tipis);
-  background: var(--kertas);
+  border-bottom: 1px solid var(--card-border);
+  background: var(--n50);
 }
-.grup-kepala h3 { font-weight: 620; font-size: .9375rem; color: var(--tanah); }
-.grup-kepala .kecil { font-size: .75rem; color: var(--abu); margin-top: .1rem; }
+.grup-kepala h3 { font-weight: 620; font-size: .9375rem; }
+.grup-kepala .kecil { font-size: .75rem; color: var(--ink-muted); margin-top: .1rem; }
 .grup-badan { padding: 0; }
 
-.permintaan-item {
+.req-item {
   display: flex;
   flex-wrap: wrap;
   gap: .625rem;
   align-items: center;
   padding: .875rem 1.25rem;
-  border-bottom: 1px solid var(--abu-tipis);
+  border-bottom: 1px solid var(--card-border);
   transition: background .2s;
 }
-.permintaan-item:last-child { border-bottom: none; }
-.permintaan-item:hover { background: var(--awan); }
+.req-item:last-child { border-bottom: none; }
+.req-item:hover { background: var(--n50); }
 
 .kosong-req {
   padding: 1.5rem;
   text-align: center;
-  color: var(--abu);
+  color: var(--ink-muted);
   font-size: .8125rem;
 }
 .kosong-req svg {
   width: 2rem;
   height: 2rem;
-  color: var(--abu-muda);
+  color: var(--ink-subtle);
   margin-bottom: .5rem;
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* ═══════════════════════════════════════════════
+/* ============================================
    TOAST
-   ═══════════════════════════════════════════════ */
+   ============================================ */
 .toast {
   position: fixed;
   bottom: 1.75rem;
@@ -754,20 +841,20 @@ select.input {
   display: flex;
   align-items: center;
   gap: .75rem;
-  background: var(--tanah);
-  color: var(--kadus);
+  background: var(--ink);
+  color: #fff;
   padding: .75rem 1rem .75rem .9rem;
   border-radius: var(--radius);
-  box-shadow: var(--bayang-dalam);
+  box-shadow: var(--shadow-lg);
   font-size: .875rem;
   line-height: 1.5;
-  transform: translateY(calc(100% + 2rem));
+  transform: translateY(calc(100% + 2.5rem));
   transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
   z-index: 300;
 }
 .toast.muncul { transform: translateY(0); }
 .toast svg { width: 1.25rem; height: 1.25rem; flex: none; }
-.toast .tutup-toast {
+.toast .tutup-t {
   background: none;
   border: none;
   color: rgba(255,255,255,.4);
@@ -775,29 +862,29 @@ select.input {
   padding: .25rem;
   flex: none;
 }
-.toast .tutup-toast:hover { color: #fff; }
+.toast .tutup-t:hover { color: #fff; }
 
-/* ═══════════════════════════════════════════════
+/* ============================================
    SKELETON
-   ═══════════════════════════════════════════════ */
+   ============================================ */
 .kerangka {
-  background: linear-gradient(110deg, var(--awan) 25%, var(--abu-tipis) 37%, var(--awan) 63%);
+  background: linear-gradient(110deg, var(--n100) 25%, var(--n200) 37%, var(--n100) 63%);
   background-size: 200% 100%;
   animation: kilau 1.6s ease-in-out infinite;
   border-radius: var(--radius);
 }
-.kerangka-kartu { aspect-ratio: 16/10; border-radius: var(--radius-besar); margin-bottom: .5rem; }
-.kerangka-garis { height: .85rem; width: 100%; margin-bottom: .5rem; }
+.kerangka-kartu { aspect-ratio: 16/10; border-radius: var(--radius-lg); margin-bottom: .5rem; }
+.kerangka-garis { height: .85rem; width: 100%; margin-bottom: .5rem; border-radius: 4px; }
 .kerangka-garis.pendek { width: 55%; }
 
-/* ═══════════════════════════════════════════════
-   ANIMASI
-   ═══════════════════════════════════════════════ */
-@keyframes munc {
+/* ============================================
+   KEYFRAMES
+   ============================================ */
+@keyframes naik {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes besar {
+@keyframes membesar {
   from { opacity: 0; transform: scale(.95); }
   to   { opacity: 1; transform: scale(1); }
 }
@@ -805,26 +892,19 @@ select.input {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-@keyframes turun {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 
-/* ═══════════════════════════════════════════════
-   R E S P O N S I F
-   ═══════════════════════════════════════════════ */
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 @media (max-width: 480px) {
   .grid { gap: .75rem; grid-template-columns: 1fr; }
   select.input { min-width: 0; flex: 1; }
-  .tab-btn { font-size: .75rem; padding: .4rem .5rem; }
+  .tab-btn { font-size: .7rem; padding: .4rem .5rem; }
   .tab-btn span { display: none; }
   .toast { left: 1rem; right: 1rem; max-width: none; }
   .lapisan { padding: .5rem; }
 }
 
-/* ═══════════════════════════════════════════════
-   GERAKAN DIKURANGI
-   ═══════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after {
     animation-duration: .01ms !important;
@@ -841,7 +921,7 @@ select.input {
 
   <!-- ── MASTHEAD ── -->
   <header class="masthead">
-    <div class="masthead-top">
+    <div class="masthead-atas">
       <div>
         <h1>
           <span class="glyph" aria-hidden="true"><i data-lucide="sprout"></i></span>
@@ -850,8 +930,8 @@ select.input {
         <p>Cari, minta, dan bagikan bibit dari komunitas SpringHub</p>
       </div>
     </div>
-    <nav class="tab-nav" role="tablist">
-      <button class="tab-btn menor" data-tab="marketplace" onclick="pindahTab('marketplace',this)" role="tab" aria-selected="true">
+    <nav class="nav-tab" role="tablist">
+      <button class="tab-btn aktif" data-tab="marketplace" onclick="pindahTab('marketplace',this)" role="tab" aria-selected="true">
         <i data-lucide="store"></i>
         <span>Marketplace</span>
       </button>
@@ -885,13 +965,15 @@ select.input {
     </div>
 
     <div id="kisiMarket" class="grid"></div>
+
     <div id="kerangkaMarket" class="grid" style="display:none">
-      <div class="kartu" style="cursor:default;pointer-events:none"><div class="kerangka-kartu kerangka"></div><div class="badan"><div class="kerangka-garis kerangka"></div><div class="kerangka-garis pendek kerangka" style="margin-top:.75rem"></div><div class="kerangka-garis pendek kerangka" style="width:40%;margin-top:.75rem"></div></div></div>
-      <div class="kartu" style="cursor:default;pointer-events:none"><div class="kerangka-kartu kerangka"></div><div class="badan"><div class="kerangka-garis kerangka"></div><div class="kerangka-garis pendek kerangka" style="margin-top:.75rem"></div><div class="kerangka-garis pendek kerangka" style="width:40%;margin-top:.75rem"></div></div></div>
-      <div class="kartu" style="cursor:default;pointer-events:none"><div class="kerangka-kartu kerangka"></div><div class="badan"><div class="kerangka-garis kerangka"></div><div class="kerangka-garis pendek kerangka" style="margin-top:.75rem"></div><div class="kerangka-garis pendek kerangka" style="width:40%;margin-top:.75rem"></div></div></div>
+      <div class="kartu" style="cursor:default;pointer-events:none"><div class="kerangka-kartu kerangka"></div><div class="badan"><div class="kerangka-garis kerangka"></div><div class="kerangka-garis pendek kerangka" style="margin-top:.75rem"></div><div class="kerangka-garis pendek kerangka" style="width:35%;margin-top:.75rem"></div></div></div>
+      <div class="kartu" style="cursor:default;pointer-events:none"><div class="kerangka-kartu kerangka"></div><div class="badan"><div class="kerangka-garis kerangka"></div><div class="kerangka-garis pendek kerangka" style="margin-top:.75rem"></div><div class="kerangka-garis pendek kerangka" style="width:35%;margin-top:.75rem"></div></div></div>
+      <div class="kartu" style="cursor:default;pointer-events:none"><div class="kerangka-kartu kerangka"></div><div class="badan"><div class="kerangka-garis kerangka"></div><div class="kerangka-garis pendek kerangka" style="margin-top:.75rem"></div><div class="kerangka-garis pendek kerangka" style="width:35%;margin-top:.75rem"></div></div></div>
     </div>
+
     <div class="kosong" id="kosongMarket" style="display:none">
-      <i data-lucide="package-search" style="width:3.5rem;height:3.5rem;color:var(--abu-muda);margin-bottom:1rem;display:block;margin-left:auto;margin-right:auto;opacity:.6"></i>
+      <i data-lucide="package-search"></i>
       <h3>Bibit tidak ditemukan</h3>
       <p>Coba ubah filter atau kata kunci pencarian</p>
       <button class="btn btn-lunak" onclick="resetFilter()">Reset Filter</button>
@@ -905,14 +987,14 @@ select.input {
         <i data-lucide="search"></i>
         <input type="text" class="input" id="cariListing" placeholder="Cari laporanmu..." oninput="renderListing()">
       </div>
-      <a href="https://github.com/Ayatull4h/springhub/blob/main/app/seedlings/my-listings/page.tsx" target="_blank" class="btn btn-pokok">
+      <a href="#" class="btn btn-utama">
         <i data-lucide="plus" style="width:1rem;height:1rem"></i>
         Laporkan Bibit
       </a>
     </div>
     <div id="wadahListing"></div>
     <div class="kosong" id="kosongListing" style="display:none">
-      <i data-lucide="package" style="width:3.5rem;height:3.5rem;color:var(--abu-muda);margin-bottom:1rem;display:block;margin-left:auto;margin-right:auto;opacity:.6"></i>
+      <i data-lucide="package"></i>
       <h3>Belum ada laporan bibit</h3>
       <p>Laporkan bibit yang kamu miliki agar muncul di marketplace</p>
     </div>
@@ -922,7 +1004,7 @@ select.input {
   <section id="tab-requests" class="bagian-sembunyi">
     <div id="wadahRequest"></div>
     <div class="kosong" id="kosongRequest" style="display:none">
-      <i data-lucide="inbox" style="width:3.5rem;height:3.5rem;color:var(--abu-muda);margin-bottom:1rem;display:block;margin-left:auto;margin-right:auto;opacity:.6"></i>
+      <i data-lucide="inbox"></i>
       <h3>Belum ada permintaan</h3>
       <p>Jelajahi bibit yang tersedia di marketplace</p>
       <button class="btn btn-lunak" onclick="pindahTab('marketplace',document.querySelector('[data-tab=marketplace]'))">Jelajahi Marketplace</button>
@@ -933,7 +1015,7 @@ select.input {
 
 <!-- ═══ OVERLAY DETAIL ═══ -->
 <div class="lapisan" id="lapisanDetail">
-  <div class="lapisan-dalam">
+  <div class="panel">
     <button class="tutup" onclick="tutupDetail()" aria-label="Tutup"><i data-lucide="x" style="width:1.125rem;height:1.125rem"></i></button>
     <div class="grid-detail">
       <div>
@@ -945,7 +1027,7 @@ select.input {
           <div class="jempol-item"><i data-lucide="image" style="width:1rem;height:1rem"></i></div>
         </div>
         <div class="catatan">
-          <h3><i data-lucide="file-text"></i>Keterangan</h3>
+          <h3><i data-lucide="file-text"></i> Keterangan</h3>
           <p id="dCatatan"></p>
         </div>
       </div>
@@ -954,8 +1036,8 @@ select.input {
           <h2 id="dJenis"></h2>
           <div class="baris-info">
             <div class="baris"><span>Jumlah</span><span id="dJumlah"></span></div>
-            <div class="baris"><span>Tersedia</span><span id="dSisa" style="color:var(--daun)"></span></div>
-            <div class="garis"></div>
+            <div class="baris"><span>Tersedia</span><span id="dSisa" style="color:var(--b600);font-weight:650"></span></div>
+            <div class="garis-batas"></div>
             <div class="baris"><span>Lokasi</span><span id="dLokasi"></span></div>
             <div class="baris"><span>Pemilik</span><span id="dPemilik"></span></div>
             <div class="baris"><span>Dilaporkan</span><span id="dTanggal"></span></div>
@@ -967,7 +1049,7 @@ select.input {
           <input type="number" class="input" id="dQty" value="1" min="1">
           <label for="dMsg">Pesan</label>
           <textarea class="input" id="dMsg" rows="3" placeholder="Contoh: Mau tanam di kebun..."></textarea>
-          <button class="btn btn-pokok btn-penuh" style="margin-top:.9rem" onclick="kirimRequest()">
+          <button class="btn btn-utama btn-lebar" style="margin-top:.9rem" onclick="kirimRequest()">
             <i data-lucide="send" style="width:1rem;height:1rem"></i>
             Kirim Permintaan
           </button>
@@ -979,15 +1061,15 @@ select.input {
 
 <!-- TOAST -->
 <div class="toast" id="toast">
-  <i data-lucide="check-circle" id="toastIkon" style="color:var(--tunas)"></i>
+  <i data-lucide="check-circle" id="toastIkon" style="color:var(--b400)"></i>
   <span id="toastPesan">Berhasil!</span>
-  <button class="tutup-toast" onclick="sembunyiToast()"><i data-lucide="x" style="width:1rem;height:1rem"></i></button>
+  <button class="tutup-t" onclick="sembunyiToast()"><i data-lucide="x" style="width:1rem;height:1rem"></i></button>
 </div>
 
 <script>
-/* ===============================================
-   D A T A   —   biar hidup
-   =============================================== */
+/* ══════════════════════════════════
+   DATA
+   ══════════════════════════════════ */
 const BIBIT = [
   { id:1, jenis:"Jati", jumlah:50, sisa:40, prov:"Jawa Barat", kota:"Bandung", pemilik:"Asep", trust:85, tgl:"10 Jul 2026", catatan:"Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm. Lokasi di daerah Cimenyan, Bandung. Ditanam dari biji pilihan." },
   { id:2, jenis:"Bambu Petung", jumlah:30, sisa:28, prov:"Jawa Barat", kota:"Bogor", pemilik:"Sari", trust:92, tgl:"12 Jul 2026", catatan:"Bambu petung kualitas bagus, siap tanam, diameter 2-3cm. Berasal dari rumpun induk yang sudah terbukti adaptif." },
@@ -1021,206 +1103,152 @@ const REQUESTKU = [
   { jenis:"Kaliandra", qty:20, pemilik:"Rina", lokasi:"Banyuwangi", status:"cancelled", tgl:"7 hari lalu" },
 ];
 
-/* ===============================================
-   UTILITY
-   =============================================== */
+/* ── CONST ── */
+const CLS = { pending:'label-tunggu', approved:'label-setuju', rejected:'label-tolak', fulfilled:'label-selesai', cancelled:'label-batal' };
+const LBL = { pending:'Menunggu', approved:'Disetujui', rejected:'Ditolak', fulfilled:'Selesai', cancelled:'Dibatalkan' };
+const IKN = { pending:'clock', approved:'check-circle', rejected:'x-circle', fulfilled:'check-check', cancelled:'slash' };
+
 let timerCari;
-function tundaCari(){ clearTimeout(timerCari); timerCari=setTimeout(filterKartu, 200); }
+function tundaCari(){ clearTimeout(timerCari); timerCari=setTimeout(filterKartu, 180); }
 
-const WARNA_CHIP = { pending:'chip-tunggu', approved:'chip-setuju', rejected:'chip-tolak', fulfilled:'chip-selesai', cancelled:'chip-batal' };
-const LABEL_CHIP = { pending:'Menunggu', approved:'Disetujui', rejected:'Ditolak', fulfilled:'Selesai', cancelled:'Dibatalkan' };
-
-/* ===============================================
-   TAB
-   =============================================== */
+/* ── TAB ── */
 function pindahTab(nama, btn){
-  document.querySelectorAll('.tab-btn').forEach(t=>{
-    t.classList.remove('menor');
-    t.setAttribute('aria-selected','false');
-  });
-  document.querySelectorAll('[id^="tab-"]').forEach(s=>{
-    s.classList.remove('bagian-aktif');
-    s.classList.add('bagian-sembunyi');
-  });
-  btn.classList.add('menor');
+  document.querySelectorAll('.tab-btn').forEach(t=>{ t.classList.remove('aktif'); t.setAttribute('aria-selected','false'); });
+  document.querySelectorAll('[id^="tab-"]').forEach(s=>{ s.classList.remove('bagian-aktif'); s.classList.add('bagian-sembunyi'); });
+  btn.classList.add('aktif');
   btn.setAttribute('aria-selected','true');
-  document.getElementById('tab-'+nama).classList.remove('bagian-sembunyi');
-  document.getElementById('tab-'+nama).classList.add('bagian-aktif');
-  setTimeout(()=>{ if(typeof lucide !== 'undefined') lucide.createIcons(); }, 20);
+  const el=document.getElementById('tab-'+nama);
+  el.classList.remove('bagian-sembunyi');
+  el.classList.add('bagian-aktif');
+  setTimeout(()=>{ if(typeof lucide!=='undefined') lucide.createIcons(); }, 20);
 }
 
-/* ===============================================
-   MARKETPLACE — render kartu
-   =============================================== */
+/* ── RENDER KARTU ── */
 function renderKartu(data){
-  const kisi = document.getElementById('kisiMarket');
-  const kosong = document.getElementById('kosongMarket');
-  const kerangka = document.getElementById('kerangkaMarket');
-  kerangka.style.display = 'none';
-
-  if(!data || !data.length){
-    kisi.innerHTML = '';
-    kosong.style.display = 'block';
-    return;
-  }
-  kosong.style.display = 'none';
-
-  kisi.innerHTML = data.map((b, i) => `
-    <div class="kartu" onclick="bukaDetail(${b.id})" style="animation:munc .45s ease-out ${i*70}ms both">
-      <div class="thumb"><i data-lucide="tree-pine" style="width:2.25rem;height:2.25rem"></i></div>
-      <div class="badan">
-        <div class="badan-atas">
-          <h3>${b.jenis}</h3>
-          <span class="label-stok"><i data-lucide="package" style="width:.75rem;height:.75rem"></i>${b.jumlah}</span>
-        </div>
-        <div class="lokasi"><i data-lucide="map-pin"></i>${b.kota}, ${b.prov}</div>
-        <div class="kaki-kartu">
-          <span class="pemilik">
-            <i data-lucide="user"></i>
-            ${b.pemilik}
-            <span class="trust-badge"><i data-lucide="star"></i>${b.trust}</span>
-          </span>
-          <span class="cta-minta">Minta <i data-lucide="arrow-right"></i></span>
+  const kisi=document.getElementById('kisiMarket');
+  const kosong=document.getElementById('kosongMarket');
+  const kerangka=document.getElementById('kerangkaMarket');
+  kerangka.style.display='none';
+  if(!data||!data.length){ kisi.innerHTML=''; kosong.style.display='block'; return; }
+  kosong.style.display='none';
+  kisi.innerHTML=data.map((b,i)=>`
+    <div class="kartu" onclick="bukaDetail(${b.id})" style="animation:naik .45s ease-out ${i*70}ms both">
+      <div class="thumb"><i data-lucide="tree-pine"></i></div>
+        <div class="badan">
+          <div class="badan-atas">
+            <h3>${b.jenis}</h3>
+            <span class="badge"><i data-lucide="package" style="width:.7rem;height:.7rem"></i>${b.jumlah}</span>
+          </div>
+          <div class="lokasi"><i data-lucide="map-pin"></i>${b.kota}, ${b.prov}</div>
+          <div class="kaki-kartu">
+            <span class="pemilik">
+              <i data-lucide="user"></i>
+              ${b.pemilik}
+              <span class="trust"><i data-lucide="star"></i>${b.trust}</span>
+            </span>
+            <span class="cta">Minta <i data-lucide="arrow-right"></i></span>
+          </div>
         </div>
       </div>
-    </div>
   `).join('');
-
-  if(typeof lucide !== 'undefined') lucide.createIcons();
+  if(typeof lucide!=='undefined') lucide.createIcons();
 }
 
 function filterKartu(){
-  const q = document.getElementById('cariBibit').value.toLowerCase();
-  const p = document.getElementById('filterProv').value;
-  const hasil = BIBIT.filter(b => (!p || b.prov === p) && (!q || b.jenis.toLowerCase().includes(q)));
-  renderKartu(hasil);
+  const q=document.getElementById('cariBibit').value.toLowerCase();
+  const p=document.getElementById('filterProv').value;
+  renderKartu(BIBIT.filter(b=>(!p||b.prov===p)&&(!q||b.jenis.toLowerCase().includes(q))));
 }
 
-function resetFilter(){
-  document.getElementById('cariBibit').value = '';
-  document.getElementById('filterProv').value = '';
-  filterKartu();
-}
+function resetFilter(){ document.getElementById('cariBibit').value=''; document.getElementById('filterProv').value=''; filterKartu(); }
 
-/* ===============================================
-   DETAIL OVERLAY
-   =============================================== */
-let detailSekarang = null;
-
+/* ── DETAIL ── */
+let detail=null;
 function bukaDetail(id){
-  const b = BIBIT.find(x => x.id === id);
-  if(!b) return;
-  detailSekarang = b;
-
-  document.getElementById('dJenis').textContent = b.jenis;
-  document.getElementById('dJumlah').textContent = b.jumlah + ' bibit';
-  document.getElementById('dSisa').textContent = b.sisa + ' bibit';
-  document.getElementById('dLokasi').textContent = b.kota + ', ' + b.prov;
-  document.getElementById('dPemilik').textContent = b.pemilik + ' \u00B7 ' + b.trust;
-  document.getElementById('dTanggal').textContent = b.tgl;
-  document.getElementById('dCatatan').textContent = b.catatan;
-  document.getElementById('dQty').max = b.sisa;
-  document.getElementById('dQty').value = 1;
-  document.getElementById('dMsg').value = '';
-
+  const b=BIBIT.find(x=>x.id===id); if(!b)return; detail=b;
+  document.getElementById('dJenis').textContent=b.jenis;
+  document.getElementById('dJumlah').textContent=b.jumlah+' bibit';
+  document.getElementById('dSisa').textContent=b.sisa+' bibit';
+  document.getElementById('dLokasi').textContent=b.kota+', '+b.prov;
+  document.getElementById('dPemilik').textContent=b.pemilik+' \u00B7 '+b.trust;
+  document.getElementById('dTanggal').textContent=b.tgl;
+  document.getElementById('dCatatan').textContent=b.catatan;
+  document.getElementById('dQty').max=b.sisa; document.getElementById('dQty').value=1;
+  document.getElementById('dMsg').value='';
   document.getElementById('lapisanDetail').classList.add('buka');
-  document.body.style.overflow = 'hidden';
-  setTimeout(() => { if(typeof lucide !== 'undefined') lucide.createIcons(); }, 20);
+  document.body.style.overflow='hidden';
+  setTimeout(()=>{ if(typeof lucide!=='undefined') lucide.createIcons(); }, 20);
 }
-
-function tutupDetail(){
-  document.getElementById('lapisanDetail').classList.remove('buka');
-  document.body.style.overflow = '';
-  detailSekarang = null;
-}
-
+function tutupDetail(){ document.getElementById('lapisanDetail').classList.remove('buka'); document.body.style.overflow=''; detail=null; }
 function kirimRequest(){
-  if(!detailSekarang) return;
-  const qty = parseInt(document.getElementById('dQty').value) || 0;
-  if(qty < 1) { ngasihTau('Jumlah minimal 1', 'alert-circle'); return; }
-  if(qty > detailSekarang.sisa) { ngasihTau('Jumlah melebihi stok tersedia', 'alert-circle'); return; }
-  ngasihTau('Permintaan ' + qty + ' ' + detailSekarang.jenis + ' terkirim!', 'check-circle');
+  if(!detail)return;
+  const qty=parseInt(document.getElementById('dQty').value)||0;
+  if(qty<1){ngasihTau('Jumlah minimal 1','alert-circle');return}
+  if(qty>detail.sisa){ngasihTau('Jumlah melebihi stok tersedia','alert-circle');return}
+  ngasihTau('Permintaan '+qty+' '+detail.jenis+' terkirim!','check-circle');
   tutupDetail();
 }
 
-/* ===============================================
-   BIBITKU — render listing grup
-   =============================================== */
+/* ── RENDER LISTING (BIBITKU) ── */
 function renderListing(){
-  const wadah = document.getElementById('wadahListing');
-  const kosong = document.getElementById('kosongListing');
-  const q = document.getElementById('cariListing').value.toLowerCase();
-  const hasil = LISTINGKU.filter(g => !q || g.jenis.toLowerCase().includes(q));
-
-  if(!hasil.length){ wadah.innerHTML=''; kosong.style.display='block'; return; }
-  kosong.style.display='none';
-
-  wadah.innerHTML = hasil.map((g, gi) => `
+  const w=document.getElementById('wadahListing'), k=document.getElementById('kosongListing');
+  const q=document.getElementById('cariListing').value.toLowerCase();
+  const h=LISTINGKU.filter(g=>!q||g.jenis.toLowerCase().includes(q));
+  if(!h.length){w.innerHTML='';k.style.display='block';return}
+  k.style.display='none';
+  w.innerHTML=h.map((g,gi)=>`
     <div class="grup" style="animation-delay:${gi*80}ms">
       <div class="grup-kepala">
         <div><h3>${g.jenis}</h3><div class="kecil">${g.jumlah} bibit dilaporkan</div></div>
-        <span class="label-stok" style="background:var(--awan);color:var(--abu)">${g.permintaan.length} permintaan</span>
+        <span class="badge" style="background:var(--n100);color:var(--n500);border-color:var(--n200)">${g.permintaan.length} permintaan</span>
       </div>
       <div class="grup-badan">
-        ${g.permintaan.length ? g.permintaan.map((r, ri) => `
-          <div class="permintaan-item" style="animation:munc .3s ease-out ${(gi*3+ri)*50}ms both;border-left:3px solid ${
-            r.status==='pending' ? '#d4a85c' : r.status==='approved' ? '#4a9e6b' : r.status==='fulfilled' ? '#5a7a9a' : 'var(--abu-muda)'
+        ${g.permintaan.length?g.permintaan.map((r,ri)=>`
+          <div class="req-item" style="animation:naik .3s ease-out ${(gi*3+ri)*50}ms both;border-left:3px solid ${
+            r.status==='pending'?'#eab308':r.status==='approved'?'#22c55e':r.status==='fulfilled'?'#3b82f6':'#94a3b8'
           }">
             <div style="flex:1;min-width:160px">
               <div class="item-atas">
                 <strong>${r.dari}</strong>
                 <span class="item-redup">minta ${r.qty}</span>
-                <span class="chip ${WARNA_CHIP[r.status]}">
-                  <i data-lucide="${r.status==='pending' ? 'clock' : r.status==='approved' ? 'check-circle' : r.status==='fulfilled' ? 'check-check' : 'x-circle'}"></i>
-                  ${LABEL_CHIP[r.status]}
-                </span>
+                <span class="label ${CLS[r.status]}"><i data-lucide="${IKN[r.status]}" style="width:.7rem;height:.7rem"></i>${LBL[r.status]}</span>
               </div>
-              ${r.pesan ? '<div style="color:var(--abu);font-size:.75rem;font-style:italic;margin-top:.125rem">\u201C'+r.pesan+'\u201D</div>' : ''}
-              <div style="font-size:.625rem;color:var(--abu-muda);margin-top:.125rem">${r.tgl}</div>
+              ${r.pesan?'<div style="color:var(--ink-muted);font-size:.75rem;font-style:italic;margin-top:.125rem">\u201C'+r.pesan+'\u201D</div>':''}
+              <div style="font-size:.6rem;color:var(--ink-subtle);margin-top:.125rem">${r.tgl}</div>
             </div>
             <div style="display:flex;gap:.375rem">
-              ${r.status==='pending' ?
+              ${r.status==='pending'?
                 '<button class="btn btn-kecil btn-lunak" onclick="event.stopPropagation();ngasihTau(\'Permintaan '+r.dari+' disetujui!\')"><i data-lucide="check" style="width:.8125rem;height:.8125rem"></i>Setujui</button>'+
                 '<button class="btn btn-kecil btn-bahaya" onclick="event.stopPropagation();ngasihTau(\'Permintaan ditolak\')"><i data-lucide="x" style="width:.8125rem;height:.8125rem"></i>Tolak</button>'
-              : ''}
-              ${r.status==='approved' ?
+              :''}
+              ${r.status==='approved'?
                 '<button class="btn btn-kecil btn-biru" onclick="event.stopPropagation();ngasihTau(\'Bibit sudah diambil!\')"><i data-lucide="check-check" style="width:.8125rem;height:.8125rem"></i>Selesai</button>'
-              : ''}
+              :''}
             </div>
           </div>
-        `).join('') : '<div class="kosong-req"><i data-lucide="message-circle" style="width:1.5rem;height:1.5rem;color:var(--abu-muda);display:block;margin:0 auto .5rem"></i>Belum ada permintaan</div>'}
+        `).join(''):'<div class="kosong-req"><i data-lucide="message-circle" style="width:1.5rem;height:1.5rem;color:var(--ink-subtle);display:block;margin:0 auto .5rem"></i>Belum ada permintaan</div>'}
       </div>
     </div>
   `).join('');
-  if(typeof lucide !== 'undefined') lucide.createIcons();
+  if(typeof lucide!=='undefined') lucide.createIcons();
 }
 
-/* ===============================================
-   PERMINTAANKU — render daftar
-   =============================================== */
+/* ── RENDER REQUEST (PERMINTAANKU) ── */
 function renderRequest(){
-  const wadah = document.getElementById('wadahRequest');
-  const kosong = document.getElementById('kosongRequest');
-
-  if(!REQUESTKU.length){ wadah.innerHTML=''; kosong.style.display='block'; return; }
-  kosong.style.display='none';
-
-  wadah.innerHTML = REQUESTKU.map((r, i) => {
-    let aksi = '';
-    if(r.status==='pending') aksi = '<button class="btn btn-kecil btn-bahaya" onclick="ngasihTau(\'Permintaan dibatalkan\')"><i data-lucide="x" style="width:.8125rem;height:.8125rem"></i>Batalkan</button>';
-    else if(r.status==='approved') aksi = `
-      <span style="font-size:.8125rem;color:var(--abu);display:flex;align-items:center;gap:.25rem"><i data-lucide="phone" style="width:.8125rem;height:.8125rem;color:var(--daun)"></i>${r.telp}</span>
-      <a href="tel:${r.telp}" class="btn btn-kecil btn-lunak"><i data-lucide="phone-call" style="width:.8125rem;height:.8125rem"></i>Hubungi</a>`;
+  const w=document.getElementById('wadahRequest'), k=document.getElementById('kosongRequest');
+  if(!REQUESTKU.length){w.innerHTML='';k.style.display='block';return}
+  k.style.display='none';
+  w.innerHTML=REQUESTKU.map((r,i)=>{
+    let a='';
+    if(r.status==='pending') a='<button class="btn btn-kecil btn-bahaya" onclick="ngasihTau(\'Permintaan dibatalkan\')"><i data-lucide="x" style="width:.8125rem;height:.8125rem"></i>Batalkan</button>';
+    else if(r.status==='approved') a='<span style="font-size:.8125rem;color:var(--ink-muted);display:flex;align-items:center;gap:.25rem"><i data-lucide="phone" style="width:.8125rem;height:.8125rem;color:var(--b600)"></i>'+r.telp+'</span><a href="tel:'+r.telp+'" class="btn btn-kecil btn-lunak"><i data-lucide="phone-call" style="width:.8125rem;height:.8125rem"></i>Hubungi</a>';
     return `
-      <div class="item-daftar" style="animation-delay:${i*60}ms">
+      <div class="item" style="animation-delay:${i*60}ms">
         <div class="item-utama">
           <div class="item-atas">
             <strong>${r.jenis}</strong>
             <span class="item-redup">${r.qty} bibit</span>
-            <span class="chip ${WARNA_CHIP[r.status]}">
-              <i data-lucide="${r.status==='pending'?'clock':r.status==='approved'?'check-circle':r.status==='rejected'?'x-circle':r.status==='fulfilled'?'check-check':'slash'}"></i>
-              ${LABEL_CHIP[r.status]}
-            </span>
+            <span class="label ${CLS[r.status]}"><i data-lucide="${IKN[r.status]}" style="width:.7rem;height:.7rem"></i>${LBL[r.status]}</span>
           </div>
           <div class="item-bawah">
             <i data-lucide="user"></i>${r.pemilik}
@@ -1228,44 +1256,30 @@ function renderRequest(){
             <i data-lucide="clock" style="margin-left:.25rem"></i>${r.tgl}
           </div>
         </div>
-        <div class="item-aksi">${aksi}</div>
+        <div class="item-aksi">${a}</div>
       </div>
     `;
   }).join('');
-  if(typeof lucide !== 'undefined') lucide.createIcons();
+  if(typeof lucide!=='undefined') lucide.createIcons();
 }
 
-/* ===============================================
-   TOAST
-   =============================================== */
-let timerToast;
-function ngasihTau(pesan, ikon='check-circle'){
-  const t = document.getElementById('toast');
-  document.getElementById('toastPesan').textContent = pesan;
-  document.getElementById('toastIkon').setAttribute('data-lucide', ikon);
-  clearTimeout(timerToast);
+/* ── TOAST ── */
+let timerT;
+function ngasihTau(p,ik='check-circle'){
+  const t=document.getElementById('toast');
+  document.getElementById('toastPesan').textContent=p;
+  document.getElementById('toastIkon').setAttribute('data-lucide',ik);
+  clearTimeout(timerT);
   t.classList.add('muncul');
-  if(typeof lucide !== 'undefined') lucide.createIcons();
-  timerToast = setTimeout(() => t.classList.remove('muncul'), 3000);
+  if(typeof lucide!=='undefined') lucide.createIcons();
+  timerT=setTimeout(()=>t.classList.remove('muncul'),3000);
 }
-function sembunyiToast(){ document.getElementById('toast').classList.remove('muncul'); clearTimeout(timerToast); }
+function sembunyiToast(){ document.getElementById('toast').classList.remove('muncul'); clearTimeout(timerT); }
 
-/* ===============================================
-   KLIK DI LUAR OVERLAY
-   =============================================== */
-document.getElementById('lapisanDetail').addEventListener('click', function(e){
-  if(e.target === e.currentTarget) tutupDetail();
-});
+document.getElementById('lapisanDetail').addEventListener('click',function(e){ if(e.target===e.currentTarget) tutupDetail(); });
 
-/* ===============================================
-   INIT
-   =============================================== */
-filterKartu();
-renderListing();
-renderRequest();
-document.addEventListener('DOMContentLoaded', function(){
-  if(typeof lucide !== 'undefined') lucide.createIcons();
-});
+filterKartu(); renderListing(); renderRequest();
+document.addEventListener('DOMContentLoaded',function(){ if(typeof lucide!=='undefined') lucide.createIcons(); });
 </script>
 </body>
 </html>
