@@ -1,0 +1,101 @@
+import { NextResponse } from "next/server";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
+import { getSession } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
+
+function isAdmin(session: { userId: string; role: string } | null) {
+  return session?.role === "admin";
+}
+
+// GET /api/admin/courses — semua course (termasuk tidak aktif)
+export async function GET() {
+  const session = await getSession();
+  if (!isAdmin(session)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+  try {
+    const courses = await prisma.course.findMany({
+      orderBy: { sortOrder: "asc" },
+      include: {
+        modules: { orderBy: { sortOrder: "asc" } },
+        _count: { select: { progress: true } },
+      },
+    });
+    return NextResponse.json({ courses });
+  } catch (error) {
+    console.error("Admin courses fetch error::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal memuat data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
+  }
+}
+
+// POST /api/admin/courses — buat course baru + modul
+export async function POST(request: Request) {
+  // CSRF protection
+  const csrfToken = request.headers.get("x-csrf-token");
+  if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
+
+
+  const session = await getSession();
+  if (!isAdmin(session)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+  try {
+    const body = await request.json();
+    const { slug, title, description, level, duration, icon, modules } = body;
+
+    // Validate required fields
+    if (!slug || !title) {
+      return NextResponse.json(
+        { error: "Slug and title are required" },
+        { status: 400 }
+      );
+    }
+
+    // Check slug uniqueness
+    const existing = await prisma.course.findUnique({ where: { slug } });
+    if (existing) {
+      return NextResponse.json(
+        { error: "A course with this slug already exists" },
+        { status: 409 }
+      );
+    }
+
+    const course = await prisma.course.create({
+      data: {
+        slug,
+        title,
+        description: description || "",
+        level: level || "Beginner",
+        duration: duration || "30 min",
+        icon: icon || "BookOpen",
+        modules: modules?.length
+          ? {
+              create: modules.map(
+                (m: { title: string; content?: string }, i: number) => ({
+                  title: m.title,
+                  content: m.content || "",
+                  sortOrder: i,
+                })
+              ),
+            }
+          : undefined,
+      },
+      include: { modules: { orderBy: { sortOrder: "asc" } } },
+    });
+    auditLog("post create course", "post create course id=" + course.id);
+    return NextResponse.json({ course }, { status: 201 });
+  } catch (error) {
+    console.error("Admin course create error::", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Gagal menambah data.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
+  }
+}

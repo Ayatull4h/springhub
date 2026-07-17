@@ -1,0 +1,347 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  BookOpen,
+  CheckCircle2,
+  Circle,
+  ArrowLeft,
+  ArrowRight,
+  Award,
+  Sparkles,
+  Loader2,
+  AlertCircle,
+  Lock,
+} from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitize";
+import { useI18n } from "@/lib/i18n";
+
+type Module = {
+  id: string;
+  title: string;
+  content: string;
+  sortOrder: number;
+};
+
+type Course = {
+  id: string;
+  slug: string;
+  title: string;
+  modules: Module[];
+};
+
+export default function LearnModulePage() {
+  const params = useParams();
+  const router = useRouter();
+  const slug = params.slug as string;
+  const moduleId = params.moduleId as string;
+
+  const [course, setCourse] = useState<Course | null>(null);
+  const [module, setModule] = useState<Module | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [pointsEarned, setPointsEarned] = useState(0);
+  const [progress, setProgress] = useState<{
+    completedModules: number;
+    totalModules: number;
+    completed: boolean;
+  } | null>(null);
+  const [user, setUser] = useState<{ userId?: string } | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [userMessage, setUserMessage] = useState("");
+  const { t } = useI18n();
+
+  useEffect(() => {
+    // Check auth
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user) setUser(data.user);
+      })
+      .catch(() => {});
+
+    // Fetch course
+    fetch(`/api/courses/${slug}`)
+      .then((r) => {
+        if (!r.ok) throw new Error("Not found");
+        return r.json();
+      })
+      .then((data) => {
+        setCourse(data.course);
+        const mod = data.course.modules.find(
+          (m: Module) => m.id === moduleId
+        );
+        if (mod) {
+          setModule(mod);
+          setCurrentIndex(data.course.modules.indexOf(mod));
+        } else {
+          setError(t("learn.course.notFound"));
+        }
+      })
+      .catch(() => setError(t("learn.course.notFound")))
+      .finally(() => setLoading(false));
+  }, [slug, moduleId]);
+
+  useEffect(() => {
+    if (!user?.userId) return;
+    fetch("/api/courses/progress")
+      .then((r) => r.json())
+      .then((data) => {
+        const p = (data.progress ?? []).find(
+          (x: any) => x.courseSlug === slug
+        );
+        if (p) setProgress(p);
+      })
+      .catch(() => {});
+  }, [user, slug]);
+
+  const nextModule = course?.modules[currentIndex + 1];
+  const prevModule = course?.modules[currentIndex - 1];
+  const isLastModule = currentIndex === (course?.modules.length ?? 1) - 1;
+  const isFirstModule = currentIndex === 0;
+  const isCompletedModule = progress
+    ? currentIndex < progress.completedModules
+    : false;
+  const isLockedModule =
+    currentIndex > (progress?.completedModules ?? 0);
+
+  async function handleComplete() {
+    if (!user?.userId || !course || !module) {
+      setUserMessage(t("learn.course.signInPrompt") || "Please sign in to track your progress");
+      return;
+    }
+
+    setSaving(true);
+    setUserMessage("");
+    try {
+      const newCompleted = Math.max(
+        (progress?.completedModules ?? 0),
+        currentIndex + 1
+      );
+
+      const res = await fetch("/api/courses/progress", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseId: course.id,
+          courseSlug: course.slug,
+          completedModules: newCompleted,
+          totalModules: course.modules.length,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setProgress({
+          completedModules: data.progress.completedModules,
+          totalModules: data.progress.totalModules,
+          completed: data.progress.completed,
+        });
+        if (data.pointsAwarded > 0) {
+          setPointsEarned(data.pointsAwarded);
+        }
+        setUserMessage(t("learn.course.moduleCompleted"));
+      } else {
+        setUserMessage(data.error || t("learn.course.failedUpdate"));
+      }
+    } catch {
+      setUserMessage(t("learn.course.networkError"));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (error || !course || !module) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 dark:bg-slate-900">
+        <AlertCircle className="h-12 w-12 text-slate-300 dark:text-slate-500" />
+        <p className="text-sm text-ink-muted">{error || t("learn.course.notFound")}</p>
+        <Link
+          href={`/learn/${slug}`}
+          className="text-sm font-medium text-brand-600 hover:underline"
+        >
+          {t("learn.course.backToCourse")}
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      {/* Header */}
+      <div className="border-b border-ink-line bg-white dark:bg-slate-800">
+        <div className="container-page py-4">
+          <Link
+            href={`/learn/${slug}`}
+            className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-ink"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to {course.title}
+          </Link>
+
+          <div className="mt-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-ink-muted">
+                {t("learn.course.moduleOfLabel", { current: String(currentIndex + 1), total: String(course.modules.length) })}
+              </span>
+              {isCompletedModule && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                  <CheckCircle2 className="h-3 w-3" />
+                  {t("learn.course.completed")}
+                </span>
+              )}
+            </div>
+            <h1 className="mt-1 text-xl font-bold text-ink">
+              {module.title}
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="container-page py-8">
+        <div className="mx-auto max-w-2xl">
+          {/* Locked module barrier */}
+          {isLockedModule && (
+            <div className="card mb-4 border-amber-200 bg-amber-50 dark:border-amber-700/50 dark:bg-amber-900/20">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 rounded-full bg-amber-100 p-2 dark:bg-amber-800/50">
+                  <Lock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                    {user
+                      ? t("learn.course.lockPrevModules")
+                      : t("learn.course.lockSignIn")}
+                  </p>
+                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                    {user
+                      ? t("learn.course.lockPrevDesc")
+                      : t("learn.course.lockSignInDesc")}
+                  </p>
+                  {!user && (
+                    <div className="mt-3 flex gap-2">
+                      <Link
+                        href="/sign-in"
+                        className="rounded-md bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700"
+                      >
+                        {t("learn.course.signIn")}
+                      </Link>
+                      <Link
+                        href="/join"
+                        className="rounded-md border border-ink-line bg-white px-3 py-1.5 text-xs font-medium text-ink hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                      >
+                        {t("learn.course.createAccount")}
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Module content */}
+          <div className="card">
+            {module.content ? (
+              <div
+                className="prose prose-sm max-w-none text-ink dark:prose-invert"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(module.content) }}
+              />
+            ) : (
+              <div className="flex flex-col items-center py-8 text-center">
+                <BookOpen className="h-10 w-10 text-slate-300 dark:text-slate-500" />
+                <p className="mt-2 text-sm text-ink-muted">
+                  {t("learn.course.contentComing")}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Points earned notification */}
+          {pointsEarned > 0 && (
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+              <Sparkles className="h-4 w-4" />
+              {t("learn.course.pointsEarned", { points: String(pointsEarned) })}
+            </div>
+          )}
+
+          {/* User message */}
+          {userMessage && !pointsEarned && (
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-brand-50 p-3 text-sm text-brand-700">
+              <AlertCircle className="h-4 w-4" />
+              {userMessage}
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              {prevModule && (
+                <Link
+                  href={`/learn/${slug}/${prevModule.id}`}
+                  className="inline-flex items-center gap-1 rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  {t("learn.course.previous")}
+                </Link>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              {!isCompletedModule && (
+                <button
+                  onClick={handleComplete}
+                  disabled={saving}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      {t("learn.course.saving")}
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="h-4 w-4" />
+                      {t("learn.course.markComplete")}
+                    </>
+                  )}
+                </button>
+              )}
+
+              {isLastModule && isCompletedModule && (
+                <Link
+                  href={`/learn/${slug}`}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+                >
+                  <Award className="h-4 w-4" />
+                  {t("learn.course.viewCourse")}
+                </Link>
+              )}
+
+              {nextModule && (
+                <Link
+                  href={`/learn/${slug}/${nextModule.id}`}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2 text-sm font-medium text-white hover:bg-brand-700"
+                >
+                  {t("learn.course.next")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

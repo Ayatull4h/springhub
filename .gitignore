@@ -1,0 +1,78 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+
+# production
+build/
+
+# misc
+.DS_Store
+*.log
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+
+# database
+prisma/dev.db
+prisma/dev.db-journal
+*.db
+*.sqlite
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# dev server
+dev-server.pid
+
+# e2e
+test-results/
+e2e-report/
+
+# vercel
+.vercel
+
+# playwright-mcp
+.playwright-mcp/
+
+# credentials
+*credentials*
+*credential*
+
+# opencode chat history (contains API keys in conversations)
+.opencode/history/
+.opencode/opencode.json
+
+# backup files (contains API keys & SSH keys in copies)
+backup/
+
+# local temp files
+MANUAL-TEST-PART-2*.md
+*.csv
+*.pdf
+baca.*.txt

@@ -1,0 +1,107 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "plan",
+
+  "references": {
+    "prisma": {
+      "path": "prisma/schema.prisma",
+      "description": "Database schema for SpringHub"
+    },
+    "env": {
+      "path": ".env",
+      "description": "Environment variables for SpringHub"
+    }
+  },
+
+  "agent": {
+    "plan": {
+      "mode": "primary",
+      "description": "Read-only planning & architecture",
+      "permission": { "edit": "deny", "bash": "deny" }
+    },
+    "build": {
+      "mode": "primary",
+      "description": "Implementasi kode, fix bug, testing",
+      "permission": { "edit": "allow", "bash": "allow" }
+    },
+    "springhub-architect": {
+      "mode": "subagent",
+      "description": "Design decisions, code review, architecture planning",
+      "permission": { "edit": "allow", "bash": "allow" }
+    },
+    "springhub-db": {
+      "mode": "subagent",
+      "description": "PostgreSQL database — schemas, migrations, Prisma",
+      "permission": { "edit": "allow", "bash": "allow" }
+    },
+    "springhub-frontend": {
+      "mode": "subagent",
+      "description": "Next.js 14 App Router, React 18, Tailwind — UI & components",
+      "permission": { "edit": "allow", "bash": "allow" }
+    },
+    "springhub-auth": {
+      "mode": "subagent",
+      "description": "JWT auth, bcrypt, CSRF, rate limiting, RLS — security",
+      "permission": { "edit": "allow", "bash": "allow" }
+    },
+    "springhub-devops": {
+      "mode": "subagent",
+      "description": "Docker, Compose, Nginx, Redis, BullMQ, Sentry — infra",
+      "permission": { "edit": "allow", "bash": "allow" }
+    },
+    "springhub-payment": {
+      "mode": "subagent",
+      "description": "Xendit payment gateway, donations, invoices",
+      "permission": { "edit": "allow", "bash": "allow" }
+    },
+    "springhub-pwa": {
+      "mode": "subagent",
+      "description": "Offline mode, IndexedDB, Service Worker, PWA",
+      "permission": { "edit": "allow", "bash": "allow" }
+    },
+    "springhub-test": {
+      "mode": "subagent",
+      "description": "Vitest, Playwright, React Testing Library — QA & testing",
+      "permission": { "edit": "allow", "bash": "allow" }
+    }
+  },
+
+  "mcp": {
+    "filesystem": {
+      "type": "local",
+      "command": ["node_modules/.bin/mcp-server-filesystem", "."],
+      "enabled": true
+    },
+    "memory": {
+      "type": "local",
+      "command": ["node_modules/.bin/mcp-server-memory"],
+      "enabled": true
+    },
+    "puppeteer": {
+      "type": "local",
+      "command": ["node_modules/.bin/mcp-server-puppeteer"],
+      "enabled": true
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["node_modules/.bin/playwright-mcp"],
+      "enabled": true
+    },
+    "context7": {
+      "type": "local",
+      "command": ["node_modules/.bin/context7-mcp", "--api-key", "ctx7sk-4a75b399-9229-45e9-9398-cb9b44bb09d0"],
+      "enabled": true
+    },
+    "supermemory": {
+      "type": "remote",
+      "url": "https://mcp.supermemory.ai/mcp",
+      "enabled": true,
+      "headers": { "Authorization": "Bearer sm_7St9xgpRkBWeYdXsBXfvR4_MVf2IYsQAl0CoHZvetbgufewRj4loobuDezhLMTXCqQc1GHdIlpVYs19AYgi4qc8" }
+    },
+    "postgres": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic/mcp-server-postgres", "{env:DATABASE_URL}"],
+      "enabled": true
+    }
+  }
+}

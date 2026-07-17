@@ -1,0 +1,47 @@
+"use client";
+
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
+import { LiteYouTubeEmbed } from "@/components/lite-youtube-embed";
+
+export function Hero() {
+  const { t } = useI18n();
+
+  return (
+    <section className="container-page grid gap-10 pt-12 pb-16 md:grid-cols-2 md:items-center md:pt-20">
+      <div>
+        <h1
+          className="text-4xl font-extrabold leading-tight tracking-tight text-brand-700 md:text-5xl"
+          dangerouslySetInnerHTML={{ __html: t("hero.title") }}
+        />
+        <p className="mt-6 max-w-xl text-base leading-relaxed text-ink-muted md:text-lg">
+          {t("hero.subtitle")}
+        </p>
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <Link href="#map" className="btn-primary px-5 py-3 text-base">
+            {t("hero.cta.start")}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            href="https://jagasemesta.org/"
+            className="btn-secondary px-5 py-3 text-base"
+          >
+            {t("hero.cta.back")}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+
+        </div>
+      </div>
+
+      <div className="relative aspect-video overflow-hidden rounded-2xl border border-ink-line bg-slate-900 shadow-card dark:border-slate-700">
+        <LiteYouTubeEmbed videoId="oUDA1loE8BE" title="Jaga Semesta · SpringHub" />
+      </div>
+
+      {/* Mobile fallback — YouTube link */}
+      <a href="https://www.youtube.com/watch?v=oUDA1loE8BE" target="_blank" className="mt-2 inline-flex items-center gap-1 text-xs text-ink-muted hover:text-brand-600 md:hidden">
+        ▶️ Tonton di YouTube
+      </a>
+    </section>
+  );
+}

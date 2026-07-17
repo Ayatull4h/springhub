@@ -1,0 +1,191 @@
+import { NextResponse } from "next/server";
+import { getSession } from "@/lib/auth";
+import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
+import { buildPhotoUrl } from "@/lib/photo-url";
+
+export const dynamic = "force-dynamic";
+
+function escapeCsv(val: unknown): string {
+  const s = String(val ?? "");
+  if (s.includes(",") || s.includes('"') || s.includes("\n")) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+}
+
+function toCsv(rows: string[][], headers: string[]): string {
+  return [headers.join(","), ...rows.map((r) => r.map(escapeCsv).join(","))].join("\n");
+}
+
+export async function GET(request: Request) {
+  const session = await getSession();
+  if (!session || session.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
+  const url = new URL(request.url);
+  const entity = url.searchParams.get("entity") || "users";
+  const startDate = url.searchParams.get("startDate");
+  const endDate = url.searchParams.get("endDate");
+  const notify = url.searchParams.get("notify") === "true";
+
+  const dateFilter =
+    startDate || endDate
+      ? {
+          createdAt: {
+            ...(startDate ? { gte: new Date(startDate) } : {}),
+            ...(endDate ? { lt: new Date(endDate) } : {}),
+          },
+        }
+      : {};
+
+  try {
+    let csv = "";
+    let filename = "";
+
+    switch (entity) {
+      case "users": {
+        const users = await prisma.profile.findMany({
+          where: dateFilter,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true, username: true, email: true, phone: true,
+            role: true, region: true, points: true, trustScore: true, createdAt: true,
+          },
+        });
+        csv = toCsv(
+          users.map((u) => [u.id, u.username, u.email, u.phone, u.role, u.region, String(u.points), String(u.trustScore), u.createdAt.toISOString()]),
+          ["ID", "Username", "Email", "Phone", "Role", "Region", "Points", "TrustScore", "CreatedAt"]
+        );
+        filename = `springhub-users-${startDate || "all"}.csv`;
+        break;
+      }
+
+      case "reports": {
+        const reports = await prisma.report.findMany({
+          where: { ...dateFilter },
+          orderBy: { createdAt: "desc" },
+          include: {
+            user: { select: { username: true } },
+            photos: { select: { id: true, storagePath: true, fieldId: true }, take: 10 },
+          },
+        });
+        csv = toCsv(
+          reports.map((r) => [r.id, r.user?.username || "guest", r.formSlug, r.status, String(r.preciseLat ?? ""), String(r.preciseLng ?? ""), String(r.snappedLat ?? ""), String(r.snappedLng ?? ""), r.reviewedById || "", r.createdAt.toISOString(), r.photos.map((p) => buildPhotoUrl(p.storagePath)).join("; ")]),
+          ["ID", "User", "FormSlug", "Status", "PreciseLat", "PreciseLng", "SnappedLat", "SnappedLng", "ReviewedBy", "CreatedAt", "PhotoURLs"]
+        );
+        filename = `springhub-reports-${startDate || "all"}.csv`;
+        break;
+      }
+
+      case "donations": {
+        const donations = await prisma.donation.findMany({
+          where: { ...dateFilter },
+          orderBy: { createdAt: "desc" },
+          include: { user: { select: { username: true } }, project: { select: { title: true } } },
+        });
+        csv = toCsv(
+          donations.map((d) => [d.id, d.user?.username || "anon", d.invoiceId, String(d.amountIdr), d.tierId, d.donorName, d.donorEmail, d.status, d.paidAt?.toISOString() || "", d.createdAt.toISOString(), d.project?.title || ""]),
+          ["ID", "User", "InvoiceID", "Amount(Rp)", "Tier", "DonorName", "DonorEmail", "Status", "PaidAt", "CreatedAt", "Project"]
+        );
+        filename = `springhub-donations-${startDate || "all"}.csv`;
+        break;
+      }
+
+      case "projects": {
+        const projects = await prisma.project.findMany({
+          where: { ...dateFilter },
+          orderBy: { createdAt: "desc" },
+          include: { user: { select: { username: true, email: true } } },
+        });
+        csv = toCsv(
+          projects.map((p) => [p.id, p.title, p.typeId, p.status, p.region, String(p.goalAmount), String(p.raisedAmount), p.contactName, p.contactEmail, p.contactPhone, p.user?.username || "", p.user?.email || "", p.createdAt.toISOString()]),
+          ["ID", "Title", "Type", "Status", "Region", "GoalAmount", "RaisedAmount", "ContactName", "ContactEmail", "ContactPhone", "User", "UserEmail", "CreatedAt"]
+        );
+        filename = `springhub-projects-${startDate || "all"}.csv`;
+        break;
+      }
+
+      case "feedback": {
+        const feedback = await prisma.feedback.findMany({
+          where: { ...dateFilter },
+          orderBy: { createdAt: "desc" },
+        });
+        csv = toCsv(
+          feedback.map((f) => [f.id, f.type, f.kritik, f.saran, f.bugDescription, f.status, f.userId || "", f.createdAt.toISOString()]),
+          ["ID", "Type", "Kritik", "Saran", "BugDescription", "Status", "UserID", "CreatedAt"]
+        );
+        filename = `springhub-feedback-${startDate || "all"}.csv`;
+        break;
+      }
+
+      case "points": {
+        const logs = await prisma.pointsLog.findMany({
+          where: { ...dateFilter },
+          orderBy: { createdAt: "desc" },
+          include: { user: { select: { username: true } } },
+        });
+        csv = toCsv(
+          logs.map((l) => [l.id, l.user?.username || l.guestId || "unknown", String(l.amount), l.reason, l.reportId || "", l.createdAt.toISOString()]),
+          ["ID", "User", "Amount", "Reason", "ReportID", "CreatedAt"]
+        );
+        filename = `springhub-points-${startDate || "all"}.csv`;
+        break;
+      }
+
+      case "photos": {
+        const photos = await prisma.reportPhoto.findMany({
+          orderBy: { createdAt: "desc" },
+          include: {
+            report: {
+              select: { id: true, formSlug: true, status: true },
+            },
+          },
+        });
+        csv = toCsv(
+          photos.map((p) => [p.id, p.report?.id || "", p.report?.formSlug || "", p.report?.status || "", p.fieldId, buildPhotoUrl(p.storagePath), p.mimeType, `${p.width}x${p.height}`, p.createdAt.toISOString()]),
+          ["PhotoID", "ReportID", "FormSlug", "ReportStatus", "FieldID", "URL", "MimeType", "Dimensions", "CreatedAt"]
+        );
+        filename = `springhub-photos-${startDate || "all"}.csv`;
+        break;
+      }
+
+      default:
+        return NextResponse.json({ error: "Invalid entity. Valid: users, reports, donations, projects, feedback, points, photos" }, { status: 400 });
+    }
+
+    // Send email notification if requested
+    if (notify && session?.userId) {
+      const admin = await prisma.profile.findUnique({
+        where: { id: session.userId },
+        select: { email: true },
+      });
+      if (admin?.email) {
+        const subject = `Export ${entity} siap — ${filename}`;
+        const html = `
+          <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+            <h2 style="color: #1e293b;">Export Data Siap</h2>
+            <p style="color: #475569;">File <strong>${filename}</strong> telah siap di-download.</p>
+            <p style="color: #475569;">Total ${csv.split("\n").length - 1} baris data.</p>
+            <p style="color: #94a3b8; font-size: 12px;">Periode: ${startDate || "sejak awal"} — ${endDate || "sekarang"}</p>
+          </div>
+        `;
+        sendEmail({ to: admin.email, subject, html }).catch(() => {});
+      }
+    }
+
+    return new NextResponse(csv, {
+      headers: {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": `attachment; filename="${filename}"`,
+      },
+    });
+  } catch (error) {
+    console.error("Export error:", error);
+    return NextResponse.json(
+      { error: getErrorMessage(error, "Terjadi kesalahan.") },
+      { status: isDatabaseError(error) ? 503 : 500 }
+    );
+  }
+}

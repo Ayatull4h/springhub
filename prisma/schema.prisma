@@ -1,0 +1,496 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── ENUMs ─────────────────────────────────────────────────────────────────
+
+enum Role {
+  user
+  volunteer
+  admin
+}
+
+enum ReportStatus {
+  pending
+  approved
+  rejected
+}
+
+enum ProjectStatus {
+  pending
+  under_review
+  approved
+  rejected
+  completed
+}
+
+enum DonationStatus {
+  pending
+  paid
+  expired
+  failed
+}
+
+// ─── TABLES ─────────────────────────────────────────────────────────────────
+
+model Profile {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  username      String   @unique @default("")
+  role          Role     @default(volunteer)
+  phone         String   @default("")
+  phoneVerified Boolean  @default(false)
+  region        String   @default("")
+  points        Int      @default(0)
+  trustScore    Int      @default(50)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  reports         Report[]
+  donations       Donation[]
+  projects        Project[]
+  pointsLogs      PointsLog[]
+  sessions        Session[]
+  courses         CoursesProgress[]
+  reviewedReports Report[]          @relation("reviewedReports")
+  offlineSessions OfflineSession[]
+  notifications  Notification[]
+  userComments   Comment[]
+  likes          Like[]
+
+  @@index([role])
+  @@index([points(sort: Desc)])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  profileId String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([expiresAt])
+}
+
+model Spring {
+  id          String   @id @default(uuid())
+  name        String
+  snappedLat  Float?
+  snappedLng  Float?
+  province    String   @default("")
+  regency     String   @default("")
+  village     String   @default("")
+  subdistrict String   @default("")
+  isDummy     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reports Report[]
+
+  @@index([snappedLat, snappedLng])
+  @@index([name])
+}
+
+// ─── MAP SYSTEM (Generalized) ────────────────────────────────────────────────
+
+model MapPointType {
+  id          String              @id @default(uuid())
+  slug        String              @unique // "spring", "conservation", "tree-planting", "trench"
+  name        String              // "Mata Air", "Konservasi", "Tanam Pohon", "Parit Resapan"
+  description String              @default("")
+  icon        String              @default("MapPin")
+  sortOrder   Int                 @default(0)
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  categories  MapPointCategory[]
+  forms       Form[]
+  points      MapPoint[]
+}
+
+model MapPointCategory {
+  id        String   @id @default(uuid())
+  typeId    String
+  slug      String   // "sehat", "terdegradasi", "restorasi", "pohon-hampir-punah"
+  name      String   // "Sehat", "Terdegradasi", "Dalam Restorasi", "Pohon Hampir Punah"
+  color     String   @default("#2563eb") // hex color for marker
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  type     MapPointType @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  mapPoints MapPoint[]
+
+  @@unique([typeId, slug])
+}
+
+model MapPoint {
+  id            String      @id @default(uuid())
+  typeId        String
+  categoryId    String?
+  name          String
+  slug          String      @unique
+  snappedLat    Float?
+  snappedLng    Float?
+  province      String      @default("")
+  regency       String      @default("")
+  village       String      @default("")
+  subdistrict   String      @default("")
+  description   String      @default("")
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  type          MapPointType     @relation(fields: [typeId], references: [id])
+  category      MapPointCategory? @relation(fields: [categoryId], references: [id])
+  reports       Report[]
+
+  @@index([typeId, isActive])
+  @@index([snappedLat, snappedLng])
+  @@index([slug])
+}
+
+model Report {
+  id              String       @id @default(uuid())
+  userId          String?
+  guestId         String?
+  formSlug        String
+  status          ReportStatus @default(pending)
+  isActive        Boolean      @default(true)
+  isDummy         Boolean      @default(false)
+  fieldData       String // JSON string of form fields
+  preciseLat      Float?
+  preciseLng      Float?
+  snappedLat      Float?
+  snappedLng      Float?
+  reviewedById    String?
+  reviewNote      String       @default("")
+  featuredPhotoId String?
+  springId        String?
+  mapPointId      String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  user       Profile?      @relation(fields: [userId], references: [id])
+  reviewedBy Profile?      @relation("reviewedReports", fields: [reviewedById], references: [id])
+  photos     ReportPhoto[] @relation("ReportPhotos")
+  spring     Spring?       @relation(fields: [springId], references: [id])
+  mapPoint   MapPoint?     @relation(fields: [mapPointId], references: [id])
+
+  pointsLogs PointsLog[]
+  form       Form?       @relation(fields: [formSlug], references: [slug])
+
+  @@index([status])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([formSlug])
+  @@index([createdAt])
+  @@index([guestId])
+  @@index([springId])
+  @@index([mapPointId])
+}
+
+model ReportPhoto {
+  id          String   @id @default(uuid())
+  reportId    String
+  fieldId     String
+  storagePath String   @default("")
+  mimeType    String   @default("image/jpeg")
+  width       Int      @default(0)
+  height      Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  report Report @relation("ReportPhotos", fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId])
+}
+
+model Project {
+  id           String        @id @default(uuid())
+  userId       String?
+  title        String
+  summary      String        @default("")
+  region       String        @default("")
+  typeId       String
+  status       ProjectStatus @default(pending)
+  goalAmount   Int           @default(0)
+  raisedAmount Int           @default(0)
+  likes        Int           @default(0)
+  comments     Int           @default(0)
+  contactName  String        @default("")
+  contactEmail String        @default("")
+  contactPhone String        @default("")
+  proposalFile String        @default("")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user        Profile?   @relation(fields: [userId], references: [id])
+  donations   Donation[]
+  commentList Comment[]  @relation("ProjectComments")
+  likesList   Like[]
+}
+
+model Donation {
+  id         String         @id @default(uuid())
+  userId     String?
+  projectId  String?
+  invoiceId  String         @default("")
+  externalId String         @default("")
+  amountIdr  Int
+  tierId     String         @default("")
+  donorName  String         @default("")
+  donorEmail String         @default("")
+  status     DonationStatus @default(pending)
+  paidAt     DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  user    Profile? @relation(fields: [userId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+
+  @@index([status])
+  @@index([userId])
+  @@index([projectId])
+}
+
+model PointsLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  guestId   String?
+  reportId  String?
+  amount    Int
+  reason    String
+  metadata  String   @default("{}") // JSON
+  createdAt DateTime @default(now())
+
+  user   Profile? @relation(fields: [userId], references: [id])
+  report Report?  @relation(fields: [reportId], references: [id])
+
+  @@index([userId])
+}
+
+model CoursesProgress {
+  id               String   @id @default(uuid())
+  userId           String
+  courseId         String   @default("")
+  courseSlug       String
+  completedModules Int      @default(0)
+  totalModules     Int      @default(1)
+  completed        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user   Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseSlug])
+}
+
+model PointRule {
+  id          String   @id @default(uuid())
+  name        String
+  description String   @default("")
+  points      Int
+  category    String // "basic", "bonus", "milestone"
+  icon        String   @default("Star")
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  description String   @default("")
+  level       String   @default("Beginner")
+  duration    String   @default("30 min")
+  icon        String   @default("BookOpen")
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  modules  CourseModule[]
+  progress CoursesProgress[]
+}
+
+model CourseModule {
+  id        String   @id @default(uuid())
+  courseId  String
+  title     String
+  content   String   @default("") // Markdown atau HTML content
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Form {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  title            String
+  description      String   @default("")
+  pointsOnSubmit   Int      @default(25)
+  contributionType String   @default("monitoring")
+  isActive         Boolean  @default(true)
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  fields  FormField[]
+  reports Report[]
+  mapTypeId String?
+  mapType   MapPointType? @relation(fields: [mapTypeId], references: [id])
+
+  @@index([mapTypeId])
+}
+
+model FormField {
+  id          String   @id @default(uuid())
+  formId      String
+  fieldId     String
+  label       String
+  type        String   @default("text")
+  required    Boolean  @default(false)
+  placeholder String   @default("")
+  helpText    String   @default("")
+  options     String   @default("[]")
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@unique([formId, fieldId])
+}
+
+model OfflineSession {
+  id            String    @id @default(uuid())
+  userId        String
+  isActive      Boolean   @default(true)
+  selectedForms Json      @default("[]")
+  totalDistance Float? // meters
+  startedAt     DateTime  @default(now())
+  endedAt       DateTime?
+
+  user           Profile         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackingPoints TrackingPoint[]
+
+  @@index([userId])
+  @@index([isActive])
+}
+
+model TrackingPoint {
+  id             String   @id @default(uuid())
+  sessionId      String
+  lat            Float
+  lng            Float
+  accuracy       Float?
+  isSpringMarker Boolean  @default(false)
+  springName     String? // nama mata air jika marker
+  recordedAt     DateTime @default(now())
+
+  session OfflineSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([recordedAt])
+}
+
+model Feedback {
+  id             String   @id @default(uuid())
+  type           String   @default("bug") // "bug", "kritik", "saran", "both"
+  kritik         String   @default("")
+  saran          String   @default("")
+  bugDescription String   @default("")
+  bugScreenshot  String   @default("") // storage path
+  status         String   @default("open") // "open", "read", "resolved"
+  userId         String? // null if guest
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String   @default("info") // "draft", "submission-sent", "points-earned", "report-approved", "report-rejected", "project-verified", "event"
+  title     String
+  body      String   @default("")
+  isRead    Boolean  @default(false)
+  link      String   @default("") // deep link to relevant page
+  createdAt DateTime @default(now())
+
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  projectId String
+  userId    String
+  text      String
+  createdAt DateTime @default(now())
+
+  project   Project  @relation("ProjectComments", fields: [projectId], references: [id], onDelete: Cascade)
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  projectId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@index([projectId])
+}
+
+model ContentBlock {
+  id          String   @id @default(uuid())
+  section     String // "media", "projects", "stats", "testimonials"
+  type        String   @default("") // "video", "event", "publication", "press", "project", "stat"
+  title       String
+  subtitle    String   @default("")
+  description String   @default("")
+  imageUrl    String   @default("")
+  linkUrl     String   @default("")
+  linkLabel   String   @default("")
+  data        String   @default("{}") // JSON for extra fields
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AppError {
+  id        String   @id @default(uuid())
+  level     String   @default("error") // "info", "warning", "error", "critical"
+  message   String
+  source    String   @default("") // "frontend", "api", "worker", "database"
+  stack     String   @default("")
+  url       String   @default("")
+  userId    String   @default("")
+  metadata  String   @default("{}") // JSON string
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([level, createdAt])
+  @@index([source, createdAt])
+  @@index([read, createdAt])
+}

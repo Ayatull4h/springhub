@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /_next/static/
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /reset-password
+Sitemap: /sitemap.xml
+
+# Host
+Host: https://www.springhub.id
