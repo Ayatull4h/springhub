@@ -469,7 +469,7 @@ select.cari-select:focus {
    ═══════════════════════════════════════════════════ */
 .grid-kartu {
   display: grid;
-  gap: 1.125rem;
+  gap: 1.25rem;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
 }
 
@@ -477,26 +477,31 @@ select.cari-select:focus {
 .kartu {
   background: var(--kartu);
   border: 1px solid var(--tepi);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-xl);
   overflow: hidden;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(.34, 1.56, .64, 1);
   box-shadow: var(--sha-sm);
   position: relative;
   -webkit-tap-highlight-color: transparent;
+  transform: rotate(var(--rot, 0deg));
 }
+.kartu:nth-child(3n+1) { --rot: -0.4deg; }
+.kartu:nth-child(3n+2) { --rot: 0.6deg; }
+.kartu:nth-child(3n+3) { --rot: -0.2deg; }
+.kartu:nth-child(5n+4) { --rot: 0.3deg; }
 .kartu:hover {
-  transform: translateY(-6px) scale(1.01);
+  transform: translateY(-6px) scale(1.01) rotate(0deg);
   box-shadow: var(--sha-lg), var(--sha-glow);
   border-color: transparent;
 }
-.kartu:active { transform: translateY(-2px) scale(0.99); }
+.kartu:active { transform: translateY(-2px) scale(0.99) rotate(0deg); }
 
-/* Border accent — gradient yang hidup */
+/* Border accent — gradient yang hidup · tampil dari sudut */
 .kartu-batas {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
+  border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-xl);
   padding: 1px;
   background: transparent;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -504,47 +509,48 @@ select.cari-select:focus {
   mask-composite: exclude;
   pointer-events: none;
   z-index: 2;
-  transition: opacity 0.4s;
+  transition: opacity 0.5s;
   opacity: 0;
 }
 .kartu:hover .kartu-batas {
   opacity: 1;
-  background: linear-gradient(135deg, var(--b300), var(--b600), var(--b400));
+  background: linear-gradient(145deg, var(--b300), var(--b600), var(--b400), transparent 80%);
 }
 
-/* Notch — si biru kecil di atas */
+/* Notch miring — bukan centang tengah */
 .kartu::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40%;
+  left: 1.5rem;
+  width: 4.5rem;
   height: 3px;
-  background: linear-gradient(90deg, transparent, var(--b400), var(--b600), var(--b400), transparent);
-  border-radius: 0 0 6px 6px;
+  background: linear-gradient(90deg, var(--b400), var(--b600));
+  border-radius: 0 0 4px 4px;
   z-index: 3;
-  opacity: 0.6;
-  transition: all 0.4s;
+  opacity: 0.5;
+  transition: all 0.4s cubic-bezier(.34, 1.56, .64, 1);
 }
 .kartu:hover::after {
-  width: 60%;
+  width: 6rem;
+  left: 2rem;
   opacity: 1;
-  background: linear-gradient(90deg, transparent, var(--b300), var(--b500), var(--b300), transparent);
+  background: linear-gradient(90deg, var(--b300), var(--b500));
 }
 
-/* ── GAMBAR KARTU ── */
+/* ── GAMBAR KARTU — ujungnya bergelombang ── */
 .kartu-gambar {
-  aspect-ratio: 16 / 9.5;
+  aspect-ratio: 16 / 9;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   transition: background 0.5s;
+  clip-path: polygon(0 0, 100% 0, 100% 82%, 96% 88%, 91% 82%, 85% 89%, 78% 83%, 70% 90%, 61% 84%, 52% 91%, 42% 84%, 31% 90%, 20% 85%, 10% 91%, 4% 84%, 0 88%);
+  margin-bottom: -8px;
 }
-/* Gradient dinamis — di-set dari JS */
-/* Pola decorative di thumbnail — kotak-kotak halus */
+/* Pola decorative di thumbnail — bintik halus */
 .kartu-gambar::before {
   content: '';
   position: absolute;
@@ -557,36 +563,36 @@ select.cari-select:focus {
   z-index: 1;
 }
 
-/* Lingkaran dekoratif thumbnail */
+/* Lingkaran dekoratif thumbnail — pecah dari pojok */
 .kartu-gambar::after {
   content: '';
   position: absolute;
-  width: min(160px, 40%);
-  height: min(160px, 40%);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-  bottom: -30px;
-  right: -20px;
+  width: min(180px, 45%);
+  height: min(180px, 45%);
+  border-radius: 30% 70% 50% 50% / 40% 40% 60% 60%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  bottom: -40px;
+  right: -30px;
   pointer-events: none;
-  transition: transform 0.6s cubic-bezier(.34, 1.56, .64, 1);
+  transition: transform 0.7s cubic-bezier(.34, 1.56, .64, 1);
   z-index: 1;
 }
 .kartu:hover .kartu-gambar::after {
-  transform: scale(1.5) translate(-10px, -10px);
+  transform: scale(1.6) translate(-15px, -10px);
 }
 
 .kartu-icon {
   position: relative;
   z-index: 2;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.8rem;
+  height: 2.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--r);
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  border-radius: 30% 50% 40% 60% / 40% 30% 70% 60%;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2);
   transition: all 0.4s cubic-bezier(.34, 1.56, .64, 1);
 }
 .kartu-icon svg {
@@ -596,17 +602,39 @@ select.cari-select:focus {
   transition: all 0.4s cubic-bezier(.34, 1.56, .64, 1);
 }
 .kartu:hover .kartu-icon {
-  transform: scale(1.15) rotate(-6deg);
-  background: rgba(255,255,255,0.25);
+  transform: scale(1.1) rotate(-8deg) translateY(-2px);
+  background: rgba(255,255,255,0.3);
 }
 .kartu:hover .kartu-icon svg {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(-4deg);
 }
 
 /* ── BADAN KARTU ── */
 .kartu-badan {
-  padding: 1rem 1.25rem 1.2rem;
+  padding: 1rem 1.25rem 1.3rem 1.15rem;
   position: relative;
+}
+/* Variasi tinggi — biar gak seragam kayak pabrik */
+.kartu:nth-child(2n) .kartu-badan { padding-bottom: 1.6rem; }
+.kartu:nth-child(3n) .kartu-badan { padding-bottom: 1.15rem; }
+.kartu:nth-child(5n+2) .kartu-badan { padding-top: 0.85rem; }
+
+/* Sudut lipat kertas — pojok kanan bawah */
+.kartu::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, transparent 50%, var(--latar) 50%);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+.kartu:hover::before {
+  opacity: 1;
 }
 
 .kartu-header {
@@ -658,11 +686,15 @@ select.cari-select:focus {
 }
 .kartu-lokasi svg { width: 0.85rem; height: 0.85rem; flex: none; color: var(--teks-samar); }
 
-/* Divider tipis */
+/* Divider — garis gelombang, bukan garis lurus */
 .kartu-divider {
-  height: 1px;
+  height: 6px;
+  margin: 0.7rem 0;
   background: var(--tepi);
-  margin: 0.8rem 0;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='6' viewBox='0 0 100 6'%3E%3Cpath d='M0,3 Q12.5,0 25,3 T50,3 T75,3 T100,3' stroke='black' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") repeat-x 0 0 / 100px 6px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='6' viewBox='0 0 100 6'%3E%3Cpath d='M0,3 Q12.5,0 25,3 T50,3 T75,3 T100,3' stroke='black' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") repeat-x 0 0 / 100px 6px;
+  -webkit-mask-size: 80px 6px;
+  mask-size: 80px 6px;
   transition: background 0.3s;
 }
 .kartu:hover .kartu-divider { background: var(--b200); }
@@ -1262,6 +1294,17 @@ textarea.input { resize: vertical; min-height: 3.2rem; }
 
 @media (max-width: 480px) {
   .toast { left: 1rem; right: 1rem; max-width: none; bottom: 1rem; }
+  .kartu { --rot: 0deg !important; }
+  .kartu:hover { transform: none !important; }
+  .kartu:hover .kartu-gambar::after { transform: none !important; }
+  .kartu-icon { width: 2.2rem; height: 2.2rem; }
+  .kartu-icon svg { width: 1.1rem; height: 1.1rem; }
+  .grid-kartu { gap: 0.85rem; }
+  select.cari-select { min-width: 0; flex: 1; }
+  .tab-btn { font-size: 0.72rem; padding: 0.4rem 0.5rem; }
+  .tab-btn .label-tab { display: none; }
+  .lapisan { padding: 0.5rem; }
+  .panel { padding: 1rem; }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1278,7 +1321,7 @@ textarea.input { resize: vertical; min-height: 3.2rem; }
   border-radius: var(--r);
 }
 .skel-kartu {
-  aspect-ratio: 16 / 9.5;
+  aspect-ratio: 16 / 9;
   border-radius: var(--r-lg) var(--r-lg) 0 0;
   margin-bottom: 0;
 }
@@ -1681,7 +1724,7 @@ function renderKartu(data) {
   kisi.innerHTML = data.map((b, i) => {
     const w = WARNA_TAK[b.jenis] || WARNA_DEFAULT;
     return `
-    <div class="kartu" onclick="bukaDetail(${b.id})" style="animation:naik 0.45s ease-out ${i*70}ms both">
+    <div class="kartu" onclick="bukaDetail(${b.id})" style="animation:naik 0.45s ease-out ${60 + (i*47) + (i%3 * 15)}ms both">
       <div class="kartu-batas"></div>
       <div class="kartu-gambar" style="background:${w.bg}">
         <div class="kartu-icon"><i data-lucide="${w.ikon}"></i></div>
