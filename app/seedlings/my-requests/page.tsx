@@ -1,18 +1,13 @@
 "use client";
 
-import { FileText, XCircle } from "lucide-react";
+import { FileText, User, MapPin, Clock, Phone, PhoneCall, X, Inbox } from "lucide-react";
 import Link from "next/link";
-import { useI18n } from "@/lib/i18n";
 
 type RequestItem = {
-  id: string;
-  species: string;
-  qty: number;
-  owner: string;
-  location: string;
+  id: string; species: string; qty: number;
+  owner: string; location: string;
   status: "pending" | "approved" | "rejected" | "fulfilled" | "cancelled";
-  date: string;
-  phone?: string;
+  date: string; phone?: string;
 };
 
 const DUMMY: RequestItem[] = [
@@ -23,70 +18,83 @@ const DUMMY: RequestItem[] = [
   { id: "5", species: "Kaliandra", qty: 20, owner: "Rina", location: "Banyuwangi", status: "cancelled", date: "7 hari lalu" },
 ];
 
-const STATUS_STYLE: Record<string, string> = {
-  pending:   "text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-300",
-  approved:  "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-300",
-  rejected:  "text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300",
-  fulfilled: "text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300",
-  cancelled: "text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400",
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  pending:   "Menunggu",
-  approved:  "Disetujui",
-  rejected:  "Ditolak",
-  fulfilled: "Selesai",
-  cancelled: "Dibatalkan",
+const STATUS: Record<string, { cls: string; icon: typeof Clock; label: string }> = {
+  pending:   { cls: "bg-amber-50 text-amber-700", icon: Clock, label: "Menunggu" },
+  approved:  { cls: "bg-green-50 text-green-700", icon: Phone, label: "Disetujui" },
+  rejected:  { cls: "bg-rose-50 text-rose-600", icon: X, label: "Ditolak" },
+  fulfilled: { cls: "bg-blue-50 text-blue-600", icon: Phone, label: "Selesai" },
+  cancelled: { cls: "bg-slate-100 text-slate-500", icon: X, label: "Dibatalkan" },
 };
 
 export default function MyRequestsPage() {
-  const { t } = useI18n();
-
   return (
     <main className="container-page py-8">
-      <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold text-ink">
-        <FileText className="h-6 w-6 text-brand-600" />
-        {t("seedlings.myRequests") || "Permintaanku"}
+      <h1 className="mb-6 flex items-center gap-3 text-2xl font-extrabold text-ink">
+        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-blue-100">
+          <FileText className="h-5 w-5 text-blue-600" />
+        </span>
+        Permintaanku
       </h1>
 
-      <div className="space-y-3">
-        {DUMMY.map(req => (
-          <div key={req.id} className="card flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-ink">{req.species}</span>
-                <span className="text-sm text-ink-muted">— {req.qty} bibit</span>
-                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[req.status]}`}>
-                  {STATUS_LABEL[req.status]}
-                </span>
+      {DUMMY.length === 0 ? (
+        <div className="flex animate-fade flex-col items-center py-16 text-center">
+          <Inbox className="mb-4 h-12 w-12 text-slate-300" />
+          <h3 className="text-lg font-semibold text-ink">Belum ada permintaan</h3>
+          <p className="mt-1 text-sm text-ink-muted">Jelajahi bibit yang tersedia di marketplace</p>
+          <Link href="/seedlings" className="btn-soft mt-4 inline-flex items-center gap-2">
+            Jelajahi Marketplace
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {DUMMY.map((r, i) => {
+            const st = STATUS[r.status];
+            const Icon = st.icon;
+            return (
+              <div
+                key={r.id}
+                className="flex animate-fade-up flex-wrap items-center gap-3 rounded-xl border border-ink-line bg-white p-4 shadow-card transition hover:shadow-elevated"
+                style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
+              >
+                <div className="min-w-[180px] flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <strong className="text-[0.9375rem] font-semibold text-ink">{r.species}</strong>
+                    <span className="text-sm text-ink-muted">{r.qty} bibit</span>
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${st.cls}`}>
+                      <Icon className="h-3 w-3" />
+                      {st.label}
+                    </span>
+                  </div>
+                  <div className="mt-0.5 flex items-center gap-3 text-xs text-ink-muted">
+                    <span className="flex items-center gap-1"><User className="h-3 w-3" />{r.owner}</span>
+                    <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{r.location}</span>
+                    <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{r.date}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {r.status === "pending" && (
+                    <button className="btn-sm btn-danger inline-flex items-center gap-1"
+                      onClick={() => alert("Permintaan dibatalkan (demo)")}>
+                      <X className="h-3 w-3" />Batalkan
+                    </button>
+                  )}
+                  {r.status === "approved" && (
+                    <>
+                      <span className="flex items-center gap-1 text-sm text-ink-muted">
+                        <Phone className="h-3.5 w-3.5 text-green-500" />
+                        {r.phone}
+                      </span>
+                      <a href={`tel:${r.phone}`} className="btn-sm btn-soft inline-flex items-center gap-1">
+                        <PhoneCall className="h-3 w-3" />Hubungi
+                      </a>
+                    </>
+                  )}
+                </div>
               </div>
-              <p className="mt-1 text-xs text-ink-muted">
-                Dari {req.owner} · {req.location} · {req.date}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {req.status === "pending" && (
-                <button className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-1 text-xs text-red-600 hover:bg-red-50">
-                  <XCircle className="h-3 w-3" />
-                  Batalkan
-                </button>
-              )}
-              {req.status === "approved" && (
-                <>
-                  <span className="text-xs text-ink-muted">📞 {req.phone}</span>
-                  <a
-                    href={`tel:${req.phone}`}
-                    className="rounded-lg bg-brand-600 px-3 py-1 text-xs text-white hover:bg-brand-700"
-                  >
-                    Hubungi
-                  </a>
-                </>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </main>
   );
 }

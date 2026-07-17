@@ -2,188 +2,242 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Bibit — SpringHub</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/lucide@0.408.0/dist/esm/lucide.css">
+<script src="https://unpkg.com/lucide@0.408.0/dist/umd/lucide.js"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; }
-.container { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
+/* ═══════════ RESET & BASE ═══════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green-50:#ecfdf5;--green-100:#d1fae5;--green-200:#a7f3d0;--green-500:#10b981;--green-600:#059669;--green-700:#047857;--green-800:#065f46;
+  --amber-50:#fffbeb;--amber-100:#fef3c7;--amber-500:#f59e0b;--amber-600:#d97706;
+  --rose-50:#fff1f2;--rose-500:#f43f5e;--rose-600:#e11d48;
+  --blue-50:#eff6ff;--blue-500:#3b82f6;--blue-600:#2563eb;
+  --slate-50:#f8fafc;--slate-100:#f1f5f9;--slate-200:#e2e8f0;--slate-300:#cbd5e1;--slate-400:#94a3b8;--slate-500:#64748b;--slate-600:#475569;--slate-700:#334155;--slate-800:#1e293b;--slate-900:#0f172a;
+  --bg:#f6f7f9;--surface:#fff;--border:#e8ecf0;--text:#1a1d23;--text-muted:#6b7280;--text-subtle:#9ca3af;
+  --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-xl:20px;
+  --shadow-card:0 1px 2px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.04);
+  --shadow-elevated:0 4px 6px -1px rgba(0,0,0,.06),0 10px 28px -4px rgba(0,0,0,.08);
+  --shadow-modal:0 20px 60px rgba(0,0,0,.12);
+  --transition:200ms cubic-bezier(.4,0,.2,1);
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.6}
+.container{max-width:1040px;margin:0 auto;padding:clamp(1rem,4vw,2rem)}
 
-/* ── NAV ── */
-h1 { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; }
-h1 .accent { color: #059669; }
-.tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-.tab {
-  padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500;
-  cursor: pointer; border: 1px solid #e2e8f0; background: white; transition: all 0.2s;
-  display: inline-flex; align-items: center; gap: 0.375rem;
-}
-.tab:hover { border-color: #059669; }
-.tab.active { background: #059669; color: white; border-color: #059669; }
-.section { display: none; }
-.section.active { display: block; }
+/* ═══════════ ANIMATIONS ═══════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.anim-fade{animation:fadeUp .5s ease-out both}
+.anim-scale{animation:scaleIn .35s ease-out both}
+.anim-slide{animation:slideDown .3s ease-out both}
 
-/* ── FILTER ── */
-.filter-bar { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem; }
-.search-box { position: relative; flex: 1; min-width: 180px; }
-.search-box input {
-  width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem;
-  border: 1px solid #e2e8f0; border-radius: 0.5rem; font-size: 0.875rem; background: white; outline: none;
-}
-.search-box input:focus { border-color: #059669; box-shadow: 0 0 0 3px rgba(5,150,105,0.1); }
-.search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-.filter-bar select {
-  padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;
-  font-size: 0.875rem; background: white; outline: none; cursor: pointer;
+/* ═══════════ HEADER ═══════════ */
+.header{padding-bottom:clamp(1rem,2.5vw,1.5rem)}
+.header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+.header h1{font-size:clamp(1.25rem,2.5vw,1.75rem);font-weight:800;display:flex;align-items:center;gap:.5rem;color:var(--text)}
+.header h1 .icon{display:flex;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--green-50),var(--green-100))}
+.header h1 .icon svg{width:1.125rem;height:1.125rem;color:var(--green-600)}
+.header p{font-size:.875rem;color:var(--text-muted);margin-top:.25rem}
+.nav-tabs{display:flex;gap:.25rem;margin-top:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:.25rem}
+.nav-tab{flex:1;padding:.5rem .75rem;border:none;border-radius:var(--radius-sm);font-size:.8125rem;font-weight:500;background:transparent;color:var(--text-muted);cursor:pointer;transition:all var(--transition);display:flex;align-items:center;justify-content:center;gap:.375rem;white-space:nowrap}
+.nav-tab:hover{color:var(--text);background:var(--slate-50)}
+.nav-tab.active{background:var(--green-600);color:#fff;box-shadow:0 1px 3px rgba(5,150,105,.25)}
+.nav-tab.active svg{color:#fff}
+
+/* ═══════════ FILTER BAR ═══════════ */
+.filter-bar{display:flex;gap:.625rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.filter-bar .search-wrap{position:relative;flex:1;min-width:180px}
+.filter-bar .search-wrap svg{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:1rem;height:1rem;color:var(--text-subtle);pointer-events:none}
+.filter-bar input{padding:.5rem .75rem .5rem 2.25rem}
+.filter-bar select{-webkit-appearance:none;appearance:none;padding:.5rem 2rem .5rem .75rem;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .5rem center;background-size:1rem;padding-right:2rem;cursor:pointer;min-width:140px}
+
+/* ═══════════ INPUTS ═══════════ */
+.input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:.875rem;background:var(--surface);color:var(--text);outline:none;transition:border-color var(--transition),box-shadow var(--transition);font-family:inherit}
+.input:hover{border-color:var(--slate-300)}
+.input:focus{border-color:var(--green-500);box-shadow:0 0 0 3px rgba(16,185,129,.12)}
+
+/* ═══════════ GRID ═══════════ */
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+
+/* ═══════════ CARD ═══════════ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow-card)}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-elevated);border-color:var(--green-200)}
+.card:active{transform:translateY(-1px)}
+.card-img{aspect-ratio:16/10;background:linear-gradient(135deg,var(--slate-50),var(--slate-100));display:flex;align-items:center;justify-content:center;color:var(--slate-300);position:relative;overflow:hidden}
+.card-img svg{width:2rem;height:2rem;transition:transform .3s ease}
+.card:hover .card-img svg{transform:scale(1.1)}
+.card-body{padding:1rem 1.125rem 1.125rem}
+.card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.card-h h3{font-size:1.0625rem;font-weight:600;line-height:1.3}
+.badge{display:inline-flex;align-items:center;gap:.25rem;padding:.1875rem .625rem;border-radius:9999px;font-size:.75rem;font-weight:600;white-space:nowrap;line-height:1.3}
+.badge-green{background:var(--green-50);color:var(--green-700)}
+.badge-count{background:var(--slate-100);color:var(--slate-600)}
+.loc{display:flex;align-items:center;gap:.3125rem;font-size:.8125rem;color:var(--text-muted);margin-top:.5rem}
+.loc svg{width:.875rem;height:.875rem;flex:none;color:var(--slate-400)}
+.cf{display:flex;align-items:center;justify-content:space-between;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border)}
+
+/* ═══════════ BUTTONS ═══════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4375rem;font-size:.8125rem;font-weight:600;padding:.5rem 1rem;border-radius:var(--radius-md);border:none;cursor:pointer;transition:all var(--transition);font-family:inherit;text-decoration:none}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--green-600);color:#fff;box-shadow:0 1px 2px rgba(5,150,105,.15)}
+.btn-primary:hover{background:var(--green-700);box-shadow:0 2px 6px rgba(5,150,105,.25)}
+.btn-soft{background:var(--green-50);color:var(--green-700)}
+.btn-soft:hover{background:var(--green-100)}
+.btn-ghost{background:transparent;color:var(--text-muted)}
+.btn-ghost:hover{background:var(--slate-50);color:var(--text)}
+.btn-danger{background:var(--rose-50);color:var(--rose-600)}
+.btn-danger:hover{background:var(--rose-100)}
+.btn-blue{background:var(--blue-50);color:var(--blue-600)}
+.btn-blue:hover{background:var(--blue-100)}
+.btn-sm{padding:.375rem .75rem;font-size:.75rem}
+.btn-full{width:100%}
+
+/* ═══════════ STATUS CHIPS ═══════════ */
+.status-chip{display:inline-flex;align-items:center;gap:.3125rem;padding:.1875rem .625rem;border-radius:9999px;font-size:.75rem;font-weight:600;line-height:1.4}
+.status-pending{background:var(--amber-50);color:var(--amber-600)}
+.status-approved{background:var(--green-50);color:var(--green-700)}
+.status-rejected{background:var(--rose-50);color:var(--rose-600)}
+.status-fulfilled{background:var(--blue-50);color:var(--blue-600)}
+.status-cancelled{background:var(--slate-100);color:var(--slate-500)}
+
+/* ═══════════ EMPTY STATE ═══════════ */
+.empty-state{text-align:center;padding:4rem 1rem;animation:fadeUp .5s ease-out}
+.empty-state svg{width:3rem;height:3rem;color:var(--slate-300);margin-bottom:1rem}
+.empty-state h3{font-size:1.0625rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
+.empty-state p{font-size:.875rem;color:var(--text-muted);margin-bottom:1rem}
+
+/* ═══════════ SECTION HEADERS ═══════════ */
+.section-hidden{display:none}
+.section-active{display:block;animation:fadeUp .4s ease-out}
+
+/* ═══════════ DETAIL OVERLAY ═══════════ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;padding:clamp(1rem,3vw,2rem);overflow-y:auto;display:none;align-items:flex-start;justify-content:center;padding-top:2rem;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.overlay.open{display:flex}
+.overlay-content{background:var(--surface);border-radius:var(--radius-xl);max-width:920px;width:100%;padding:clamp(1.25rem,3vw,2rem);position:relative;animation:scaleIn .35s ease-out;box-shadow:var(--shadow-modal)}
+.close-btn{position:absolute;top:1rem;right:1rem;width:2.25rem;height:2.25rem;border-radius:9999px;border:none;display:flex;align-items:center;justify-content:center;background:var(--slate-100);color:var(--text-muted);cursor:pointer;transition:all var(--transition)}
+.close-btn:hover{background:var(--slate-200);color:var(--text)}
+.detail-grid{display:grid;gap:1.5rem;grid-template-columns:3fr 2fr}
+@media(max-width:700px){.detail-grid{grid-template-columns:1fr}}
+.detail-photo{aspect-ratio:16/10;background:linear-gradient(135deg,var(--slate-50),var(--slate-100));border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;color:var(--slate-300)}
+.detail-photo svg{width:2.5rem;height:2.5rem}
+.detail-thumbs{display:flex;gap:.5rem;margin-top:.75rem}
+.detail-thumb{width:4.5rem;height:3.5rem;border-radius:var(--radius-sm);background:var(--slate-50);border:1.5px solid transparent;display:flex;align-items:center;justify-content:center;font-size:.6875rem;color:var(--text-subtle);cursor:pointer;transition:all var(--transition)}
+.detail-thumb:hover{border-color:var(--green-200)}
+.detail-thumb.active{border-color:var(--green-500);background:var(--green-50)}
+.detail-side{display:flex;flex-direction:column;gap:.75rem}
+.detail-info{padding:1.125rem;border-radius:var(--radius-lg);background:var(--slate-50);border:1px solid var(--border)}
+.detail-info h2{font-size:1.25rem;font-weight:700}
+.detail-rows{margin-top:.75rem;display:grid;gap:.375rem;font-size:.875rem}
+.detail-row{display:flex;justify-content:space-between;align-items:center}
+.detail-row span:first-child{color:var(--text-muted)}
+.detail-row span:last-child{font-weight:600}
+.dl{border-top:1px solid var(--border);margin:.5rem 0}
+.detail-notes{background:var(--slate-50);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.125rem;margin-top:1rem}
+.detail-notes h3{font-weight:600;font-size:.875rem;margin-bottom:.375rem}
+.detail-notes p{font-size:.8125rem;color:var(--text-muted);line-height:1.7}
+.request-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.125rem}
+.request-form h3{font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem}
+.request-form h3 svg{width:1rem;height:1rem;color:var(--green-600)}
+.request-form label{font-size:.75rem;font-weight:500;color:var(--text-muted);display:block;margin-top:.75rem;margin-bottom:.25rem}
+.request-form .input{display:block}
+
+/* ═══════════ LIST ITEMS ═══════════ */
+.list-item{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.125rem;transition:all var(--transition);margin-bottom:.625rem;animation:fadeUp .4s ease-out both}
+.list-item:hover{border-color:var(--slate-200);box-shadow:var(--shadow-elevated)}
+.li-main{flex:1;min-width:180px}
+.li-top{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.li-top strong{font-weight:600;font-size:.9375rem}
+.li-muted{color:var(--text-muted);font-size:.8125rem}
+.li-sub{font-size:.75rem;color:var(--text-muted);margin-top:.1875rem;display:flex;align-items:center;gap:.375rem}
+.li-sub svg{width:.75rem;height:.75rem}
+.li-actions{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+
+/* ═══════════ LISTING GROUP ═══════════ */
+.listing-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1rem;animation:fadeUp .4s ease-out both}
+.lg-head{padding:1rem 1.125rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.lg-head h3{font-weight:600;font-size:.9375rem}
+.lg-head .muted{font-size:.75rem;color:var(--text-muted);margin-top:.125rem}
+.lg-body{padding:0}
+.req-item{display:flex;flex-wrap:wrap;gap:.625rem;align-items:center;padding:.875rem 1.125rem;border-bottom:1px solid var(--border);transition:background var(--transition)}
+.req-item:last-child{border-bottom:none}
+.req-item:hover{background:var(--slate-50)}
+.empty-req{padding:1.5rem;text-align:center;color:var(--text-muted);font-size:.8125rem}
+.empty-req svg{width:2rem;height:2rem;color:var(--slate-300);margin-bottom:.5rem}
+
+/* ═══════════ TOAST ═══════════ */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;max-width:380px;display:flex;align-items:center;gap:.75rem;background:var(--slate-800);color:#fff;padding:.75rem 1rem .75rem .875rem;border-radius:var(--radius-md);box-shadow:var(--shadow-elevated);font-size:.875rem;transform:translateY(120%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:300;line-height:1.4}
+.toast.show{transform:translateY(0)}
+.toast svg{width:1.25rem;height:1.25rem;flex:none}
+.toast .t-close{background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;padding:.25rem;flex:none}
+.toast .t-close:hover{color:#fff}
+
+/* ═══════════ SKELETON ═══════════ */
+.skeleton{background:linear-gradient(90deg,var(--slate-50) 25%,var(--slate-100) 50%,var(--slate-50) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-sm)}
+.skel-card{aspect-ratio:16/10;border-radius:var(--radius-lg);margin-bottom:.5rem}
+.skel-line{height:.875rem;width:100%;margin-bottom:.5rem}
+.skel-line.short{width:60%}
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media(max-width:480px){
+  .grid{gap:.75rem;grid-template-columns:1fr}
+  .filter-bar select{min-width:0;flex:1}
+  .nav-tab{font-size:.75rem;padding:.375rem .5rem}
+  .nav-tab span{display:none}
+  .toast{left:1rem;right:1rem;max-width:none}
+  .overlay{padding:.5rem}
 }
 
-/* ── GRID ── */
-.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); }
-.card {
-  background: white; border-radius: 0.75rem; border: 1px solid #e2e8f0;
-  overflow: hidden; cursor: pointer; transition: border-color 0.2s;
+/* ═══════════ prefers-reduced-motion ═══════════ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .card:hover{transform:none}
 }
-.card:hover { border-color: #059669; }
-.card-img {
-  aspect-ratio: 16/9; background: #f1f5f9; display: flex; align-items: center;
-  justify-content: center; color: #94a3b8; font-size: 0.875rem;
-}
-.card-body { padding: 1rem; }
-.card-h { display: flex; justify-content: space-between; align-items: flex-start; }
-.card-h h3 { font-size: 1.125rem; font-weight: 600; }
-.badge { padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
-.badge-green { background: #ecfdf5; color: #059669; }
-.badge-amber { background: #fef3c7; color: #d97706; }
-.badge-blue { background: #dbeafe; color: #2563eb; }
-.loc { display: flex; align-items: center; gap: 0.25rem; color: #64748b; font-size: 0.875rem; margin-top: 0.5rem; }
-.cf {
-  display: flex; justify-content: space-between; align-items: center;
-  border-top: 1px solid #f1f5f9; margin-top: 0.5rem; padding-top: 0.5rem;
-}
-.empty { text-align: center; padding: 4rem 0; color: #64748b; }
-
-/* ── OVERLAY (detail) ── */
-.overlay {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-  z-index: 100; padding: 1rem; overflow-y: auto;
-}
-.overlay.open { display: flex; align-items: flex-start; justify-content: center; padding-top: 2rem; }
-.overlay-content {
-  background: white; border-radius: 1rem; max-width: 900px; width: 100%;
-  padding: 1.5rem; position: relative;
-}
-.close {
-  position: absolute; top: 1rem; right: 1rem; width: 2rem; height: 2rem;
-  border-radius: 9999px; border: none; background: #f1f5f9; font-size: 1.25rem;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-}
-.close:hover { background: #e2e8f0; }
-.detail-grid { display: grid; gap: 1.5rem; grid-template-columns: 3fr 2fr; }
-@media (max-width: 640px) { .detail-grid { grid-template-columns: 1fr; } }
-.detail-main-img {
-  aspect-ratio: 16/9; background: #f1f5f9; border-radius: 0.75rem;
-  display: flex; align-items: center; justify-content: center; color: #94a3b8;
-}
-.thumbnails { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
-.thumb {
-  width: 5rem; height: 4rem; background: #f1f5f9; border-radius: 0.5rem;
-  display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.75rem;
-}
-.detail-card { background: #f8fafc; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
-.detail-card h2 { font-size: 1.25rem; font-weight: 700; }
-.info-row { display: flex; justify-content: space-between; padding: 0.375rem 0; font-size: 0.875rem; }
-.info-l { color: #64748b; }
-.info-v { font-weight: 600; }
-.info-v.green { color: #16a34a; }
-.dl { border-top: 1px solid #e2e8f0; margin: 0.75rem 0; }
-.request-form label { font-size: 0.75rem; color: #64748b; display: block; margin-top: 0.75rem; }
-.request-form input, .request-form textarea {
-  width: 100%; margin-top: 0.25rem; padding: 0.5rem 0.75rem;
-  border: 1px solid #e2e8f0; border-radius: 0.5rem; font-size: 0.875rem; font-family: inherit; outline: none;
-}
-.request-form input:focus, .request-form textarea:focus { border-color: #059669; }
-.request-form textarea { resize: vertical; min-height: 4rem; }
-.btn-primary {
-  width: 100%; margin-top: 1rem; padding: 0.625rem;
-  background: #059669; color: white; border: none; border-radius: 0.5rem;
-  font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.2s;
-}
-.btn-primary:hover { background: #047857; }
-.detail-notes { margin-top: 1rem; }
-.detail-notes h3 { font-weight: 600; margin-bottom: 0.5rem; }
-.detail-notes p { font-size: 0.875rem; color: #64748b; line-height: 1.6; }
-
-/* ── LIST ── */
-.list-item {
-  display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
-  background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem;
-  padding: 1rem; transition: border-color 0.2s; margin-bottom: 0.75rem;
-}
-.list-item:hover { border-color: #d1d5db; }
-.li-main { flex: 1; min-width: 200px; }
-.li-top { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-.li-top strong { font-weight: 600; }
-.li-muted { color: #64748b; font-size: 0.875rem; }
-.li-sub { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
-.li-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-
-.btn-xs {
-  padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem;
-  border: none; cursor: pointer; transition: background 0.2s;
-}
-.btn-green { background: #059669; color: white; }
-.btn-green:hover { background: #047857; }
-.btn-red { border: 1px solid #fecaca; color: #dc2626; background: none; }
-.btn-red:hover { background: #fef2f2; }
-.btn-blue { background: #2563eb; color: white; }
-.btn-blue:hover { background: #1d4ed8; }
-
-/* ── LISTING GROUP ── */
-.lg { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
-.lg-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-.lg-h h3 { font-weight: 600; }
-.lg-h .muted { font-size: 0.75rem; color: #64748b; }
-.empty-r { text-align: center; padding: 1rem 0; color: #94a3b8; font-size: 0.875rem; border-top: 1px solid #f1f5f9; }
-.ri { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; padding: 0.75rem 0; border-top: 1px solid #f1f5f9; }
-.ri:first-of-type { border-top: 1px solid #e2e8f0; }
-.chip { padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
-.chip-pending { background: #fef3c7; color: #d97706; }
-.chip-approved { background: #d1fae5; color: #059669; }
-.chip-fulfilled { background: #dbeafe; color: #2563eb; }
-.chip-rejected { background: #fee2e2; color: #dc2626; }
-.chip-cancelled { background: #f1f5f9; color: #64748b; }
-
-/* ── NOTIF TOAST ── */
-.toast {
-  position: fixed; bottom: 1.5rem; right: 1.5rem;
-  background: #1e293b; color: white; padding: 0.75rem 1.25rem;
-  border-radius: 0.75rem; font-size: 0.875rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transform: translateY(120%); transition: transform 0.3s; z-index: 200;
-}
-.toast.show { transform: translateY(0); }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1><span class="accent">🌱</span> Bibit SpringHub</h1>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>
+          <span class="icon" aria-hidden="true"><i data-lucide="sprout"></i></span>
+          Bibit
+        </h1>
+        <p>Cari dan minta bibit dari komunitas SpringHub</p>
+      </div>
+    </div>
 
-  <!-- TABS -->
-  <div class="tabs">
-    <div class="tab active" onclick="showTab('marketplace',this)">🌱 Marketplace</div>
-    <div class="tab" onclick="showTab('listings',this)">📋 Bibitku</div>
-    <div class="tab" onclick="showTab('requests',this)">📨 Permintaanku</div>
+    <div class="nav-tabs" role="tablist">
+      <button class="nav-tab active" data-tab="marketplace" onclick="switchTab('marketplace',this)" role="tab">
+        <i data-lucide="store" style="width:1rem;height:1rem"></i>
+        <span>Marketplace</span>
+      </button>
+      <button class="nav-tab" data-tab="listings" onclick="switchTab('listings',this)" role="tab">
+        <i data-lucide="package" style="width:1rem;height:1rem"></i>
+        <span>Bibitku</span>
+      </button>
+      <button class="nav-tab" data-tab="requests" onclick="switchTab('requests',this)" role="tab">
+        <i data-lucide="inbox" style="width:1rem;height:1rem"></i>
+        <span>Permintaanku</span>
+      </button>
+    </div>
   </div>
 
-  <!-- ───────────── MARKETPLACE ───────────── -->
-  <div id="s-marketplace" class="section active">
+  <!-- ─── MARKETPLACE ─── -->
+  <section id="tab-marketplace" class="section-active">
     <div class="filter-bar">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Cari jenis bibit..." oninput="filterCards()">
+      <div class="search-wrap">
+        <i data-lucide="search" style="width:1rem;height:1rem"></i>
+        <input type="text" class="input" id="searchInput" placeholder="Cari jenis bibit..." oninput="debounceSearch()" style="padding-left:2.25rem">
       </div>
-      <select id="provinceFilter" onchange="filterCards()">
+      <select class="input" id="provinceFilter" onchange="filterCards()" style="width:auto">
         <option value="">Semua Provinsi</option>
         <option>Jawa Barat</option><option>Jawa Tengah</option><option>Jawa Timur</option>
         <option>Banten</option><option>Sumatera Utara</option><option>Sumatera Barat</option>
@@ -193,54 +247,90 @@ h1 .accent { color: #059669; }
         <option>Kalimantan Selatan</option><option>Papua</option>
       </select>
     </div>
-    <div class="grid" id="grid"></div>
-    <div class="empty" id="emptyMarket" style="display:none">Tidak ada bibit ditemukan</div>
-  </div>
 
-  <!-- ───────────── BIBITKU ───────────── -->
-  <div id="s-listings" class="section">
+    <div id="marketplaceGrid" class="grid"></div>
+    <div id="marketplaceSkeleton" class="grid" style="display:none">
+      <div class="card" style="cursor:default;pointer-events:none"><div class="skel-card skeleton"></div><div class="card-body"><div class="skel-line skeleton"></div><div class="skel-line short skeleton" style="margin-top:.75rem"></div><div class="skel-line short skeleton" style="width:40%;margin-top:.75rem"></div></div></div>
+      <div class="card" style="cursor:default;pointer-events:none"><div class="skel-card skeleton"></div><div class="card-body"><div class="skel-line skeleton"></div><div class="skel-line short skeleton" style="margin-top:.75rem"></div><div class="skel-line short skeleton" style="width:40%;margin-top:.75rem"></div></div></div>
+      <div class="card" style="cursor:default;pointer-events:none"><div class="skel-card skeleton"></div><div class="card-body"><div class="skel-line skeleton"></div><div class="skel-line short skeleton" style="margin-top:.75rem"></div><div class="skel-line short skeleton" style="width:40%;margin-top:.75rem"></div></div></div>
+    </div>
+    <div class="empty-state" id="emptyMarket" style="display:none">
+      <i data-lucide="package-search" style="width:3rem;height:3rem;color:var(--slate-300);margin-bottom:1rem;display:block;margin-left:auto;margin-right:auto"></i>
+      <h3>Bibit tidak ditemukan</h3>
+      <p>Coba ganti filter atau kata kunci pencarian</p>
+      <button class="btn btn-soft" onclick="resetFilters()">Reset Filter</button>
+    </div>
+  </section>
+
+  <!-- ─── BIBITKU ─── -->
+  <section id="tab-listings" class="section-hidden">
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <i data-lucide="search" style="width:1rem;height:1rem"></i>
+        <input type="text" class="input" id="listingsSearch" placeholder="Cari laporanmu..." style="padding-left:2.25rem" oninput="renderListings()">
+      </div>
+      <a href="https://github.com/Ayatull4h/springhub/blob/main/app/seedlings/my-listings/page.tsx" target="_blank" class="btn btn-soft">
+        <i data-lucide="plus" style="width:1rem;height:1rem"></i>
+        Laporkan Bibit
+      </a>
+    </div>
     <div id="listingsContainer"></div>
-  </div>
+    <div class="empty-state" id="emptyListing" style="display:none">
+      <i data-lucide="package" style="width:3rem;height:3rem;color:var(--slate-300);margin-bottom:1rem;display:block;margin-left:auto;margin-right:auto"></i>
+      <h3>Belum ada laporan bibit</h3>
+      <p>Laporkan bibit yang kamu miliki agar muncul di marketplace</p>
+    </div>
+  </section>
 
-  <!-- ───────────── PERMINTAANKU ───────────── -->
-  <div id="s-requests" class="section">
+  <!-- ─── PERMINTAANKU ─── -->
+  <section id="tab-requests" class="section-hidden">
     <div id="requestsContainer"></div>
-  </div>
-
+    <div class="empty-state" id="emptyReq" style="display:none">
+      <i data-lucide="inbox" style="width:3rem;height:3rem;color:var(--slate-300);margin-bottom:1rem;display:block;margin-left:auto;margin-right:auto"></i>
+      <h3>Belum ada permintaan</h3>
+      <p>Jelajahi bibit yang tersedia di marketplace</p>
+      <button class="btn btn-soft" onclick="switchTab('marketplace',document.querySelector('[data-tab=marketplace]'))">Jelajahi Marketplace</button>
+    </div>
+  </section>
 </div>
 
 <!-- ─── OVERLAY DETAIL ─── -->
 <div class="overlay" id="detailOverlay">
   <div class="overlay-content">
-    <button class="close" onclick="closeDetail()">✕</button>
+    <button class="close-btn" onclick="closeDetail()" aria-label="Tutup"><i data-lucide="x" style="width:1.125rem;height:1.125rem"></i></button>
     <div class="detail-grid">
       <div>
-        <div class="detail-main-img">📷 Foto Utama Bibit</div>
-        <div class="thumbnails">
-          <div class="thumb">Foto 1</div>
-          <div class="thumb">Foto 2</div>
-          <div class="thumb">Foto 3</div>
-          <div class="thumb">Foto 4</div>
+        <div class="detail-photo"><i data-lucide="image" style="width:2.5rem;height:2.5rem"></i></div>
+        <div class="detail-thumbs" id="detailThumbs">
+          <div class="detail-thumb active"><i data-lucide="image" style="width:1rem;height:1rem"></i></div>
+          <div class="detail-thumb"><i data-lucide="image" style="width:1rem;height:1rem"></i></div>
+          <div class="detail-thumb"><i data-lucide="image" style="width:1rem;height:1rem"></i></div>
+          <div class="detail-thumb"><i data-lucide="image" style="width:1rem;height:1rem"></i></div>
         </div>
-        <div class="detail-notes"><h3>Keterangan</h3><p id="dNotes"></p></div>
+        <div class="detail-notes"><h3><i data-lucide="file-text" style="width:.875rem;height:.875rem;vertical-align:text-bottom;margin-right:.25rem"></i>Keterangan</h3><p id="dNotes"></p></div>
       </div>
-      <div>
-        <div class="detail-card">
+      <div class="detail-side">
+        <div class="detail-info">
           <h2 id="dSpecies"></h2>
-          <div class="info-row" style="margin-top:0.75rem"><span class="info-l">Jumlah</span><span class="info-v" id="dCount"></span></div>
-          <div class="info-row"><span class="info-l">Tersedia</span><span class="info-v green" id="dAvail"></span></div>
-          <div class="dl"></div>
-          <div class="info-row"><span class="info-l">📍 Lokasi</span><span id="dLoc"></span></div>
-          <div class="info-row"><span class="info-l">👤 Pemilik</span><span id="dOwner"></span></div>
-          <div class="info-row"><span class="info-l">📅 Dilaporkan</span><span id="dDate"></span></div>
+          <div class="detail-rows">
+            <div class="detail-row"><span>Jumlah</span><span id="dCount"></span></div>
+            <div class="detail-row"><span>Tersedia</span><span id="dAvail" style="color:var(--green-600)"></span></div>
+            <div class="dl"></div>
+            <div class="detail-row"><span><i data-lucide="map-pin" style="width:.8125rem;height:.8125rem;vertical-align:text-bottom"></i> Lokasi</span><span id="dLoc"></span></div>
+            <div class="detail-row"><span><i data-lucide="user" style="width:.8125rem;height:.8125rem;vertical-align:text-bottom"></i> Pemilik</span><span id="dOwner"></span></div>
+            <div class="detail-row"><span><i data-lucide="calendar" style="width:.8125rem;height:.8125rem;vertical-align:text-bottom"></i> Dilaporkan</span><span id="dDate"></span></div>
+          </div>
         </div>
-        <div class="detail-card request-form">
-          <h3 style="font-size:0.875rem;margin-bottom:0.75rem">📨 Kirim Permintaan</h3>
-          <label>Jumlah</label>
-          <input type="number" id="dQty" value="1" min="1">
-          <label>Pesan (opsional)</label>
-          <textarea id="dMsg" placeholder="Contoh: Mau tanam di kebun..."></textarea>
-          <button class="btn-primary" onclick="toast('Permintaan terkirim!')">Kirim Permintaan</button>
+        <div class="request-form">
+          <h3><i data-lucide="send" style="width:1rem;height:1rem"></i> Kirim Permintaan</h3>
+          <label>Jumlah bibit</label>
+          <input type="number" class="input" id="dQty" value="1" min="1">
+          <label>Pesan</label>
+          <textarea class="input" id="dMsg" rows="3" placeholder="Contoh: Mau tanam di kebun..." style="resize:vertical;min-height:3.5rem;padding:.5rem .75rem"></textarea>
+          <button class="btn btn-primary btn-full" style="margin-top:.875rem" onclick="submitRequest()">
+            <i data-lucide="send" style="width:1rem;height:1rem"></i>
+            Kirim Permintaan
+          </button>
         </div>
       </div>
     </div>
@@ -248,21 +338,25 @@ h1 .accent { color: #059669; }
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast">
+  <i data-lucide="check-circle" id="toastIcon" style="color:var(--green-500)"></i>
+  <span id="toastMsg">Berhasil!</span>
+  <button class="t-close" onclick="hideToast()"><i data-lucide="x" style="width:1rem;height:1rem"></i></button>
+</div>
 
 <script>
-// ── DATA ──
+// ═══════════════ DATA ═══════════════
 const SEEDLINGS = [
-  { id:1, species:"Jati", count:50, avail:40, prov:"Jawa Barat", regency:"Bandung", owner:"Asep", trust:85, date:"2026-07-10", notes:"Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm." },
-  { id:2, species:"Bambu Petung", count:30, avail:28, prov:"Jawa Barat", regency:"Bogor", owner:"Sari", trust:92, date:"2026-07-12", notes:"Bambu petung kualitas bagus, siap tanam." },
-  { id:3, species:"Mahoni", count:100, avail:95, prov:"Jawa Barat", regency:"Garut", owner:"Budi", trust:78, date:"2026-07-08", notes:"Mahoni hasil persemaian kelompok tani." },
-  { id:4, species:"Sengon", count:25, avail:20, prov:"Jawa Timur", regency:"Malang", owner:"Dewi", trust:88, date:"2026-07-14", notes:"Sengon umur 2 bulan. Tinggi 30-40cm." },
-  { id:5, species:"Suren", count:40, avail:40, prov:"Jawa Tengah", regency:"Solo", owner:"Joko", trust:90, date:"2026-07-05", notes:"Bibit suren hasil penangkaran." },
-  { id:6, species:"Kaliandra", count:200, avail:180, prov:"Jawa Timur", regency:"Banyuwangi", owner:"Rina", trust:95, date:"2026-07-13", notes:"Kaliandra merah. Bagus untuk pakan ternak." },
-  { id:7, species:"Acacia", count:75, avail:70, prov:"Jawa Barat", regency:"Sukabumi", owner:"Agus", trust:82, date:"2026-07-11", notes:"Acacia mangium. Tumbuh cepat." },
-  { id:8, species:"Albasia", count:60, avail:55, prov:"Jawa Tengah", regency:"Semarang", owner:"Fitri", trust:87, date:"2026-07-09", notes:"Albasia siap salur." },
-  { id:9, species:"Gamal", count:150, avail:150, prov:"Banten", regency:"Pandeglang", owner:"Ujang", trust:80, date:"2026-07-15", notes:"Stok melimpah, hubungi langsung." },
-  { id:10, species:"Saga", count:35, avail:30, prov:"Bali", regency:"Tabanan", owner:"Nyoman", trust:91, date:"2026-07-07", notes:"Saga biji. Cocok untuk penghijauan." },
+  { id:1, species:"Jati", count:50, avail:40, prov:"Jawa Barat", regency:"Bandung", owner:"Asep", trust:85, date:"10 Jul 2026", notes:"Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm. Lokasi di daerah Cimenyan, Bandung." },
+  { id:2, species:"Bambu Petung", count:30, avail:28, prov:"Jawa Barat", regency:"Bogor", owner:"Sari", trust:92, date:"12 Jul 2026", notes:"Bambu petung kualitas bagus, siap tanam, diameter 2-3cm." },
+  { id:3, species:"Mahoni", count:100, avail:95, prov:"Jawa Barat", regency:"Garut", owner:"Budi", trust:78, date:"8 Jul 2026", notes:"Mahoni hasil persemaian kelompok tani. Tinggi 30-60cm." },
+  { id:4, species:"Sengon", count:25, avail:20, prov:"Jawa Timur", regency:"Malang", owner:"Dewi", trust:88, date:"14 Jul 2026", notes:"Sengon umur 2 bulan. Tinggi 30-40cm. Siap tanam." },
+  { id:5, species:"Suren", count:40, avail:40, prov:"Jawa Tengah", regency:"Solo", owner:"Joko", trust:90, date:"5 Jul 2026", notes:"Bibit suren hasil penangkaran. Adaptasi lokal." },
+  { id:6, species:"Kaliandra", count:200, avail:180, prov:"Jawa Timur", regency:"Banyuwangi", owner:"Rina", trust:95, date:"13 Jul 2026", notes:"Kaliandra merah. Bagus untuk pakan ternak dan reboisasi." },
+  { id:7, species:"Acacia", count:75, avail:70, prov:"Jawa Barat", regency:"Sukabumi", owner:"Agus", trust:82, date:"11 Jul 2026", notes:"Acacia mangium. Tumbuh cepat, cocok lahan kritis." },
+  { id:8, species:"Albasia", count:60, avail:55, prov:"Jawa Tengah", regency:"Semarang", owner:"Fitri", trust:87, date:"9 Jul 2026", notes:"Albasia ukuran seragam, siap salur." },
+  { id:9, species:"Gamal", count:150, avail:150, prov:"Banten", regency:"Pandeglang", owner:"Ujang", trust:80, date:"15 Jul 2026", notes:"Stok melimpah, hubungi langsung untuk ambil." },
+  { id:10, species:"Saga", count:35, avail:30, prov:"Bali", regency:"Tabanan", owner:"Nyoman", trust:91, date:"7 Jul 2026", notes:"Saga biji, cocok untuk penghijauan lahan kering." },
 ];
 
 const MY_LISTINGS = [
@@ -285,135 +379,214 @@ const MY_REQUESTS = [
   { species:"Kaliandra", qty:20, owner:"Rina", loc:"Banyuwangi", status:"cancelled", date:"7 hari lalu" },
 ];
 
-const CHIP = { pending:'chip-pending', approved:'chip-approved', rejected:'chip-rejected', fulfilled:'chip-fulfilled', cancelled:'chip-cancelled' };
-const LBL = { pending:'Menunggu', approved:'Disetujui', rejected:'Ditolak', fulfilled:'Selesai', cancelled:'Dibatalkan' };
+// ═══════════════ UTILITY ═══════════════
+let searchTimer;
+function debounceSearch(){clearTimeout(searchTimer);searchTimer=setTimeout(filterCards,200)}
 
-// ── TABS ──
-function showTab(name, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('s-'+name).classList.add('active');
+const CHIP_CLS = { pending:'status-pending', approved:'status-approved', rejected:'status-rejected', fulfilled:'status-fulfilled', cancelled:'status-cancelled' };
+const CHIP_LBL = { pending:'Menunggu', approved:'Disetujui', rejected:'Ditolak', fulfilled:'Selesai', cancelled:'Dibatalkan' };
+
+// ═══════════════ TABS ═══════════════
+function switchTab(name,btn){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('[id^="tab-"]').forEach(s=>{s.classList.remove('section-active');s.classList.add('section-hidden')});
+  btn.classList.add('active');
+  const el=document.getElementById('tab-'+name);
+  el.classList.remove('section-hidden');el.classList.add('section-active');
+  setTimeout(()=>{lucide.createIcons()},10);
 }
 
-// ── MARKETPLACE ──
-function renderCards(list) {
-  const grid = document.getElementById('grid');
-  const empty = document.getElementById('emptyMarket');
-  if (!list.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+// ═══════════════ MARKETPLACE ═══════════════
+function renderCards(list){
+  const grid=document.getElementById('marketplaceGrid');
+  const empty=document.getElementById('emptyMarket');
+  const skel=document.getElementById('marketplaceSkeleton');
+  skel.style.display='none';
+  if(!list.length){grid.innerHTML='';empty.style.display='block';return}
   empty.style.display='none';
-  grid.innerHTML = list.map(s => `
-    <div class="card" onclick="openDetail(${s.id})">
-      <div class="card-img">📷 Foto Bibit</div>
+  const now=Date.now();
+  grid.innerHTML=list.map((s,i)=>`
+    <div class="card" onclick="openDetail(${s.id})" style="animation:fadeUp .5s ease-out ${i*60}ms both">
+      <div class="card-img"><i data-lucide="tree-pine" style="width:2rem;height:2rem"></i></div>
       <div class="card-body">
         <div class="card-h">
           <h3>${s.species}</h3>
-          <span class="badge badge-green">${s.count} bibit</span>
+          <span class="badge badge-green"><i data-lucide="package" style="width:.75rem;height:.75rem"></i>${s.count}</span>
         </div>
-        <div class="loc">📍 ${s.regency}, ${s.prov}</div>
+        <div class="loc"><i data-lucide="map-pin" style="width:.875rem;height:.875rem"></i>${s.regency}, ${s.prov}</div>
         <div class="cf">
-          <span class="li-muted">👤 ${s.owner} · ⭐ ${s.trust}</span>
-          <span style="color:#059669;font-size:0.75rem;font-weight:500">Minta &rarr;</span>
+          <span style="font-size:.8125rem;color:var(--text-muted);display:flex;align-items:center;gap:.3125rem">
+            <i data-lucide="user" style="width:.8125rem;height:.8125rem;color:var(--slate-400)"></i>
+            ${s.owner}
+            <span style="display:inline-flex;align-items:center;gap:.125rem;margin-left:.125rem">
+              <i data-lucide="star" style="width:.6875rem;height:.6875rem;fill:currentColor;color:var(--amber-500)"></i>
+              ${s.trust}
+            </span>
+          </span>
+          <span style="color:var(--green-600);font-size:.75rem;font-weight:600;display:flex;align-items:center;gap:.25rem">
+            Minta <i data-lucide="arrow-right" style="width:.75rem;height:.75rem"></i>
+          </span>
         </div>
       </div>
     </div>
   `).join('');
+  lucide.createIcons();
 }
 
-function filterCards() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const p = document.getElementById('provinceFilter').value;
-  renderCards(SEEDLINGS.filter(s => (!p||s.prov===p) && (!q||s.species.toLowerCase().includes(q))));
+function filterCards(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const p=document.getElementById('provinceFilter').value;
+  const filtered=SEEDLINGS.filter(s=>(!p||s.prov===p)&&(!q||s.species.toLowerCase().includes(q)));
+  renderCards(filtered);
 }
 
-// ── DETAIL ──
-function openDetail(id) {
-  const s = SEEDLINGS.find(x => x.id === id);
-  if (!s) return;
-  document.getElementById('dSpecies').textContent = s.species;
-  document.getElementById('dCount').textContent = s.count + ' bibit';
-  document.getElementById('dAvail').textContent = s.avail + ' bibit';
-  document.getElementById('dLoc').textContent = s.regency + ', ' + s.prov;
-  document.getElementById('dOwner').textContent = s.owner + ' · ⭐ ' + s.trust;
-  document.getElementById('dDate').textContent = s.date;
-  document.getElementById('dNotes').textContent = s.notes;
-  document.getElementById('dQty').max = s.avail;
+function resetFilters(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('provinceFilter').value='';
+  filterCards();
+}
+
+// ═══════════════ DETAIL ═══════════════
+let detailData=null;
+function openDetail(id){
+  const s=SEEDLINGS.find(x=>x.id===id);
+  if(!s)return;detailData=s;
+  document.getElementById('dSpecies').textContent=s.species;
+  document.getElementById('dCount').textContent=s.count+' bibit';
+  document.getElementById('dAvail').textContent=s.avail+' bibit';
+  document.getElementById('dLoc').textContent=s.regency+', '+s.prov;
+  document.getElementById('dOwner').textContent=s.owner+' · '+s.trust;
+  document.getElementById('dDate').textContent=s.date;
+  document.getElementById('dNotes').textContent=s.notes;
+  document.getElementById('dQty').max=s.avail;
+  document.getElementById('dQty').value=1;
+  document.getElementById('dMsg').value='';
   document.getElementById('detailOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
+  setTimeout(()=>lucide.createIcons(),10);
 }
-function closeDetail() {
+function closeDetail(){
   document.getElementById('detailOverlay').classList.remove('open');
-  document.body.style.overflow = '';
+  document.body.style.overflow='';detailData=null;
 }
 
-// ── BIBITKU ──
-function renderListings() {
-  const c = document.getElementById('listingsContainer');
-  c.innerHTML = MY_LISTINGS.map(g => `
-    <div class="lg">
-      <div class="lg-h">
+function submitRequest(){
+  if(!detailData)return;
+  const qty=parseInt(document.getElementById('dQty').value)||0;
+  if(qty<1){toast('Jumlah minimal 1','alert-circle');return}
+  if(qty>detailData.avail){toast('Jumlah melebihi stok tersedia','alert-circle');return}
+  toast(`Permintaan ${qty} ${detailData.species} terkirim!`,`check-circle`);
+  closeDetail();
+}
+
+// ═══════════════ BIBITKU ═══════════════
+function renderListings(){
+  const c=document.getElementById('listingsContainer');
+  const empty=document.getElementById('emptyListing');
+  const q=document.getElementById('listingsSearch').value.toLowerCase();
+  const filtered=MY_LISTINGS.filter(g=>!q||g.species.toLowerCase().includes(q));
+
+  if(!filtered.length){c.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+
+  c.innerHTML=filtered.map((g,gi)=>`
+    <div class="listing-group" style="animation-delay:${gi*80}ms">
+      <div class="lg-head">
         <div><h3>${g.species}</h3><div class="muted">${g.count} bibit dilaporkan</div></div>
-        <span class="badge badge-green">${g.requests.length} permintaan</span>
+        <span class="badge badge-count">${g.requests.length} permintaan</span>
       </div>
-      ${g.requests.length ? g.requests.map(r => `
-        <div class="ri">
-          <div style="flex:1;min-width:160px">
-            <div class="li-top">
-              <strong>${r.from}</strong><span class="li-muted">minta ${r.qty} bibit</span>
-              <span class="chip ${CHIP[r.status]}">${LBL[r.status]}</span>
+      <div class="lg-body">
+        ${g.requests.length?g.requests.map((r,ri)=>`
+          <div class="req-item" style="animation:fadeUp .3s ease-out ${(gi*3+ri)*50}ms both;border-left:3px solid ${
+            r.status==='pending'?'var(--amber-500)':r.status==='approved'?'var(--green-500)':r.status==='fulfilled'?'var(--blue-500)':'var(--slate-300)'
+          }">
+            <div style="flex:1;min-width:160px">
+              <div class="li-top">
+                <strong>${r.from}</strong>
+                <span class="li-muted">minta ${r.qty}</span>
+                <span class="status-chip ${CHIP_CLS[r.status]}">
+                  <i data-lucide="${r.status==='pending'?'clock':r.status==='approved'?'check-circle':r.status==='fulfilled'?'check-check':'x-circle'}" style="width:.75rem;height:.75rem"></i>
+                  ${CHIP_LBL[r.status]}
+                </span>
+              </div>
+              ${r.msg?`<div style="color:var(--text-muted);font-size:.75rem;font-style:italic;margin-top:.125rem">\u201C${r.msg}\u201D</div>`:''}
+              <div style="font-size:.625rem;color:var(--text-subtle);margin-top:.125rem">${r.date}</div>
             </div>
-            ${r.msg ? `<div style="color:#64748b;font-size:.75rem;font-style:italic;margin-top:2px">"${r.msg}"</div>` : ''}
-            <div style="font-size:.625rem;color:#94a3b8;margin-top:2px">${r.date}</div>
+            <div style="display:flex;gap:.375rem">
+              ${r.status==='pending'?
+                `<button class="btn btn-sm btn-soft" onclick="event.stopPropagation();toast('Permintaan ${r.from} disetujui!')"><i data-lucide="check" style="width:.8125rem;height:.8125rem"></i>Setujui</button>
+                 <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();toast('Permintaan ditolak')"><i data-lucide="x" style="width:.8125rem;height:.8125rem"></i>Tolak</button>`:''}
+              ${r.status==='approved'?
+                `<button class="btn btn-sm btn-blue" onclick="event.stopPropagation();toast('Bibit sudah diambil!')"><i data-lucide="check-check" style="width:.8125rem;height:.8125rem"></i>Selesai</button>`:''}
+            </div>
           </div>
-          <div style="display:flex;gap:.5rem">
-            ${r.status==='pending' ? `<button class="btn-xs btn-green" onclick="toast('Disetujui!')">✅ Setujui</button><button class="btn-xs btn-red" onclick="toast('Ditolak!')">❌ Tolak</button>` : ''}
-            ${r.status==='approved' ? `<button class="btn-xs btn-blue" onclick="toast('Selesai!')">✅ Tandai Selesai</button>` : ''}
-          </div>
-        </div>
-      `).join('') : `<div class="empty-r">Belum ada permintaan</div>`}
+        `).join(''):`<div class="empty-req"><i data-lucide="message-circle" style="width:1.5rem;height:1.5rem;color:var(--slate-300);display:block;margin:0 auto .5rem"></i>Belum ada permintaan</div>`}
+      </div>
     </div>
   `).join('');
+  lucide.createIcons();
 }
 
-// ── PERMINTAANKU ──
-function renderRequests() {
-  const c = document.getElementById('requestsContainer');
-  c.innerHTML = MY_REQUESTS.map(r => {
-    let actions = '';
-    if (r.status==='pending') actions = `<button class="btn-xs btn-red" onclick="toast('Dibatalkan!')">Batalkan</button>`;
-    else if (r.status==='approved') actions = `<span style="font-size:.875rem;color:#64748b">📞 ${r.phone}</span> <a href="tel:${r.phone}" class="btn-xs btn-green" style="text-decoration:none;display:inline-flex">Hubungi</a>`;
+// ═══════════════ PERMINTAANKU ═══════════════
+function renderRequests(){
+  const c=document.getElementById('requestsContainer');
+  const empty=document.getElementById('emptyReq');
+  if(!MY_REQUESTS.length){c.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  c.innerHTML=MY_REQUESTS.map((r,i)=>{
+    let actions='';
+    if(r.status==='pending') actions=`<button class="btn btn-sm btn-danger" onclick="toast('Permintaan dibatalkan')"><i data-lucide="x" style="width:.8125rem;height:.8125rem"></i>Batalkan</button>`;
+    else if(r.status==='approved') actions=`
+      <span style="font-size:.8125rem;color:var(--text-muted);display:flex;align-items:center;gap:.25rem"><i data-lucide="phone" style="width:.8125rem;height:.8125rem;color:var(--green-500)"></i>${r.phone}</span>
+      <a href="tel:${r.phone}" class="btn btn-sm btn-soft"><i data-lucide="phone-call" style="width:.8125rem;height:.8125rem"></i>Hubungi</a>`;
     return `
-      <div class="list-item">
+      <div class="list-item" style="animation-delay:${i*60}ms">
         <div class="li-main">
           <div class="li-top">
-            <strong>${r.species}</strong><span class="li-muted">— ${r.qty} bibit</span>
-            <span class="chip ${CHIP[r.status]}">${LBL[r.status]}</span>
+            <strong>${r.species}</strong>
+            <span class="li-muted">${r.qty} bibit</span>
+            <span class="status-chip ${CHIP_CLS[r.status]}">
+              <i data-lucide="${r.status==='pending'?'clock':r.status==='approved'?'check-circle':r.status==='rejected'?'x-circle':r.status==='fulfilled'?'check-check':'slash'}" style="width:.75rem;height:.75rem"></i>
+              ${CHIP_LBL[r.status]}
+            </span>
           </div>
-          <div class="li-sub">Dari ${r.owner} · ${r.loc} · ${r.date}</div>
+          <div class="li-sub">
+            <i data-lucide="user" style="width:.75rem;height:.75rem"></i>${r.owner}
+            <i data-lucide="map-pin" style="width:.75rem;height:.75rem;margin-left:.25rem"></i>${r.loc}
+            <i data-lucide="clock" style="width:.75rem;height:.75rem;margin-left:.25rem"></i>${r.date}
+          </div>
         </div>
         <div class="li-actions">${actions}</div>
       </div>
     `;
   }).join('');
+  lucide.createIcons();
 }
 
-// ── TOAST ──
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = '✅ ' + msg;
+// ═══════════════ TOAST ═══════════════
+let toastTimer;
+function toast(msg,icon='check-circle'){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  const i=document.getElementById('toastIcon');
+  i.setAttribute('data-lucide',icon);
+  clearTimeout(toastTimer);
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  lucide.createIcons();
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
 }
+function hideToast(){document.getElementById('toast').classList.remove('show');clearTimeout(toastTimer)}
 
-// ── INIT ──
-renderCards(SEEDLINGS);
+// ═══════════════ OVERLAY CLICK OUTSIDE ═══════════════
+document.getElementById('detailOverlay').addEventListener('click',e=>{
+  if(e.target===e.currentTarget) closeDetail();
+});
+
+// ═══════════════ INIT ═══════════════
+filterCards();
 renderListings();
 renderRequests();
-
-// Tutup overlay klik di luar
-document.getElementById('detailOverlay').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeDetail();
-});
+lucide.createIcons();
 </script>
 </body>
 </html>

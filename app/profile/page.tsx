@@ -405,25 +405,29 @@ export default function ProfilePage() {
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         <Link
           href="/seedlings/my-listings"
-          className="card flex items-center gap-3 p-3 transition hover:border-brand-300"
+          className="card group flex items-center gap-3 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated hover:border-green-200"
         >
-          <Sprout className="h-5 w-5 text-brand-600" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-green-50 to-green-100 transition-transform duration-200 group-hover:scale-110">
+            <Sprout className="h-5 w-5 text-green-600" />
+          </span>
           <div>
-            <div className="font-medium text-ink">Bibitku</div>
+            <div className="font-semibold text-ink">Bibitku</div>
             <div className="text-xs text-ink-muted">Kelola laporan bibit dan permintaan masuk</div>
           </div>
-          <ArrowRight className="ml-auto h-4 w-4 text-ink-subtle" />
+          <ArrowRight className="ml-auto h-4 w-4 text-ink-subtle transition-transform duration-200 group-hover:translate-x-0.5" />
         </Link>
         <Link
           href="/seedlings/my-requests"
-          className="card flex items-center gap-3 p-3 transition hover:border-brand-300"
+          className="card group flex items-center gap-3 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated hover:border-blue-200"
         >
-          <FileText className="h-5 w-5 text-brand-600" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 transition-transform duration-200 group-hover:scale-110">
+            <FileText className="h-5 w-5 text-blue-600" />
+          </span>
           <div>
-            <div className="font-medium text-ink">Permintaanku</div>
+            <div className="font-semibold text-ink">Permintaanku</div>
             <div className="text-xs text-ink-muted">Lihat status permintaan bibit yang kamu kirim</div>
           </div>
-          <ArrowRight className="ml-auto h-4 w-4 text-ink-subtle" />
+          <ArrowRight className="ml-auto h-4 w-4 text-ink-subtle transition-transform duration-200 group-hover:translate-x-0.5" />
         </Link>
       </div>
       {/* Reports */}
