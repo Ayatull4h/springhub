@@ -346,6 +346,7 @@ const LBL={pending:"Menunggu",approved:"Disetujui",rejected:"Ditolak",fulfilled:
 const IKN={pending:"clock",approved:"check-circle",rejected:"x-circle",fulfilled:"check-check",cancelled:"slash"}
 
 let tc;function tunda(){clearTimeout(tc);tc=setTimeout(filter,180)}
+function aksiBtn(r){if(r.st==="pending")return '<button class="btn btn-kecil btn-lunak" data-aksi="ok" onclick="event.stopPropagation();ngasih(this.dataset.aksi)"><i data-lucide="check" style="width:.75rem;height:.75rem"></i>Setujui</button><button class="btn btn-kecil btn-bahaya" data-aksi="x" onclick="event.stopPropagation();ngasih(this.dataset.aksi)"><i data-lucide="x" style="width:.75rem;height:.75rem"></i>Tolak</button>';if(r.st==="approved")return '<button class="btn btn-kecil btn-biru" data-aksi="done" onclick="event.stopPropagation();ngasih(this.dataset.aksi)"><i data-lucide="check-check" style="width:.75rem;height:.75rem"></i>Selesai</button>';return""}
 
 function pindah(n,b){
   document.querySelectorAll(".nav-btn").forEach(t=>{t.classList.remove("aktif");t.setAttribute("aria-selected","false")})
@@ -418,13 +419,10 @@ function renderList(){
         <div class="req-item" style="border-left:3px solid ${r.st==="pending"?"#eab308":r.st==="approved"?"#22c55e":r.st==="fulfilled"?"#3b82f6":"#94a3b8"}">
           <div style="flex:1;min-width:140px">
             <div class="item-atas"><strong>${r.dari}</strong><span class="item-redup">${r.qty}</span><span class="label ${CLS[r.st]}"><i data-lucide="${IKN[r.st]}" style="width:.7rem;height:.7rem"></i>${LBL[r.st]}</span></div>
-            ${r.msg?'<div style="color:var(--abu);font-size:.72rem;font-style:italic;margin-top:.05rem">"'+r.msg+'"</div>':''}
+            ${r.msg?'<div style="color:var(--abu);font-size:.72rem;font-style:italic;margin-top:.05rem">&ldquo;'+r.msg+'&rdquo;</div>':''}
             <div class="item-bawah"><i data-lucide="clock"></i>${r.tgl}</div>
           </div>
-          <div class="item-aksi">
-            ${r.st==="pending"?'<button class="btn btn-kecil btn-lunak" onclick="event.stopPropagation();ngasih(\\'✓ Disetujui!\\',\\'check-circle\\')"><i data-lucide="check" style="width:.75rem;height:.75rem"></i>Setujui</button><button class="btn btn-kecil btn-bahaya" onclick="event.stopPropagation();ngasih(\\'✗ Ditolak\\',\\'x-circle\\')"><i data-lucide="x" style="width:.75rem;height:.75rem"></i>Tolak</button>':""}
-            ${r.st==="approved"?'<button class="btn btn-kecil btn-biru" onclick="event.stopPropagation();ngasih(\\'✓ Selesai!\\',\\'check-check\\')"><i data-lucide="check-check" style="width:.75rem;height:.75rem"></i>Selesai</button>':""}
-          </div>
+          <div class="item-aksi">${aksiBtn(r)}</div>
         </div>`).join(""):'<div class="req-kosong"><i data-lucide="message-circle"></i>Belum ada permintaan</div>'}</div></div>`).join("")
   if(typeof lucide!="undefined")lucide.createIcons()
 }
@@ -434,8 +432,8 @@ function renderReq(){
   if(!REQUESTKU.length){w.innerHTML="";k.style.display="block";return}
   k.style.display="none"
   w.innerHTML=REQUESTKU.map((r,i)=>{let a=""
-    if(r.st==="pending") a='<button class="btn btn-kecil btn-bahaya" onclick="ngasih(\\'Dibatalkan\\')"><i data-lucide="x" style="width:.75rem;height:.75rem"></i>Batalkan</button>'
-    else if(r.st==="approved") a='<span style="font-size:.78rem;color:var(--abu);display:flex;align-items:center;gap:.25rem"><i data-lucide="phone" style="width:.75rem;height:.75rem;color:var(--biru)"></i>'+r.telp+'</span><a href="tel:'+r.telp+'" class="btn btn-kecil btn-lunak"><i data-lucide="phone-call" style="width:.75rem;height:.75rem"></i>Hubungi</a>'
+    if(r.st==="pending") a='<button class="btn btn-kecil btn-bahaya" data-aksi="cancel" onclick="ngasih(this.dataset.aksi)"><i data-lucide="x" style="width:.75rem;height:.75rem"></i>Batalkan</button>'
+    else if(r.st==="approved") a='<span class="item-redup" style="display:flex;align-items:center;gap:.25rem"><i data-lucide="phone" style="width:.75rem;height:.75rem;color:var(--biru)"></i>'+r.telp+'</span><a href="tel:'+r.telp+'" class="btn btn-kecil btn-lunak"><i data-lucide="phone-call" style="width:.75rem;height:.75rem"></i>Hubungi</a>'
     return `<div class="item" style="animation:naik .35s ease-out ${i*50}ms both">
       <div class="item-utama">
         <div class="item-atas"><strong>${r.jenis}</strong><span class="item-redup">${r.qty} bibit</span><span class="label ${CLS[r.st]}"><i data-lucide="${IKN[r.st]}" style="width:.7rem;height:.7rem"></i>${LBL[r.st]}</span></div>
