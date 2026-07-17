@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Bibit — SpringHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; }
+.container { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
+
+.back { display: inline-flex; align-items: center; gap: 0.25rem; color: #059669; font-size: 0.875rem; text-decoration: none; margin-bottom: 1rem; }
+.back:hover { text-decoration: underline; }
+
+.grid { display: grid; gap: 1.5rem; grid-template-columns: 3fr 2fr; }
+@media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+
+.main-photo {
+  aspect-ratio: 16/9; background: #f1f5f9; border-radius: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+  color: #94a3b8; font-size: 1.125rem;
+}
+.thumbnails { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+.thumb { width: 6rem; height: 5rem; background: #f1f5f9; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.75rem; }
+
+.card { background: white; border-radius: 0.75rem; border: 1px solid #e2e8f0; padding: 1.25rem; }
+.species { font-size: 1.25rem; font-weight: 700; }
+.info-list { margin-top: 0.75rem; }
+.info-row { display: flex; justify-content: space-between; padding: 0.375rem 0; font-size: 0.875rem; }
+.info-label { color: #64748b; }
+.info-value { font-weight: 600; }
+.available { color: #16a34a; }
+.divider { border-top: 1px solid #f1f5f9; margin: 0.75rem 0; }
+
+.request-form h3 { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; margin-bottom: 0.75rem; }
+.request-form label { font-size: 0.75rem; color: #64748b; display: block; margin-top: 0.75rem; }
+.request-form input, .request-form textarea {
+  width: 100%; margin-top: 0.25rem; padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0; border-radius: 0.5rem; font-size: 0.875rem;
+  font-family: inherit; outline: none;
+}
+.request-form input:focus, .request-form textarea:focus { border-color: #059669; }
+.request-form textarea { resize: vertical; min-height: 4rem; }
+.btn-primary {
+  width: 100%; margin-top: 1rem; padding: 0.625rem;
+  background: #059669; color: white; border: none; border-radius: 0.5rem;
+  font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.2s;
+}
+.btn-primary:hover { background: #047857; }
+
+.sign-in-card { text-align: center; padding: 1rem; font-size: 0.875rem; color: #64748b; }
+.sign-in-card a { color: #059669; font-weight: 500; }
+
+.notes-card { margin-top: 1.5rem; }
+.notes-card h3 { font-weight: 600; margin-bottom: 0.5rem; }
+.notes-card p { font-size: 0.875rem; color: #64748b; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html" class="back">← Kembali ke daftar</a>
+
+  <div class="grid">
+    <div>
+      <div class="main-photo">📷 Foto Utama Bibit</div>
+      <div class="thumbnails">
+        <div class="thumb">Foto 1</div>
+        <div class="thumb">Foto 2</div>
+        <div class="thumb">Foto 3</div>
+        <div class="thumb">Foto 4</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="species" id="species">Jati</div>
+        <div class="info-list">
+          <div class="info-row"><span class="info-label">Jumlah</span><span class="info-value" id="count">50 bibit</span></div>
+          <div class="info-row"><span class="info-label">Tersedia</span><span class="info-value available" id="available">40 bibit</span></div>
+          <div class="divider"></div>
+          <div class="info-row"><span class="info-label">📍 Lokasi</span><span id="location">Bandung, Jawa Barat</span></div>
+          <div class="info-row"><span class="info-label">👤 Pemilik</span><span id="owner">Asep · ⭐ 85</span></div>
+          <div class="info-row"><span class="info-label">📅 Dilaporkan</span><span id="date">2026-07-10</span></div>
+        </div>
+      </div>
+
+      <div class="card request-form" id="requestForm">
+        <h3>📨 Kirim Permintaan</h3>
+        <label>Jumlah yang diminta</label>
+        <input type="number" id="qtyInput" value="1" min="1" max="40">
+        <label>Pesan (opsional)</label>
+        <textarea id="msgInput" placeholder="Contoh: Mau tanam di kebun..."></textarea>
+        <button class="btn-primary" onclick="alert('Permintaan terkirim! (demo)')">Kirim Permintaan</button>
+      </div>
+
+      <div class="card sign-in-card" id="loginPrompt" style="display:none">
+        <a href="#">Masuk</a> untuk mengirim permintaan
+      </div>
+    </div>
+  </div>
+
+  <div class="card notes-card">
+    <h3>Keterangan</h3>
+    <p id="notes">Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm. Lokasi di daerah Cimenyan, Bandung. Hubungi untuk koordinasi ambil bibit.</p>
+  </div>
+</div>
+
+<script>
+// Data dummy — di sini isinya statis untuk demo
+const DATA = {
+  species: "Jati", count: 50, available: 40,
+  province: "Jawa Barat", regency: "Bandung",
+  owner: "Asep", trust: 85, date: "2026-07-10",
+  notes: "Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50cm. Lokasi di daerah Cimenyan, Bandung. Hubungi untuk koordinasi ambil bibit."
+};
+
+document.getElementById('species').textContent = DATA.species;
+document.getElementById('count').textContent = DATA.count + ' bibit';
+document.getElementById('available').textContent = DATA.available + ' bibit';
+document.getElementById('location').textContent = DATA.regency + ', ' + DATA.province;
+document.getElementById('owner').textContent = DATA.owner + ' · ⭐ ' + DATA.trust;
+document.getElementById('date').textContent = DATA.date;
+document.getElementById('notes').textContent = DATA.notes;
+document.getElementById('qtyInput').max = DATA.available;
+
+// Ganti mode: logged in vs not
+const isLoggedIn = true; // ganti ke false untuk lihat tampilan "belum login"
+if (!isLoggedIn) {
+  document.getElementById('requestForm').style.display = 'none';
+  document.getElementById('loginPrompt').style.display = 'block';
+}
+</script>
+</body>
+</html>
