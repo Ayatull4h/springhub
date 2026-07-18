@@ -71,18 +71,43 @@ export async function POST(request: Request) {
       );
     }
 
-    const seedling = await prisma.seedling.create({
-      data: {
+    // Cek: user yang sama, jenis + provinsi sama, masih ada stok?
+    const existing = await prisma.seedling.findFirst({
+      where: {
         userId: session.userId,
         species,
-        quantity,
-        stock: quantity,
         province,
         regency: regency || "",
-        notes: notes || "",
-        status: "pending",
+        status: { in: ["pending", "active"] },
+        stock: { gt: 0 },
       },
     });
+
+    let seedling;
+    if (existing) {
+      // User yang sama, jenis sama — tambah stok doang
+      seedling = await prisma.seedling.update({
+        where: { id: existing.id },
+        data: {
+          quantity: existing.quantity + quantity,
+          stock: existing.stock + quantity,
+        },
+      });
+    } else {
+      // Belum ada — bikin baru
+      seedling = await prisma.seedling.create({
+        data: {
+          userId: session.userId,
+          species,
+          quantity,
+          stock: quantity,
+          province,
+          regency: regency || "",
+          notes: notes || "",
+          status: "pending",
+        },
+      });
+    }
 
     return NextResponse.json({ seedling }, { status: 201 });
   } catch (error) {
