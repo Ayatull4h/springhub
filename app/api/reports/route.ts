@@ -295,6 +295,51 @@ export async function POST(request: Request) {
       }
     }
 
+    // ── Buat Seedling dari form seedling ─────────────────────────────
+    const species = (fieldData?.species as string || "").trim();
+    const seedlingCount = parseInt((fieldData?.count as string || "0"), 10);
+    if (species && seedlingCount > 0 && formSlug.includes("seedling")) {
+      try {
+        // Cari seedling yang sama (user + species + province), tambah stok
+        const existing = await prisma.seedling.findFirst({
+          where: {
+            userId: session?.userId || "__guest__",
+            species,
+            province: (fieldData?.province as string) || "",
+            status: { in: ["pending", "active"] },
+          },
+        });
+
+        if (existing && existing.userId === session?.userId) {
+          // User sama, species sama → tambah stok
+          await prisma.seedling.update({
+            where: { id: existing.id },
+            data: {
+              quantity: existing.quantity + seedlingCount,
+              stock: existing.stock + seedlingCount,
+            },
+          });
+        } else {
+          // Bikin seedling baru
+          await prisma.seedling.create({
+            data: {
+              userId: session?.userId || "__guest__",
+              species,
+              quantity: seedlingCount,
+              stock: seedlingCount,
+              province: (fieldData?.province as string) || "",
+              regency: (fieldData?.regency as string) || "",
+              notes: (fieldData?.notes as string) || "",
+              status: "pending",
+            },
+          });
+        }
+      } catch (e) {
+        console.warn("[Seedling] Creation error:", e);
+        // Non-critical — report tetap tersimpan
+      }
+    }
+
     // NOTE: Points are NOT awarded here — they are awarded server-side
     // when an admin approves the report (see app/api/admin/reports/[id]/approve/route.ts).
     // This prevents double-awarding.

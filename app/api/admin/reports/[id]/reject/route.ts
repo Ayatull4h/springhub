@@ -85,9 +85,32 @@ export async function POST(
         console.error("Notification create failed (non-blocking):", e);
       }
     }
+
+    // ── Tolak seedling kalau laporan seedling ──
+    if (report.formSlug.includes("seedling") && report.userId) {
+      try {
+        const fieldData = JSON.parse(
+          typeof report.fieldData === "string" ? report.fieldData : JSON.stringify(report.fieldData ?? {})
+        );
+        const species = (fieldData?.species as string || "").trim();
+        if (species) {
+          const seedling = await prisma.seedling.findFirst({
+            where: { userId: report.userId, species, status: "pending" },
+            orderBy: { createdAt: "desc" },
+          });
+          if (seedling) {
+            await prisma.seedling.update({
+              where: { id: seedling.id },
+              data: { status: "rejected" },
+            });
+          }
+        }
+      } catch (e) {
+        console.warn("[Seedling] Reject error:", e);
+      }
+    }
+
     auditLog("post report", "post report");
-
-
     return NextResponse.json({ success: true, status: "rejected" });
   } catch (error) {
     console.error("Reject error:", error instanceof Error ? error.message : error);

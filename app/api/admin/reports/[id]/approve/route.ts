@@ -74,13 +74,13 @@ export async function POST(
       },
     });
 
-    if (report.userId) {
-      const fieldData = JSON.parse(
-        typeof report.fieldData === "string"
-          ? report.fieldData
-          : JSON.stringify(report.fieldData ?? {})
-      );
+    const fieldData = JSON.parse(
+      typeof report.fieldData === "string"
+        ? report.fieldData
+        : JSON.stringify(report.fieldData ?? {})
+    );
 
+    if (report.userId) {
       const existingPoints = await prisma.pointsLog.findFirst({
         where: { reportId: report.id, reason: { contains: "Approved" } },
       });
@@ -101,6 +101,22 @@ export async function POST(
         },
       });
     }
+
+    // ── Aktifkan seedling kalau laporan seedling ──
+    const species = (fieldData?.species as string || "").trim();
+    if (report.formSlug.includes("seedling") && species) {
+      const seedling = await prisma.seedling.findFirst({
+        where: { userId: report.userId || "", species },
+        orderBy: { createdAt: "desc" },
+      });
+      if (seedling && seedling.status === "pending") {
+        await prisma.seedling.update({
+          where: { id: seedling.id },
+          data: { status: "active" },
+        });
+      }
+    }
+
     auditLog("post report", "post report");
 
 
