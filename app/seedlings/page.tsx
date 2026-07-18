@@ -45,7 +45,9 @@ function SkeletonCard() {
 export default function SeedlingsPage() {
   const [province, setProvince] = useState("");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const PER_PAGE = 9;
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 600);
@@ -59,6 +61,12 @@ export default function SeedlingsPage() {
     ),
     [province, search]
   );
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+
+  // Reset page saat filter berubah
+  useEffect(() => { setPage(1); }, [province, search]);
 
   return (
     <main className="container-page py-8">
@@ -111,46 +119,80 @@ export default function SeedlingsPage() {
           </button>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((s, i) => (
-            <Link
-              key={s.id}
-              href={`/seedlings/${s.id}`}
-              className="card group overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-elevated hover:border-green-200"
-              style={{ animation: `fadeUp 0.5s ease-out ${i * 60}ms both` }}
-            >
-              <div className="flex aspect-[16/10] items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-                <TreePine className="h-8 w-8 text-slate-300 transition-transform duration-300 group-hover:scale-110" />
-              </div>
-              <div className="p-4">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-[1.0625rem] font-semibold leading-tight text-ink">{s.species}</h3>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
-                    <Package className="h-3 w-3" />
-                    {s.count}
-                  </span>
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {paged.map((s, i) => (
+              <Link
+                key={s.id}
+                href={`/seedlings/${s.id}`}
+                className="card group overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-elevated hover:border-green-200"
+                style={{ animation: `fadeUp 0.5s ease-out ${i * 60}ms both` }}
+              >
+                <div className="flex aspect-[16/10] items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+                  <TreePine className="h-8 w-8 text-slate-300 transition-transform duration-300 group-hover:scale-110" />
                 </div>
-                <div className="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
-                  <MapPin className="h-3.5 w-3.5 text-slate-400" />
-                  {s.regency}, {s.province}
-                </div>
-                <div className="mt-3 flex items-center justify-between border-t border-ink-line pt-3">
-                  <span className="flex items-center gap-1.5 text-sm text-ink-muted">
-                    <User className="h-3.5 w-3.5 text-slate-400" />
-                    {s.owner}
-                    <span className="ml-0.5 inline-flex items-center gap-0.5">
-                      <Star className="h-2.5 w-2.5 fill-amber-500 text-amber-500" />
-                      {s.trustScore}
+                <div className="p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-[1.0625rem] font-semibold leading-tight text-ink">{s.species}</h3>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                      <Package className="h-3 w-3" />
+                      {s.count}
                     </span>
-                  </span>
-                  <span className="flex items-center gap-1 text-xs font-semibold text-green-600 transition-all duration-200 group-hover:gap-1.5">
-                    Minta <ArrowRight className="h-3 w-3" />
-                  </span>
+                  </div>
+                  <div className="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
+                    <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                    {s.regency}, {s.province}
+                  </div>
+                  <div className="mt-3 flex items-center justify-between border-t border-ink-line pt-3">
+                    <span className="flex items-center gap-1.5 text-sm text-ink-muted">
+                      <User className="h-3.5 w-3.5 text-slate-400" />
+                      {s.owner}
+                      <span className="ml-0.5 inline-flex items-center gap-0.5">
+                        <Star className="h-2.5 w-2.5 fill-amber-500 text-amber-500" />
+                        {s.trustScore}
+                      </span>
+                    </span>
+                    <span className="flex items-center gap-1 text-xs font-semibold text-green-600 transition-all duration-200 group-hover:gap-1.5">
+                      Minta <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="rounded-lg border border-ink-line px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:bg-slate-100 disabled:opacity-30 dark:hover:bg-slate-800"
+              >
+                ← Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+                <button
+                  key={num}
+                  onClick={() => setPage(num)}
+                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+                    page === num
+                      ? "bg-brand-600 text-white"
+                      : "text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="rounded-lg border border-ink-line px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:bg-slate-100 disabled:opacity-30 dark:hover:bg-slate-800"
+              >
+                Next →
+              </button>
+            </div>
+          )}
+        </>
       )}
     </main>
   );
