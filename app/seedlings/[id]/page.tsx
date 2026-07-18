@@ -13,6 +13,7 @@ type SeedlingDetail = {
   province: string; regency: string;
   owner: string; ownerPhone: string; trustScore: number;
   notes: string; createdAt: string;
+  photos?: { storagePath: string }[];
 };
 
 const DUMMY: SeedlingDetail = {
@@ -21,6 +22,7 @@ const DUMMY: SeedlingDetail = {
   owner: "Asep", ownerPhone: "0812-3456-7890", trustScore: 85,
   notes: "Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50 cm. Lokasi di daerah Cimenyan, Bandung. Hubungi untuk koordinasi ambil bibit.",
   createdAt: "10 Jul 2026",
+  photos: [],
 };
 
 export default function SeedlingDetailPage() {
@@ -75,19 +77,33 @@ export default function SeedlingDetailPage() {
 
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
-          <div className="flex aspect-[16/10] items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 to-slate-100">
-            <Image className="h-10 w-10 text-slate-300" />
-          </div>
-          <div className="mt-3 flex gap-2">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex h-14 w-18 min-w-[4.5rem] items-center justify-center rounded-lg bg-slate-50 text-xs text-slate-400 transition hover:border-green-200"
-              >
-                <Image className="h-4 w-4" />
+          {s.photos && s.photos.length > 0 ? (
+            <>
+              <div className="flex aspect-[16/10] items-center justify-center overflow-hidden rounded-xl bg-slate-100">
+                <img
+                  src={s.photos[0].storagePath}
+                  alt={s.species}
+                  className="h-full w-full object-cover"
+                />
               </div>
-            ))}
-          </div>
+              {s.photos.length > 1 && (
+                <div className="mt-3 flex gap-2 overflow-x-auto">
+                  {s.photos.map((p, i) => (
+                    <div
+                      key={i}
+                      className="flex h-14 w-18 min-w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-50"
+                    >
+                      <img src={p.storagePath} alt="" className="h-full w-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex aspect-[16/10] items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 to-slate-100">
+              <Image className="h-10 w-10 text-slate-300" />
+            </div>
+          )}
           <div className="mt-4 rounded-xl border border-ink-line bg-slate-50 p-4">
             <h3 className="flex items-center gap-1.5 text-sm font-semibold text-ink">
               <FileText className="h-4 w-4 text-green-600" />

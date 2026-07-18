@@ -11,7 +11,7 @@ export async function GET(
       where: { id: params.id },
       include: {
         user: { select: { id: true, username: true, points: true, phone: true } },
-        photos: { select: { storagePath: true } },
+        photos: { select: { id: true, storagePath: true, createdAt: true }, orderBy: { createdAt: "asc" } },
       },
     });
 

@@ -27,7 +27,7 @@ export async function GET(request: Request) {
       where,
       include: {
         user: { select: { id: true, username: true, points: true, phone: true } },
-        photos: { select: { storagePath: true } },
+        photos: { select: { id: true, storagePath: true }, orderBy: { createdAt: "asc" } },
         _count: { select: { requests: true } },
       },
       orderBy: { createdAt: "desc" },
