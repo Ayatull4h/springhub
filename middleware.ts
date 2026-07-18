@@ -15,14 +15,8 @@ const PROJECT_CREATE = "/projects/new";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // API routes: prevent CDN caching + add version + redirect /api/v1/* to /api/*
+  // API routes: prevent CDN caching so data always fresh
   if (pathname.startsWith("/api/")) {
-    // Redirect /api/v1/xxx → /api/xxx (versioning backward compat)
-    if (pathname.startsWith("/api/v1/")) {
-      const newPath = pathname.replace(/^\/api\/v1\//, "/api/");
-      return NextResponse.redirect(new URL(newPath, request.url));
-    }
-
     const response = NextResponse.next();
     response.headers.set(
       "Cache-Control",
@@ -30,7 +24,6 @@ export async function middleware(request: NextRequest) {
     );
     response.headers.set("Pragma", "no-cache");
     response.headers.set("Expires", "0");
-    response.headers.set("X-API-Version", "1");
     return response;
   }
 
@@ -96,6 +89,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
