@@ -18,33 +18,47 @@ const projectSchema = z.object({
   proposalFile: z.string().optional(),
 });
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const projects = await prisma.project.findMany({
-      where: { status: { in: ["approved", "under_review"] } },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        title: true,
-        summary: true,
-        region: true,
-        status: true,
-        goalAmount: true,
-        raisedAmount: true,
-        typeId: true,
-        likes: true,
-        comments: true,
-        createdAt: true,
-        user: { select: { username: true } },
-        _count: { select: { donations: true, commentList: true } },
-      },
-    });
+    const url = new URL(request.url);
+    const limitParam = url.searchParams.get("limit") || url.searchParams.get("per_page") || "50";
+    const pageParam = url.searchParams.get("page") || "1";
+    const limit = Math.min(Math.max(parseInt(limitParam, 10) || 50, 1), 200);
+    const page = Math.max(parseInt(pageParam, 10) || 1, 1);
+    const skip = (page - 1) * limit;
+
+    const where = { status: { in: ["approved" as const, "under_review" as const] } };
+
+    const [projects, total] = await Promise.all([
+      prisma.project.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip,
+        select: {
+          id: true,
+          title: true,
+          summary: true,
+          region: true,
+          status: true,
+          goalAmount: true,
+          raisedAmount: true,
+          typeId: true,
+          likes: true,
+          comments: true,
+          createdAt: true,
+          user: { select: { username: true } },
+          _count: { select: { donations: true, commentList: true } },
+        },
+      }),
+      prisma.project.count({ where }),
+    ]);
 
     const normalized = projects.map((p) => ({
       ...p,
       _count: { donations: p._count.donations, comments: p._count.commentList },
     }));
-    return NextResponse.json({ projects: normalized });
+    return NextResponse.json({ projects: normalized, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
   } catch (err) {
     console.error("[Projects GET]", err);
     await logError({ message: "Projects GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});

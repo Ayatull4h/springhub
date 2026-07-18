@@ -12,21 +12,32 @@ export async function GET(request: Request) {
 
     const url = new URL(request.url);
     const statusFilter = url.searchParams.get("status") || "";
+    const limitParam = url.searchParams.get("limit") || url.searchParams.get("per_page") || "50";
+    const pageParam = url.searchParams.get("page") || "1";
+    const limit = Math.min(Math.max(parseInt(limitParam, 10) || 50, 1), 200);
+    const page = Math.max(parseInt(pageParam, 10) || 1, 1);
+    const skip = (page - 1) * limit;
+
     const where: Record<string, unknown> = {};
     if (statusFilter && ["pending", "approved", "rejected"].includes(statusFilter)) {
       where.status = statusFilter;
     }
 
-    const reports = await prisma.report.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: {
-        user: { select: { id: true, username: true, email: true } },
-        reviewedBy: { select: { username: true } },
-        pointsLogs: { select: { amount: true } },
-        _count: { select: { photos: true } },
-      },
-    });
+    const [reports, total] = await Promise.all([
+      prisma.report.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip,
+        include: {
+          user: { select: { id: true, username: true, email: true } },
+          reviewedBy: { select: { username: true } },
+          pointsLogs: { select: { amount: true } },
+          _count: { select: { photos: true } },
+        },
+      }),
+      prisma.report.count({ where }),
+    ]);
 
     const mapped = reports.map((r) => ({
       ...r,
@@ -37,7 +48,7 @@ export async function GET(request: Request) {
       guestId: undefined,
     }));
 
-    return NextResponse.json({ reports: mapped });
+    return NextResponse.json({ reports: mapped, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
   } catch (error) {
     console.error("Admin reports GET error:", error instanceof Error ? error.message : error);
     return NextResponse.json(

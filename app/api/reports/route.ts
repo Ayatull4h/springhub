@@ -320,38 +320,45 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
-    const limitParam = url.searchParams.get("limit");
-    const limit = limitParam ? parseInt(limitParam, 10) : 50;
+    const limitParam = url.searchParams.get("limit") || url.searchParams.get("per_page") || "50";
+    const pageParam = url.searchParams.get("page") || "1";
+    const limit = Math.min(Math.max(parseInt(limitParam, 10) || 50, 1), 200);
+    const page = Math.max(parseInt(pageParam, 10) || 1, 1);
+    const skip = (page - 1) * limit;
 
-    const reports = await prisma.report.findMany({
-      where: {
-        status: "approved",
-        isActive: true,
-        form: { isActive: true },
-      },
-      orderBy: { createdAt: "desc" },
-      take: limit,
-      select: {
-        id: true,
-        formSlug: true,
-        status: true,
-        snappedLat: true,
-        snappedLng: true,
-        springId: true,
-        createdAt: true,
-        featuredPhotoId: true,
-        photos: {
-          select: { id: true, storagePath: true },
-          take: 1,
-          orderBy: { createdAt: "desc" },
-        },
-        user: {
-          select: { username: true, region: true },
-        },
-      },
-    });
+    const where = {
+      status: "approved" as const,
+      isActive: true,
+      form: { isActive: true },
+    };
 
-    const total = reports.length;
+    const [reports, total] = await Promise.all([
+      prisma.report.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip,
+        select: {
+          id: true,
+          formSlug: true,
+          status: true,
+          snappedLat: true,
+          snappedLng: true,
+          springId: true,
+          createdAt: true,
+          featuredPhotoId: true,
+          photos: {
+            select: { id: true, storagePath: true },
+            take: 1,
+            orderBy: { createdAt: "desc" },
+          },
+          user: {
+            select: { username: true, region: true },
+          },
+        },
+      }),
+      prisma.report.count({ where }),
+    ]);
     const healthy = reports.filter(
       (r: { formSlug: string }) => r.formSlug === "spring-monitoring" || r.formSlug === "seedling-stock"
     ).length;
@@ -373,7 +380,11 @@ export async function GET(request: Request) {
         : null,
     }));
 
-    return NextResponse.json({ reports: enriched, stats: { total, healthy, restoration, degraded } });
+    return NextResponse.json({
+      reports: enriched,
+      stats: { total, healthy, restoration, degraded },
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    });
   } catch (error) {
     console.error("Reports fetch error:", error instanceof Error ? error.message : error);
     return NextResponse.json(

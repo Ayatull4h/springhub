@@ -6,18 +6,31 @@ import { sendNotificationEmail } from "@/lib/email";
 export const dynamic = "force-dynamic";
 
 // GET /api/notifications — list notifications for current user
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const notifications = await prisma.notification.findMany({
-      where: { userId: session.userId },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
+    const url = new URL(request.url);
+    const limitParam = url.searchParams.get("limit") || url.searchParams.get("per_page") || "50";
+    const pageParam = url.searchParams.get("page") || "1";
+    const limit = Math.min(Math.max(parseInt(limitParam, 10) || 50, 1), 200);
+    const page = Math.max(parseInt(pageParam, 10) || 1, 1);
+    const skip = (page - 1) * limit;
 
-    return NextResponse.json({ notifications });
+    const where = { userId: session.userId };
+
+    const [notifications, total] = await Promise.all([
+      prisma.notification.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip,
+      }),
+      prisma.notification.count({ where }),
+    ]);
+
+    return NextResponse.json({ notifications, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
   } catch (err) {
     console.error("[Notifications GET]", err);
     await logError({ message: "Notifications GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
