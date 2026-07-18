@@ -85,5 +85,30 @@ else
   echo "[$TIMESTAMP] WARNING: Backup TIDAK dienkripsi. Set BACKUP_ENCRYPT_KEY di .env.production"
 fi
 
+# ── Kirim backup ke email admin ──
+if [ -f "$BACKUP_FILE" ] && [ -s "$BACKUP_FILE" ]; then
+  ADMIN_EMAIL="admin@springhub.id"
+  BACKUP_B64=$(base64 "$BACKUP_FILE" | tr -d '\n')
+  EMAIL_KEY="${EMAIL_API_KEY:-}"
+  if [ -n "$EMAIL_KEY" ]; then
+    curl -sf -X POST "https://api.resend.com/emails" \
+      -H "Authorization: Bearer $EMAIL_KEY" \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"from\": \"SpringHub Backup <noreply@springhub.id>\",
+        \"to\": [\"$ADMIN_EMAIL\"],
+        \"subject\": \"Backup Database SpringHub — $TIMESTAMP\",
+        \"text\": \"Backup database SpringHub.\nUkuran: $BACKUP_SIZE\nFile: springhub-${TIMESTAMP}.sql.gz\n\nBackup otomatis tiap jam 3 pagi. Retensi 7 hari.\",
+        \"attachments\": [{
+          \"filename\": \"springhub-${TIMESTAMP}.sql.gz\",
+          \"content\": \"$BACKUP_B64\"
+        }]
+      }" && echo "[$TIMESTAMP] Backup terkirim ke email: $ADMIN_EMAIL" \
+      || echo "[$TIMESTAMP] Gagal kirim email (tidak kritis)"
+  else
+    echo "[$TIMESTAMP] EMAIL_API_KEY tidak ada, backup hanya lokal"
+  fi
+fi
+
 # ── Retensi: hapus backup lebih dari 7 hari ──
 find "$BACKUP_DIR" -name "springhub-*.sql.gz*" -type f -mtime +7 -delete
