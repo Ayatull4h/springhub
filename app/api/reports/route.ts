@@ -256,11 +256,12 @@ export async function POST(request: Request) {
     const springName = (fieldData?.spring_name as string || "").trim();
     if (springName && formSlug !== "trench-development" && formSlug !== "seedling-stock") {
       try {
-        // Cari spring yang cocok: snapped location match + nama mirip
+        // Cari spring yang cocok: snapped location (1km) + nama mirip
         const existingSpring = snappedLat && snappedLng ? await prisma.spring.findFirst({
           where: {
-            snappedLat: { gte: snappedLat - 0.001, lte: snappedLat + 0.001 },
-            snappedLng: { gte: snappedLng - 0.001, lte: snappedLng + 0.001 },
+            status: { in: ["pending", "active"] },
+            snappedLat: { gte: snappedLat - 0.01, lte: snappedLat + 0.01 },
+            snappedLng: { gte: snappedLng - 0.01, lte: snappedLng + 0.01 },
             name: { contains: springName, mode: "insensitive" },
           },
         }) : null;
@@ -272,7 +273,7 @@ export async function POST(request: Request) {
             data: { springId: existingSpring.id },
           });
         } else {
-          // Buat spring baru
+          // Buat spring baru — status PENDING, nunggu admin approve
           const newSpring = await prisma.spring.create({
             data: {
               name: springName,
@@ -282,6 +283,7 @@ export async function POST(request: Request) {
               regency: (fieldData?.regency as string) || "",
               village: (fieldData?.village as string) || "",
               subdistrict: (fieldData?.subdistrict as string) || "",
+              status: "pending",
             },
           });
           await prisma.report.update({

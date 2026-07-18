@@ -83,18 +83,25 @@ model Session {
   @@index([expiresAt])
 }
 
+enum SpringStatus {
+  pending  // baru dari report, belum disetujui admin
+  active   // sudah disetujui, muncul di publik
+  merged   // digabung ke spring lain
+}
+
 model Spring {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   name        String
   snappedLat  Float?
   snappedLng  Float?
-  province    String   @default("")
-  regency     String   @default("")
-  village     String   @default("")
-  subdistrict String   @default("")
-  isDummy     Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  province    String        @default("")
+  regency     String        @default("")
+  village     String        @default("")
+  subdistrict String        @default("")
+  status      SpringStatus  @default(pending)
+  isDummy     Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   reports Report[]
 
