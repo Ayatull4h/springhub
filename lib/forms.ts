@@ -321,3 +321,70 @@ export function getFormTitle(
   }
   return fallbackTitle;
 }
+
+/**
+ * Fetch a single form definition from the API (database first, fallback to static).
+ * Client-safe — uses fetch to /api/forms.
+ */
+export async function fetchForm(slug: string): Promise<FormSchema | undefined> {
+  try {
+    const res = await fetch("/api/forms");
+    const data = await res.json();
+    const forms: { slug: string; title: string; description: string; pointsOnSubmit: number; contributionType: string; fields: { fieldId: string; label: string; type: string; required: boolean; placeholder: string; helpText: string; options: string }[] }[] = data.forms ?? [];
+    const found = forms.find((f: { slug: string }) => f.slug === slug);
+    if (found) {
+      return {
+        slug: found.slug,
+        title: found.title,
+        description: found.description,
+        pointsOnSubmit: found.pointsOnSubmit,
+        contributionType: found.contributionType as FormSchema["contributionType"],
+        fields: found.fields.map((ff) => ({
+          id: ff.fieldId,
+          label: ff.label,
+          type: ff.type as FormFieldType,
+          required: ff.required,
+          placeholder: ff.placeholder,
+          help: ff.helpText,
+          options: (() => { try { return JSON.parse(ff.options || "[]"); } catch { return []; } })(),
+        })),
+      };
+    }
+  } catch {
+    // API unreachable — fallback to static
+  }
+  return getForm(slug);
+}
+
+/**
+ * Fetch all active form definitions from the API (database first, fallback to static).
+ * Client-safe.
+ */
+export async function fetchForms(): Promise<FormSchema[]> {
+  try {
+    const res = await fetch("/api/forms");
+    const data = await res.json();
+    const forms: { slug: string; title: string; description: string; pointsOnSubmit: number; contributionType: string; fields: { fieldId: string; label: string; type: string; required: boolean; placeholder: string; helpText: string; options: string }[] }[] = data.forms ?? [];
+    if (forms.length > 0) {
+      return forms.map((found) => ({
+        slug: found.slug,
+        title: found.title,
+        description: found.description,
+        pointsOnSubmit: found.pointsOnSubmit,
+        contributionType: found.contributionType as FormSchema["contributionType"],
+        fields: found.fields.map((ff) => ({
+          id: ff.fieldId,
+          label: ff.label,
+          type: ff.type as FormFieldType,
+          required: ff.required,
+          placeholder: ff.placeholder,
+          help: ff.helpText,
+          options: (() => { try { return JSON.parse(ff.options || "[]"); } catch { return []; } })(),
+        })),
+      }));
+    }
+  } catch {
+    // API unreachable — fallback to static
+  }
+  return FORMS;
+}
