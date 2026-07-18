@@ -19,9 +19,10 @@ import {
   MessageSquare,
   Image,
   MapPin,
-  X,
-  Menu,
   AlertTriangle,
+  Menu,
+  X,
+  Sprout,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
@@ -35,6 +36,7 @@ const sidebar = [
   { label: "admin.sidebar.donations", href: "/admin/donations", icon: Heart },
   { label: "admin.sidebar.points", href: "/admin/points", icon: Award },
   { label: "admin.sidebar.courses", href: "/admin/courses", icon: BookOpen },
+  { label: "admin.sidebar.seedlings", href: "/admin/seedlings", icon: Sprout },
   { label: "admin.sidebar.feedback", href: "/admin/feedback", icon: MessageSquare },
   { label: "admin.sidebar.errors", href: "/admin/errors", icon: AlertTriangle },
   { label: "admin.sidebar.reviewQueue", href: "/admin/review", icon: ShieldCheck },
