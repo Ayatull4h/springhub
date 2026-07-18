@@ -51,6 +51,19 @@ export async function POST(
       data: { status: "given" },
     });
 
+    // Notif ke peminta: "Ayo ambil! Pemilik udah ngasih bibit"
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: seedReq.requesterId,
+          type: "seedling-ready",
+          title: "Bibit siap diambil!",
+          body: "Pemilik sudah konfirmasi memberikan bibit. Klik Terima untuk menyelesaikan transaksi.",
+          link: "/seedlings",
+        },
+      });
+    } catch (e) { console.warn("[Seedling] Notif error:", e); }
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json(

@@ -69,6 +69,19 @@ export async function POST(
       });
     }
 
+    // Notif ke pemilik: "Transaksi selesai!"
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: seedReq.ownerId,
+          type: "seedling-completed",
+          title: "Transaksi bibit selesai!",
+          body: `Bibit sudah diterima. Stok berkurang ${seedReq.quantity}.`,
+          link: "/seedlings",
+        },
+      });
+    } catch (e) { console.warn("[Seedling] Notif error:", e); }
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json(

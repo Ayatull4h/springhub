@@ -3,6 +3,7 @@ import { getSession, isAdmin as checkAdmin } from "@/lib/auth";
 import { prisma, getErrorMessage } from "@/lib/prisma";
 import { verifyCsrfToken } from "@/lib/csrf";
 import { auditLog } from "@/lib/audit";
+import { logError } from "@/lib/error-logger";
 export const dynamic = "force-dynamic";
 
 export async function POST(
@@ -48,6 +49,19 @@ export async function POST(
     });
 
     auditLog("seedling request approve", `Permintaan bibit ${seedReq.id} disetujui admin`);
+
+    // Notif ke peminta: "Permintaanmu disetujui admin, tunggu pemilik"
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: seedReq.requesterId,
+          type: "seedling-request-approved",
+          title: "Permintaan bibit disetujui admin",
+          body: "Sekarang tunggu persetujuan pemilik. Kami kabari lagi ya!",
+          link: "/seedlings",
+        },
+      });
+    } catch (e) { await logError({ message: "Notif seedling request approve", level: "warning", source: "api", stack: "" }).catch(() => {}); }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

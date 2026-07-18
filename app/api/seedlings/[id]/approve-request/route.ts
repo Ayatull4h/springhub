@@ -28,6 +28,7 @@ export async function POST(
 
     const seedReq = await prisma.seedlingRequest.findUnique({
       where: { id: requestId },
+      include: { seedling: { select: { species: true } } },
     });
 
     if (!seedReq) {
@@ -49,6 +50,21 @@ export async function POST(
       where: { id: requestId },
       data: { status: "owner_approved" },
     });
+
+    // Notif ke peminta: "Pemilik setuju, hubungi!"
+    try {
+      const owner = await prisma.profile.findUnique({ where: { id: seedReq.ownerId }, select: { phone: true, username: true } });
+      const waLink = owner?.phone ? `https://wa.me/${owner.phone.replace(/[^0-9]/g, "")}` : "";
+      await prisma.notification.create({
+        data: {
+          userId: seedReq.requesterId,
+          type: "seedling-owner-approved",
+          title: `${seedReq.quantity} ${seedReq.seedling?.species || "bibit"} — Pemilik setuju!`,
+          body: waLink ? `Hubungi ${owner?.username || "pemilik"} lewat WhatsApp: ${waLink}` : `Hubungi ${owner?.username || "pemilik"} untuk ambil bibit`,
+          link: waLink || "/seedlings",
+        },
+      });
+    } catch (e) { console.warn("[Seedling] Notif error:", e); }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
