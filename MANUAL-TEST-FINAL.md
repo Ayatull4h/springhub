@@ -316,10 +316,60 @@ Gunakan terminal untuk test ini.
 
 ---
 
+## Test 20 — Seedlings / Pasar Bibit (14 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 20.1 | Marketplace muncul | Buka `www.springhub.id/seedlings` — harusnya grid 9 card bibit per halaman + pagination | |
+| 20.2 | Filter provinsi | Pilih provinsi dari dropdown — card harus filter sesuai provinsi | |
+| 20.3 | Cari bibit | Ketik "Jati" di kolom search — harusnya cuma muncul card Jati | |
+| 20.4 | Pagination 9/page | Kalo bibit > 9, harusnya ada tombol ← Prev dan Next → | |
+| 20.5 | Detail bibit | Klik card bibit — harusnya halaman detail dengan nama, jumlah, stok, pemilik, WA link | |
+| 20.6 | Minta bibit | Klik "Minta", isi jumlah + pesan, kirim — harusnya sukses (butuh login) | |
+| 20.7 | WA kontak aman | `curl $API/api/seedlings/:id` — response TIDAK boleh ada `phone` | |
+| 20.8 | WA kontak via notifikasi | Setelah owner approve request — harusnya dapet notif berisi link WA | |
+| 20.9 | Lapor bibit lewat form | Buka form "Seedling Stock" — isi species, jumlah, provinsi — submit — seedling harus muncul di `/api/seedlings` | |
+| 20.10 | Seedling dari form → pending | Lapor bibit via form → seedling status harus "pending" | |
+| 20.11 | Seedling aktif setelah approve | Admin approve laporan seedling → seedling status jadi "active" | |
+| 20.12 | Stok bertambah (user sama) | User yang sama lapor species sama → stok seedling nambah, bukan card baru | |
+| 20.13 | Stok berkurang (selesai) | Request → admin approve → owner approve → give → receive — stok harus berkurang | |
+| 20.14 | Admin panel seedlings | Buka `/admin/seedlings` — daftar seedling, filter status, tombol approve/reject | |
+| 20.15 | Admin panel requests | Buka `/admin/seedlings/requests` — daftar permintaan, tombol setujui | |
+
+## Test 21 — Springs & Admin Springs (6 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 21.1 | Spring baru pending | Lapor monitoring → spring baru dibuat dengan status "pending" (bukan langsung active) | |
+| 21.2 | Spring tidak muncul di publik | Spring pending harusnya belum muncul di `/api/springs` | |
+| 21.3 | Admin setujui spring | `POST /api/admin/springs/:id/approve` — spring jadi active | |
+| 21.4 | Admin panel spring | Buka `/admin/map/springs` — daftar spring, filter status pending/active/merged | |
+| 21.5 | Search spring API | `curl "$API/api/springs/search?q=Cibeureum"` — harusnya return spring yang namanya mengandung "Cibeureum" | |
+| 21.6 | Search minimal 2 huruf | `curl "$API/api/springs/search?q=C"` — harusnya return `[]` karena minimal 2 karakter | |
+
+## Test 22 — Pagination & API Versioning (4 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 22.1 | Reports pagination | `curl "$API/api/reports?page=1&per_page=10"` — response harus ada `pagination.total`, `pagination.totalPages` | |
+| 22.2 | Projects pagination | `curl "$API/api/projects?page=1&per_page=5"` — response harus ada `pagination` object | |
+| 22.3 | Notifications pagination | Login → `curl -b $COOKIE "$API/api/notifications?page=1&per_page=5"` — response harus ada `pagination` | |
+| 22.4 | API v1 redirect | `curl "$API/api/v1/seedlings"` — harusnya sama kayak `curl "$API/api/seedlings"` | |
+
+## Test 23 — Backup (3 test)
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 23.1 | Backup tiap jam 3 pagi | Cek `/root/backups/` — harusnya ada file `springhub-YYYYMMDD-030001.sql.gz` | |
+| 23.2 | Backup ukuran wajar | File backup harusnya antara 20KB - 1MB (gak 0KB) | |
+| 23.3 | Backup terkirim ke email | Cek inbox admin@springhub.id — harusnya ada email backup dari jam 3 pagi | |
+
+---
+
 ## Ringkasan Hasil
 
 | Kategori | PASS | FAIL | Catatan |
-|---|---|---|---|
+|---|---|---|---|---|
 | Test 1 — Buka Website (6) | 6 | 0 | |
 | Test 2 — Login & Daftar (8) | 8 | 0 | |
 | Test 3 — Halaman Admin (18) | 18 | 0 | |
@@ -339,4 +389,8 @@ Gunakan terminal untuk test ini.
 | Test 17 — Project & Like (6) | 6 | 0 | |
 | Test 18 — API Routing (8) | 8 | 0 | |
 | Test 19 — Aksi Nyata Section (4) | 4 | 0 | |
-| **TOTAL** | **/** | **/** | |
+| Test 20 — Seedlings (15) | 15 | 0 | |
+| Test 21 — Springs (6) | 6 | 0 | |
+| Test 22 — Pagination & Versioning (4) | 4 | 0 | |
+| Test 23 — Backup (3) | 3 | 0 | |
+| **TOTAL** | **/** | **/** | **183 test** |
