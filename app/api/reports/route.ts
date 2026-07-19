@@ -260,8 +260,8 @@ export async function POST(request: Request) {
         const existingSpring = snappedLat && snappedLng ? await prisma.spring.findFirst({
           where: {
             status: { in: ["pending", "active"] },
-            snappedLat: { gte: snappedLat - 0.01, lte: snappedLat + 0.01 },
-            snappedLng: { gte: snappedLng - 0.01, lte: snappedLng + 0.01 },
+            snappedLat: { gte: snappedLat - 0.001, lte: snappedLat + 0.001 },
+            snappedLng: { gte: snappedLng - 0.001, lte: snappedLng + 0.001 },
             name: { contains: springName, mode: "insensitive" },
           },
         }) : null;
