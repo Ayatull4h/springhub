@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Laporan Pasar Bibit & Billing — SpringHub</title>
+<style>
+  @page { size: A4; margin: 20mm 15mm; }
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #111;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: #fff;
+  }
+  .header-line { border: none; border-top: 3px double #000; margin: 20px 0; }
+  h1 {
+    font-size: 14pt;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 30px 0 10px;
+  }
+  h2 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin: 25px 0 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 4px;
+  }
+  h3 { font-size: 11pt; font-weight: bold; margin: 15px 0 8px; }
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 10pt; break-inside: avoid; page-break-inside: avoid; }
+  table th, table td { border: 1px solid #333; padding: 6px 8px; text-align: left; }
+  table th { background: #f0f0f0; font-weight: bold; }
+  table td.num { text-align: right; }
+  .grand-total { font-weight: bold; background: #e8e8e8; }
+  .section-block { margin: 15px 0; padding-left: 10px; }
+  .right { text-align: right; }
+  .note { margin-top: 25px; padding: 10px; border: 1px dashed #666; font-size: 9pt; color: #444; break-inside: avoid; }
+  .footer { margin-top: 40px; text-align: center; font-size: 9pt; border-top: 1px solid #999; padding-top: 10px; }
+  ol, ul { margin: 5px 0 10px 20px; padding: 0; }
+  li { margin: 4px 0; }
+  pre { font-family: 'Courier New', Courier, monospace; font-size: 9pt; background: #f5f5f5; padding: 10px; border-left: 3px solid #333; margin: 10px 0; line-height: 1.3; }
+</style>
+</head>
+<body>
+
+<h1>LAPORAN</h1>
+<p class="right">Jakarta, 19 Juli 2026</p>
+<p class="right">Proyek: SpringHub — Jaga Semesta</p>
+<p class="right">Oleh: Ayatullah Reza Chalid</p>
+
+<hr class="header-line">
+
+<h2>Bagian 1 — Laporan Fitur Pasar Bibit</h2>
+
+<h3>Latar Belakang</h3>
+<div class="section-block">
+<p>SpringHub adalah platform komunitas untuk monitoring dan restorasi mata air di Indonesia. Dalam kegiatan restorasi, bibit tanaman adalah komponen penting. Sebelum ada fitur Pasar Bibit, tidak ada wadah bagi relawan untuk saling berbagi atau meminta bibit. Kelebihan bibit seringkali tidak termanfaatkan.</p>
+<p>Pasar Bibit hadir untuk menjembatani antara relawan yang memiliki bibit dengan relawan yang membutuhkan bibit. Semua transaksi tercatat, terverifikasi admin, dan terukur.</p>
+</div>
+
+<h3>Cara Kerja Pasar Bibit</h3>
+<div class="section-block">
+<p>Pasar Bibit adalah fitur di SpringHub yang memungkinkan pengguna saling berbagi dan meminta bibit tanaman. Semua data bibit berasal dari <strong>form laporan</strong> yang diisi oleh pengguna (volunteer). Tidak ada celah untuk memasukkan data secara manual — semuanya harus melalui form yang sudah ditentukan oleh admin.</p>
+<p><strong>Pasar Bibit mendapatkan data dari form.</strong> Jika ID pengguna, lokasi, dan jenis bibit sama, maka akan menambah stok dari bibit yang sudah ada. Jika ada satu saja dari tiga aspek itu yang berbeda, maka akan membuat card baru.</p>
+<p><strong>Untuk verifikasi:</strong> Form diupload oleh user (pengguna) dan di-acc oleh admin, maka card baru akan muncul yang berisikan: jenis tanaman, ketinggian tanaman, lokasi bibit, dan nama user.</p>
+<p><strong>Jika akan minta bibit:</strong> tinggal pilih jenis bibit atau lokasi, kemudian tulis jumlah, dan klik "Minta". Permintaan akan ditinjau oleh admin. Jika di-acc, maka user akan menerima notifikasi yang berisikan nomor WhatsApp dari penyedia bibit.</p>
+<p><strong>Jika bibit sudah diterima:</strong> user penyedia klik "Selesai" dan penerima klik "Selesai". Jika salah satu tidak klik selesai, maka stok bibit tidak akan berkurang.</p>
+</div>
+
+<h3>Diagram Alur</h3>
+<div class="section-block">
+<pre>
+USER LAPOR BIBIT (via Form)
+  ↓
+ADMIN VERIFIKASI
+  ↓ (jika disetujui)
+CARD MUNCUL DI MARKETPLACE
+  ↓
+USER LAIN PILIH + TULIS JUMLAH + KLIK MINTA
+  ↓
+ADMIN TINJAU PERMINTAAN
+  ↓ (jika disetujui)
+NOTIFIKASI + NOMOR WA KE PEMINTA
+  ↓
+PEMINTA HUBUNGI PENYEDIA → AMBIL BIBIT
+  ↓
+PENYEDIA KLIK "SELESAI" + PENERIMA KLIK "SELESAI"
+  ↓
+STOK BERKURANG ✅
+</pre>
+</div>
+
+<h3>Rincian Pekerjaan</h3>
+<table>
+  <thead>
+    <tr><th style="width:5%">No</th><th style="width:95%">Pekerjaan</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><strong>Database Seedling</strong> — 3 tabel (Seedling, SeedlingPhoto, SeedlingRequest) + enum status + relasi ke Profile</td></tr>
+    <tr><td>2</td><td><strong>Backend API (14 endpoint)</strong> — Marketplace, request, approve/reject admin, confirm-give, confirm-receive, kontak WA, upload foto. Dilengkapi CSRF, validasi, pagination</td></tr>
+    <tr><td>3</td><td><strong>Frontend Marketplace</strong> — Halaman /seedlings dengan grid 9 card per halaman, filter provinsi, search, pagination, skeleton loading, animasi. Halaman detail dengan foto dan tombol minta. Dark mode support</td></tr>
+    <tr><td>4</td><td><strong>Admin Panel Seedling</strong> — Halaman /admin/seedlings (daftar laporan + filter status + approve/reject) dan /admin/seedlings/requests (daftar permintaan + setujui)</td></tr>
+    <tr><td>5</td><td><strong>Sistem Stok Cerdas</strong> — Logika penambahan stok berdasarkan 3 aspek (user ID + jenis + lokasi). Sama → tambah stok. Beda → card baru. Tidak ada duplikasi</td></tr>
+    <tr><td>6</td><td><strong>Sistem 2 Langkah</strong> — Flow confirm-give + confirm-receive. Stok hanya berkurang jika kedua belah pihak konfirmasi. Mencegah kecurangan dari kedua sisi</td></tr>
+    <tr><td>7</td><td><strong>Keamanan Kontak WA</strong> — Nomor WhatsApp tidak tampil di API publik. WA hanya dikirim via notifikasi internal kepada peminta yang sudah disetujui. Endpoint kontak butuh autentikasi</td></tr>
+    <tr><td>8</td><td><strong>Integrasi dengan Form</strong> — Seedlings mengambil data dari form submission (POST /api/reports). Auto-create Seedling saat form disubmit. Auto-activate saat admin approve laporan. Auto-reject saat admin tolak laporan</td></tr>
+    <tr><td>9</td><td><strong>Notifikasi Otomatis</strong> — 4 notifikasi di setiap tahap: admin approve request, owner approve, confirm-give, confirm-receive</td></tr>
+    <tr><td>10</td><td><strong>Dokumentasi</strong> — API-SPRINGHUB-LENGKAP.md (85 endpoint bahasa sederhana), CARA-KERJA-SEEDLING.md (alur lengkap + diagram), manual test update</td></tr>
+  </tbody>
+</table>
+
+<h2>Bagian 2 — Kendala: Xendit & Donasi</h2>
+
+<h3>Kenapa Donasi Belum Bisa Dipakai?</h3>
+<div class="section-block">
+<p>Fitur donasi menggunakan <strong>Xendit</strong> sebagai payment gateway. Backend untuk invoice dan webhook sudah selesai 100%. Namun ada 2 hal yang belum terpenuhi:</p>
+<ol>
+  <li><strong>XENDIT_SECRET_KEY masih kosong</strong> — Ini adalah kunci rahasia untuk mengotentikasi setiap permintaan API dari server SpringHub ke server Xendit. Tanpa key ini, backend tidak bisa membuat invoice pembayaran. Key ini didapatkan dari dashboard akun Xendit setelah client mendaftar dan membuat akun.</li>
+  <li><strong>XENDIT_WEBHOOK_TOKEN masih kosong</strong> — Webhook token digunakan untuk memverifikasi bahwa notifikasi pembayaran yang masuk ke server SpringHub benar-benar berasal dari Xendit, bukan dari pihak ketiga yang mencoba memalsukan status pembayaran.</li>
+  <li><strong>Akun Xendit belum dibuat</strong> — Client perlu mendaftar akun Xendit, melengkapi verifikasi bisnis, membuat API key dan webhook token, kemudian memberikan key tersebut untuk dikonfigurasi di .env.production.</li>
+</ol>
+</div>
+
+<h3>Dampak</h3>
+<div class="section-block">
+<p>Tanpa key Xendit, tombol "Continue to Donate" di halaman depan tidak bisa memproses pembayaran. Invoice tidak bisa dibuat, webhook callback tidak bisa diverifikasi, dan donasi tidak bisa masuk.</p>
+</div>
+
+<h3>Status Backend Donasi</h3>
+<table>
+  <tr><th style="width:45%">Komponen</th><th style="width:55%">Status</th></tr>
+  <tr><td>POST /api/donations/invoice</td><td>✅ Backend siap (tapi butuh XENDIT_SECRET_KEY)</td></tr>
+  <tr><td>POST /api/donations/webhook</td><td>✅ Backend siap (tapi butuh XENDIT_WEBHOOK_TOKEN)</td></tr>
+  <tr><td>Validasi HMAC</td><td>✅ Siap</td></tr>
+  <tr><td>Rate limiting</td><td>✅ Siap</td></tr>
+  <tr><td>Tier management</td><td>✅ Siap</td></tr>
+  <tr><td>Konfigurasi env</td><td>❌ XENDIT_SECRET_KEY kosong</td></tr>
+  <tr><td>Konfigurasi env</td><td>❌ XENDIT_WEBHOOK_TOKEN kosong</td></tr>
+</table>
+
+<p><strong>Kesimpulan:</strong> Backend donasi sudah selesai. Tinggal menunggu client membuat akun Xendit dan memberikan API key.</p>
+
+<h2>Bagian 3 — Billing</h2>
+
+<table>
+  <tr><td style="width:35%"><strong>Nama</strong></td><td style="width:65%">Ayatullah Reza Chalid</td></tr>
+  <tr><td><strong>Peran</strong></td><td>Full-stack Developer SpringHub</td></tr>
+  <tr><td><strong>Periode</strong></td><td>20 Juni 2026 — 20 Juli 2026</td></tr>
+  <tr><td><strong>Total</strong></td><td><strong>Rp2.500.000</strong> (Dua Juta Lima Ratus Ribu Rupiah)</td></tr>
+</table>
+
+<h3>Bank Tujuan Pembayaran</h3>
+<table>
+  <tr><td style="width:35%">Penerima</td><td style="width:65%"><strong>Ayatullah Reza Chalid</strong></td></tr>
+  <tr><td>Bank Tujuan</td><td><strong>BANK BRI</strong></td></tr>
+  <tr><td>Nomor Rekening</td><td><strong>359001035332531</strong></td></tr>
+</table>
+
+<div class="footer">
+  <p>SpringHub — Jaga Semesta | www.springhub.id</p>
+  <p>Terima kasih atas kerjasamanya.</p>
+</div>
+
+</body>
+</html>
