@@ -120,7 +120,7 @@ Tanpa key Xendit:
 |---|---|
 | **Nama** | Ayatullah Reza Chalid |
 | **Peran** | Full-stack Developer SpringHub |
-| **Periode** | 15 Mei 2026 — 19 Juli 2026 |
+| **Periode** | 20 Juni 2026 — 20 Juli 2026 |
 | **Total** | **Rp2.500.000** (Dua Juta Lima Ratus Ribu Rupiah) |
 
 ### Bank Tujuan Pembayaran
