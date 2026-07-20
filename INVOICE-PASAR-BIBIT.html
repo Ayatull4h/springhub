@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Invoice — Pasar Bibit SpringHub</title>
+<style>
+  @page { size: A4; margin: 20mm 15mm; }
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #111;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: #fff;
+  }
+  .header-line {
+    border: none;
+    border-top: 3px double #000;
+    margin: 20px 0;
+  }
+  h1 {
+    font-size: 14pt;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 30px 0 10px;
+  }
+  h2 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin: 25px 0 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 4px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 10pt;
+  }
+  table th, table td {
+    border: 1px solid #333;
+    padding: 6px 8px;
+    text-align: left;
+  }
+  table th {
+    background: #f0f0f0;
+    font-weight: bold;
+  }
+  table td.num { text-align: right; }
+  .grand-total {
+    font-weight: bold;
+    background: #e8e8e8;
+  }
+  .section-block { margin: 15px 0; padding-left: 10px; }
+  .right { text-align: right; }
+  .note {
+    margin-top: 25px;
+    padding: 10px;
+    border: 1px dashed #666;
+    font-size: 9pt;
+    color: #444;
+  }
+  .footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 9pt;
+    border-top: 1px solid #999;
+    padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<h1>INVOICE</h1>
+<p class="right">Jakarta, 19 Juli 2026</p>
+<p class="right">No: INV/SH/2026/07/001</p>
+
+<hr class="header-line">
+
+<table>
+  <tr>
+    <td style="border:none;width:50%"><strong>Kepada Yth:</strong><br>
+      Tim SpringHub<br>
+      Jaga Semesta<br>
+      Jakarta, Indonesia
+    </td>
+    <td style="border:none;width:50%"><strong>Dari:</strong><br>
+      Ayatull4h<br>
+      Full-stack Developer<br>
+      Email: admin@springhub.id
+    </td>
+  </tr>
+</table>
+
+<h2>Perihal: Pengembangan Fitur Pasar Bibit</h2>
+
+<p>Dengan hormat,</p>
+<p>Bersama ini kami sampaikan tagihan atas jasa pengembangan fitur <strong>Pasar Bibit (Seedlings)</strong> untuk platform SpringHub. Pekerjaan meliputi perancangan database, pengembangan backend API, pembangunan frontend, integrasi form, sistem stok cerdas, sistem keamanan kontak, admin panel, dan dokumentasi teknis.</p>
+
+<h2>Rincian Pekerjaan</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:5%">No</th>
+      <th style="width:55%">Pekerjaan</th>
+      <th style="width:20%">Detail</th>
+      <th style="width:20%" class="num">Biaya</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>Database Seedling</strong> — Perancangan 3 tabel (Seedling, SeedlingPhoto, SeedlingRequest) dengan relasi, index, dan enum status</td>
+      <td>3 tabel</td>
+      <td class="num">Rp250.000</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>Backend API (14 endpoint)</strong> — REST API untuk marketplace, request, approve/reject, confirm-give, confirm-receive, kontak WA. Dilengkapi CSRF, validasi, pagination</td>
+      <td>14 endpoint</td>
+      <td class="num">Rp500.000</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>Frontend Marketplace</strong> — Halaman `/seedlings` (grid 9 card/page), filter provinsi, search, pagination, detail, dark mode</td>
+      <td>2 halaman</td>
+      <td class="num">Rp400.000</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><strong>Admin Panel Seedling</strong> — Halaman `/admin/seedlings` (daftar + filter + approve/reject) dan `/admin/seedlings/requests` (daftar permintaan + setujui)</td>
+      <td>2 halaman</td>
+      <td class="num">Rp350.000</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><strong>Sistem Stok Cerdas</strong> — Logika penambahan stok berbasis 3 aspek (user ID + jenis + lokasi). Sama → tambah stok, beda → card baru. Tidak ada duplikasi</td>
+      <td>1 fitur</td>
+      <td class="num">Rp250.000</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><strong>Sistem 2 Langkah</strong> — Flow confirm-give + confirm-receive. Stok hanya berkurang jika kedua pihak konfirmasi. Mencegah kecurangan</td>
+      <td>1 fitur</td>
+      <td class="num">Rp250.000</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td><strong>Keamanan Kontak WA</strong> — Nomor WA tidak tampil di API publik. Hanya dikirim via notifikasi internal. Endpoint contact butuh auth + approved</td>
+      <td>1 fitur</td>
+      <td class="num">Rp200.000</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td><strong>Integrasi Form</strong> — Seedlings mengambil data dari form submission (POST /api/reports). Auto-create saat submit, auto-activate saat approve, auto-reject saat tolak</td>
+      <td>1 fitur</td>
+      <td class="num">Rp150.000</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td><strong>Notifikasi Otomatis</strong> — 4 notifikasi di setiap tahap (admin approve, owner approve, confirm-give, confirm-receive)</td>
+      <td>4 notif</td>
+      <td class="num">Rp100.000</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td><strong>Dokumentasi Teknis</strong> — API-SPRINGHUB-LENGKAP.md (85 endpoint), CARA-KERJA-SEEDLING.md (alur + diagram), LAPORAN-PASAR-BIBIT.md</td>
+      <td>3 dokumen</td>
+      <td class="num">Rp50.000</td>
+    </tr>
+    <tr class="grand-total">
+      <td colspan="3"><strong>TOTAL</strong></td>
+      <td class="num"><strong>Rp2.500.000</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="right"><strong>Terbilang: Dua Juta Lima Ratus Ribu Rupiah</strong></p>
+
+<h2>Ringkasan Produk</h2>
+
+<div class="section-block">
+  <p><strong>Nama Produk:</strong> Fitur Pasar Bibit (Seedlings) untuk SpringHub</p>
+  <p><strong>Versi:</strong> 1.0.0</p>
+  <p><strong>Periode Pengerjaan:</strong> 15 Mei 2026 — 19 Juli 2026</p>
+  <p><strong>Total API Endpoint:</strong> 14 (10 publik + 4 admin)</p>
+  <p><strong>Total Halaman:</strong> 4 (marketplace, detail, admin list, admin requests)</p>
+  <p><strong>Tabel Database Baru:</strong> 3 (Seedling, SeedlingPhoto, SeedlingRequest)</p>
+</div>
+
+<h2>Alur Pasar Bibit</h2>
+
+<div class="section-block">
+  <p>User lapor bibit (via form) → Admin verifikasi → Card muncul di Marketplace → User lain pilih jenis/lokasi + tulis jumlah + klik minta → Admin tinjau permintaan → Jika diacc, user terima notifikasi berisi nomor WA penyedia bibit → User hubungi penyedia → Ambil bibit → Penyedia klik "Selesai" + Penerima klik "Selesai" → Jika salah satu tidak klik selesai, stok bibit tidak akan berkurang.</p>
+  <p style="margin-top:8px;"><em>Catatan: Jika ID pengguna, lokasi, dan jenis bibit sama → tambah stok. Jika satu saja dari 3 aspek berbeda → card baru.</em></p>
+</div>
+
+<h2>Ketentuan Pembayaran</h2>
+
+<table>
+  <tr>
+    <td style="width:40%">Jumlah Tagihan</td>
+    <td style="width:60%"><strong>Rp2.500.000</strong></td>
+  </tr>
+  <tr>
+    <td>Jatuh Tempo</td>
+    <td>19 Agustus 2026</td>
+  </tr>
+  <tr>
+    <td>Metode Pembayaran</td>
+    <td>Transfer Bank / QRIS</td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>Catatan:</strong>
+  <ul>
+    <li>Tagihan ini berlaku untuk jasa pengembangan fitur Pasar Bibit (Seedlings) sebagaimana dijelaskan di atas.</li>
+    <li>Pembayaran dilakukan setelah pekerjaan selesai dan hasil telah diverifikasi.</li>
+    <li>Source code dan dokumentasi telah di-push ke repository GitHub SpringHub.</li>
+  </ul>
+</div>
+
+<div class="footer">
+  <p>SpringHub — Jaga Semesta | www.springhub.id</p>
+  <p>Invoice ini digenerate otomatis. Tidak perlu ditandatangani.</p>
+</div>
+
+</body>
+</html>
