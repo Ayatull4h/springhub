@@ -329,7 +329,7 @@ export default function AdminProjectsPage() {
         body: JSON.stringify({ status, note }),
       });
       if (res.ok) {
-        setActionMsg(`Project ${status === "approved" ? "approved" : status === "rejected" ? "rejected" : "moved to " + status} successfully!`);
+        setActionMsg(`✅ Project ${status === "approved" ? "approved" : status === "rejected" ? "rejected" : "moved to " + status}!`);
         fetchProjects();
       } else {
         const data = await res.json();
