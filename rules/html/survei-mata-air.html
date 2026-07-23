@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Survei Mata Air — Referensi Form</title>
+<style>
+  body{font-family:system-ui,sans-serif;max-width:800px;margin:0 auto;padding:2rem;background:#f8fafc;color:#0b0f15}
+  h1{font-size:1.5rem;font-weight:700}
+  .cat{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1.25rem;margin:1rem 0}
+  .cat h2{font-size:1.1rem;font-weight:600;margin:0 0 .5rem;color:#0284c7}
+  .field{margin:.6rem 0;padding:.5rem .7rem;background:#f8fafc;border-radius:6px;border-left:3px solid #0284c7}
+  .field .lbl{font-weight:600;font-size:.9rem}
+  .field .tpe{font-size:.75rem;color:#64748b}
+  .field.req{border-left-color:#dc2626}
+  .field.req .lbl::after{content:" *";color:#dc2626}
+  .badge{padding:.15rem .5rem;border-radius:999px;font-size:.65rem;font-weight:600}
+  .badge-red{background:#fee2e2;color:#b91c1c}
+  .badge-blue{background:#e0f2fe;color:#0369a1}
+  .info{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:.75rem 1rem;font-size:.85rem;color:#92400e;margin:1rem 0}
+</style>
+</head>
+<body>
+<p><a href="index.html">← Kembali</a></p>
+<h1>📋 Form Survei Mata Air</h1>
+<p><span class="badge badge-red">WAJIB LOGIN</span> <span class="badge badge-blue">MUNCUL DI MAP</span></p>
+<div class="info">Satu form untuk satu mata air. Menggantikan form "Spring Monitoring" yang lama.</div>
+
+<div class="cat">
+<h2>A. Identitas Survei</h2>
+<p style="font-size:.85rem;color:#64748b">Otomatis dari akun + geotag.</p>
+<div class="field req"><span class="lbl">Tanggal survei</span> <span class="tpe">— date —</span></div>
+<div class="field req"><span class="lbl">Nama surveyor</span> <span class="tpe">— text (dari akun) —</span></div>
+<div class="field req"><span class="lbl">Nomor WA</span> <span class="tpe">— phone (dari akun) —</span></div>
+<div class="field req"><span class="lbl">Geotag (tap lokasi)</span> <span class="tpe">— location —</span></div>
+<div class="field"><span class="lbl">Desa</span> <span class="tpe">— reverse geocoding otomatis —</span></div>
+<div class="field"><span class="lbl">Kecamatan</span> <span class="tpe">— reverse geocoding otomatis —</span></div>
+<div class="field"><span class="lbl">Kabupaten</span> <span class="tpe">— reverse geocoding otomatis —</span></div>
+<div class="field"><span class="lbl">Provinsi</span> <span class="tpe">— reverse geocoding otomatis —</span></div>
+<div class="field"><span class="lbl">Tutupan lahan</span> <span class="tpe">— otomatis dari Dynamic World (GEE) —</span></div>
+<div class="field req"><span class="lbl">Cek duplikat (radius 250m)</span> <span class="tpe">— select: Baru / Kunjungan ulang —</span></div>
+<div class="field"><span class="lbl">Kode SpringHub (jika kunjungan ulang)</span> <span class="tpe">— text —</span></div>
+</div>
+
+<div class="cat">
+<h2>B. Identitas Mata Air</h2>
+<div class="field req"><span class="lbl">Nama lokal mata air</span> <span class="tpe">— text —</span></div>
+<div class="field req"><span class="lbl">Foto 1: titik keluar air (dekat)</span> <span class="tpe">— photo —</span></div>
+<div class="field req"><span class="lbl">Foto 2: lingkungan sekitar (5-10 langkah)</span> <span class="tpe">— photo —</span></div>
+<div class="field req"><span class="lbl">Foto 3: arah aliran keluar</span> <span class="tpe">— photo —</span></div>
+<div class="field req"><span class="lbl">Jenis/tipe mata air</span> <span class="tpe">— select: Memancar / Genangan / Lereng / Celah batu / Tidak yakin —</span></div>
+<div class="field req"><span class="lbl">Aliran air saat ini dan sepanjang tahun</span> <span class="tpe">— select: Stabil / Berkurang saat kemarau / Fluktuatif / Kering total / Tidak tahu —</span></div>
+<div class="field"><span class="lbl">Perbandingan debit 5 tahun lalu</span> <span class="tpe">— select: Bertambah / Sama / Berkurang / Tidak tahu —</span></div>
+<div class="field"><span class="lbl">Perkiraan tahun kering (jika mata air mati)</span> <span class="tpe">— number —</span></div>
+<div class="field"><span class="lbl">Dulu air dimanfaatkan untuk (jika mata air mati)</span> <span class="tpe">— text —</span></div>
+</div>
+
+<div class="cat">
+<h2>C. Kondisi dan Pemanfaatan</h2>
+<div class="field req"><span class="lbl">Warna air</span> <span class="tpe">— select: Bening / Agak keruh / Keruh / Kekuningan / Kehijauan —</span></div>
+<div class="field req"><span class="lbl">Pemanfaatan lahan radius 50m</span> <span class="tpe">— select: Pemukiman / Pertanian / Lahan hijau / Semak / Air / Industri / Tambang / Lahan kosong —</span></div>
+<div class="field req"><span class="lbl">Tutupan lahan radius 50m (Dynamic World)</span> <span class="tpe">— select: Air / Pepohonan / Rerumputan / Tanaman pertanian / Semak / Area terbangun / Lahan kosong / Vegetasi tergenang —</span></div>
+<div class="field req"><span class="lbl">Pemanfaatan air saat ini</span> <span class="tpe">— multiselect: Irigasi / Air minum warga sekitar / Air minum desa lain / Mandi cuci / Kolam ikan / Wisata / Cadangan kemarau / Adat / Tidak dimanfaatkan / Tidak tahu —</span></div>
+<div class="field"><span class="lbl">Perkiraan jumlah KK pengguna</span> <span class="tpe">— select: <10 KK / 10-50 / 50-100 / 100-1000 / >1000 / Tidak tahu —</span></div>
+<div class="field req"><span class="lbl">Terlihat ancaman?</span> <span class="tpe">— select: Tidak ada / Ya —</span></div>
+<div class="field"><span class="lbl">Jenis ancaman</span> <span class="tpe">— multiselect: Pestisida / Mandi di sumber / Toilet <11m / Sampah / Sumur dalam / Kandang ternak / Bangunan beton / Over-ekstraksi / Tambang / Lainnya —</span></div>
+<div class="field req"><span class="lbl">Sumber informasi</span> <span class="tpe">— select: Observasi sendiri / Warga sekitar / Orang tua desa / Kelompok masyarakat / Aparat desa —</span></div>
+</div>
+
+<div class="cat">
+<h2>D. Pengukuran (jika bawa alat)</h2>
+<div class="field"><span class="lbl">pH air</span> <span class="tpe">— number (range 0-14) —</span></div>
+<div class="field"><span class="lbl">Suhu air (°C)</span> <span class="tpe">— number (range 5-45) —</span></div>
+<div class="field"><span class="lbl">TDS (ppm)</span> <span class="tpe">— number (range 0-5000) —</span></div>
+<div class="field"><span class="lbl">EC / DHL (µS/cm)</span> <span class="tpe">— number —</span></div>
+<div class="field"><span class="lbl">Debit air (liter/detik)</span> <span class="tpe">— number —</span></div>
+<div class="field"><span class="lbl">Estimasi debit visual</span> <span class="tpe">— select: Menetes / Kecil / Sedang / Besar / Tidak diukur —</span></div>
+</div>
+
+<div class="cat">
+<h2>E. Cerita dan Tindak Lanjut</h2>
+<div class="field"><span class="lbl">Cerita, sejarah, mitos</span> <span class="tpe">— textarea (opsional) —</span></div>
+<div class="field req"><span class="lbl">Bersedia aksi tindak lanjut?</span> <span class="tpe">— select: Ya / Belum tahu / Tidak —</span></div>
+<div class="field"><span class="lbl">Aksi yang dibutuhkan</span> <span class="tpe">— multiselect: Pembersihan sedimen / Penanaman pohon / Pembuatan rorak / Perlindungan regulasi / Lapor desa/dinas / Lainnya —</span></div>
+</div>
+
+<div class="info">Total field: ~30+ field (termasuk reverse geocoding otomatis).</div>
+<p><a href="index.html">← Kembali ke daftar</a></p>
+</body>
+</html>
