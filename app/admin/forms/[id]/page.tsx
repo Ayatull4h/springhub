@@ -243,6 +243,7 @@ export default function AdminEditFormPage() {
     try {
       const res = await fetch(`/api/admin/forms/${formId}/fields/${fieldId}`, {
         method: "DELETE",
+        headers: await csrfHeaders(),
       });
       if (res.ok) {
         setSuccess(t("admin.formBuilder.fieldDeleteSuccess"));
@@ -347,35 +348,35 @@ export default function AdminEditFormPage() {
           <div className="space-y-1">
             <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.fieldLabel")}</label>
             <input type="text" value={label} onChange={e => setLabel(e.target.value)}
-              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600" />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.fieldType")}</label>
             <select value={type} onChange={e => setType(e.target.value)}
-              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none">
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600">
               {FIELD_TYPES.map(ft => <option key={ft.value} value={ft.value}>{ft.label}</option>)}
             </select>
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.fieldPlaceholder")}</label>
             <input type="text" value={placeholder} onChange={e => setPlaceholder(e.target.value)}
-              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600" />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.fieldHelpText")}</label>
             <input type="text" value={helpText} onChange={e => setHelpText(e.target.value)}
-              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600" />
           </div>
         </div>
         {(type === "select" || type === "multiselect") && (
           <div className="mt-3 space-y-1">
             <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.optionsOnePerLine")}</label>
             <textarea value={optionsText} onChange={e => setOptionsText(e.target.value)} rows={3}
-              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none" />
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600" />
           </div>
         )}
         <div className="mt-3 flex justify-end gap-2">
-          <button onClick={onClose} className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100">{t("common.cancel")}</button>
+          <button onClick={onClose} className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700">{t("common.cancel")}</button>
           <button onClick={handleSave} disabled={saving}
             className="inline-flex items-center gap-1 rounded-md bg-brand-600 px-3 py-1 text-xs font-medium text-white hover:bg-brand-700 disabled:opacity-50">
             {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
@@ -399,7 +400,7 @@ export default function AdminEditFormPage() {
       <div className="flex items-center gap-3">
         <Link
           href="/admin/forms"
-          className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 hover:text-ink"
+          className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-ink"
         >
           <ArrowUp className="h-5 w-5 rotate-[-90deg]" />
         </Link>
@@ -412,14 +413,14 @@ export default function AdminEditFormPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
+        <div className="flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
           <AlertCircle className="h-4 w-4" />
           {error}
         </div>
       )}
 
       {success && (
-        <div className="flex items-center gap-2 rounded-md bg-emerald-50 p-3 text-sm text-emerald-700">
+        <div className="flex items-center gap-2 rounded-md bg-emerald-50 p-3 text-sm text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
           <CheckCircle2 className="h-4 w-4" />
           {success}
         </div>
@@ -432,7 +433,7 @@ export default function AdminEditFormPage() {
           className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition ${
             activeTab === "metadata"
               ? "bg-brand-600 text-white"
-              : "text-ink-muted hover:bg-slate-100"
+              : "text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"
           }`}
         >
           {t("admin.formBuilder.metadataTab")}
@@ -442,7 +443,7 @@ export default function AdminEditFormPage() {
           className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition ${
             activeTab === "fields"
               ? "bg-brand-600 text-white"
-              : "text-ink-muted hover:bg-slate-100"
+              : "text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"
           }`}
         >
           {t("admin.formBuilder.fieldBuilderTab", { count: String(fields.length) })}
@@ -464,7 +465,7 @@ export default function AdminEditFormPage() {
               type="text"
               value={meta.title}
               onChange={(e) => updateMeta("title", e.target.value)}
-              className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white dark:border-slate-600"
             />
           </div>
 
@@ -476,7 +477,7 @@ export default function AdminEditFormPage() {
               value={meta.description}
               onChange={(e) => updateMeta("description", e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white dark:border-slate-600"
             />
           </div>
 
@@ -492,7 +493,7 @@ export default function AdminEditFormPage() {
                   updateMeta("pointsOnSubmit", parseInt(e.target.value) || 0)
                 }
                 min={0}
-                className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white dark:border-slate-600"
               />
             </div>
 
@@ -503,7 +504,7 @@ export default function AdminEditFormPage() {
               <select
                 value={meta.contributionType}
                 onChange={(e) => updateMeta("contributionType", e.target.value)}
-                className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white dark:border-slate-600"
               >
                 {CONTRIBUTION_TYPES.map((ct) => (
                   <option key={ct.value} value={ct.value}>
@@ -524,7 +525,7 @@ export default function AdminEditFormPage() {
                   updateMeta("sortOrder", parseInt(e.target.value) || 0)
                 }
                 min={0}
-                className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white dark:border-slate-600"
               />
             </div>
           </div>
@@ -575,14 +576,14 @@ export default function AdminEditFormPage() {
                     <div className="flex flex-col gap-0.5">
                       <button
                         onClick={() => handleMoveField(field, "up")}
-                        className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 hover:text-ink"
+                        className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-ink"
                         title={t("admin.formBuilder.moveUp")}
                       >
                         <ArrowUp className="h-3 w-3" />
                       </button>
                       <button
                         onClick={() => handleMoveField(field, "down")}
-                        className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 hover:text-ink"
+                        className="rounded p-0.5 text-ink-subtle hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-ink"
                         title={t("admin.formBuilder.moveDown")}
                       >
                         <ArrowDown className="h-3 w-3" />
@@ -614,7 +615,7 @@ export default function AdminEditFormPage() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-1">
-                      <label className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-xs text-ink-muted hover:bg-slate-100">
+                      <label className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-xs text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700">
                         <input
                           type="checkbox"
                           checked={field.required}
@@ -629,7 +630,7 @@ export default function AdminEditFormPage() {
                             editingField === field.fieldId ? null : field.fieldId
                           )
                         }
-                        className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 hover:text-brand-600"
+                        className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-brand-600"
                         title={t("common.edit")}
                       >
                         <Pencil className="h-3.5 w-3.5" />
@@ -676,7 +677,7 @@ export default function AdminEditFormPage() {
                   value={newField.label}
                   onChange={(e) => handleNewFieldLabel(e.target.value)}
                   placeholder={t("admin.formBuilder.placeholderSpringName")}
-                  className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white dark:border-slate-600"
                 />
               </div>
               <div className="space-y-1.5">
@@ -716,7 +717,7 @@ export default function AdminEditFormPage() {
                 ))}
               </div>
               <div className="mt-2 flex items-center gap-2">
-                <label className="flex cursor-pointer items-center gap-2 rounded-md border border-ink-line px-3 py-2 text-sm text-ink-muted hover:bg-slate-100">
+                <label className="flex cursor-pointer items-center gap-2 rounded-md border border-ink-line px-3 py-2 text-sm text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700">
                   <input
                     type="checkbox"
                     checked={newField.required}
@@ -748,7 +749,7 @@ export default function AdminEditFormPage() {
                     }))
                   }
                   placeholder={t("admin.formBuilder.placeholderPlaceholder")}
-                  className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white dark:border-slate-600"
                 />
               </div>
               <div className="space-y-1.5">
@@ -765,7 +766,7 @@ export default function AdminEditFormPage() {
                     }))
                   }
                   placeholder={t("admin.formBuilder.placeholderHelpText")}
-                  className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white dark:border-slate-600"
                 />
               </div>
             </div>
@@ -786,7 +787,7 @@ export default function AdminEditFormPage() {
                   }
                   placeholder={t("admin.formBuilder.placeholderOptions")}
                   rows={4}
-                  className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white dark:border-slate-600"
                 />
                 <p className="text-[10px] text-ink-subtle">
                   {t("admin.formBuilder.optionsHint")}
