@@ -177,8 +177,10 @@ export async function GET(request: Request) {
 
     return new NextResponse(csv, {
       headers: {
-        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Type": "application/csv; charset=utf-8",
         "Content-Disposition": `attachment; filename="${filename}"`,
+        "Content-Length": String(Buffer.byteLength(csv, "utf8")),
+        "Cache-Control": "no-cache",
       },
     });
   } catch (error) {

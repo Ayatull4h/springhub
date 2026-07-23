@@ -119,7 +119,7 @@ export default function AdminNewCoursePage() {
       <div className="flex items-center gap-3">
         <Link
           href="/admin/courses"
-          className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 hover:text-ink"
+          className="rounded-md p-1.5 text-ink-muted hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
@@ -132,14 +132,14 @@ export default function AdminNewCoursePage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
+        <div className="flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
           <AlertCircle className="h-4 w-4" />
           {error}
         </div>
       )}
 
       {success && (
-        <div className="flex items-center gap-2 rounded-md bg-emerald-50 p-3 text-sm text-emerald-700">
+        <div className="flex items-center gap-2 rounded-md bg-emerald-50 p-3 text-sm text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
           <CheckCircle2 className="h-4 w-4" />
           {success}
         </div>
