@@ -50,6 +50,7 @@ export default function LearnModulePage() {
     completed: boolean;
   } | null>(null);
   const [user, setUser] = useState<{ userId?: string } | null>(null);
+  const [userLoading, setUserLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userMessage, setUserMessage] = useState("");
   const { t } = useI18n();
@@ -61,7 +62,8 @@ export default function LearnModulePage() {
       .then((data) => {
         if (data.user) setUser(data.user);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setUserLoading(false));
 
     // Fetch course
     fetch(`/api/courses/${slug}`)
@@ -109,6 +111,7 @@ export default function LearnModulePage() {
     currentIndex > (progress?.completedModules ?? 0);
 
   async function handleComplete() {
+    if (userLoading) return;
     if (!user?.userId || !course || !module) {
       setUserMessage(t("learn.course.signInPrompt") || "Please sign in to track your progress");
       return;

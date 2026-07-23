@@ -482,11 +482,11 @@ export function SpringMap() {
               href="/seedlings"
               className="group flex flex-col items-center justify-center rounded-xl border border-green-200 bg-gradient-to-br from-green-50 to-white px-3 py-3 text-center text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated hover:border-green-300 cursor-pointer dark:border-slate-700 dark:from-slate-800 dark:to-slate-800"
             >
-              <span className="mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 transition-transform duration-200 group-hover:scale-110">
-                <Sprout className="h-4 w-4 text-green-600" />
+              <span className="mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 transition-transform duration-200 group-hover:scale-110 dark:bg-green-900/50">
+                <Sprout className="h-4 w-4 text-green-600 dark:text-green-400" />
               </span>
-              <span className="text-xs font-semibold text-ink">Pasar Bibit</span>
-              <span className="text-[10px] text-ink-muted">Minta bibit</span>
+              <span className="text-xs font-semibold text-ink dark:text-slate-100">Pasar Bibit</span>
+              <span className="text-[10px] text-ink-muted dark:text-slate-400">Minta bibit</span>
             </Link>
             <div className="flex items-stretch">
               <OfflineEntryButton />
