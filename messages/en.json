@@ -246,9 +246,6 @@
   "auth.signIn.cta": "Sign In",
   "auth.signIn.noAccount": "Don't have an account?",
   "auth.signIn.joinNow": "Join Now",
-  "auth.signIn.testAccounts": "Test Accounts:",
-  "auth.signIn.testVolunteer": "Demo: vol@springhub.id / vol12345",
-  "auth.signIn.testAdmin": "Admin: admin@springhub.id / demo12345",
   "auth.signIn.error": "Login failed. Please try again.",
   "auth.signIn.networkError": "Network error. Please try again.",
 

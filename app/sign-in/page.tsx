@@ -170,11 +170,6 @@ export default function SignInPage() {
           </Link>
         </p>
 
-        <div className="mt-4 rounded-lg border border-ink-line/60 bg-slate-50 p-3 text-xs text-ink-muted dark:bg-slate-800">
-          <p className="font-medium text-ink">{t("auth.signIn.testAccounts")}</p>
-          <p>{t("auth.signIn.testVolunteer")}</p>
-          <p>{t("auth.signIn.testAdmin")}</p>
-        </div>
       </div>
     </div>
   );
