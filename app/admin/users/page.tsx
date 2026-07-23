@@ -105,7 +105,7 @@ export default function AdminUsersPage() {
                     className="rounded-md border border-ink-line px-2 py-1 text-xs dark:bg-slate-800 dark:text-white"
                   >
                     <option value="volunteer">Volunteer</option>
-                    <option value="field_lead">Field Lead</option>
+                    <option value="field_lead">⭐ ⭐ Field Lead</option>
                     <option value="admin">Admin</option>
                   </select>
                   <button onClick={() => setEditingRole(null)} className="text-xs text-ink-muted hover:text-ink">Cancel</button>
@@ -167,7 +167,7 @@ export default function AdminUsersPage() {
                         className="rounded-md border border-ink-line px-2 py-1 text-xs dark:bg-slate-800 dark:text-white"
                       >
                         <option value="volunteer">Volunteer</option>
-                        <option value="field_lead">Field Lead</option>
+                        <option value="field_lead">⭐ Field Lead</option>
                         <option value="admin">Admin</option>
                       </select>
                       <button onClick={() => setEditingRole(null)} className="text-xs text-ink-muted hover:text-ink dark:hover:text-white">Cancel</button>
