@@ -13,20 +13,20 @@ export async function GET(
       return NextResponse.json({ error: "Harus login" }, { status: 401 });
     }
 
-    // Cari request yang statusnya owner_approved, given, atau completed
-    // dan requesternya adalah user yang login
+    // Cari request yang statusnya pending atau completed
+    // Requester bisa lihat WA kapan aja setelah minta
     const request = await prisma.seedlingRequest.findFirst({
       where: {
         seedlingId: params.id,
         requesterId: session.userId,
-        status: { in: ["owner_approved", "given", "completed"] },
+        status: { in: ["pending", "completed"] },
       },
       select: { id: true, status: true },
     });
 
     if (!request) {
       return NextResponse.json(
-        { error: "Kontak pemilik hanya bisa dilihat setelah permintaan disetujui pemilik" },
+        { error: "Kamu belum minta bibit ini" },
         { status: 403 }
       );
     }

@@ -481,13 +481,10 @@ enum SeedlingStatus {
 }
 
 enum RequestStatus {
-  pending        // baru diminta, nunggu admin
-  admin_approved // admin setujui, nunggu pemilik setuju
-  owner_approved // pemilik setujui, peminta bisa ambil
-  given          // pemilik klik Selesai (step 1)
-  completed     // peminta klik Terima (step 2), stok berkurang
-  rejected      // ditolak (admin atau pemilik)
-  cancelled     // dibatalkan peminta
+  pending     // baru diminta, belum diambil
+  completed   // penerima klik Selesai, stok berkurang
+  rejected    // ditolak
+  cancelled   // dibatalkan peminta
 }
 
 model Seedling {

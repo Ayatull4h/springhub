@@ -39,9 +39,9 @@ export async function POST(
       return NextResponse.json({ error: "Hanya peminta yang bisa konfirmasi" }, { status: 403 });
     }
 
-    if (seedReq.status !== "given") {
+    if (seedReq.status === "completed" || seedReq.status === "rejected" || seedReq.status === "cancelled") {
       return NextResponse.json(
-        { error: "Pemilik belum konfirmasi. Tunggu pemilik klik Selesai dulu." },
+        { error: "Permintaan sudah selesai atau dibatalkan" },
         { status: 400 }
       );
     }

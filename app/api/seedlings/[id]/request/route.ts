@@ -52,6 +52,13 @@ export async function POST(
       );
     }
 
+    if (quantity > 100) {
+      return NextResponse.json(
+        { error: "Maksimal 100 bibit. Untuk lebih dari 100, buat proyek di /projects/new" },
+        { status: 400 }
+      );
+    }
+
     const req = await prisma.seedlingRequest.create({
       data: {
         seedlingId: seedling.id,
