@@ -51,7 +51,7 @@ npm start
 ### 1.4 Akun Test
 | Role | Email | Password | Points |
 |---|---|---|---|
-| Admin | admin@springhub.id | admin123 | - |
+| Admin | admin@springhub.id | demo12345 | - |
 | Volunteer | volunteer@springhub.id | vol12345 | 24.168 |
 | Volunteer (eligible) | ucup@springhub.id | ucup123 | 25.000 |
 
@@ -1008,7 +1008,7 @@ Base path: `/report/spring-monitoring`, `/report/spring-restoration`, dll
 ## 15. Akun Test
 
 ```
-Admin:        admin@springhub.id / admin123
+Admin:        admin@springhub.id / demo12345
 Volunteer:    volunteer@springhub.id / vol12345
 Volunteer:    ucup@springhub.id / ucup123 (25.000 pts — eligible untuk project)
 ```

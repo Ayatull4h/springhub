@@ -247,8 +247,8 @@
   "auth.signIn.noAccount": "Belum punya akun?",
   "auth.signIn.joinNow": "Daftar Sekarang",
   "auth.signIn.testAccounts": "Akun Test:",
-  "auth.signIn.testVolunteer": "Relawan: volunteer@springhub.id / vol123",
-  "auth.signIn.testAdmin": "Admin: admin@springhub.id / admin123",
+  "auth.signIn.testVolunteer": "Relawan: vol@springhub.id / vol12345",
+  "auth.signIn.testAdmin": "Admin: admin@springhub.id / demo12345",
   "auth.signIn.error": "Login gagal. Silakan coba lagi.",
   "auth.signIn.networkError": "Kesalahan jaringan. Silakan coba lagi.",
 

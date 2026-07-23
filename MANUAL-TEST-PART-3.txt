@@ -15,7 +15,7 @@ AKUN TEST:
   - Guest      : (tanpa login)
   - Volunteer 1: ucup@springhub.id / ucup12345 (Sesi 8: password fix 8 char + 20.168 pts)
   - Volunteer 2: volunteer@springhub.id / vol12345
-  - Admin      : admin@springhub.id / admin123
+  - Admin      : admin@springhub.id / demo12345
 
 ======================================================================
   1. GUEST FLOW (TANPA LOGIN)
@@ -98,9 +98,9 @@ AKUN TEST:
 [x] TC-11 Login berhasil
     Device  : Both
     Langkah : 1. Buka /sign-in  2. Email volunteer@springhub.id
-              password vol12345  3. Klik Login
+              password vol12345
     Harapan : Berhasil login, redirect, nama user muncul di header
-    Catatan : Password vol12345 (bukan vol123 — seed mungkin belum
+    Catatan : Password vol12345
               jalan)
 
 [x] TC-12 Form render untuk volunteer
@@ -929,7 +929,7 @@ TOTAL                          104       90        0       14
 1. Akun test:
    - ucup@springhub.id / ucup12345 (Sesi 8: password min 8 char + 20.168 pts)
    - volunteer@springhub.id / vol12345
-   - admin@springhub.id / admin123
+   - admin@springhub.id / demo12345
    - Jalankan `prisma/fix-ucup.sql` di PostgreSQL client jika seed belum
      diupdate, atau re-run `npx prisma db seed`.
 

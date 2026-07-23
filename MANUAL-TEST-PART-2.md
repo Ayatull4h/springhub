@@ -241,7 +241,7 @@
 |||
 |-|-|
 |**Device**|Both|
-|**Langkah**|1. Buka `/sign-in`. 2. Masukkan email `admin@springhub.id` dan password `admin123`. 3. Klik Login|
+|**Langkah**|1. Buka `/sign-in`. 2. Masukkan email `admin@springhub.id` dan password `demo12345`. 3. Klik Login|
 |**Harapan**|Berhasil login. Link/nav "Admin" muncul di header (atau langsung redirect ke `/admin`)|
 |**✅/❌**|**✅**|
 |**Catatan**||
