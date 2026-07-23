@@ -130,7 +130,7 @@ export function SpringMap() {
   useEffect(() => {
     fetch("/api/point-rules")
       .then(r => r.json())
-      .then(data => setPointRules(data.rules?.filter((r: { isActive: boolean }) => r.isActive) || []))
+      .then(data => setPointRules(data.rules || []))
       .catch(() => {});
   }, []);
 
