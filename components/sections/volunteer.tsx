@@ -51,11 +51,16 @@ export function VolunteerActivities() {
   const [showPoints, setShowPoints] = useState(false);
   const [realActivities, setRealActivities] = useState<ActivityItem[]>([]);
 
+  const [userRole, setUserRole] = useState("");
+
   useEffect(() => {
     fetch("/api/auth/me")
       .then(r => r.json())
       .then(data => {
-        if (data.user) setUserPoints(data.user.points || 0);
+        if (data.user) {
+          setUserPoints(data.user.points || 0);
+          setUserRole(data.user.role || "");
+        }
       })
       .catch(() => {});
   }, []);
@@ -117,7 +122,7 @@ export function VolunteerActivities() {
     actPage * actPerPage
   );
 
-  const eligible = userPoints >= PROJECT_PROPOSAL_THRESHOLD;
+  const eligible = userRole === "admin" || userRole === "field_lead";
   const pct = Math.min(
     100,
     Math.round((userPoints / PROJECT_PROPOSAL_THRESHOLD) * 100)

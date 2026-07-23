@@ -82,11 +82,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 
-  const isAdmin = profile.role === "admin";
-  if (!isAdmin && profile.points < PROJECT_PROPOSAL_THRESHOLD) {
+  const canSubmit = profile.role === "admin" || profile.role === "field_lead";
+  if (!canSubmit) {
     return NextResponse.json(
       {
-        error: `Minimal ${PROJECT_PROPOSAL_THRESHOLD.toLocaleString("id-ID")} poin untuk submit proyek`,
+        error: `Hanya Field Lead dan Admin yang bisa submit proyek. Kumpulkan 20.000 poin untuk jadi Field Lead.`,
       },
       { status: 403 }
     );

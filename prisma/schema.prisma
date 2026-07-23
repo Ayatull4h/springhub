@@ -11,6 +11,7 @@ datasource db {
 enum Role {
   user
   volunteer
+  field_lead
   admin
 }
 

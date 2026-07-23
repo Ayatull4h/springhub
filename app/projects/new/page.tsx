@@ -87,7 +87,8 @@ export default function NewProjectPage() {
   }, [router]);
 
   const isAdmin = userRole === "admin";
-  const eligible = isAdmin || userPoints >= PROJECT_PROPOSAL_THRESHOLD;
+  const isFieldLead = userRole === "field_lead";
+  const eligible = isAdmin || isFieldLead;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

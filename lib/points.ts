@@ -95,6 +95,20 @@ export async function awardReportPoints(
     });
 
     await checkMilestones(userId);
+
+    // Auto-upgrade: volunteer → field_lead (≥20.000 poin)
+    if (user?.role === "volunteer") {
+      const profile = await prisma.profile.findUnique({
+        where: { id: userId },
+        select: { points: true, role: true },
+      });
+      if (profile && profile.points >= 20000) {
+        await prisma.profile.update({
+          where: { id: userId },
+          data: { role: "field_lead" },
+        });
+      }
+    }
   }
 
   return { pointsAwarded: totalPoints, reason: `Approved ${formSlug}`, bonus };
