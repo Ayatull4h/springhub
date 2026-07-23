@@ -209,7 +209,7 @@ export default function AdminEditFormPage() {
           ...newField,
           fieldId: finalFieldId,
           options: (newField.type === "select" || newField.type === "multiselect")
-            ? newField.options.split("\n").filter((o) => o.trim())
+            ? newField.options.split("\n").map((o) => o.trim()).filter((o) => o)
             : [],
         }),
       });
@@ -325,7 +325,7 @@ export default function AdminEditFormPage() {
           helpText: helpText.trim(),
         };
         if (type === "select" || type === "multiselect") {
-          body.options = optionsText.split("\n").filter((o) => o.trim()).map((o) => o.trim());
+          body.options = optionsText.split(/\r?\n/).map((o) => o.trim()).filter((o) => o);
         }
         const res = await fetch(`/api/admin/forms/${formId}/fields/${field.fieldId}`, {
           method: "PUT",
