@@ -99,6 +99,7 @@ export function SpringMap() {
   const [reportsError, setReportsError] = useState("");
   const [dynamicForms, setDynamicForms] = useState<Array<{ slug: string; title: string; pointsOnSubmit: number }>>([]);
   const [formsError, setFormsError] = useState("");
+  const [pointRules, setPointRules] = useState<Array<{ name: string; points: number }>>([]);
   const [mapTypesWithCats, setMapTypesWithCats] = useState<Array<{ slug: string; id: string; name: string; categories: CategoryItem[] }>>([]);
   const [showGuide, setShowGuide] = useState(false);
 
@@ -127,6 +128,13 @@ export function SpringMap() {
   }, []);
 
   useEffect(() => {
+    fetch("/api/point-rules")
+      .then(r => r.json())
+      .then(data => setPointRules(data.rules?.filter((r: { isActive: boolean }) => r.isActive) || []))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
     fetch("/api/map-points/types")
       .then(r => r.json())
       .then(data => setMapTypesWithCats(data.types || []))
@@ -145,6 +153,11 @@ export function SpringMap() {
   };
 
   const allForms = useMemo(() => {
+    const ruleMap = new Map<string, number>();
+    for (const rule of pointRules) {
+      const slug = rule.name.toLowerCase().replace(/\s+/g, "-");
+      if (rule.points > 0) ruleMap.set(slug, rule.points);
+    }
     const staticForms = FORMS.map(f => ({
       slug: f.slug,
       title: f.title,
@@ -153,7 +166,7 @@ export function SpringMap() {
     const dbForms = dynamicForms.map((f) => ({
       slug: f.slug,
       title: f.title,
-      pointsOnSubmit: f.pointsOnSubmit,
+      pointsOnSubmit: ruleMap.get(f.slug) || f.pointsOnSubmit || 0,
     }));
     const seen = new Set<string>();
     return [...staticForms, ...dbForms].filter(f => {
@@ -161,7 +174,7 @@ export function SpringMap() {
       seen.add(f.slug);
       return true;
     });
-  }, [dynamicForms]);
+  }, [dynamicForms, pointRules]);
 
   // Map form slug → its linked MapPointType's categories
   const formCategories = useMemo(() => {
