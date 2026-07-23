@@ -104,7 +104,6 @@ export default function AdminUsersPage() {
                     disabled={savingRole}
                     className="rounded-md border border-ink-line px-2 py-1 text-xs dark:bg-slate-800 dark:text-white"
                   >
-                    <option value="user">User</option>
                     <option value="volunteer">Volunteer</option>
                     <option value="field_lead">Field Lead</option>
                     <option value="admin">Admin</option>
