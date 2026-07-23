@@ -337,9 +337,10 @@ export default function AdminPointsPage() {
   async function handleSave(data: Partial<PointRule>) {
     if (editingRule) {
       // Update existing
+      const csrf = await fetch("/api/csrf").then(r=>r.json()).then(d=>d.token||"").catch(()=>"");
       const res = await fetch(`/api/admin/point-rules/${editingRule.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
         body: JSON.stringify(data),
       });
       if (res.ok) {
@@ -351,9 +352,10 @@ export default function AdminPointsPage() {
       }
     } else {
       // Create new
+      const csrf = await fetch("/api/csrf").then(r=>r.json()).then(d=>d.token||"").catch(()=>"");
       const res = await fetch("/api/admin/point-rules", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
         body: JSON.stringify(data),
       });
       if (res.ok) {
@@ -367,9 +369,10 @@ export default function AdminPointsPage() {
   }
 
   async function handleToggleActive(rule: PointRule) {
+    const csrf = await fetch("/api/csrf").then(r=>r.json()).then(d=>d.token||"").catch(()=>"");
     const res = await fetch(`/api/admin/point-rules/${rule.id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
       body: JSON.stringify({ isActive: !rule.isActive }),
     });
     if (res.ok) {
@@ -382,8 +385,10 @@ export default function AdminPointsPage() {
 
   async function handleDelete() {
     if (!deleteTarget) return;
+    const csrf = await fetch("/api/csrf").then(r=>r.json()).then(d=>d.token||"").catch(()=>"");
     const res = await fetch(`/api/admin/point-rules/${deleteTarget.id}`, {
       method: "DELETE",
+      headers: { "x-csrf-token": csrf },
     });
     if (res.ok) {
       showMsg("Aturan berhasil dihapus");
