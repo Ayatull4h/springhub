@@ -69,11 +69,23 @@ function ProjectDetailModal({
   project,
   open,
   onClose,
+  onAction,
 }: {
   project: ProjectItem | null;
   open: boolean;
   onClose: () => void;
+  onAction: (id: string, status: string, note: string) => Promise<void>;
 }) {
+  const [note, setNote] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function handleAction(status: string) {
+    if (!project) return;
+    setSaving(true);
+    await onAction(project.id, status, note);
+    setSaving(false);
+    onClose();
+  }
   if (!open || !project) return null;
 
   const status = statusConfig[project.status] ?? statusConfig.pending;
@@ -185,6 +197,34 @@ function ProjectDetailModal({
           })}</span>
         </div>
 
+        {/* Action buttons */}
+        {(project.status === "pending" || project.status === "under_review") && (
+          <div className="mt-4 space-y-2">
+            <label className="block text-xs font-medium text-ink-muted">Review Note (optional)</label>
+            <textarea
+              value={note}
+              onChange={e => setNote(e.target.value)}
+              rows={2}
+              className="w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white"
+              placeholder="Catatan untuk pengaju proyek..."
+            />
+            <div className="flex items-center justify-end gap-2">
+              <button onClick={() => handleAction("rejected")} disabled={saving}
+                className="inline-flex items-center gap-1 rounded-md bg-red-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-600 disabled:opacity-50">
+                <XCircle className="h-3.5 w-3.5" /> Reject
+              </button>
+              <button onClick={() => handleAction("under_review")} disabled={saving}
+                className="inline-flex items-center gap-1 rounded-md bg-blue-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-600 disabled:opacity-50">
+                <Eye className="h-3.5 w-3.5" /> Under Review
+              </button>
+              <button onClick={() => handleAction("approved")} disabled={saving}
+                className="inline-flex items-center gap-1 rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50">
+                <CheckCircle2 className="h-3.5 w-3.5" /> Approve
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Close button */}
         <div className="mt-5 flex justify-end">
           <button
@@ -199,7 +239,7 @@ function ProjectDetailModal({
   );
 }
 
-// ─── Approve/Reject Modal ─────────────────────────────────────────────────────
+// ─── Approve/Reject Modal (still used for backward compatibility) ──────────────
 
 function ActionModal({
   project,
@@ -603,27 +643,12 @@ export default function AdminProjectsPage() {
         </div>
       </div>
 
-      {/* Action button bar for selected project */}
-      {detailProject && detailProject.status !== "completed" && (
-        <div className="flex items-center justify-center gap-2">
-          <button
-            onClick={() => {
-              setActionProject(detailProject);
-              setDetailProject(null);
-            }}
-            className="inline-flex items-center gap-1.5 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-          >
-            <Target className="h-4 w-4" />
-            Review & Approve / Reject
-          </button>
-        </div>
-      )}
-
       {/* Modals */}
       <ProjectDetailModal
         project={detailProject}
         open={detailProject !== null && actionProject === null}
         onClose={() => setDetailProject(null)}
+        onAction={handleAction}
       />
 
       <ActionModal
