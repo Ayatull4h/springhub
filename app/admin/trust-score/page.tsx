@@ -66,9 +66,10 @@ export default function AdminTrustScorePage() {
     }
     setSaving(userId);
     try {
+      const { token } = await fetch("/api/csrf").then(r => r.json());
       const res = await fetch(`/api/admin/trust-scores/${userId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": token },
         body: JSON.stringify({ trustScore: val }),
       });
       if (res.ok) {

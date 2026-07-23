@@ -74,6 +74,15 @@ type NewField = {
   options: string;
 };
 
+async function csrfHeaders(): Promise<Record<string, string>> {
+  try {
+    const { token } = await fetch("/api/csrf").then(r => r.json());
+    return { "Content-Type": "application/json", "x-csrf-token": token };
+  } catch {
+    return { "Content-Type": "application/json" };
+  }
+}
+
 export default function AdminEditFormPage() {
   const params = useParams();
   const formId = params.id as string;
@@ -152,7 +161,7 @@ export default function AdminEditFormPage() {
     try {
       const res = await fetch(`/api/admin/forms/${formId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: await csrfHeaders(),
         body: JSON.stringify(meta),
       });
       const data = await res.json();
@@ -195,7 +204,7 @@ export default function AdminEditFormPage() {
     try {
       const res = await fetch(`/api/admin/forms/${formId}/fields`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await csrfHeaders(),
         body: JSON.stringify({
           ...newField,
           fieldId: finalFieldId,
@@ -251,7 +260,7 @@ export default function AdminEditFormPage() {
     try {
       await fetch(`/api/admin/forms/${formId}/fields/${field.fieldId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: await csrfHeaders(),
         body: JSON.stringify({ required: !field.required }),
       });
       fetchForm();
@@ -269,12 +278,12 @@ export default function AdminEditFormPage() {
     try {
       await fetch(`/api/admin/forms/${formId}/fields/${field.fieldId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: await csrfHeaders(),
         body: JSON.stringify({ sortOrder: swapField.sortOrder }),
       });
       await fetch(`/api/admin/forms/${formId}/fields/${swapField.fieldId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: await csrfHeaders(),
         body: JSON.stringify({ sortOrder: field.sortOrder }),
       });
       fetchForm();
@@ -319,7 +328,7 @@ export default function AdminEditFormPage() {
         }
         const res = await fetch(`/api/admin/forms/${formId}/fields/${field.fieldId}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: await csrfHeaders(),
           body: JSON.stringify(body),
         });
         if (res.ok) onSaved();

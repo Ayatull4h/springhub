@@ -26,9 +26,10 @@ export default function AdminUsersPage() {
   async function handleRoleSave(userId: string, newRole: string) {
     setSavingRole(true);
     try {
+      const csrf = await fetch("/api/csrf").then(r => r.json()).catch(() => ({ token: "" }));
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrf.token },
         body: JSON.stringify({ role: newRole }),
       });
       if (res.ok) {
