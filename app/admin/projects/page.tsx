@@ -322,9 +322,10 @@ export default function AdminProjectsPage() {
 
   async function handleAction(id: string, status: string, note: string) {
     try {
+      const csrf = await fetch("/api/csrf").then(r=>r.json()).then(d=>d.token||"").catch(()=>"");
       const res = await fetch(`/api/admin/projects/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
         body: JSON.stringify({ status, note }),
       });
       if (res.ok) {
