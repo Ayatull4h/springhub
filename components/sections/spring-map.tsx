@@ -170,7 +170,7 @@ const formTitleI18nKey = (slug: string): string => {
       pointsOnSubmit: ruleMap.get(f.slug) || f.pointsOnSubmit || 0,
     }));
     const seen = new Set<string>();
-    return [...staticForms, ...dbForms].filter(f => {
+    return [...dbForms, ...staticForms].filter(f => {
       if (seen.has(f.slug)) return false;
       seen.add(f.slug);
       return true;
