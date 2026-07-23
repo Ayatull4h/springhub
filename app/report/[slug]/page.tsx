@@ -77,10 +77,14 @@ export default function ReportFormPage() {
             description: data.form.description,
             pointsOnSubmit: data.form.pointsOnSubmit,
             contributionType: data.form.contributionType,
-            fields: data.form.fields.map((f: { fieldId: string; label: string; type: string; required: boolean; placeholder: string | null; helpText: string | null; options: string | null }) => {
+            fields: data.form.fields.map((f: { fieldId: string; label: string; type: string; required: boolean; placeholder: string | null; helpText: string | null; options: string | string[] | null }) => {
               let options: string[];
-              try { options = JSON.parse(f.options || "[]"); }
-              catch { options = []; }
+              if (Array.isArray(f.options)) {
+                options = f.options;
+              } else {
+                try { options = JSON.parse(f.options || "[]"); }
+                catch { options = []; }
+              }
               const staticForm = getForm(slug);
               const staticField = staticForm?.fields.find(sf => sf.id === f.fieldId);
               if (options.length === 0 && staticField?.options && staticField.options.length > 0) {
