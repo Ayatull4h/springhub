@@ -141,7 +141,8 @@ export function SpringMap() {
       .catch(() => {});
   }, []);
 
-  const formTitleI18nKey = (slug: string): string => {
+  // Tampilkan poin dari PointRule (via /api/point-rules), bukan hardcode
+const formTitleI18nKey = (slug: string): string => {
     const map: Record<string, string> = {
       "spring-monitoring": "form.title.monitoring",
       "spring-restoration": "form.title.restoration",
