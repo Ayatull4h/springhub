@@ -74,7 +74,7 @@ export function VolunteerActivities() {
           const mapped: ActivityItem[] = data.gallery.map((r: any) => {
             let action = "";
             let locationDetail = "";
-            if (r.formSlug === "spring-monitoring" || r.formSlug === "spring-restoration") {
+            if (r.formSlug === "spring-monitoring" || r.formSlug === "spring-survey" || r.formSlug === "spring-restoration") {
               action = r.detailName ? `memantau ${r.detailName}` : "memantau mata air";
               locationDetail = r.detailName || "";
             } else if (r.formSlug === "tree-planting") {

@@ -45,7 +45,7 @@ type CategoryItem = {
 function getStatusFromForm(formSlug: string, formTitle?: string): string {
   // Hardcoded untuk 5 form static
   const staticMap: Record<string, string> = {
-    "spring-monitoring": "healthy",
+    "spring-survey": "healthy",
     "spring-restoration": "restoration",
     "trench-development": "restoration",
     "tree-planting": "restoration",
@@ -144,8 +144,8 @@ export function SpringMap() {
   // Tampilkan poin dari PointRule (via /api/point-rules), bukan hardcode
 const formTitleI18nKey = (slug: string): string => {
     const map: Record<string, string> = {
-      "spring-monitoring": "form.title.monitoring",
-      "spring-restoration": "form.title.restoration",
+    "spring-survey": "form.title.monitoring",
+    "spring-restoration": "form.title.restoration",
       "trench-development": "form.title.trench",
       "tree-planting": "form.title.planting",
       "seedling-stock": "form.title.seedling",
@@ -483,7 +483,7 @@ const formTitleI18nKey = (slug: string): string => {
               ) : (
                 <>
                   {t("map.discoveryPrompt")}{" "}
-                  <Link href="/report/spring-monitoring" className="font-semibold text-brand-700 hover:underline">
+                  <Link href="/report/spring-survey" className="font-semibold text-brand-700 hover:underline">
                     {t("map.discoveryPrompt")}
                   </Link>
                 </>

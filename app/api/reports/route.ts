@@ -407,7 +407,7 @@ export async function GET(request: Request) {
       prisma.report.count({ where }),
     ]);
     const healthy = reports.filter(
-      (r: { formSlug: string }) => r.formSlug === "spring-monitoring" || r.formSlug === "seedling-stock"
+      (r: { formSlug: string }) => r.formSlug === "spring-monitoring" || r.formSlug === "spring-survey" || r.formSlug === "seedling-stock"
     ).length;
     const restoration = reports.filter(
       (r: { formSlug: string }) =>
