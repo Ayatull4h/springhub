@@ -155,10 +155,12 @@ function getMarkerColor(
 
 export function LeafletMap({
   reports,
+  springs: springItems,
   formColors,
   formLookup,
 }: {
   reports: ReportData[];
+  springs?: { id: string; name: string; snappedLat: number; snappedLng: number; healthScore: number | null; healthStatus: string | null; reportCount: number }[];
   formColors?: Record<string, { color: string; fillColor: string; label: string }>;
   formLookup?: Record<string, { title: string; typeSlug: string }>;
 }) {
@@ -166,9 +168,10 @@ export function LeafletMap({
   const [tileError, setTileError] = useState(false);
   const [springNames, setSpringNames] = useState<Record<string, string>>({});
   const [springHealth, setSpringHealth] = useState<Record<string, string>>({});
+  const [activeLayer, setActiveLayer] = useState<"springs" | "activities">("springs");
 
   // Group reports by snapped location → one marker per grid (bisa banyak spring)
-  const springs = useMemo(() => {
+  const springGroups = useMemo(() => {
     const locMap = new Map<string, { reports: ReportData[]; springIds: Set<string>; springNames: Set<string> }>();
     const noSpring: ReportData[] = [];
 
@@ -217,7 +220,7 @@ export function LeafletMap({
 
   // Fetch spring names for grouped markers — uses bulk API to avoid N+1 problem
   useEffect(() => {
-    const ids = springs.groups
+    const ids = springGroups.groups
       .filter((g) => !springNames[g.id])
       .map((g) => g.id)
       .slice(0, 50);
@@ -242,11 +245,11 @@ export function LeafletMap({
       } catch { /* ignore */ }
     };
     fetchNames();
-  }, [springs.groups, springNames]);
+  }, [springGroups.groups, springNames]);
 
   const markers: (ReportData | SpringGroup)[] = useMemo(
-    () => [...springs.groups, ...springs.noSpring] as (ReportData | SpringGroup)[],
-    [springs]
+    () => [...springGroups.groups, ...springGroups.noSpring] as (ReportData | SpringGroup)[],
+    [springGroups]
   );
 
   return (
@@ -275,8 +278,73 @@ export function LeafletMap({
           />
         )}
 
-        {/* ═══ Spring Group markers (one per spring) ═══ */}
-        {springs.groups.map((sg) => {
+        {/* ═══ Layer Toggle ═══ */}
+          {springItems && springItems.length > 0 && (
+            <div className="absolute left-3 top-3 z-[1000] flex gap-1 rounded-lg bg-white p-1 shadow-md dark:bg-slate-800">
+              <button
+                onClick={() => setActiveLayer("springs")}
+                className={`rounded-md px-3 py-1 text-xs font-medium ${activeLayer === "springs" ? "bg-brand-600 text-white" : "text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"}`}
+              >
+                🌊 Mata Air ({springItems.length})
+              </button>
+            <button
+              onClick={() => setActiveLayer("activities")}
+              className={`rounded-md px-3 py-1 text-xs font-medium ${activeLayer === "activities" ? "bg-brand-600 text-white" : "text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"}`}
+            >
+              🌱 Aktivitas
+            </button>
+          </div>
+        )}
+
+        {/* ═══ Spring markers (sumber daya) ═══ */}
+        {activeLayer === "springs" && springItems?.map((s) => {
+          const hc = statusColors[s.healthStatus || "sehat"] || statusColors.sehat;
+          const r = Math.min(12, 6 + (s.reportCount || 0) * 1.5);
+          return (
+            <Fragment key={`spring-${s.id}`}>
+              <CircleMarker
+                center={[s.snappedLat, s.snappedLng]}
+                radius={r}
+                pathOptions={{
+                  color: hc.color,
+                  fillColor: hc.fillColor,
+                  fillOpacity: 0.8,
+                  weight: s.healthStatus === "kritis" ? 2 : 3,
+                  dashArray: s.healthStatus === "kritis" ? "4 4" : undefined,
+                }}
+              >
+                <Tooltip direction="top" offset={[0, -8]}>
+                  <div className="max-w-[180px] text-xs leading-relaxed">
+                    <strong>{s.name}</strong>
+                    <br />
+                    <span className="font-medium" style={{ color: hc.color }}>{hc.label}</span>
+                    {s.healthScore !== null && <span> · {s.healthScore}/100</span>}
+                    <br />
+                    <span className="text-ink-muted">{s.reportCount} laporan</span>
+                    <br />
+                    <span className="text-brand-600">Klik untuk detail</span>
+                  </div>
+                </Tooltip>
+                <Popup>
+                  <div className="min-w-[200px] text-sm">
+                    <strong className="text-base">{s.name}</strong>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className="text-xs" style={{ color: hc.color }}>●</span>
+                      <span className="text-xs font-medium">{hc.label}</span>
+                      {s.healthScore !== null && <span className="text-xs text-ink-muted">({s.healthScore}/100)</span>}
+                    </div>
+                    <div className="mt-1 text-xs text-ink-muted">{s.reportCount} laporan</div>
+                    <a href={`/springs/${s.id}`} className="mt-2 block rounded-md bg-brand-600 px-3 py-1.5 text-center text-xs font-semibold text-white hover:bg-brand-700">Lihat Detail →</a>
+                  </div>
+                </Popup>
+              </CircleMarker>
+              <Circle center={[s.snappedLat, s.snappedLng]} radius={5000} pathOptions={{ color: hc.color, fillColor: hc.color, fillOpacity: 0.05, weight: 1, dashArray: "4 4" }} />
+            </Fragment>
+          );
+        })}
+
+        {/* ═══ Activity markers (laporan kegiatan) ═══ */}
+        {activeLayer === "activities" && springGroups.groups.map((sg) => {
           const fc = getMarkerColor(sg.latestFormSlug, formColors, sg.healthStatus);
           const actCount = sg.reports.length;
           const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";
@@ -369,7 +437,7 @@ export function LeafletMap({
         })}
 
         {/* ═══ Individual markers (no springId) — legacy fallback ═══ */}
-        {springs.noSpring.map((r) => {
+        {springGroups.noSpring.map((r) => {
           const fc = getMarkerColor(r.formSlug, formColors);
           const detailUrl = `/${formIconsToType[r.formSlug] || "spring"}/${r.id}`;
           return (

@@ -97,6 +97,7 @@ export function SpringMap() {
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
   const [reportsError, setReportsError] = useState("");
+  const [springs, setSprings] = useState<unknown[]>([]);
   const [dynamicForms, setDynamicForms] = useState<Array<{ slug: string; title: string; pointsOnSubmit: number }>>([]);
   const [formsError, setFormsError] = useState("");
   const [pointRules, setPointRules] = useState<Array<{ name: string; points: number }>>([]);
@@ -138,6 +139,16 @@ export function SpringMap() {
     fetch("/api/map-points/types")
       .then(r => r.json())
       .then(data => setMapTypesWithCats(data.types || []))
+      .catch(() => {});
+
+    fetch("/api/springs")
+      .then(r => r.json())
+      .then(data => {
+        if (data?.groups) {
+          const flat = data.groups.flatMap((g: any) => g.springs || []);
+          setSprings(flat);
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -339,7 +350,7 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         </div>
         <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
-          <LeafletMap reports={visible} formColors={formColors} formLookup={formLookup} />
+          <LeafletMap reports={visible} springs={springs as any[]} formColors={formColors} formLookup={formLookup} />
         </div>
       </div>
 
