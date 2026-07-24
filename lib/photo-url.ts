@@ -12,7 +12,18 @@ export function getPhotoUrlPrefix(): string {
  * Build a full photo URL from its storage path.
  * Jika storagePath sudah URL lengkap (http/https), return as-is.
  */
+const PATH_REGEX = /^[a-zA-Z0-9_\-/]+\.[a-zA-Z0-9]+$/;
+
+function isValidPath(storagePath: string): boolean {
+  // Label strings like "Tree Planting Maron 1" don't have a file extension
+  // Valid paths have "reports/" prefix and a file extension like .jpg
+  return storagePath.startsWith("http://") ||
+         storagePath.startsWith("https://") ||
+         (storagePath.includes("/") && PATH_REGEX.test(storagePath.split("/").pop() || ""));
+}
+
 export function buildPhotoUrl(storagePath: string): string {
+  if (!storagePath || !isValidPath(storagePath)) return "";
   if (storagePath.startsWith("http://") || storagePath.startsWith("https://")) {
     return storagePath;
   }
@@ -26,11 +37,8 @@ export function buildPhotoUrl(storagePath: string): string {
 export function buildPhotoUrls<T extends { storagePath: string }>(
   photos: T[]
 ): (T & { url: string })[] {
-  const prefix = getPhotoUrlPrefix();
   return photos.map((p) => ({
     ...p,
-    url: p.storagePath.startsWith("http://") || p.storagePath.startsWith("https://")
-      ? p.storagePath
-      : `${prefix}${p.storagePath}`,
+    url: buildPhotoUrl(p.storagePath),
   }));
 }
