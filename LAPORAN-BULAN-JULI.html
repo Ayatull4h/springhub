@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Laporan Bulan Juli — SpringHub</title>
+<style>
+  @page { size: A4; margin: 20mm 15mm; }
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #111;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: #fff;
+  }
+  .header-line { border: none; border-top: 3px double #000; margin: 20px 0; }
+  h1 {
+    font-size: 14pt;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 30px 0 10px;
+  }
+  h2 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin: 25px 0 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 4px;
+  }
+  h3 { font-size: 11pt; font-weight: bold; margin: 15px 0 8px; }
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 10pt; break-inside: avoid; page-break-inside: avoid; }
+  table th, table td { border: 1px solid #333; padding: 6px 8px; text-align: left; }
+  table th { background: #f0f0f0; font-weight: bold; }
+  .section-block { margin: 15px 0; padding-left: 10px; }
+  .right { text-align: right; }
+  .footer { margin-top: 40px; text-align: center; font-size: 9pt; border-top: 1px solid #999; padding-top: 10px; }
+  ol, ul { margin: 5px 0 10px 20px; padding: 0; }
+  li { margin: 4px 0; }
+  pre { font-family: 'Courier New', Courier, monospace; font-size: 9pt; background: #f5f5f5; padding: 10px; border-left: 3px solid #333; margin: 10px 0; line-height: 1.3; }
+  .note { margin-top: 25px; padding: 10px; border: 1px dashed #666; font-size: 9pt; color: #444; }
+</style>
+</head>
+<body>
+
+<h1>LAPORAN BULAN JULI 2026</h1>
+<p class="right">Proyek: SpringHub — Jaga Semesta</p>
+<p class="right">Periode: 24 Juni — 24 Juli 2026</p>
+<p class="right">Oleh: Ayatullah Reza Chalid</p>
+
+<hr class="header-line">
+
+<h2>Bagian 1 — Refaktor Sistem Formulir</h2>
+
+<h3>Latar Belakang</h3>
+<div class="section-block">
+<p>Berdasarkan data lapangan yang terkumpul dari aplikasi Epicellect (103 entry survei mata air) dan masukan dari surveyor, sistem formulir SpringHub versi 1 (8-11 field per form) tidak lagi memadai. Data lapangan menunjukkan kebutuhan parameter yang lebih detail: kondisi lingkungan, pengukuran fisik (pH, TDS, EC), ancaman, dan dokumentasi foto terstruktur.</p>
+<p>Periode ini fokus pada refaktor total 5 form utama, penambahan 2 form baru, dan penyesuaian sistem poin.</p>
+</div>
+
+<h3>Form yang Dirombak</h3>
+<table>
+  <thead>
+    <tr><th>Form</th><th>Field Lama</th><th>Field Baru</th><th>Perubahan Utama</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Survei Mata Air</td><td class="num">8</td><td class="num">32</td><td>pH, suhu, TDS, EC, debit, ancaman, cerita, 3 foto</td></tr>
+    <tr><td>Restorasi Mata Air</td><td class="num">11</td><td class="num">13</td><td>Multiselect kegiatan, jumlah relawan, durasi</td></tr>
+    <tr><td>Rorak</td><td class="num">9</td><td class="num">18</td><td>SATU FORM = SATU RORAK, posisi, bahan, dimensi</td></tr>
+    <tr><td>Tanam Pohon</td><td class="num">9</td><td class="num">16</td><td>SATU FORM = SATU POHON, tinggi, sumber, lokasi</td></tr>
+    <tr><td>Stok Bibit</td><td class="num">10</td><td class="num">16</td><td>2 arah, tinggi, bentuk, kesiapan tanam</td></tr>
+  </tbody>
+</table>
+
+<h3>Form Baru</h3>
+<table>
+  <thead>
+    <tr><th>Form</th><th>Field</th><th>Fungsi</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Pengajuan Proyek</td><td class="num">27</td><td>Proposal proyek + 3 foto wajib + komitmen checkbox + target terukur + Featured Projects thumbnail</td></tr>
+    <tr><td>Kolaborasi Kemitraan</td><td class="num">10</td><td>Form publik tanpa login untuk CSR/perusahaan/komunitas</td></tr>
+  </tbody>
+</table>
+
+<h3>Health Scoring Engine</h3>
+<div class="section-block">
+<p>Setiap laporan survei mata air yang di-approve otomatis menghitung health score 0-100 dari 8 parameter dengan bobot distribusi otomatis:</p>
+<table>
+  <thead>
+    <tr><th>Skor</th><th>Status</th><th>Warna Marker</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>≥80</td><td>Sehat</td><td>Hijau 🟢</td></tr>
+    <tr><td>60-79</td><td>Tercemar Ringan</td><td>Kuning 🟡</td></tr>
+    <tr><td>30-59</td><td>Tercemar Berat</td><td>Oranye 🟠</td></tr>
+    <tr><td>&#x3C;30</td><td>Kritis</td><td>Merah 🔴</td></tr>
+  </tbody>
+</table>
+<p>Parameter: warna air (25%), aliran (25%), perubahan debit (20%), ancaman (30%), pH, suhu, TDS, debit liter/detik — bobot didistribusi ulang jika parameter tidak terisi.</p>
+</div>
+
+<h3>Import Data Epicellect</h3>
+<div class="section-block">
+<p>103 entry data survei mata air asli dari aplikasi Epicellect berhasil diimpor dan dinormalisasi:</p>
+<ul>
+  <li><strong>73 spring unik</strong> dari 103 report — semua ter-link dan punya health score</li>
+  <li>6 provinsi: Jawa Timur, Jawa Tengah, DIY, Jawa Barat, Madura, Banten</li>
+  <li>47 mata air stabil, 31 menurun, 9 kering/mati, 4 bertambah</li>
+  <li>20+ surveyor (Dimas Eko, Triyasinta, Sessa, Jagatamimi, dll)</li>
+  <li>100% punya koordinat presisi (akurasi 4-12m)</li>
+  <li>Field D1-D6 (pH, suhu, TDS, EC, debit) masih kosong — menunggu alat ukur</li>
+</ul>
+</div>
+
+<h3>Sistem Poin</h3>
+<table>
+  <thead>
+    <tr><th>Form</th><th>Poin Lama</th><th>Poin Baru</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Survei Mata Air</td><td class="num">25</td><td class="num">100</td></tr>
+    <tr><td>Restorasi Mata Air</td><td class="num">100</td><td class="num">1.000</td></tr>
+    <tr><td>Rorak</td><td class="num">50</td><td class="num">500</td></tr>
+    <tr><td>Tanam Pohon</td><td class="num">100</td><td class="num">100</td></tr>
+    <tr><td>Stok Bibit</td><td class="num">15</td><td class="num">100</td></tr>
+    <tr><td>Milestone 10 Laporan</td><td class="num">50</td><td class="num">250</td></tr>
+    <tr><td>Milestone 50 Laporan</td><td class="num">250</td><td class="num">1.000</td></tr>
+    <tr><td>Milestone 100 Laporan</td><td class="num">500</td><td class="num">5.000</td></tr>
+    <tr><td>Milestone 500 Laporan (BARU)</td><td class="num">—</td><td class="num">25.000</td></tr>
+  </tbody>
+</table>
+
+<h3>Auto-fill & UX</h3>
+<ul>
+  <li>GPS otomatis dari browser (online & offline)</li>
+  <li>Nomor WA dari profil user — edit sekali, otomatis terisi di semua form</li>
+  <li><strong>Turbo mode</strong>: tanam pohon & rorak — setelah submit, otomatis siapkan entri berikutnya + lokasi GPS baru</li>
+  <li>Cek duplikat radius 20m</li>
+  <li>Default cerdas: C1_warna = Bening, C8 = Observasi Sendiri, E2 = Belum Tahu</li>
+</ul>
+
+<hr class="header-line">
+
+<h2>Bagian 2 — Peta Interaktif & Marker</h2>
+
+<h3>Layer & Tampilan</h3>
+<div class="section-block">
+<p>Peta landing page sekarang menampilkan dua kategori marker:</p>
+<ul>
+  <li><strong>Mata Air</strong> — 73 spring dengan warna berdasarkan health score (hijau/kuning/oranye/merah). Ukuran marker bervariasi berdasarkan jumlah laporan. Spring kritis ditampilkan dengan garis putus-putus.</li>
+  <li><strong>Aktivitas</strong> — Tanam pohon (106), restorasi (3), rorak (2). Ditampilkan sebagai badge ringkasan per tipe form.</li>
+</ul>
+<p>Filter dropdown di atas map mendukung subkategori kesehatan: Sehat, Tercemar Ringan, Tercemar Berat, Kritis — masing-masing dengan jumlah.</p>
+<p>Popup tidak lagi menggunakan emoji panjang. Cukup ringkasan: nama spring, status kesehatan, jumlah laporan per tipe form.</p>
+</div>
+
+<h3>Foto Spring Detail — Pagination</h3>
+<div class="section-block">
+<p>Halaman detail spring menampilkan foto dengan pagination 12 per klik — tombol "Muat lebih banyak (12/106 foto)" — menghindari scroll panjang untuk spring dengan banyak foto (seperti 106 tree-planting dirgapala).</p>
+</div>
+
+<h3>Filter Foto Invalid</h3>
+<div class="section-block">
+<p>buildPhotoUrl() sekarang memfilter storagePath yang bukan path valid (label-string seperti "Tree Planting Maron 1" tidak lagi dianggap sebagai foto). Mencegah broken image di halaman admin dan gallery.</p>
+</div>
+
+<hr class="header-line">
+
+<h2>Bagian 3 — Database</h2>
+
+<h3>Perubahan Schema</h3>
+<table>
+  <thead>
+    <tr><th>Model</th><th>Field Baru</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Spring</td><td>healthScore (Int?), healthStatus (String), lastSurveyedAt (DateTime?)</td></tr>
+    <tr><td>Project</td><td>featuredPhotoId (String?), relasi ke ProjectPhoto</td></tr>
+    <tr><td>ProjectPhoto (BARU)</td><td>id, projectId, storagePath, mimeType, createdAt</td></tr>
+    <tr><td>FormField</td><td>type: "email", "checkbox" — untuk form pengajuan proyek</td></tr>
+    <tr><td>Form</td><td>contributionType: "project"</td></tr>
+  </tbody>
+</table>
+
+<h3>Data Real</h3>
+<table>
+  <thead>
+    <tr><th>Entitas</th><th>Jumlah</th><th>Catatan</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Spring</td><td class="num">86</td><td>73 dengan health score dari Epic, 13 dari seed lama</td></tr>
+    <tr><td>Report</td><td class="num">230</td><td>103 Epic + 106 tree-planting dirgapala + 21 lainnya</td></tr>
+    <tr><td>Foto</td><td class="num">349</td><td>Disimpan di Docker volume, serve via nginx</td></tr>
+    <tr><td>User</td><td class="num">8</td><td>dirgapala, Riris, admin, volunteer, ucup, dll</td></tr>
+    <tr><td>Project</td><td class="num">4</td><td>Rorak, Bibit, Penghijauan, Restorasi</td></tr>
+  </tbody>
+</table>
+
+<hr class="header-line">
+
+<h2>Bagian 4 — API & Routing</h2>
+
+<h3>Route API</h3>
+<div class="section-block">
+<p>Total <strong>92 route API</strong>, semuanya berfungsi. Dokumentasi lengkap tersedia di /api-routes.html.</p>
+</div>
+
+<h3>Endpoint Baru</h3>
+<table>
+  <thead>
+    <tr><th>Endpoint</th><th>Method</th><th>Fungsi</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>/api/admin/reports/approve-all</td><td>POST</td><td>Approve semua pending + health scoring + award points + recalculate</td></tr>
+  </tbody>
+</table>
+
+<h3>Perubahan API Existing</h3>
+<table>
+  <thead>
+    <tr><th>Endpoint</th><th>Perubahan</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>POST /api/reports</td><td>Spring linking via B1_nama (dengan fallback spring_name)</td></tr>
+    <tr><td>POST /api/admin/reports/[id]/approve</td><td>Health scoring otomatis untuk spring-survey</td></tr>
+    <tr><td>GET /api/springs</td><td>Return healthScore, healthStatus, snappedLat, snappedLng per spring</td></tr>
+    <tr><td>GET /api/springs/bulk</td><td>Return healthScore, healthStatus</td></tr>
+    <tr><td>GET /api/gallery</td><td>Support field ID baru (B1_nama, T_nama_lokal)</td></tr>
+    <tr><td>GET/PUT /api/user/profile</td><td>Support update phone</td></tr>
+    <tr><td>GET /api/auth/me</td><td>Return phone</td></tr>
+    <tr><td>POST /api/projects</td><td>Handle multipart form + 3 foto + featuredPhotoId</td></tr>
+    <tr><td>GET /api/projects</td><td>Return featuredPhoto + photos[]</td></tr>
+    <tr><td>GET /api/admin/reports</td><td>Return photos[] + _count.photos</td></tr>
+  </tbody>
+</table>
+
+<h3>Admin Panel</h3>
+<ul>
+  <li>Pagination: dropdown 25/50/100/200 per halaman + page numbers + prev/next</li>
+  <li>Foto thumbnail 32x32 di kolom pertama tabel</li>
+  <li>Tombol ✅ Approve All — approve semua pending + health scoring + points otomatis</li>
+</ul>
+
+<hr class="header-line">
+
+<h2>Bagian 5 — Pengajuan Proyek & Featured Projects</h2>
+
+<h3>Form Pengajuan Proyek (Baru)</h3>
+<div class="section-block">
+<p>Form ini menggantikan halaman /projects/new yang lama. Terintegrasi dengan sistem form SpringHub, 27 field, 5 bagian (A-E):</p>
+<ul>
+  <li><strong>A. Pengusul</strong> — nama, WA, email, organisasi, peran, pengalaman Jaga Semesta</li>
+  <li><strong>B. Tentang Proyek</strong> — judul, jenis (multiselect), geotag, latar belakang</li>
+  <li><strong>C. Rencana</strong> — timeline, target terukur, jumlah relawan, mitra</li>
+  <li><strong>D. Dukungan</strong> — biaya (5 range), rincian, jenis dukungan (multiselect)</li>
+  <li><strong>E. Komitmen</strong> — 3 checkbox wajib (lapor via form, terima review, setuju data publik)</li>
+</ul>
+<p><strong>3 foto lokasi wajib</strong> — minimalisir manipulasi (geotag + foto = bukti lapangan). Admin pilih 1 foto sebagai thumbnail Featured Projects.</p>
+</div>
+
+<h3>Featured Projects</h3>
+<div class="section-block">
+<p>Landing page menampilkan card proyek unggulan yang sekarang bisa menampilkan <strong>foto thumbnail</strong> dari proyek — bukan lagi gradient placeholder. API projects return featuredPhoto + photos[] dengan URL.</p>
+</div>
+
+<hr class="header-line">
+
+<h2>Bagian 6 — Laporan Pasar Bibit</h2>
+
+<h3>Cara Kerja</h3>
+<div class="section-block">
+<p>Pasar Bibit memungkinkan pengguna saling berbagi dan meminta bibit tanaman. Semua data berasal dari form laporan — tidak ada celah input manual.</p>
+<p><strong>Alur:</strong></p>
+<pre>
+USER LAPOR BIBIT (via Form)
+  ↓
+ADMIN VERIFIKASI
+  ↓ (jika disetujui)
+CARD MUNCUL DI MARKETPLACE
+  ↓
+USER LAIN PILIH + TULIS JUMLAH + KLIK MINTA
+  ↓
+ADMIN TINJAU PERMINTAAN
+  ↓ (jika disetujui)
+NOTIFIKASI + NOMOR WA KE PEMINTA
+  ↓
+PEMINTA HUBUNGI PENYEDIA → AMBIL BIBIT
+  ↓
+PENYEDIA KLIK "SELESAI" + PENERIMA KLIK "SELESAI"
+  ↓
+STOK BERKURANG ✅
+</pre>
+</div>
+
+<h3>Rincian Pekerjaan</h3>
+<table>
+  <thead>
+    <tr><th style="width:5%">No</th><th style="width:95%">Pekerjaan</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><strong>Database Seedling</strong> — 3 tabel (Seedling, SeedlingPhoto, SeedlingRequest) + enum status + relasi ke Profile</td></tr>
+    <tr><td>2</td><td><strong>Backend API (14 endpoint)</strong> — Marketplace, request, approve/reject admin, confirm, kontak WA, upload foto. CSRF, validasi, pagination</td></tr>
+    <tr><td>3</td><td><strong>Frontend Marketplace</strong> — Grid 9 card, filter provinsi, search, pagination, skeleton, dark mode</td></tr>
+    <tr><td>4</td><td><strong>Admin Panel</strong> — /admin/seedlings + /admin/seedlings/requests</td></tr>
+    <tr><td>5</td><td><strong>Sistem Stok Cerdas</strong> — Dedup berdasarkan user ID + jenis + lokasi</td></tr>
+    <tr><td>6</td><td><strong>Sistem 2 Langkah</strong> — Confirm-give + confirm-receive. Stok berkurang jika kedua pihak konfirmasi</td></tr>
+    <tr><td>7</td><td><strong>Keamanan Kontak WA</strong> — Nomor WA tidak tampil di API publik</td></tr>
+    <tr><td>8</td><td><strong>Integrasi dengan Form</strong> — Auto-create, auto-activate, auto-reject</td></tr>
+    <tr><td>9</td><td><strong>Notifikasi Otomatis</strong> — 4 notifikasi di setiap tahap</td></tr>
+    <tr><td>10</td><td><strong>Dokumentasi</strong> — API-SPRINGHUB-LENGKAP.md, CARA-KERJA-SEEDLING.md</td></tr>
+  </tbody>
+</table>
+
+<hr class="header-line">
+
+<h2>Bagian 7 — Kendala: Xendit & Donasi</h2>
+
+<div class="section-block">
+<p>Fitur donasi menggunakan <strong>Xendit</strong> sebagai payment gateway. Backend invoice dan webhook sudah selesai 100%, namun terkendala:</p>
+<ol>
+  <li><strong>XENDIT_SECRET_KEY</strong> masih kosong — perlu dari dashboard akun Xendit</li>
+  <li><strong>XENDIT_WEBHOOK_TOKEN</strong> masih kosong — perlu dibuat di dashboard Xendit</li>
+  <li><strong>Akun Xendit</strong> belum dibuat oleh client</li>
+</ol>
+</div>
+
+<table>
+  <tr><th style="width:45%">Komponen</th><th style="width:55%">Status</th></tr>
+  <tr><td>POST /api/donations/invoice</td><td>✅ Backend siap (butuh XENDIT_SECRET_KEY)</td></tr>
+  <tr><td>POST /api/donations/webhook</td><td>✅ Backend siap (butuh XENDIT_WEBHOOK_TOKEN)</td></tr>
+  <tr><td>Validasi HMAC, Rate limiting, Tier management</td><td>✅ Siap</td></tr>
+  <tr><td>Konfigurasi env</td><td>❌ Kedua key kosong</td></tr>
+</table>
+
+<div class="note">
+<strong>Kesimpulan:</strong> Backend donasi sudah selesai. Tinggal menunggu client membuat akun Xendit dan memberikan API key.
+</div>
+
+<hr class="header-line">
+
+<h2>Bagian 8 — Billing</h2>
+
+<table>
+  <tr><td style="width:35%"><strong>Nama</strong></td><td style="width:65%">Ayatullah Reza Chalid</td></tr>
+  <tr><td><strong>Peran</strong></td><td>Full-stack Developer SpringHub</td></tr>
+  <tr><td><strong>Periode</strong></td><td>24 Juni 2026 — 24 Juli 2026</td></tr>
+  <tr><td><strong>Total</strong></td><td><strong>Rp2.500.000</strong> (Dua Juta Lima Ratus Ribu Rupiah)</td></tr>
+</table>
+
+<h3>Bank Tujuan Pembayaran</h3>
+<table>
+  <tr><td style="width:35%">Penerima</td><td style="width:65%"><strong>Ayatullah Reza Chalid</strong></td></tr>
+  <tr><td>Bank Tujuan</td><td><strong>BANK BRI</strong></td></tr>
+  <tr><td>Nomor Rekening</td><td><strong>359001035332531</strong></td></tr>
+</table>
+
+<div class="footer">
+  <p>SpringHub — Jaga Semesta | www.springhub.id</p>
+  <p>Terima kasih atas kerjasamanya.</p>
+</div>
+
+</body>
+</html>
