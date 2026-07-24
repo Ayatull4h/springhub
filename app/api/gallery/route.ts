@@ -57,10 +57,11 @@ export async function GET(request: Request) {
         username: r.user?.username || "guest",
         region: r.user?.region || "",
         province: (parsedFieldData.province as string) || "",
-        detailName: (parsedFieldData.spring_name as string) ||
+        detailName: (parsedFieldData.B1_nama as string) ||
+                    (parsedFieldData.T_nama_lokal as string) ||
+                    (parsedFieldData.spring_name as string) ||
                     (parsedFieldData.species as string) || "",
-        detailCount: (parsedFieldData.trench_count as string) ||
-                     (parsedFieldData.count as string) || "",
+        detailCount: (parsedFieldData.count as string) || "",
         photo: featured
           ? {
               id: featured.id,

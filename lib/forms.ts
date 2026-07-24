@@ -318,7 +318,7 @@ export const POINTS_MAP: Record<string, number> = {
   "spring-monitoring": 25,
   "spring-restoration": 100,
   "trench-development": 50,
-  "tree-planting": 50,
+  "tree-planting": 100,
   "seedling-stock": 15,
 };
 

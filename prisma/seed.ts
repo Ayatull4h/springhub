@@ -222,7 +222,7 @@ async function main() {
       ],
     },
     {
-      slug: "tree-planting", title: "Tanam Pohon", points: 50, type: "restoration",
+      slug: "tree-planting", title: "Tanam Pohon", points: 100, type: "restoration",
       fields: [
         { fieldId: "A_tanggal", label: "Tanggal Kegiatan", type: "date", required: true, placeholder: "", sortOrder: 1 },
         { fieldId: "A_nama", label: "Nama Pelapor", type: "text", required: true, placeholder: "", sortOrder: 2 },
