@@ -315,11 +315,11 @@ export function getFormSchema(slug: string): z.ZodObject<z.ZodRawShape> | undefi
 
 /** Points awarded per form slug (matches AGENTS.md). */
 export const POINTS_MAP: Record<string, number> = {
-  "spring-monitoring": 25,
-  "spring-restoration": 100,
-  "trench-development": 50,
+  "spring-monitoring": 100,
+  "spring-restoration": 1000,
+  "trench-development": 500,
   "tree-planting": 100,
-  "seedling-stock": 15,
+  "seedling-stock": 100,
 };
 
 /**

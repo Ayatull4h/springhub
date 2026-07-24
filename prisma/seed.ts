@@ -155,7 +155,7 @@ async function main() {
   // ── 3. Forms + Fields ───────────────────────────────────────────────────
   const formDefs = [
     {
-      slug: "spring-monitoring", title: "Survei Mata Air", points: 25, type: "monitoring",
+      slug: "spring-monitoring", title: "Survei Mata Air", points: 100, type: "monitoring",
       fields: [
         { fieldId: "A1_tanggal", label: "Tanggal Survei", type: "date", required: true, placeholder: "", sortOrder: 1 },
         { fieldId: "A2_nama_surveyor", label: "Nama Surveyor", type: "text", required: true, placeholder: "", sortOrder: 2 },
@@ -192,7 +192,7 @@ async function main() {
       ],
     },
     {
-      slug: "spring-restoration", title: "Spring Restoration", points: 100, type: "restoration",
+      slug: "spring-restoration", title: "Spring Restoration", points: 1000, type: "restoration",
       fields: [
         { fieldId: "spring_name", label: "Nama Mata Air", type: "text", required: true, placeholder: "Masukkan nama mata air", sortOrder: 1 },
         { fieldId: "province", label: "Provinsi", type: "province", required: true, placeholder: "", sortOrder: 2 },
@@ -208,7 +208,7 @@ async function main() {
       ],
     },
     {
-      slug: "trench-development", title: "Trench Development", points: 50, type: "restoration",
+      slug: "trench-development", title: "Trench Development", points: 500, type: "restoration",
       fields: [
         { fieldId: "volunteer_name", label: "Nama Anda", type: "text", required: true, placeholder: "Masukkan nama", sortOrder: 1 },
         { fieldId: "province", label: "Provinsi", type: "province", required: true, placeholder: "", sortOrder: 2 },
@@ -243,7 +243,7 @@ async function main() {
       ],
     },
     {
-      slug: "seedling-stock", title: "Seedling Stock", points: 15, type: "monitoring",
+      slug: "seedling-stock", title: "Seedling Stock", points: 100, type: "monitoring",
       fields: [
         { fieldId: "species", label: "Jenis Tanaman", type: "text", required: true, placeholder: "cth: Bambu, Sengon, Mahoni", sortOrder: 1 },
         { fieldId: "count", label: "Jumlah Bibit", type: "number", required: true, placeholder: "cth: 200", sortOrder: 2 },
@@ -503,20 +503,21 @@ async function main() {
 
   // ── 10. Point Rules ────────────────────────────────────────────────────
   const pointRules = [
-    { name: "Spring Monitoring", description: "Laporan monitoring mata air", points: 25, category: "basic", icon: "Eye", sortOrder: 1 },
-    { name: "Spring Restoration", description: "Laporan restorasi mata air", points: 100, category: "basic", icon: "Heart", sortOrder: 2 },
-    { name: "Trench Development", description: "Pengembangan parit resapan", points: 50, category: "basic", icon: "Triangle", sortOrder: 3 },
-    { name: "Tree Planting", description: "Penanaman pohon", points: 50, category: "basic", icon: "Tree", sortOrder: 4 },
-    { name: "Seedling Stock", description: "Laporan stok bibit", points: 15, category: "basic", icon: "Sprout", sortOrder: 5 },
-    { name: "Streak 3 Hari", description: "Lapor 3 hari berturut-turut", points: 5, category: "bonus", icon: "Star", sortOrder: 6 },
-    { name: "Streak Mingguan", description: "Lapor seminggu penuh", points: 50, category: "bonus", icon: "Zap", sortOrder: 7 },
-    { name: "Laporan Lengkap", description: "Semua field + foto + notes", points: 10, category: "bonus", icon: "Check", sortOrder: 8 },
-    { name: "Foto Before/After", description: "Minimal 2 foto", points: 15, category: "bonus", icon: "Camera", sortOrder: 9 },
-    { name: "Penemu (Discovery)", description: "Mata air baru", points: 50, category: "bonus", icon: "Compass", sortOrder: 10 },
-    { name: "Milestone 10 Laporan", description: "10 laporan di-approve", points: 50, category: "milestone", icon: "Medal", sortOrder: 11 },
-    { name: "Milestone 50 Laporan", description: "50 laporan di-approve", points: 250, category: "milestone", icon: "Award", sortOrder: 12 },
-    { name: "Milestone 100 Laporan", description: "100 laporan di-approve", points: 500, category: "milestone", icon: "Trophy", sortOrder: 13 },
-    { name: "Course Selesai", description: "Menyelesaikan course", points: 25, category: "bonus", icon: "Book", sortOrder: 14 },
+    { name: "Survei Mata Air", description: "Laporan survei mata air", points: 100, category: "basic", icon: "Eye", sortOrder: 1 },
+    { name: "Restorasi Mata Air", description: "Laporan restorasi mata air", points: 1000, category: "basic", icon: "Heart", sortOrder: 2 },
+    { name: "Rorak / Parit Resapan", description: "Pembuatan rorak", points: 500, category: "basic", icon: "Triangle", sortOrder: 3 },
+    { name: "Tanam Pohon", description: "Penanaman pohon", points: 100, category: "basic", icon: "Tree", sortOrder: 4 },
+    { name: "Stok Bibit", description: "Laporan stok bibit", points: 100, category: "basic", icon: "Sprout", sortOrder: 5 },
+    { name: "Streak 3 Hari", description: "Lapor 3 hari berturut-turut", points: 25, category: "bonus", icon: "Star", sortOrder: 6 },
+    { name: "Streak Mingguan", description: "Lapor seminggu penuh", points: 100, category: "bonus", icon: "Zap", sortOrder: 7 },
+    { name: "Laporan Lengkap", description: "Mengisi seluruh field", points: 50, category: "bonus", icon: "Check", sortOrder: 8 },
+    { name: "Foto Before/After", description: "Minimal 2 foto", points: 50, category: "bonus", icon: "Camera", sortOrder: 9 },
+    { name: "Penemu (Discovery)", description: "Mata air baru pertama kali", points: 200, category: "bonus", icon: "Compass", sortOrder: 10 },
+    { name: "Milestone 10 Laporan", description: "10 laporan di-approve", points: 250, category: "milestone", icon: "Medal", sortOrder: 11 },
+    { name: "Milestone 50 Laporan", description: "50 laporan di-approve", points: 1000, category: "milestone", icon: "Award", sortOrder: 12 },
+    { name: "Milestone 100 Laporan", description: "100 laporan di-approve", points: 5000, category: "milestone", icon: "Trophy", sortOrder: 13 },
+    { name: "Milestone 500 Laporan", description: "500 laporan di-approve", points: 25000, category: "milestone", icon: "Crown", sortOrder: 14 },
+    { name: "Course Selesai", description: "Menyelesaikan course", points: 100, category: "bonus", icon: "Book", sortOrder: 15 },
   ];
 
   for (const pr of pointRules) {
