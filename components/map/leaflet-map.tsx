@@ -361,10 +361,7 @@ export function LeafletMap({
                         </span>
                       </>
                     )}
-                    <br />
-                    <span className="text-ink-muted">
-                      {sg.reports.map((r) => formIcons[r.formSlug] || "📋").join(" ")}
-                    </span>
+
                     <br />
                     <span className="text-brand-600">Klik untuk detail</span>
                   </div>
@@ -378,18 +375,15 @@ export function LeafletMap({
                         day: "numeric", month: "short", year: "numeric",
                       })}
                     </div>
-                    {sg.reports.slice(0, 4).map((r) => r.photoUrl ? (
-                      <img key={r.id} src={r.photoUrl} alt="" className="mt-1 h-16 w-full rounded object-cover" />
-                    ) : null)}
-                    <div className="mt-2 space-y-1">
-                      {sg.reports.slice(0, 10).map((r) => {
-                        const formInfo = formLookup?.[r.formSlug];
+                    {/* Report count summary per form type */}
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {Array.from(new Set(sg.reports.map(r => r.formSlug))).map(formSlug => {
+                        const count = sg.reports.filter(r => r.formSlug === formSlug).length;
+                        const formInfo = formLookup?.[formSlug];
                         return (
-                          <div key={r.id} className="flex items-center gap-1 text-xs border-t border-ink-line/40 pt-1 first:border-t-0 first:pt-0">
-                            <span>{formIcons[r.formSlug] || "📋"}</span>
-                            <span className="text-ink-muted">{formInfo?.title || r.formSlug.replace(/-/g, " ")}</span>
-                            {r.user?.username && <span className="text-ink-subtle">— {r.user.username}</span>}
-                          </div>
+                          <span key={formSlug} className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-ink-muted dark:bg-slate-700">
+                            {formInfo?.title || formSlug.replace(/-/g, " ")}: {count}
+                          </span>
                         );
                       })}
                     </div>

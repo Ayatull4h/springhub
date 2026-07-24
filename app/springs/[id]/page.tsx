@@ -218,7 +218,8 @@ export default function SpringDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [enlargedPhoto, setEnlargedPhoto] = useState<(Photo & { reportDate?: string; reportAuthor?: string }) | null>(null);
-  const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [photoPage, setPhotoPage] = useState(1);
+  const photosPerPage = 12;
   const [siblings, setSiblings] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
@@ -267,7 +268,7 @@ export default function SpringDetailPage() {
     }))
   );
 
-  const displayPhotos = showAllPhotos ? allPhotos : allPhotos.slice(0, 12);
+  const displayPhotos = allPhotos.slice(0, photoPage * photosPerPage);
 
   return (
     <main className="min-h-screen bg-page pb-16">
@@ -523,7 +524,7 @@ export default function SpringDetailPage() {
                               ))}
                               {otherPhotos.length > 4 && (
                                 <button
-                                  onClick={() => setShowAllPhotos(true)}
+                                  onClick={() => setPhotoPage(p => p + 1)}
                                   className="flex h-12 w-12 items-center justify-center rounded-md border border-ink-line/30 text-xs text-ink-muted hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800"
                                 >
                                   +{otherPhotos.length - 4}
@@ -578,21 +579,21 @@ export default function SpringDetailPage() {
                 ))}
               </div>
 
-              {allPhotos.length > 12 && !showAllPhotos && (
+              {allPhotos.length > displayPhotos.length && (
                 <button
-                  onClick={() => setShowAllPhotos(true)}
+                  onClick={() => setPhotoPage(p => p + 1)}
                   className="mt-3 w-full rounded-lg border border-ink-line py-2 text-sm font-medium text-ink-muted hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
-                  Lihat semua ({allPhotos.length} foto)
+                  Muat lebih banyak ({displayPhotos.length}/{allPhotos.length} foto)
                 </button>
               )}
 
-              {showAllPhotos && allPhotos.length > 12 && (
+              {allPhotos.length <= displayPhotos.length && displayPhotos.length > 12 && (
                 <button
-                  onClick={() => setShowAllPhotos(false)}
-                  className="mt-3 w-full rounded-lg border border-ink-line py-2 text-sm font-medium text-ink-muted hover:bg-slate-50 dark:hover:bg-slate-800"
+                  onClick={() => setPhotoPage(1)}
+                  className="mt-2 w-full rounded-lg border border-ink-line py-2 text-sm font-medium text-ink-muted hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
-                  Sembunyikan
+                  Sembunyikan ({allPhotos.length} foto)
                 </button>
               )}
             </>
