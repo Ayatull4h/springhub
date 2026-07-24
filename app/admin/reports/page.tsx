@@ -20,6 +20,8 @@ type ReportItem = {
   createdAt: string;
   submitter: { type: string; id: string | null; name: string | null; email: string | null } | null;
   reviewedBy: { username: string } | null;
+  photos?: { id: string; storagePath: string }[];
+  _count?: { photos: number };
 };
 
 export default function AdminReportsPage() {
@@ -30,6 +32,39 @@ export default function AdminReportsPage() {
   const [showDummy, setShowDummy] = useState(false);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(50);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [approvingAll, setApprovingAll] = useState(false);
+
+  // Photo URL builder
+  function photoUrl(storagePath: string): string {
+    if (!storagePath || storagePath.startsWith("http")) return storagePath || "";
+    // For seed data with label-only paths, return empty
+    if (!storagePath.includes("/") || storagePath.includes("placehold")) return "";
+    return `/uploads/${storagePath}`;
+  }
+
+  async function fetchReports() {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.set("page", String(page));
+      params.set("per_page", String(perPage));
+      const res = await fetch(`/api/admin/reports?${params}`);
+      const data = await res.json();
+      setReports(data.reports ?? []);
+      setTotal(data.pagination?.total ?? 0);
+      setTotalPages(data.pagination?.totalPages ?? 1);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { fetchReports(); }, [page, perPage]);
 
   const filteredReports = useMemo(() => {
     let result = reports;
@@ -62,13 +97,28 @@ export default function AdminReportsPage() {
     setToggling(null);
   }
 
-  useEffect(() => {
-    fetch("/api/admin/reports")
-      .then((r) => r.json())
-      .then((data) => setReports(data.reports ?? []))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+  async function approveAll() {
+    if (!confirm("Approve semua laporan pending? Tindakan ini tidak bisa dibatalkan.")) return;
+    setApprovingAll(true);
+    try {
+      const csrfRes = await fetch("/api/csrf");
+      const { token } = await csrfRes.json();
+      const res = await fetch("/api/admin/reports/approve-all", {
+        method: "POST",
+        headers: { "x-csrf-token": token },
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`${data.approved} laporan di-approve!`);
+        fetchReports();
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Gagal approve all");
+    } finally {
+      setApprovingAll(false);
+    }
+  }
 
   const statusConfig: Record<string, { label: string; icon: any; className: string }> = {
     approved: { label: t("admin.status.approved"), icon: CheckCircle2, className: "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-300" },
@@ -98,7 +148,7 @@ export default function AdminReportsPage() {
         <div>
           <h2 className="text-xl font-bold text-ink">{t("admin.reports.title")}</h2>
           <p className="mt-1 text-sm text-ink-muted">
-            {t("admin.reports.count", { count: String(filteredReports.length) })} · {reports.filter(r => r.isDummy).length} demo
+            {total} total · {reports.filter(r => r.isDummy).length} demo · Halaman {page}/{totalPages}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -110,6 +160,23 @@ export default function AdminReportsPage() {
               <button onClick={() => { setDateFrom(""); setDateTo(""); }} className="whitespace-nowrap text-xs text-brand-600 hover:underline">Reset</button>
             )}
           </div>
+          <select
+            value={perPage}
+            onChange={e => { setPerPage(Number(e.target.value)); setPage(1); }}
+            className="rounded-md border border-ink-line px-2 py-1.5 text-xs dark:bg-slate-800 dark:text-white"
+          >
+            <option value={25}>25/page</option>
+            <option value={50}>50/page</option>
+            <option value={100}>100/page</option>
+            <option value={200}>200/page</option>
+          </select>
+          <button
+            onClick={approveAll}
+            disabled={approvingAll}
+            className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-sm text-white hover:bg-emerald-700 disabled:opacity-50"
+          >
+            {approvingAll ? "⏳" : "✅"} Approve All
+          </button>
           <button
             onClick={() => window.open("/api/admin/export?entity=reports&format=csv", "_blank")}
             className="inline-flex items-center gap-1 rounded-md border border-ink-line px-3 py-1.5 text-sm text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -190,13 +257,14 @@ export default function AdminReportsPage() {
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead>
             <tr className="border-b border-ink-line text-xs font-medium text-ink-subtle">
+              <th className="pb-3 pr-2">Foto</th>
               <th className="pb-3 pr-3">{t("reports.form")}</th>
               <th className="pb-3 pr-3">User</th>
               <th className="pb-3 pr-3">Status</th>
+              <th className="pb-3 pr-3">Foto</th>
               <th className="pb-3 pr-3">Active</th>
               <th className="pb-3 pr-3">{t("admin.reports.precise")}</th>
               <th className="pb-3 pr-3">Precise Lng</th>
-              <th className="pb-3 pr-3">Snapped</th>
               <th className="pb-3 pr-3">Reviewed</th>
               <th className="pb-3">Date</th>
             </tr>
@@ -205,8 +273,19 @@ export default function AdminReportsPage() {
             {filteredReports.map((r) => {
               const status = statusConfig[r.status] ?? statusConfig.pending;
               const StatusIcon = status.icon;
+              const firstPhoto = (r as any).photos?.[0];
+              const photoUrl_str = firstPhoto?.storagePath
+                ? (firstPhoto.storagePath.startsWith("http") ? firstPhoto.storagePath : `/uploads/${firstPhoto.storagePath}`)
+                : "";
               return (
                 <tr key={r.id} className="border-b border-ink-line last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800">
+                  <td className="py-3 pr-2">
+                    {photoUrl_str ? (
+                      <img src={photoUrl_str} alt="" className="h-8 w-8 rounded object-cover" />
+                    ) : (
+                      <div className="flex h-8 w-8 items-center justify-center rounded bg-slate-100 text-[10px] text-ink-subtle dark:bg-slate-700">—</div>
+                    )}
+                  </td>
                   <td className="py-3 pr-3 text-ink">
                     <span>{formLabels[r.formSlug] ?? r.formSlug}</span>
                     {r.isDummy && (
@@ -220,6 +299,7 @@ export default function AdminReportsPage() {
                       {status.label}
                     </span>
                   </td>
+                  <td className="py-3 pr-3 text-xs text-ink-muted">{(r as any)._count?.photos ?? "—"}</td>
                   <td className="py-3 pr-3">
                     <button
                       onClick={() => toggleActive(r.id)}
@@ -232,7 +312,6 @@ export default function AdminReportsPage() {
                   </td>
                   <td className="py-3 pr-3 font-mono text-xs text-ink-muted">{showPrecise ? r.preciseLat ?? "—" : "••••••"}</td>
                   <td className="py-3 pr-3 font-mono text-xs text-ink-muted">{showPrecise ? r.preciseLng ?? "—" : "••••••"}</td>
-                  <td className="py-3 pr-3 font-mono text-xs text-ink-muted">{r.snappedLat?.toFixed(3) ?? "—"}, {r.snappedLng?.toFixed(3) ?? "—"}</td>
                   <td className="py-3 pr-3 text-ink-muted">{r.reviewedBy?.username ?? "—"}</td>
                   <td className="py-3 text-xs text-ink-muted">{new Date(r.createdAt).toLocaleDateString("id-ID")}</td>
                 </tr>
@@ -242,6 +321,47 @@ export default function AdminReportsPage() {
         </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-4">
+          <button
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page <= 1}
+            className="rounded-md border border-ink-line px-3 py-1 text-sm disabled:opacity-40"
+          >
+            ← Prev
+          </button>
+          {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => {
+            let pageNum: number;
+            if (totalPages <= 10) {
+              pageNum = i + 1;
+            } else if (page <= 5) {
+              pageNum = i + 1;
+            } else if (page >= totalPages - 4) {
+              pageNum = totalPages - 9 + i;
+            } else {
+              pageNum = page - 5 + i;
+            }
+            return (
+              <button
+                key={pageNum}
+                onClick={() => setPage(pageNum)}
+                className={`rounded-md px-3 py-1 text-sm ${pageNum === page ? "bg-brand-600 text-white" : "border border-ink-line hover:bg-slate-100 dark:hover:bg-slate-700"}`}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
+          <button
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page >= totalPages}
+            className="rounded-md border border-ink-line px-3 py-1 text-sm disabled:opacity-40"
+          >
+            Next →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

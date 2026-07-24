@@ -33,6 +33,7 @@ export async function GET(request: Request) {
           user: { select: { id: true, username: true, email: true } },
           reviewedBy: { select: { username: true } },
           pointsLogs: { select: { amount: true } },
+          photos: { select: { id: true, storagePath: true }, take: 1, orderBy: { createdAt: "asc" } },
           _count: { select: { photos: true } },
         },
       }),
