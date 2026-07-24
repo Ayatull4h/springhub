@@ -52,6 +52,8 @@ export async function GET(request: Request) {
           springs: items.map(s => ({
             id: s.id,
             name: s.name,
+            snappedLat: s.snappedLat,
+            snappedLng: s.snappedLng,
             province: s.province,
             regency: s.regency,
             healthScore: s.healthScore,
