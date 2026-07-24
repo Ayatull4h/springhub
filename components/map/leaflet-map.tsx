@@ -168,7 +168,7 @@ export function LeafletMap({
   const [tileError, setTileError] = useState(false);
   const [springNames, setSpringNames] = useState<Record<string, string>>({});
   const [springHealth, setSpringHealth] = useState<Record<string, string>>({});
-  const [activeLayer, setActiveLayer] = useState<"springs" | "activities">("springs");
+  const [activeLayer] = useState<"springs" | "activities">("activities");
 
   // Group reports by snapped location → one marker per grid (bisa banyak spring)
   const springGroups = useMemo(() => {
@@ -278,26 +278,8 @@ export function LeafletMap({
           />
         )}
 
-        {/* ═══ Layer Toggle ═══ */}
-          {springItems && springItems.length > 0 && (
-            <div className="absolute left-3 top-3 z-[1000] flex gap-1 rounded-lg bg-white p-1 shadow-md dark:bg-slate-800">
-              <button
-                onClick={() => setActiveLayer("springs")}
-                className={`rounded-md px-3 py-1 text-xs font-medium ${activeLayer === "springs" ? "bg-brand-600 text-white" : "text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"}`}
-              >
-                🌊 Mata Air ({springItems.length})
-              </button>
-            <button
-              onClick={() => setActiveLayer("activities")}
-              className={`rounded-md px-3 py-1 text-xs font-medium ${activeLayer === "activities" ? "bg-brand-600 text-white" : "text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700"}`}
-            >
-              🌱 Aktivitas
-            </button>
-          </div>
-        )}
-
         {/* ═══ Spring markers (sumber daya) ═══ */}
-        {activeLayer === "springs" && springItems?.map((s) => {
+        {springItems?.map((s) => {
           const hc = statusColors[s.healthStatus || "sehat"] || statusColors.sehat;
           const r = Math.min(12, 6 + (s.reportCount || 0) * 1.5);
           return (
@@ -344,7 +326,7 @@ export function LeafletMap({
         })}
 
         {/* ═══ Activity markers (laporan kegiatan) ═══ */}
-        {activeLayer === "activities" && springGroups.groups.map((sg) => {
+        {springGroups.groups.map((sg) => {
           const fc = getMarkerColor(sg.latestFormSlug, formColors, sg.healthStatus);
           const actCount = sg.reports.length;
           const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";

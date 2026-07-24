@@ -234,6 +234,16 @@ const formTitleI18nKey = (slug: string): string => {
     return { total, byCategory: byCat };
   }, [reports, formCategories, t]);
 
+  // Health counts from springs
+  const healthCounts = useMemo(() => {
+    const counts: Record<string, number> = { sehat: 0, ringan: 0, berat: 0, kritis: 0, unknown: 0 };
+    for (const s of springs as any[]) {
+      const st = (s as any).healthStatus || "unknown";
+      counts[st] = (counts[st] || 0) + 1;
+    }
+    return counts;
+  }, [springs]);
+
   const formFilterOptions = useMemo(() => {
     return allForms.map(f => {
         const sub: { value: string; label: string; color: string }[] = [];
@@ -248,14 +258,25 @@ const formTitleI18nKey = (slug: string): string => {
             });
           }
         }
+        // Add health subcategories for spring-survey
+        if (f.slug === "spring-monitoring") {
+          const healthLabels: Record<string, string> = { sehat: "Sehat", ringan: "Tercemar Ringan", berat: "Tercemar Berat", kritis: "Kritis" };
+          for (const [key, label] of Object.entries(healthLabels)) {
+            const count = healthCounts[key] || 0;
+            if (count > 0) {
+              const color = key === "sehat" ? "#22c55e" : key === "ringan" ? "#eab308" : key === "berat" ? "#f97316" : "#ef4444";
+              sub.push({ value: `health:${key}`, label: `${label} (${count})`, color });
+            }
+          }
+        }
         return {
           value: f.slug,
           label: t(formTitleI18nKey(f.slug), f.title),
-          count: formCounts.total[f.slug] || 0,
+          count: f.slug === "spring-monitoring" ? (springs as any[]).length : (formCounts.total[f.slug] || 0),
           subcategories: sub,
         };
       });
-  }, [allForms, formCounts, formCategories, t]);
+  }, [allForms, formCounts, formCategories, t, healthCounts, springs]);
 
   // Build formColors lookup from map types/categories (data-driven, overrides hardcoded)
   const formColors = useMemo(() => {
@@ -286,22 +307,40 @@ const formTitleI18nKey = (slug: string): string => {
     return lookup;
   }, [allForms, mapTypesWithCats]);
 
+  // Filter springs by health status
+  const visibleSprings = useMemo(() => {
+    let result = springs as any[];
+    if (selectedCategory?.startsWith("health:")) {
+      const healthKey = selectedCategory.replace("health:", "");
+      if (healthKey === "unknown") {
+        result = result.filter((s: any) => !s.healthStatus);
+      } else {
+        result = result.filter((s: any) => s.healthStatus === healthKey);
+      }
+    }
+    return result;
+  }, [springs, selectedCategory]);
+
   // Filter reports by form slug + optional category slug
   const visible = useMemo(
-    () => reports.filter(r => {
-      if (!selectedType) return true;
-      if (r.formSlug !== selectedType) return false;
-      if (selectedCategory) {
-        const cats = formCategories.get(r.formSlug) || [];
-        const formTitle = t(formTitleI18nKey(r.formSlug));
-        const status = getStatusFromForm(r.formSlug, formTitle);
-        const matched = findCategoryForStatus(r.formSlug, status, cats);
-        const catSlug = selectedCategory.replace(`cat:${selectedType}:`, "");
-        return matched?.slug === catSlug;
-      }
-      return true;
-    }),
-    [reports, selectedType, selectedCategory, formCategories]
+    () => {
+      // If health filter is active, don't show reports
+      if (selectedCategory?.startsWith("health:")) return [];
+      return reports.filter(r => {
+        if (!selectedType) return true;
+        if (r.formSlug !== selectedType) return false;
+        if (selectedCategory) {
+          const cats = formCategories.get(r.formSlug) || [];
+          const formTitle = t(formTitleI18nKey(r.formSlug));
+          const status = getStatusFromForm(r.formSlug, formTitle);
+          const matched = findCategoryForStatus(r.formSlug, status, cats);
+          const catSlug = selectedCategory.replace(`cat:${selectedType}:`, "");
+          return matched?.slug === catSlug;
+        }
+        return true;
+      });
+    },
+    [reports, selectedType, selectedCategory, formCategories, t]
   );
 
   const itemsPerPage = 6;
@@ -350,7 +389,7 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         </div>
         <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
-          <LeafletMap reports={visible} springs={springs as any[]} formColors={formColors} formLookup={formLookup} />
+          <LeafletMap reports={visible} springs={visibleSprings as any[]} formColors={formColors} formLookup={formLookup} />
         </div>
       </div>
 
