@@ -3,26 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  AlertCircle,
-  CheckCircle2,
-  Loader2,
-  Sparkles,
-  Upload,
-  FileText,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  DollarSign,
-  HardHat,
-  WifiOff,
-} from "lucide-react";
-import { PROJECT_TYPES, PROJECT_PROPOSAL_THRESHOLD } from "@/lib/data";
-import { formatNumber } from "@/lib/utils";
+import { ArrowLeft, Loader2, AlertCircle, CheckCircle2, Upload, FileText } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { offlineDB } from "@/lib/offline-db";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -32,438 +14,257 @@ export default function NewProjectPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [userPoints, setUserPoints] = useState(0);
-  const [userRole, setUserRole] = useState<string>("");
-  const [fileName, setFileName] = useState("");
-
-  // Form fields
-  const [title, setTitle] = useState("");
-  const [summary, setSummary] = useState("");
-  const [region, setRegion] = useState("");
-  const [typeId, setTypeId] = useState("");
-  const [goalAmount, setGoalAmount] = useState("");
-  const [contactName, setContactName] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
+  const [fieldData, setFieldData] = useState<Record<string, string>>({});
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [proposalFile, setProposalFile] = useState<File | null>(null);
+  const [formFields, setFormFields] = useState<any[]>([]);
+  const [userPoints, setUserPoints] = useState(0);
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-    async function checkAuth() {
-      try {
-        const res = await fetch("/api/auth/me");
-        const data = await res.json();
-        if (data.user) {
-          setUserPoints(data.user.points ?? 0);
-          setUserRole(data.user.role ?? "");
-          setContactName(data.user.username ?? "");
-          setContactEmail(data.user.email ?? "");
-          setLoading(false);
-          return;
-        }
-        // Fallback ke cached session (PWA offline mode)
-        const cached = await offlineDB.getSession().catch(() => null);
-        if (cached) {
-          setUserPoints(0);
-          setUserRole(cached.role ?? "");
-          setContactName(cached.username);
-          setContactEmail("");
-          setLoading(false);
-          return;
-        }
-      } catch {
-        // Network error — coba cached session
-        const cached = await offlineDB.getSession().catch(() => null);
-        if (cached) {
-          setUserPoints(0);
-          setContactName(cached.username);
-          setContactEmail("");
-          setLoading(false);
-          return;
-        }
+    Promise.all([
+      fetch("/api/auth/me").then(r => r.json()),
+      fetch("/api/forms/project-submission").then(r => r.json()),
+    ]).then(([userData, formData]) => {
+      if (userData?.user) {
+        setUserPoints(userData.user.points || 0);
+        setUserRole(userData.user.role || "");
+        const profile = userData.user;
+        setFieldData({
+          A_nama: profile.username || "",
+          A_wa: profile.phone || "",
+          A_email: profile.email || "",
+        });
       }
-      router.push("/sign-in?redirect=/projects/new");
-    }
-    checkAuth();
-  }, [router]);
+      if (formData?.form?.fields) setFormFields(formData.form.fields);
+    }).catch(() => {}).finally(() => setLoading(false));
+  }, []);
 
-  const isAdmin = userRole === "admin";
-  const isFieldLead = userRole === "field_lead";
-  const eligible = isAdmin || isFieldLead;
+  function updateField(id: string, value: string) {
+    setFieldData(prev => ({ ...prev, [id]: value }));
+  }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSelectChange(e: React.ChangeEvent<HTMLSelectElement>, fieldId: string) {
+    updateField(fieldId, e.target.value);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
     setSubmitting(true);
+    setError("");
+
+    const canSubmit = userRole === "admin" || userRole === "field_lead";
+    if (!canSubmit) {
+      setError("Hanya Field Lead (20.000 poin) dan Admin yang bisa submit proyek.");
+      setSubmitting(false);
+      return;
+    }
+
+    if (photoFiles.length < 3) {
+      setError("Wajib upload minimal 3 foto lokasi proyek.");
+      setSubmitting(false);
+      return;
+    }
 
     try {
+      const csrf = await fetch("/api/csrf").then(r => r.json());
       const formData = new FormData();
-      formData.set("title", title);
-      formData.set("summary", summary);
-      formData.set("region", region);
-      formData.set("typeId", typeId);
-      formData.set("goalAmount", goalAmount);
-      formData.set("contactName", contactName);
-      formData.set("contactEmail", contactEmail);
-      formData.set("contactPhone", contactPhone);
-      if (proposalFile) {
-        formData.set("proposalFile", proposalFile);
+      for (const [key, val] of Object.entries(fieldData)) {
+        formData.set(key, val as string);
       }
+      for (const f of photoFiles) formData.append(f.name || "foto", f);
+      if (proposalFile) formData.append("proposalFile", proposalFile);
+      formData.set("form_slug", "project-submission");
 
       const res = await fetch("/api/projects", {
         method: "POST",
+        headers: { "x-csrf-token": csrf.token },
         body: formData,
       });
-
       const data = await res.json();
-
       if (!res.ok) {
-        const errMsg =
-          typeof data.error === "string"
-            ? data.error
-            : data.error
-              ? Object.values(data.error).flat().join(", ")
-              : t("common.error");
-        setError(errMsg);
+        setError(typeof data.error === "string" ? data.error : "Gagal mengirim proposal");
+        setSubmitting(false);
         return;
       }
-
       setSuccess(true);
     } catch {
-      setError("Gagal mengirim. Cek koneksi internet.");
-    } finally {
-      setSubmitting(false);
+      setError("Gagal terhubung ke server. Coba lagi.");
     }
+    setSubmitting(false);
   }
 
-  // ── Loading state ──
+  function renderField(f: any) {
+    const id = f.fieldId || f.id;
+    const val = fieldData[id] || "";
+    const label = f.label || id;
+    const required = f.required;
+    const opts = (() => { try { return JSON.parse(f.options || "[]"); } catch { return f.options || []; } })();
+
+    if (id.startsWith("foto_")) return null; // handled separately
+    if (id.startsWith("komitmen_")) return null; // handled separately
+
+    if (f.type === "select" && opts.length > 0) {
+      return (
+        <div key={id}>
+          <label className="mb-1 block text-sm font-medium text-ink">{label} {required && <span className="text-red-500">*</span>}</label>
+          <select value={val} onChange={e => handleSelectChange(e, id)} required={required} className="input w-full">
+            <option value="">Pilih...</option>
+            {opts.map((o: string) => <option key={o} value={o}>{o}</option>)}
+          </select>
+        </div>
+      );
+    }
+
+    if (f.type === "textarea" || f.type === "longtext") {
+      return (
+        <div key={id}>
+          <label className="mb-1 block text-sm font-medium text-ink">{label} {required && <span className="text-red-500">*</span>}</label>
+          <textarea value={val} onChange={e => updateField(id, e.target.value)} required={required} rows={4} className="input w-full" />
+        </div>
+      );
+    }
+
+    if (f.type === "location") {
+      return (
+        <div key={id}>
+          <label className="mb-1 block text-sm font-medium text-ink">{label} {required && <span className="text-red-500">*</span>}</label>
+          <input type="text" value={val} onChange={e => updateField(id, e.target.value)} required={required} placeholder="Klik untuk dapatkan koordinat" readOnly className="input w-full bg-slate-50 dark:bg-slate-800" />
+          {navigator.geolocation && (
+            <button type="button" onClick={() => navigator.geolocation.getCurrentPosition(
+              pos => updateField(id, `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`),
+              () => {},
+              { enableHighAccuracy: true }
+            )} className="mt-1 text-xs text-brand-600 hover:underline">
+              📍 Dapatkan Lokasi Saat Ini
+            </button>
+          )}
+        </div>
+      );
+    }
+
+    if (f.type === "number") {
+      return (
+        <div key={id}>
+          <label className="mb-1 block text-sm font-medium text-ink">{label} {required && <span className="text-red-500">*</span>}</label>
+          <input type="number" value={val} onChange={e => updateField(id, e.target.value)} required={required} className="input w-full" />
+        </div>
+      );
+    }
+
+    return (
+      <div key={id}>
+        <label className="mb-1 block text-sm font-medium text-ink">{label} {required && <span className="text-red-500">*</span>}</label>
+        <input type={f.type === "email" ? "email" : "text"} value={val} onChange={e => updateField(id, e.target.value)} required={required} className="input w-full" />
+      </div>
+    );
+  }
+
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
+      <div className="container-page flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-brand-600" />
       </div>
     );
   }
 
-  // ── Not eligible ──
-  if (!eligible) {
-    return (
-      <div className="container-page max-w-lg py-12 text-center">
-        <HardHat className="mx-auto h-16 w-16 text-slate-300 dark:text-slate-500" />
-        <h1 className="mt-4 text-2xl font-extrabold text-ink">
-          {t("projects.new.notEligible")}
-        </h1>
-        <p className="mt-2 text-ink-muted">
-          {t("projects.new.needMorePoints", {
-            threshold: formatNumber(PROJECT_PROPOSAL_THRESHOLD),
-            current: formatNumber(userPoints),
-          })}
-        </p>
-        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-ink-muted">
-          <Sparkles className="h-4 w-4 text-brand-600" />
-          <span>
-            {t("projects.new.pointsNeeded", {
-              remaining: formatNumber(PROJECT_PROPOSAL_THRESHOLD - userPoints),
-            })}
-          </span>
-        </div>
-        <Link href="/#community" className="btn-primary mt-6 inline-flex">
-          {t("projects.new.backToActivities")}
-        </Link>
-      </div>
-    );
-  }
-
-  // ── Success state ──
   if (success) {
     return (
-      <div className="container-page max-w-lg py-20 text-center">
+      <div className="container-page max-w-2xl py-20 text-center">
         <CheckCircle2 className="mx-auto h-16 w-16 text-emerald-500" />
-        <h1 className="mt-4 text-2xl font-extrabold text-ink">
-          {t("projects.new.submitted")}
-        </h1>
-        <p className="mt-2 text-ink-muted">
-          {t("projects.new.submittedDesc")}
-        </p>
-        <div className="mt-6 flex items-center justify-center gap-3">
-          <Link href="/" className="btn-primary">
-            {t("projects.new.backToHome")}
-          </Link>
-          <Link href="/profile" className="btn-secondary">
-            {t("projects.new.viewProfile")}
-          </Link>
-        </div>
+        <h1 className="mt-4 text-2xl font-bold text-ink">Proposal Terkirim!</h1>
+        <p className="mt-2 text-ink-muted">Tim admin akan mereview proposal Anda dan menghubungi via WA dalam 7 hari.</p>
+        <Link href="/" className="btn-primary mt-6 inline-block">Kembali ke Beranda</Link>
       </div>
     );
   }
 
-  // ── Form ──
   return (
     <div className="container-page max-w-3xl py-12">
-      <Link
-        href="/#community"
-        className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink dark:hover:text-white"
-      >
-        <ArrowLeft className="h-4 w-4" /> {t("projects.new.back")}
+      <Link href="/" className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-brand-600">
+        <ArrowLeft className="h-4 w-4" /> Kembali
       </Link>
 
-      <h1 className="mt-4 text-3xl font-extrabold tracking-tight">
-        {t("projects.new.title")}
-      </h1>
-      <p className="mt-2 text-ink-muted">
-        {t("projects.new.description")}
+      <h1 className="mt-4 text-3xl font-extrabold text-ink">Pengajuan Proyek</h1>
+      <p className="mt-1 text-sm text-ink-muted">
+        Ajukan proyek restorasi/konservasi. Dapatkan dukungan dari komunitas SpringHub.
       </p>
 
-      {/* Eligibility badge */}
-      <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:ring-emerald-700">
-        <Sparkles className="h-4 w-4 flex-none" />
-        {t("projects.new.eligibleBadge", {
-          points: formatNumber(userPoints),
-          threshold: formatNumber(PROJECT_PROPOSAL_THRESHOLD),
-        })}
-      </div>
-
-      {error && (
-        <div className="mt-4 flex items-start gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
-          <AlertCircle className="mt-0.5 h-4 w-4 flex-none" />
-          <span>{error}</span>
+      {userRole !== "admin" && userRole !== "field_lead" && (
+        <div className="mt-4 rounded-lg bg-amber-50 p-4 text-sm text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
+          ⚠️ Hanya Field Lead (min 20.000 poin) yang bisa submit proyek. Poin kamu: {userPoints}.
         </div>
       )}
 
-      <form onSubmit={handleSubmit} encType="multipart/form-data" className="card mt-6 space-y-5">
-        {/* --- Project Info --- */}
-        <fieldset>
-          <legend className="text-sm font-semibold text-ink">
-            {t("projects.new.projectInfo")}
-          </legend>
+      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+        {formFields.map(renderField)}
 
-          <div className="mt-3 space-y-4">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-ink">
-                {t("projects.new.projectTitle")} <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="title"
-                type="text"
-                required
-                minLength={3}
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder={t("projects.new.titlePlaceholder")}
-                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="summary" className="block text-sm font-medium text-ink">
-                {t("projects.new.summary")} <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                id="summary"
-                required
-                minLength={10}
-                rows={4}
-                value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-                placeholder={t("projects.new.summaryPlaceholder")}
-                className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-              />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="region" className="block text-sm font-medium text-ink">
-                  {t("projects.new.region")} <span className="text-red-500">*</span>
-                </label>
-                <div className="relative mt-1">
-                  <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle" />
-                  <input
-                    id="region"
-                    type="text"
-                    required
-                    value={region}
-                    onChange={(e) => setRegion(e.target.value)}
-                    placeholder={t("projects.new.regionPlaceholder")}
-                    className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="typeId" className="block text-sm font-medium text-ink">
-                  {t("projects.new.projectType")} <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="typeId"
-                  required
-                  value={typeId}
-                  onChange={(e) => setTypeId(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-                >
-                  <option value="">{t("projects.new.selectType")}</option>
-                  {PROJECT_TYPES.map((pt) => (
-                    <option key={pt.id} value={pt.id}>
-                      {pt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="goalAmount" className="block text-sm font-medium text-ink">
-                {t("projects.new.goalAmount")} <span className="text-red-500">*</span>
-              </label>
-              <div className="relative mt-1">
-                <DollarSign className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle" />
-                <input
-                  id="goalAmount"
-                  type="number"
-                  required
-                  min={100000}
-                  value={goalAmount}
-                  onChange={(e) => setGoalAmount(e.target.value)}
-                  placeholder="e.g. 25000000"
-                  className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-                />
-              </div>
-              <p className="mt-1 text-xs text-ink-subtle">
-                {t("projects.new.goalHint")}
-              </p>
-            </div>
-          </div>
-        </fieldset>
-
-        {/* --- Contact Info --- */}
-        <fieldset className="border-t border-ink-line pt-5">
-          <legend className="text-sm font-semibold text-ink">
-            {t("projects.new.contactInfo")}
-          </legend>
-          <p className="mt-1 text-xs text-ink-muted">
-            {t("projects.new.contactHint")}
-          </p>
-
-          <div className="mt-3 space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="contactName" className="block text-sm font-medium text-ink">
-                  {t("projects.new.contactName")} <span className="text-red-500">*</span>
-                </label>
-                <div className="relative mt-1">
-                  <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle" />
-                  <input
-                    id="contactName"
-                    type="text"
-                    required
-                    value={contactName}
-                    onChange={(e) => setContactName(e.target.value)}
-                    className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="contactEmail" className="block text-sm font-medium text-ink">
-                  {t("projects.new.contactEmail")} <span className="text-red-500">*</span>
-                </label>
-                <div className="relative mt-1">
-                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle" />
-                  <input
-                    id="contactEmail"
-                    type="email"
-                    required
-                    value={contactEmail}
-                    onChange={(e) => setContactEmail(e.target.value)}
-                    className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="contactPhone" className="block text-sm font-medium text-ink">
-                {t("projects.new.contactPhone")} <span className="text-red-500">*</span>
-              </label>
-              <div className="relative mt-1">
-                <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle" />
-                <input
-                  id="contactPhone"
-                  type="tel"
-                  required
-                  value={contactPhone}
-                  onChange={(e) => setContactPhone(e.target.value)}
-                  placeholder="e.g. 08123456789"
-                  pattern="^(0[1-9]\d{8,11}|\+62\d{8,13})$"
-                  title="Format: 08xx atau +62xx"
-                  className="w-full rounded-md border border-ink-line pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
-                />
-              </div>
-            </div>
-          </div>
-        </fieldset>
-
-        {/* --- Proposal File --- */}
-        <fieldset className="border-t border-ink-line pt-5">
-          <legend className="text-sm font-semibold text-ink">
-            {t("projects.new.proposalFile")}
-          </legend>
-          <p className="mt-1 text-xs text-ink-muted">
-            {t("projects.new.proposalHint")}
-          </p>
-
-          <div className="mt-3">
-            <label
-              htmlFor="proposalFile"
-              className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-ink-line p-4 text-sm text-ink-muted transition hover:border-brand-300 hover:bg-brand-50/30 dark:hover:bg-brand-900/20"
-            >
-              <Upload className="h-6 w-6 flex-none text-brand-500" />
-              <div className="flex-1">
-                {fileName ? (
-                  <span className="flex items-center gap-2 font-medium text-ink">
-                    <FileText className="h-4 w-4" />
-                    {fileName}
-                  </span>
+        {/* Foto upload */}
+        <fieldset className="rounded-lg border border-ink-line p-4">
+          <legend className="text-sm font-semibold text-ink">Foto Lokasi (wajib 3 foto)</legend>
+          <p className="mt-1 text-xs text-ink-muted">Ambil 3 foto dari lokasi proyek yang diusulkan.</p>
+          <div className="mt-3 grid grid-cols-3 gap-3">
+            {[0, 1, 2].map(i => (
+              <label key={i} className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-ink-line p-4 text-center text-xs text-ink-muted hover:border-brand-300">
+                {photoFiles[i] ? (
+                  <span className="text-brand-600">{photoFiles[i].name.substring(0, 20)}</span>
                 ) : (
-                  <span>{t("projects.new.uploadPrompt")}</span>
+                  <>
+                    <Upload className="mx-auto h-6 w-6 text-brand-500" />
+                    <span className="mt-1">Foto {i + 1}</span>
+                  </>
                 )}
-              </div>
-            </label>
-            <input
-              id="proposalFile"
-              name="proposalFile"
-              type="file"
-              accept=".pdf,application/pdf"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  setProposalFile(file);
-                  setFileName(file.name);
-                }
-              }}
-            />
+                <input type="file" accept="image/*" className="hidden" onChange={e => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const newPhotos = [...photoFiles];
+                    newPhotos[i] = file;
+                    setPhotoFiles(newPhotos);
+                  }
+                }} />
+              </label>
+            ))}
+          </div>
+          {photoFiles.length < 3 && <p className="mt-2 text-xs text-amber-600">{3 - photoFiles.length} foto lagi diperlukan</p>}
+        </fieldset>
+
+        {/* Komitmen */}
+        <fieldset className="rounded-lg border border-ink-line p-4">
+          <legend className="text-sm font-semibold text-ink">Komitmen</legend>
+          <div className="mt-3 space-y-2">
+            {[
+              { id: "komitmen_lapor", label: "Saya bersedia melaporkan pelaksanaan lewat form SpringHub" },
+              { id: "komitmen_review", label: "Saya memahami proposal ditinjau admin dan bisa diminta revisi" },
+              { id: "komitmen_publik", label: "Saya menyetujui data proyek tampil di dashboard publik" },
+            ].map(c => (
+              <label key={c.id} className="flex items-start gap-2 text-sm">
+                <input type="checkbox" checked={!!fieldData[c.id]} onChange={e => updateField(c.id, e.target.checked ? "true" : "")} className="mt-0.5" required />
+                <span className="text-ink">{c.label} <span className="text-red-500">*</span></span>
+              </label>
+            ))}
           </div>
         </fieldset>
 
-        {/* --- Submit --- */}
-        <div className="flex items-center justify-end gap-2 border-t border-ink-line pt-4">
-          <Link href="/#community" className="btn-secondary">
-            {t("projects.new.cancel")}
-          </Link>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn-primary inline-flex items-center gap-2"
-          >
-            {submitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {t("projects.new.submitting")}
-              </>
-            ) : (
-              t("projects.new.submitProject")
-            )}
-          </button>
-        </div>
+        {/* Proposal file */}
+        <fieldset className="rounded-lg border border-ink-line p-4">
+          <legend className="text-sm font-semibold text-ink">Proposal (opsional)</legend>
+          <label className="mt-2 flex cursor-pointer items-center gap-3 text-sm text-ink-muted hover:text-brand-600">
+            <Upload className="h-5 w-5" />
+            <span>{proposalFile ? proposalFile.name : "Upload PDF proposal"}</span>
+            <input type="file" accept=".pdf" className="hidden" onChange={e => setProposalFile(e.target.files?.[0] || null)} />
+          </label>
+        </fieldset>
+
+        {error && (
+          <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            <AlertCircle className="mr-1 inline h-4 w-4" /> {error}
+          </div>
+        )}
+
+        <button type="submit" disabled={submitting} className="btn-primary w-full inline-flex items-center justify-center gap-2">
+          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+          {submitting ? "Mengirim..." : "Kirim Proposal"}
+        </button>
       </form>
     </div>
   );

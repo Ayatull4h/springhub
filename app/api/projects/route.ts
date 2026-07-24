@@ -1,22 +1,10 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, getErrorMessage } from "@/lib/prisma";
 import { logError } from "@/lib/error-logger";
+import { deletePhoto } from "@/lib/upload-photo";
+import { buildPhotoUrls } from "@/lib/photo-url";
 export const dynamic = "force-dynamic";
-import { PROJECT_PROPOSAL_THRESHOLD } from "@/lib/data";
-
-const projectSchema = z.object({
-  title: z.string().min(3, "Judul minimal 3 karakter"),
-  summary: z.string().min(10, "Ringkasan minimal 10 karakter"),
-  region: z.string().min(1, "Region wajib diisi"),
-  typeId: z.string().min(1, "Tipe proyek wajib dipilih"),
-  goalAmount: z.number().min(100000, "Minimal target Rp 100.000"),
-  contactName: z.string().min(1, "Nama kontak wajib diisi"),
-  contactEmail: z.string().email("Email tidak valid"),
-  contactPhone: z.string().regex(/^(0[1-9]\d{8,11}|\+62\d{8,13})$/, "Format nomor WA tidak valid"),
-  proposalFile: z.string().optional(),
-});
 
 export async function GET(request: Request) {
   try {
@@ -47,8 +35,10 @@ export async function GET(request: Request) {
           likes: true,
           comments: true,
           createdAt: true,
+          featuredPhotoId: true,
           user: { select: { username: true } },
-          _count: { select: { donations: true, commentList: true } },
+          photos: { select: { id: true, storagePath: true }, take: 1 },
+          _count: { select: { donations: true, commentList: true, photos: true } },
         },
       }),
       prisma.project.count({ where }),
@@ -57,6 +47,10 @@ export async function GET(request: Request) {
     const normalized = projects.map((p) => ({
       ...p,
       _count: { donations: p._count.donations, comments: p._count.commentList },
+      featuredPhoto: p.featuredPhotoId
+        ? p.photos.find(ph => ph.id === p.featuredPhotoId) || null
+        : p.photos[0] || null,
+      photos: buildPhotoUrls(p.photos),
     }));
     return NextResponse.json({ projects: normalized, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
   } catch (err) {
@@ -72,10 +66,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Check eligibility: >= 20K points (admin selalu diizinkan)
   const profile = await prisma.profile.findUnique({
     where: { id: session.userId },
-    select: { points: true, username: true, email: true, role: true },
+    select: { points: true, username: true, email: true, role: true, phone: true },
   });
 
   if (!profile) {
@@ -85,52 +78,88 @@ export async function POST(request: Request) {
   const canSubmit = profile.role === "admin" || profile.role === "field_lead";
   if (!canSubmit) {
     return NextResponse.json(
-      {
-        error: `Hanya Field Lead dan Admin yang bisa submit proyek. Kumpulkan 20.000 poin untuk jadi Field Lead.`,
-      },
+      { error: "Hanya Field Lead dan Admin yang bisa submit proyek. Kumpulkan 20.000 poin untuk jadi Field Lead." },
       { status: 403 }
     );
   }
 
-  // Accept both multipart/form-data and JSON
   const contentType = request.headers.get("content-type") || "";
-  let body: Record<string, unknown> = {};
+  if (!contentType.includes("multipart/form-data")) {
+    return NextResponse.json({ error: "Multipart form data required" }, { status: 400 });
+  }
 
-  if (contentType.includes("multipart/form-data")) {
-    const formData = await request.formData();
-    for (const [key, value] of formData.entries()) {
-      if (key === "proposalFile" && value instanceof File) {
-        const buffer = Buffer.from(await value.arrayBuffer());
-        body.proposalFile = `data:${value.type};base64,${buffer.toString("base64")}`;
-      } else {
-        body[key] = value as string;
-      }
+  const formData = await request.formData();
+  const fieldData: Record<string, unknown> = {};
+  const photoFiles: File[] = [];
+  const fieldPhotos: string[] = [];
+
+  for (const [key, value] of formData.entries()) {
+    if (key.startsWith("foto_") && value instanceof File && value.size > 0) {
+      photoFiles.push(value);
+      fieldPhotos.push(key);
+    } else if (key === "proposalFile" && value instanceof File) {
+      const buffer = Buffer.from(await value.arrayBuffer());
+      fieldData.proposalFile = `data:${value.type};base64,${buffer.toString("base64")}`;
+    } else if (key !== "form_slug" && key !== "_submit_time" && key !== "_website" && key !== "_captured_at") {
+      fieldData[key] = value as string;
     }
-    if (body.goalAmount) body.goalAmount = parseInt(body.goalAmount as string, 10);
-  } else {
-    body = await request.json();
   }
 
-  // Isi default dari session jika tidak disediakan
-  if (!body.contactName) body.contactName = profile.username;
-  if (!body.contactEmail) body.contactEmail = profile.email;
-
-  const parsed = projectSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: parsed.error.flatten().fieldErrors },
-      { status: 400 }
-    );
+  if (fieldPhotos.length < 3) {
+    return NextResponse.json({ error: "Wajib upload 3 foto lokasi proyek." }, { status: 400 });
   }
+
+  // Build summary from field data
+  const title = (fieldData.B1_judul as string) || "";
+  const tempat = (fieldData.B3_tempat as string) || "";
+  const jenis = Array.isArray(fieldData.B2_jenis) ? (fieldData.B2_jenis as string[]).join(", ") : (fieldData.B2_jenis as string) || "";
+  const latar = (fieldData.B4_latar as string) || "";
+  const biaya = (fieldData.D1_biaya as string) || "";
+  const region = tempat;
+  const summary = latar.substring(0, 500);
 
   const project = await prisma.project.create({
     data: {
-      ...parsed.data,
+      title: title || "Proyek Baru",
+      summary,
+      region,
+      typeId: jenis || "restoration",
+      goalAmount: 0,
+      contactName: (fieldData.A_nama as string) || profile.username,
+      contactEmail: (fieldData.A_email as string) || profile.email,
+      contactPhone: (fieldData.A_wa as string) || profile.phone || "",
       userId: session.userId,
       status: "pending",
     },
   });
+
+  // Upload photos
+  let featuredPhotoId: string | null = null;
+  for (let i = 0; i < photoFiles.length; i++) {
+    const file = photoFiles[i];
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const ext = file.name.split(".").pop() || "jpg";
+    const fileName = `${project.id}/${Date.now()}-${i}.${ext}`;
+    const storagePath = `projects/${fileName}`;
+
+    const { PrismaClient } = require("@prisma/client");
+    const prisma2 = new PrismaClient();
+    try {
+      const photo = await prisma2.projectPhoto.create({
+        data: { projectId: project.id, storagePath, mimeType: file.type || "image/jpeg" },
+      });
+      if (i === 0) featuredPhotoId = photo.id;
+    } catch {}
+    await prisma2.$disconnect();
+  }
+
+  // Set featured photo
+  if (featuredPhotoId) {
+    await prisma.project.update({
+      where: { id: project.id },
+      data: { featuredPhotoId },
+    });
+  }
 
   return NextResponse.json({ success: true, project }, { status: 201 });
 }
