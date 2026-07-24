@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 const updateSchema = z.object({
   username: z.string().min(2).optional(),
   region: z.string().optional(),
+  phone: z.string().optional(),
   currentPassword: z.string().optional(),
   newPassword: z.string().min(8, "Password minimal 8 karakter").optional(),
 });
@@ -87,6 +88,7 @@ export async function PUT(request: Request) {
 
     if (parsed.data.username) data.username = parsed.data.username;
     if (parsed.data.region) data.region = parsed.data.region;
+    if (parsed.data.phone !== undefined) data.phone = parsed.data.phone;
 
     if (parsed.data.newPassword) {
       if (!parsed.data.currentPassword) {

@@ -24,6 +24,7 @@ export async function fetchAndCacheSession(): Promise<{
     id: string;
     username: string;
     role: string;
+    phone?: string;
     points?: number;
   } | null;
   fromCache: boolean;
@@ -52,6 +53,7 @@ export async function fetchAndCacheSession(): Promise<{
           userId: data.user.id || data.user.email,
           username: data.user.username || "User",
           role: data.user.role || "volunteer",
+          phone: data.user.phone || "",
           csrfToken,
           cachedAt: Date.now(),
         };
@@ -76,6 +78,7 @@ export async function fetchAndCacheSession(): Promise<{
           id: cached.userId,
           username: cached.username,
           role: cached.role,
+          phone: cached.phone,
         },
         fromCache: true,
       };

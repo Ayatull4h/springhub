@@ -34,6 +34,8 @@ export async function GET(request: NextRequest) {
       select: {
         id: true,
         name: true,
+        healthScore: true,
+        healthStatus: true,
       },
     });
 

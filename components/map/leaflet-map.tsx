@@ -5,26 +5,26 @@ import { useRouter } from "next/navigation";
 import { MapContainer, TileLayer, CircleMarker, Tooltip, Popup, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Status (condition) based colors for springs:
-//   Biru (baik/healthy) → Kuning (sedang/restoration) → Merah (terdegradasi/degraded)
+// Health-status based colors for springs:
 const statusColors: Record<string, { color: string; fillColor: string; label: string }> = {
-  healthy: { color: "#2563eb", fillColor: "#3b82f6", label: "Sehat" },
-  restoration: { color: "#d97706", fillColor: "#f59e0b", label: "Restorasi" },
-  degraded: { color: "#dc2626", fillColor: "#ef4444", label: "Terdegradasi" },
+  sehat: { color: "#16a34a", fillColor: "#22c55e", label: "Sehat" },
+  ringan: { color: "#ca8a04", fillColor: "#eab308", label: "Tercemar Ringan" },
+  berat: { color: "#ea580c", fillColor: "#f97316", label: "Tercemar Berat" },
+  kritis: { color: "#dc2626", fillColor: "#ef4444", label: "Kritis" },
 };
 
-// Map form slug to spring status
+// Map form slug to fallback status (used when no health data)
 function getStatusFromForm(formSlug: string): string {
   switch (formSlug) {
     case "spring-monitoring":
     case "seedling-stock":
-      return "healthy";
+      return "sehat";
     case "spring-restoration":
     case "trench-development":
     case "tree-planting":
-      return "restoration";
+      return "ringan";
     default:
-      return "degraded";
+      return "kritis";
   }
 }
 
@@ -49,6 +49,7 @@ type SpringGroup = {
   latestFormSlug: string;
   latestCreatedAt: string;
   springCount: number;
+  healthStatus?: string;
 };
 
 const formIconsToType: Record<string, string> = {
@@ -143,11 +144,13 @@ function FitBounds({ data }: { data: (ReportData | SpringGroup)[] }) {
 
 function getMarkerColor(
   formSlug: string,
-  formColors?: Record<string, { color: string; fillColor: string; label: string }>
+  formColors?: Record<string, { color: string; fillColor: string; label: string }>,
+  healthStatus?: string
 ): { color: string; fillColor: string; label: string } {
   if (formColors?.[formSlug]) return formColors[formSlug];
+  if (healthStatus && statusColors[healthStatus]) return statusColors[healthStatus];
   const status = getStatusFromForm(formSlug);
-  return statusColors[status] ?? statusColors.degraded;
+  return statusColors[status] ?? statusColors.kritis;
 }
 
 export function LeafletMap({
@@ -162,6 +165,7 @@ export function LeafletMap({
   const router = useRouter();
   const [tileError, setTileError] = useState(false);
   const [springNames, setSpringNames] = useState<Record<string, string>>({});
+  const [springHealth, setSpringHealth] = useState<Record<string, string>>({});
 
   // Group reports by snapped location → one marker per grid (bisa banyak spring)
   const springs = useMemo(() => {
@@ -193,6 +197,7 @@ export function LeafletMap({
       const names = Array.from(entry.springNames);
       const name = names.length > 0 ? names.join(", ") : `Mata Air (${entry.springIds.size} sumber)`;
       const firstId = Array.from(entry.springIds)[0] || "unknown";
+      const healthStatus = entry.springIds.size === 1 ? springHealth[firstId] : undefined;
       groups.push({
         id: firstId,
         name,
@@ -203,6 +208,7 @@ export function LeafletMap({
         latestFormSlug: latest.formSlug,
         latestCreatedAt: latest.createdAt,
         springCount: entry.springIds.size,
+        healthStatus,
       });
     }
 
@@ -225,13 +231,14 @@ export function LeafletMap({
         const data = await res.json();
         if (!data?.springs?.length) return;
 
-        const results: Record<string, string> = {};
+        const names: Record<string, string> = {};
+        const health: Record<string, string> = {};
         for (const s of data.springs) {
-          if (s.id && s.name) results[s.id] = s.name;
+          if (s.id && s.name) names[s.id] = s.name;
+          if (s.id && s.healthStatus) health[s.id] = s.healthStatus;
         }
-        if (Object.keys(results).length > 0) {
-          setSpringNames((prev) => ({ ...prev, ...results }));
-        }
+        if (Object.keys(names).length > 0) setSpringNames((prev) => ({ ...prev, ...names }));
+        if (Object.keys(health).length > 0) setSpringHealth((prev) => ({ ...prev, ...health }));
       } catch { /* ignore */ }
     };
     fetchNames();
@@ -270,7 +277,7 @@ export function LeafletMap({
 
         {/* ═══ Spring Group markers (one per spring) ═══ */}
         {springs.groups.map((sg) => {
-          const fc = getMarkerColor(sg.latestFormSlug, formColors);
+          const fc = getMarkerColor(sg.latestFormSlug, formColors, sg.healthStatus);
           const actCount = sg.reports.length;
           const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";
           const detailUrl = `/springs/${sg.id}`;
@@ -296,6 +303,14 @@ export function LeafletMap({
                     <span className="text-ink-muted">
                       {actCount} laporan · terakhir {new Date(sg.latestCreatedAt).toLocaleDateString("id-ID")}
                     </span>
+                    {sg.healthStatus && (
+                      <>
+                        <br />
+                        <span className="font-medium" style={{ color: fc.color }}>
+                          {fc.label}
+                        </span>
+                      </>
+                    )}
                     <br />
                     <span className="text-ink-muted">
                       {sg.reports.map((r) => formIcons[r.formSlug] || "📋").join(" ")}

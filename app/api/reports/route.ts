@@ -253,7 +253,7 @@ export async function POST(request: Request) {
     });
 
     // ── Link or create Spring ────────────────────────────────────────
-    const springName = (fieldData?.spring_name as string || "").trim();
+    const springName = ((fieldData?.B1_nama || fieldData?.spring_name) as string || "").trim();
     if (springName && formSlug !== "trench-development" && formSlug !== "seedling-stock") {
       try {
         // Cari spring yang cocok: snapped location (1km) + nama mirip

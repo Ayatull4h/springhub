@@ -41,7 +41,23 @@ export default function ReportFormPage() {
   const [photoBlobs, setPhotoBlobs] = useState<Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>>([]);
   const [queuedOffline, setQueuedOffline] = useState(false);
 
+  // Turbo mode: simpan fieldData dari submit sebelumnya (khusus tanam pohon & rorak)
+  const [prevFieldData, setPrevFieldData] = useState<Record<string, unknown> | null>(null);
+  const isTurboForm = slug === "tree-planting" || slug === "trench-development";
+
   useAutoSave(slug, fieldData, photoBlobs);
+
+  // Auto-fill A3_wa from user profile
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (data?.user?.phone) {
+          setFieldData((prev) => ({ ...prev, A3_wa: data.user.phone }));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Sync photoFiles → photoBlobs for auto-save (accumulated, not just last batch)
   useEffect(() => {
@@ -276,12 +292,14 @@ export default function ReportFormPage() {
         setError("⚠️ " + photoErrors.join(". ") + " — Laporan tetap tersimpan. Admin akan mereview.");
       }
 
+      if (isTurboForm) setPrevFieldData({ ...fieldData });
       setSuccess(true);
       await offlineDB.deleteDraft(`draft-${activeForm.slug}-${pageLoadTime}`);
       formEl.reset();
     } catch {
       // ── Offline fallback: queue submission ────────────────────────
       setQueuedOffline(true);
+      if (isTurboForm) setPrevFieldData({ ...fieldData });
       setSuccess(true);
       const formBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }> = [];
       const photoFieldIds = activeForm.fields.filter((f: FormField) => f.type === "photo").map((f: FormField) => f.id);
@@ -342,6 +360,40 @@ export default function ReportFormPage() {
           >
             {t("report.submitAnother")}
           </button>
+          {isTurboForm && prevFieldData && (
+            <button
+              onClick={() => {
+                const newFieldData: Record<string, unknown> = {};
+                // Salin semua field (kecuali foto) dari submit sebelumnya
+                for (const [key, val] of Object.entries(prevFieldData)) {
+                  if (!key.includes("foto") && !key.includes("Foto") && !key.includes("photo") && !key.includes("Photo") && !key.includes("T_foto") && !key.includes("R_foto")) {
+                    newFieldData[key] = val;
+                  }
+                }
+                // Hapus foto dari previous
+                setPhotoFiles({});
+                setPhotoBlobs([]);
+                setFieldData(newFieldData);
+                setPrevFieldData(null);
+                setSuccess(false);
+                setError("");
+                // Trigger GPS refresh
+                if (navigator.geolocation) {
+                  navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                      const newLoc = pos.coords.latitude.toFixed(6) + ', ' + pos.coords.longitude.toFixed(6);
+                      setFieldData((prev) => ({ ...prev, A_geotag: newLoc, A_akurasi_gps: String(Math.round(pos.coords.accuracy)) }));
+                    },
+                    () => {},
+                    { enableHighAccuracy: true, timeout: 10000 }
+                  );
+                }
+              }}
+              className="btn-tertiary inline-flex items-center gap-1.5"
+            >
+              ➡️ Lanjut catat berikutnya
+            </button>
+          )}
         </div>
       </div>
     );

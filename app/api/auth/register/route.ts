@@ -101,6 +101,7 @@ export async function POST(request: Request) {
       userId: profile.id,
       role: profile.role,
       username: profile.username,
+      phone: profile.phone,
     }, proto === "https");
 
     const guestId = getExistingGuestId();

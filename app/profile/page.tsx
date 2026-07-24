@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { User, Mail, MapPin, Sparkles, Shield, FileText, LogOut, ArrowLeft, ArrowRight, Pencil, X, Check, Eye, EyeOff, Loader2, Bell, CheckCircle2, XCircle, WifiOff, Sprout } from "lucide-react";
+import { User, Mail, MapPin, Phone, Sparkles, Shield, FileText, LogOut, ArrowLeft, ArrowRight, Pencil, X, Check, Eye, EyeOff, Loader2, Bell, CheckCircle2, XCircle, WifiOff, Sprout } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { offlineDB } from "@/lib/offline-db";
@@ -44,6 +44,7 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [editUsername, setEditUsername] = useState("");
   const [editRegion, setEditRegion] = useState("");
+  const [editPhone, setEditPhone] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [showCurrentPw, setShowCurrentPw] = useState(false);
@@ -133,6 +134,7 @@ export default function ProfilePage() {
   function openEdit() {
     setEditUsername(profile?.username ?? "");
     setEditRegion(profile?.region ?? "");
+    setEditPhone(profile?.phone ?? "");
     setCurrentPassword("");
     setNewPassword("");
     setSaveError("");
@@ -158,6 +160,7 @@ export default function ProfilePage() {
         body: JSON.stringify({
           username: editUsername || undefined,
           region: editRegion || undefined,
+          phone: editPhone || undefined,
           currentPassword: currentPassword || undefined,
           newPassword: newPassword || undefined,
         }),
@@ -168,7 +171,7 @@ export default function ProfilePage() {
         return;
       }
       setSaveSuccess(t("profile.editSaved"));
-      setProfile((prev) => prev ? { ...prev, username: data.user.username, region: data.user.region } : prev);
+      setProfile((prev) => prev ? { ...prev, username: data.user.username, region: data.user.region, phone: editPhone } : prev);
       setTimeout(() => { closeEdit(); setSaveSuccess(""); }, 1500);
     } catch {
       setSaveError(t("profile.editError"));
@@ -267,6 +270,11 @@ export default function ProfilePage() {
                   <MapPin className="h-3.5 w-3.5 shrink-0" /> {profile.region}
                 </span>
               )}
+              {profile.phone && (
+                <span className="flex items-center gap-1">
+                  <Phone className="h-3.5 w-3.5 shrink-0" /> {profile.phone}
+                </span>
+              )}
               <span className="chip bg-brand-50 text-brand-700 capitalize dark:bg-brand-900/30 dark:text-brand-300">{profile.role}</span>
             </div>
           </div>
@@ -325,6 +333,16 @@ export default function ProfilePage() {
                 value={editRegion}
                 onChange={(e) => setEditRegion(e.target.value)}
                 className="input w-full"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-ink">Nomor WA</label>
+              <input
+                type="tel"
+                value={editPhone}
+                onChange={(e) => setEditPhone(e.target.value)}
+                className="input w-full"
+                placeholder="08xxx atau +62xxx"
               />
             </div>
             <hr className="border-ink-line" />

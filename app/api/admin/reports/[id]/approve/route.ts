@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";
 import { awardReportPoints, checkDailyStreak, updateTrustScore } from "@/lib/points";
 import { auditLog } from "@/lib/audit";
+import { computeSpringHealth } from "@/lib/health-score";
 
 export async function POST(
   request: Request,
@@ -114,6 +115,23 @@ export async function POST(
           where: { id: seedling.id },
           data: { status: "active" },
         });
+      }
+    }
+
+    // ── Health scoring untuk spring-survey ──
+    if (report.formSlug === "spring-monitoring" && report.springId) {
+      try {
+        const health = computeSpringHealth(fieldData);
+        await prisma.spring.update({
+          where: { id: report.springId },
+          data: {
+            healthScore: health.score,
+            healthStatus: health.status,
+            lastSurveyedAt: new Date(),
+          },
+        });
+      } catch {
+        // Health scoring non-critical
       }
     }
 

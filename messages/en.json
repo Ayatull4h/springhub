@@ -69,7 +69,7 @@
   "map.unknownLocation": "Unknown Location",
   "map.noReports": "No reports yet",
 
-  "form.title.monitoring": "Spring Monitoring",
+  "form.title.monitoring": "Spring Survey",
   "form.desc.monitoring": "Log a spring's current condition — flow, water quality, cleanliness, and a geo-tagged photo.",
   "form.title.restoration": "Spring Restoration",
   "form.desc.restoration": "Report a restoration activity — what was done, before/after photos, volunteer turnout, and any measurements taken.",

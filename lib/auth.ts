@@ -12,6 +12,7 @@ export type SessionPayload = {
   userId: string;
   role: string;
   username: string;
+  phone?: string;
 };
 
 export async function isAdmin(): Promise<boolean> {
@@ -38,6 +39,7 @@ export async function createSession(payload: SessionPayload, isSecure?: boolean)
     userId: payload.userId,
     role: payload.role,
     username: payload.username,
+    phone: payload.phone || "",
   };
   const token = await new SignJWT(jwtPayload)
     .setProtectedHeader({ alg: "HS256" })
@@ -116,7 +118,7 @@ export async function getSession(): Promise<SessionPayload | null> {
     ) {
       return null;
     }
-    return { userId: p.userId, role: p.role, username: p.username };
+    return { userId: p.userId, role: p.role, username: p.username, phone: (p.phone as string) || "" };
   } catch {
     return null;
   }

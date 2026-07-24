@@ -135,6 +135,7 @@ export type CachedSession = {
   userId: string;
   username: string;
   role: string;
+  phone?: string;
   csrfToken: string;
   cachedAt: number;
 };
