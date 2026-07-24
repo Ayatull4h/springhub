@@ -320,7 +320,7 @@ export function LeafletMap({
                   </div>
                 </Tooltip>
                 <Popup>
-                  <div className="min-w-[200px] text-sm">
+                  <div className="min-w-[220px] text-sm">
                     <strong className="text-base">{sg.name}</strong>
                     <div className="mt-1 text-xs text-ink-muted">
                       {actCount} laporan{sg.springCount > 1 ? ` · ${sg.springCount} sumber` : ""} · terakhir{" "}
@@ -328,6 +328,9 @@ export function LeafletMap({
                         day: "numeric", month: "short", year: "numeric",
                       })}
                     </div>
+                    {sg.reports.slice(0, 4).map((r) => r.photoUrl ? (
+                      <img key={r.id} src={r.photoUrl} alt="" className="mt-1 h-16 w-full rounded object-cover" />
+                    ) : null)}
                     <div className="mt-2 space-y-1">
                       {sg.reports.slice(0, 10).map((r) => {
                         const formInfo = formLookup?.[r.formSlug];

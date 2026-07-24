@@ -370,7 +370,7 @@ export default function ReportFormPage() {
                     newFieldData[key] = val;
                   }
                 }
-                // Hapus foto dari previous
+                // Reset foto — user WAJIB upload minimal 3 foto baru
                 setPhotoFiles({});
                 setPhotoBlobs([]);
                 setFieldData(newFieldData);
