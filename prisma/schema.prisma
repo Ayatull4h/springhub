@@ -227,28 +227,40 @@ model ReportPhoto {
 }
 
 model Project {
-  id           String        @id @default(uuid())
-  userId       String?
-  title        String
-  summary      String        @default("")
-  region       String        @default("")
-  typeId       String
-  status       ProjectStatus @default(pending)
-  goalAmount   Int           @default(0)
-  raisedAmount Int           @default(0)
-  likes        Int           @default(0)
-  comments     Int           @default(0)
-  contactName  String        @default("")
-  contactEmail String        @default("")
-  contactPhone String        @default("")
-  proposalFile String        @default("")
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id              String        @id @default(uuid())
+  userId          String?
+  title           String
+  summary         String        @default("")
+  region          String        @default("")
+  typeId          String
+  status          ProjectStatus @default(pending)
+  goalAmount      Int           @default(0)
+  raisedAmount    Int           @default(0)
+  likes           Int           @default(0)
+  comments        Int           @default(0)
+  contactName     String        @default("")
+  contactEmail    String        @default("")
+  contactPhone    String        @default("")
+  proposalFile    String        @default("")
+  featuredPhotoId String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  user        Profile?   @relation(fields: [userId], references: [id])
+  user        Profile?       @relation(fields: [userId], references: [id])
   donations   Donation[]
-  commentList Comment[]  @relation("ProjectComments")
+  commentList Comment[]      @relation("ProjectComments")
   likesList   Like[]
+  photos      ProjectPhoto[]
+}
+
+model ProjectPhoto {
+  id          String   @id @default(uuid())
+  projectId   String
+  storagePath String   @default("")
+  mimeType    String   @default("image/jpeg")
+  createdAt   DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Donation {

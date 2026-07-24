@@ -21,6 +21,8 @@ type ProjectItem = {
   likes: number;
   comments: number;
   user?: { username: string } | null;
+  featuredPhoto?: { url: string } | null;
+  photos?: { url: string }[];
 };
 
 const DUMMY: ProjectItem[] = dummyData.map((d, i) => ({
