@@ -139,13 +139,19 @@ export async function POST(request: Request) {
       fieldData[key] = value as string;
     }
 
-    // Snap location to 5km protection grid
+    // Snap location to 5km protection grid (hanya untuk form yang terkait spring)
     let snappedLat: number | null = null;
     let snappedLng: number | null = null;
+    const protectForm = formSlug === "spring-monitoring" || formSlug === "spring-restoration";
     if (preciseLat !== null && preciseLng !== null) {
-      const snapped = snapToProtectionGrid({ lat: preciseLat, lng: preciseLng });
-      snappedLat = snapped.lat;
-      snappedLng = snapped.lng;
+      if (protectForm) {
+        const snapped = snapToProtectionGrid({ lat: preciseLat, lng: preciseLng });
+        snappedLat = snapped.lat;
+        snappedLng = snapped.lng;
+      } else {
+        snappedLat = preciseLat;
+        snappedLng = preciseLng;
+      }
     }
 
     // Try dynamic form validation from DB first
