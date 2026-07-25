@@ -50,8 +50,7 @@ export type FormSchema = {
     | "restoration"
     | "trench"
     | "tree_planting"
-    | "seedling_stock"
-    | "project";
+    | "seedling_stock";
   fields: FormField[];
 };
 
@@ -208,43 +207,6 @@ export const FORMS: FormSchema[] = [
       { id: "C4_kesiapan", label: "Kesiapan Tanam", type: "select", options: ["Siap Tanam Sekarang", "1-2 Minggu Lagi", ">1 Bulan Lagi"] },
     ],
   },
-  {
-    slug: "project-submission",
-    title: "Pengajuan Proyek",
-    legacyTitle: "Project Submission",
-    description: "Ajukan proyek restorasi/konservasi. Dapatkan dukungan dari komunitas SpringHub.",
-    pointsOnSubmit: 0,
-    contributionType: "project",
-    fields: [
-      { id: "A_nama", label: "Nama Pengusul", type: "text", required: true },
-      { id: "A_wa", label: "Nomor WA", type: "phone", required: true },
-      { id: "A_email", label: "Email", type: "email", required: true },
-      { id: "A_organisasi", label: "Nama Organisasi/Komunitas", type: "text" },
-      { id: "A_peran", label: "Peran Anda", type: "text", required: true, placeholder: "relawan, koordinator, warga" },
-      { id: "A_pengalaman", label: "Pernah Terlibat Jaga Semesta?", type: "select", required: true, options: ["Ya", "Tidak"] },
-      { id: "B1_judul", label: "Judul Proyek", type: "text", required: true, placeholder: "Maksimal 10 kata" },
-      { id: "B2_jenis", label: "Jenis Proyek", type: "multiselect", required: true, options: ["Restorasi Mata Air", "Ekspedisi Pemantauan", "Penanaman Pohon Endemik", "Edukasi Masyarakat", "Pembuatan Rorak", "Lainnya"] },
-      { id: "B3_geotag", label: "Geotag Lokasi Proyek", type: "location", required: true },
-      { id: "B3_tempat", label: "Nama Tempat (dusun/desa)", type: "text", required: true },
-      { id: "B3_kode_spring", label: "Kode Mata Air Terkait", type: "text" },
-      { id: "B4_latar", label: "Latar Belakang dan Tujuan", type: "longtext", required: true },
-      { id: "C1_waktu", label: "Waktu Pelaksanaan", type: "select", required: true, options: ["Sekali Kegiatan (1-2 Hari)", "Jangka Pendek (<3 Bulan)", "Jangka Panjang (3 Bulan+)"] },
-      { id: "C2_target", label: "Target Hasil Terukur", type: "longtext", required: true, placeholder: "Cth: 5 mata air, 500 pohon, 20 rorak, 50 warga" },
-      { id: "C3_relawan", label: "Jumlah Relawan Siap", type: "number", required: true },
-      { id: "C3_mitra", label: "Mitra yang Dilibatkan", type: "multiselect", options: ["Pemerintah Desa", "Komunitas Lingkungan", "Sekolah/Kampus", "Perusahaan/CSR", "Kelompok Masyarakat", "Belum Ada"] },
-      { id: "D1_biaya", label: "Perkiraan Total Biaya", type: "select", required: true, options: ["Tanpa Biaya/Swadaya", "<Rp 1 Juta", "Rp 1-5 Juta", "Rp 5-25 Juta", ">Rp 25 Juta"] },
-      { id: "D1_rincian", label: "Rincian Penggunaan Dana", type: "longtext" },
-      { id: "D2_dukungan", label: "Dukungan yang Dibutuhkan", type: "multiselect", required: true, options: ["Pendanaan/Donasi", "Pendampingan Teknis", "Relawan", "Publikasi", "Bibit", "Tidak Ada"] },
-      { id: "D2_dana_ada", label: "Dana yang Sudah Tersedia", type: "text" },
-      { id: "foto_1", label: "Foto Lokasi 1", type: "photo", required: true },
-      { id: "foto_2", label: "Foto Lokasi 2", type: "photo", required: true },
-      { id: "foto_3", label: "Foto Lokasi 3", type: "photo", required: true },
-      { id: "komitmen_lapor", label: "Bersedia lapor via form SpringHub", type: "checkbox", required: true },
-      { id: "komitmen_review", label: "Proposal bisa diminta revisi", type: "checkbox", required: true },
-      { id: "komitmen_publik", label: "Data proyek tampil di publik", type: "checkbox", required: true },
-      { id: "E2_catatan", label: "Catatan Tambahan", type: "longtext" },
-    ],
-  },
 ];
 
 export function getForm(slug: string | undefined): FormSchema | undefined {
@@ -370,44 +332,12 @@ export const seedlingStockSchema = z.object({
   C4_kesiapan: z.string().optional(),
 });
 
-export const projectSubmissionSchema = z.object({
-  A_nama: z.string().min(1, "Nama pengusul wajib diisi"),
-  A_wa: z.string().min(1, "Nomor WA wajib diisi"),
-  A_email: z.string().email("Email tidak valid"),
-  A_organisasi: z.string().optional(),
-  A_peran: z.string().min(1, "Peran Anda wajib diisi"),
-  A_pengalaman: z.string().min(1, "Pengalaman wajib diisi"),
-  B1_judul: z.string().min(3, "Judul proyek wajib diisi"),
-  B2_jenis: z.any().optional(),
-  B3_geotag_lat: z.string().optional(),
-  B3_geotag_lng: z.string().optional(),
-  B3_tempat: z.string().min(1, "Nama tempat wajib diisi"),
-  B3_kode_spring: z.string().optional(),
-  B4_latar: z.string().min(10, "Latar belakang wajib diisi"),
-  C1_waktu: z.string().min(1, "Waktu pelaksanaan wajib diisi"),
-  C2_target: z.string().min(1, "Target wajib diisi"),
-  C3_relawan: z.coerce.number().min(1, "Jumlah relawan wajib diisi"),
-  C3_mitra: z.any().optional(),
-  D1_biaya: z.string().min(1, "Perkiraan biaya wajib diisi"),
-  D1_rincian: z.string().optional(),
-  D2_dukungan: z.any().optional(),
-  D2_dana_ada: z.string().optional(),
-  foto_1: z.any().optional(),
-  foto_2: z.any().optional(),
-  foto_3: z.any().optional(),
-  komitmen_lapor: z.any().optional(),
-  komitmen_review: z.any().optional(),
-  komitmen_publik: z.any().optional(),
-  E2_catatan: z.string().optional(),
-});
-
 export const formSchemaMap: Record<string, z.ZodObject<z.ZodRawShape>> = {
   "spring-monitoring": springMonitoringSchema,
   "spring-restoration": springRestorationSchema,
   "trench-development": trenchDevelopmentSchema,
   "tree-planting": treePlantingSchema,
   "seedling-stock": seedlingStockSchema,
-  "project-submission": projectSubmissionSchema,
 };
 
 export function getFormSchema(slug: string): z.ZodObject<z.ZodRawShape> | undefined {
@@ -420,7 +350,6 @@ export const POINTS_MAP: Record<string, number> = {
   "spring-restoration": 1000,
   "trench-development": 500,
   "tree-planting": 100,
-  "project-submission": 0,
   "seedling-stock": 100,
 };
 
@@ -441,7 +370,6 @@ export function getFormI18nKey(slug: string): string | undefined {
     "trench-development": "form.title.trench",
     "tree-planting": "form.title.planting",
     "seedling-stock": "form.title.seedling",
-    "project-submission": "form.title.project",
   };
   return map[slug];
 }
