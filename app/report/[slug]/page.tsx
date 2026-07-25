@@ -214,19 +214,26 @@ export default function ReportFormPage() {
       }
     }
 
-    // ── Validasi: min 3 foto per field photo ─────────────────────────
+    // ── Validasi: min 1 foto per field, total min 3 foto ─────────────────
     const photoFieldIds = activeForm.fields
       .filter((f: FormField) => f.type === "photo")
       .map((f: FormField) => f.id);
+    let totalPhotos = 0;
     for (const fieldId of photoFieldIds) {
       const files = formData.getAll(fieldId).filter(
         (f): f is File => f instanceof File && f.size > 0
       );
-      if (files.length < 3) {
-        setError(`Minimal 3 foto untuk "${fieldId}". Saat ini: ${files.length} foto.`);
+      if (files.length < 1) {
+        setError(`Minimal 1 foto untuk "${fieldId}".`);
         setLoading(false);
         return;
       }
+      totalPhotos += files.length;
+    }
+    if (totalPhotos < 3) {
+      setError(`Minimal total 3 foto. Saat ini: ${totalPhotos} foto.`);
+      setLoading(false);
+      return;
     }
 
     formData.set("form_slug", activeForm.slug);
