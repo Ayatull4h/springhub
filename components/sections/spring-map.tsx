@@ -307,8 +307,9 @@ const formTitleI18nKey = (slug: string): string => {
     return lookup;
   }, [allForms, mapTypesWithCats]);
 
-  // Filter springs by health status
+  // Filter springs: hanya muncul jika filter = Semua atau Survei Mata Air
   const visibleSprings = useMemo(() => {
+    if (selectedType && selectedType !== "spring-monitoring") return [];
     let result = springs as any[];
     if (selectedCategory?.startsWith("health:")) {
       const healthKey = selectedCategory.replace("health:", "");
@@ -319,13 +320,13 @@ const formTitleI18nKey = (slug: string): string => {
       }
     }
     return result;
-  }, [springs, selectedCategory]);
+  }, [springs, selectedType, selectedCategory]);
 
-  // Filter reports by form slug + optional category slug
+  // Filter reports: muncul jika filter = Semua atau form non-spring
   const visible = useMemo(
     () => {
-      // If health filter is active, don't show reports
       if (selectedCategory?.startsWith("health:")) return [];
+      if (selectedType === "spring-monitoring") return [];
       return reports.filter(r => {
         if (!selectedType) return true;
         if (r.formSlug !== selectedType) return false;
