@@ -17,26 +17,43 @@ export default function NewProjectPage() {
   const [fieldData, setFieldData] = useState<Record<string, string>>({});
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [proposalFile, setProposalFile] = useState<File | null>(null);
-  const [formFields, setFormFields] = useState<any[]>([]);
   const [userPoints, setUserPoints] = useState(0);
   const [userRole, setUserRole] = useState("");
 
+  const formFields: any[] = [
+    { fieldId: "A_nama", label: "Nama Pengusul", type: "text", required: true },
+    { fieldId: "A_wa", label: "Nomor WA", type: "phone", required: true },
+    { fieldId: "A_email", label: "Email", type: "email", required: true },
+    { fieldId: "A_organisasi", label: "Nama Organisasi/Komunitas", type: "text", required: false },
+    { fieldId: "A_peran", label: "Peran Anda", type: "text", required: true },
+    { fieldId: "A_pengalaman", label: "Pernah Terlibat Jaga Semesta?", type: "select", required: true, options: JSON.stringify(["Ya", "Tidak"]) },
+    { fieldId: "B1_judul", label: "Judul Proyek", type: "text", required: true },
+    { fieldId: "B2_jenis", label: "Jenis Proyek", type: "multiselect", required: true, options: JSON.stringify(["Restorasi Mata Air", "Ekspedisi Pemantauan", "Penanaman Pohon Endemik", "Edukasi Masyarakat", "Pembuatan Rorak", "Lainnya"]) },
+    { fieldId: "B3_geotag", label: "Geotag Lokasi Proyek", type: "location", required: true },
+    { fieldId: "B3_tempat", label: "Nama Tempat (dusun/desa)", type: "text", required: true },
+    { fieldId: "B4_latar", label: "Latar Belakang dan Tujuan", type: "longtext", required: true },
+    { fieldId: "C1_waktu", label: "Waktu Pelaksanaan", type: "select", required: true, options: JSON.stringify(["Sekali Kegiatan (1-2 Hari)", "Jangka Pendek (<3 Bulan)", "Jangka Panjang (3 Bulan+)"]) },
+    { fieldId: "C2_target", label: "Target Hasil Terukur", type: "longtext", required: true },
+    { fieldId: "C3_relawan", label: "Jumlah Relawan Siap", type: "number", required: true },
+    { fieldId: "C3_mitra", label: "Mitra yang Dilibatkan", type: "multiselect", required: false, options: JSON.stringify(["Pemerintah Desa", "Komunitas Lingkungan", "Sekolah/Kampus", "Perusahaan/CSR", "Kelompok Masyarakat", "Belum Ada"]) },
+    { fieldId: "D1_biaya", label: "Perkiraan Total Biaya", type: "select", required: true, options: JSON.stringify(["Tanpa Biaya/Swadaya", "<Rp 1 Juta", "Rp 1-5 Juta", "Rp 5-25 Juta", ">Rp 25 Juta"]) },
+    { fieldId: "D1_rincian", label: "Rincian Penggunaan Dana", type: "longtext", required: false },
+    { fieldId: "D2_dukungan", label: "Dukungan yang Dibutuhkan", type: "multiselect", required: true, options: JSON.stringify(["Pendanaan/Donasi", "Pendampingan Teknis", "Relawan", "Publikasi", "Bibit", "Tidak Ada"]) },
+    { fieldId: "D2_dana_ada", label: "Dana yang Sudah Tersedia", type: "text", required: false },
+    { fieldId: "E2_catatan", label: "Catatan Tambahan", type: "longtext", required: false },
+  ];
+
   useEffect(() => {
-    Promise.all([
-      fetch("/api/auth/me").then(r => r.json()),
-      fetch("/api/forms/project-submission").then(r => r.json()),
-    ]).then(([userData, formData]) => {
-      if (userData?.user) {
-        setUserPoints(userData.user.points || 0);
-        setUserRole(userData.user.role || "");
-        const profile = userData.user;
+    fetch("/api/auth/me").then(r => r.json()).then(data => {
+      if (data?.user) {
+        setUserPoints(data.user.points || 0);
+        setUserRole(data.user.role || "");
         setFieldData({
-          A_nama: profile.username || "",
-          A_wa: profile.phone || "",
-          A_email: profile.email || "",
+          A_nama: data.user.username || "",
+          A_wa: data.user.phone || "",
+          A_email: data.user.email || "",
         });
       }
-      if (formData?.form?.fields) setFormFields(formData.form.fields);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
