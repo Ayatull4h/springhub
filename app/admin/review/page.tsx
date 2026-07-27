@@ -184,7 +184,7 @@ export default function AdminReviewPage() {
 
                 {/* Field data preview */}
                 <div className="mt-3 grid gap-1 text-sm sm:grid-cols-2">
-                  {Object.entries(fieldData).slice(0, 6).map(([key, val]) => (
+                  {Object.entries(fieldData).filter(([k]) => !k.startsWith("_")).map(([key, val]) => (
                     <div key={key} className="text-xs">
                       <span className="text-ink-subtle">{key}: </span>
                       <span className="text-ink">

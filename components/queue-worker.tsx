@@ -120,29 +120,50 @@ export function QueueWorker() {
       // Upload photos AFTER report sukses
       if (data.report?.id && item.photoBlobs?.length > 0) {
         const reportId = data.report.id;
-        for (const pb of item.photoBlobs) {
-          try {
-            const photoCsrf = await getCsrfToken();
-            const blob = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
-            const photoPayload = new FormData();
-            photoPayload.append("photo", blob, pb.fileName || `photo-${Date.now()}.jpg`);
-            photoPayload.append("field_id", pb.fieldId);
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const remaining: typeof item.photoBlobs = [];
+          for (const pb of item.photoBlobs) {
+            try {
+              const photoCsrf = await getCsrfToken();
+              const blob = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
+              const photoPayload = new FormData();
+              photoPayload.append("photo", blob, pb.fileName || `photo-${Date.now()}.jpg`);
+              photoPayload.append("field_id", pb.fieldId);
 
-            await fetch(`/api/reports/${reportId}/photos`, {
-              method: "POST",
-              headers: { ...(photoCsrf ? { "x-csrf-token": photoCsrf } : {}), "x-queue-worker": "true" },
-              body: photoPayload,
-              signal: (() => { const c = new AbortController(); setTimeout(() => c.abort(), 30000); return c.signal; })(),
-            });
-          } catch {
-            // Photo gagal — report sudah tersimpan, foto bisa diupload manual
+              const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
+                method: "POST",
+                headers: { ...(photoCsrf ? { "x-csrf-token": photoCsrf } : {}), "x-queue-worker": "true" },
+                body: photoPayload,
+                signal: (() => { const c = new AbortController(); setTimeout(() => c.abort(), 30000); return c.signal; })(),
+              });
+              if (!photoRes.ok) remaining.push(pb);
+            } catch {
+              remaining.push(pb);
+            }
           }
+          item.photoBlobs = remaining;
+          if (remaining.length === 0) break;
+          await new Promise(r => setTimeout(r, 1000));
         }
       }
 
       // Bersihin pending-reports / drafts yg mungkin tersisa (pakai item.id yg sama)
       try { await offlineDB.deleteReport(item.id); } catch {}
       try { await offlineDB.deleteDraft(item.id); } catch {}
+
+      // Juga hapus pending-report dengan formSlug + captured_at yang sama (cegah duplikat)
+      try {
+        const allPending = await offlineDB.getAllReports();
+        const capAt = item.fieldData._captured_at;
+        for (const p of allPending) {
+          if (p.id !== item.id && p.formSlug === item.formSlug) {
+            const pData = p.fieldData as Record<string, unknown>;
+            if (pData._captured_at === capAt) {
+              await offlineDB.deleteReport(p.id);
+            }
+          }
+        }
+      } catch {}
 
       return { ok: true };
     } catch (err) {
