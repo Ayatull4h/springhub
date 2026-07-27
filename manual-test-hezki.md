@@ -1,8 +1,8 @@
 # Manual Test — SpringHub v2.1
 
-**Tanggal**: 24 Juli 2026
+**Tanggal**: 27 Juli 2026
 **Domain**: https://www.springhub.id
-**Total Test**: ~195 test case — 26 kategori
+**Total Test**: ~200 test case — 27 kategori
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -14,26 +14,20 @@
 |Akun|Email|Password|Bisa apa?|
 |-|-|-|-|
 |**Admin**|`admin@springhub.id`|`demo12345`|Lihat semua data, approve laporan, atur map, kelola user|
-|**Ucup**|`ucup@springhub.id`|`ucup12345`|Volunteer dengan **20.168 poin** — bisa buat proyek baru|
-|**Sari**|`volunteer@springhub.id`|`vol12345`|Volunteer dengan **8.750 poin** — belum bisa buat proyek|
+|**Ucup**|`ucup@springhub.id`|`ucup12345`|Volunteer dengan 100 poin|
+|**Dirgapala**|`dirgapala@sttkd.ac.id`|?|Volunteer dengan **10.500 poin** — bisa buat proyek baru|
+|**Riris**|`ririsaldicky@gmail.com`|?|Volunteer dengan 300 poin|
 
 ---
 
 ## Persiapan (Cukup Sekali)
 
-Buka Terminal (Command Prompt / PowerShell / Terminal):
-
 ```bash
-# Simpan cookie biar gak login terus
 COOKIE="/tmp/springhub.txt"
 API="https://www.springhub.id"
-
-# Login sebagai admin
 curl -sk -c $COOKIE -b $COOKIE -X POST $API/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@springhub.id","password":"demo12345"}'
-
-# Ambil token CSRF (dibutuhkan untuk kirim form)
 CSRF=$(curl -sk -c $COOKIE -b $COOKIE $API/api/csrf | python3 -c "import json,sys; print(json.load(sys.stdin).get('token',''))")
 echo $CSRF
 ```
@@ -44,11 +38,13 @@ echo $CSRF
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|1.1|Landing page kebuka|Buka `www.springhub.id` di browser — harusnya muncul halaman utama dengan peta, statistik, dan tombol donasi||
-|1.2|Pakai HTTPS aman|Lihat di address bar — harus ada gembok 🔒||
-|1.3|Halaman 404 keren|Buka `www.springhub.id/halaman-yang-tidak-ada` — harusnya muncul halaman "Halaman Tidak Ditemukan" yang bagus, bukan putih polos||
-|1.4|Icon tab (favicon) muncul|Lihat di tab browser — harusnya logo SpringHub. Buka `www.springhub.id/favicon.png?v=3` — harusnya gambar logo 196x196||
-|1.5|Dark mode bisa diganti|Klik tombol bulan/matahari di pojok kanan atas — tampilan harus berubah jadi gelap/terang||
+|1.1|Landing page kebuka|Buka `www.springhub.id` — halaman utama dengan peta, statistik, donasi||
+|1.2|HTTPS aman|Gembok 🔒 di address bar||
+|1.3|Halaman 404|Buka `/halaman-tidak-ada` — tampilan 404 bagus||
+|1.4|Favicon|Logo SpringHub di tab browser||
+|1.5|Dark mode|Klik tombol bulan/matahari — tampilan berubah||
+|1.6|Map muncul|Scroll ke peta — marker spring (warna) + aktivitas (abu) muncul||
+|1.7|Filter dropdown|Ada pilihan: Semua, Survei Mata Air (dengan sub Sehat/Ringan/Berat/Kritis), Tanam Pohon, dll||
 
 ---
 
@@ -56,78 +52,69 @@ echo $CSRF
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|2.1|Halaman login terbuka|Buka `www.springhub.id/sign-in` — harusnya ada form email + password||
-|2.2|Login admin berhasil|Isi email `admin@springhub.id`, password `demo12345`, klik Login — harusnya masuk ke halaman utama||
-|2.3|Password salah ditolak|Isi email `admin@springhub.id`, password `salah` — harusnya muncul "Email atau password salah"||
-|2.4|Lockout (5x salah)|Coba login 5 kali dengan password salah — setelah percobaan ke-5 harusnya muncul "Akun terkunci karena terlalu banyak percobaan"||
-|2.5|Register halaman terbuka|Buka `www.springhub.id/join` — harusnya ada form email + password + username||
-|2.6|Password lemah ditolak|Coba daftar dengan password `123` — harusnya ditolak, minimal 8 karakter||
-|2.7|Password tanpa huruf besar ditolak|Coba daftar dengan password `abcdefgh1` — harusnya ditolak, harus ada huruf BESAR||
-|2.8|Email duplikat ditolak|Coba daftar dengan email `admin@springhub.id` — harusnya muncul "Email sudah terdaftar"||
+|2.1|Halaman login|`/sign-in` — form email + password||
+|2.2|Login admin|`admin@springhub.id` / `demo12345` — masuk||
+|2.3|Password salah|Tampil "Email atau password salah"||
+|2.4|Lockout 5x|5x salah — "Akun terkunci"||
+|2.5|Register|`/join` — form daftar||
+|2.6|Password lemah|`123` ditolak (min 8)||
+|2.7|Tanpa huruf besar|`abcdefgh1` ditolak||
+|2.8|Email duplikat|Email sudah terdaftar ditolak||
 
 ---
 
 ## Test 3 — Halaman Admin (15 test)
 
-### Login ke Admin dulu:
-
-* Buka `www.springhub.id/sign-in`, login dengan `admin@springhub.id` / `demo12345`
-* Buka `www.springhub.id/admin`
-
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|3.1|Dashboard admin|Harusnya muncul angka: total user, laporan, donasi, proyek||
-|3.2|Sidebar menu|Di sebelah kiri harus ada menu: Dashboard, Users, Reports, Forms, Map, dll||
-|3.3|Daftar user|Klik menu "Users" — harusnya ada tabel dengan email, username, role, poin||
-|3.4|Pagination user|Kalo usernya banyak, harusnya ada tombol ← Prev dan Next →||
-|3.5|Daftar laporan|Klik "Reports" — harusnya ada daftar laporan dari relawan||
-|3.6|Toggle aktif/nonaktif|Klik tombol mata 👁 di laporan — laporan harusnya berubah status||
-|3.7|Review queue|Klik "Review Queue" — harusnya ada laporan yang menunggu review||
-|3.8|Approve laporan|Klik tombol centang hijau ✅ — laporan harus berubah jadi "approved"||
-|3.9|Minimal 3 foto|Coba approve laporan dengan foto < 3 — harusnya ditolak dengan pesan "Minimal 3 foto"||
-|3.10|Trust score|Klik "Trust Score" — harusnya ada daftar user dengan skor kepercayaan||
-|3.11|Reset trust score|Klik tombol reset 🔄 — skor harus kembali ke 50||
-|3.12|Manajemen form|Klik "Forms" — harusnya daftar 5 form yang bisa diedit||
-|3.13|Lihat form Survei Mata Air (32 field)|Klik form "Survei Mata Air" — harusnya ada 32 field dari A1_tanggal sampai E3_aksi||
-|3.14|Setting map|Klik "Map" — harusnya ada daftar tipe titik peta + warna kategori||
-|3.15|Ubah warna marker|Klik color picker di kategori — warna marker di peta harus berubah||
+|3.1|Dashboard|Angka total user, laporan, donasi, proyek||
+|3.2|Sidebar menu|Dashboard, Users, Reports, Forms, Map, dll||
+|3.3|Daftar user|Tabel email, username, role, poin||
+|3.4|Daftar laporan|Semua laporan + foto thumbnail||
+|3.5|Pagination|Dropdown 25/50/100/200 + page numbers||
+|3.6|Approve all|Klik ✅ Approve All — semua pending ter-approve||
+|3.7|Review queue|Filter pending — daftar laporan menunggu||
+|3.8|Approve|Klik centang hijau — approved||
+|3.9|Minimal foto|Coba approve foto < 1 per field — ditolak||
+|3.10|Manajemen form|Daftar 5 form — klik lihat field||
+|3.11|Edit form|Edit field → simpan — berubah||
+|3.12|Soft delete form|Hapus → form nonaktif, data aman||
+|3.13|Lihat form Survei|32 field dari A1_tanggal s/d E3_aksi||
+|3.14|Setting map|Tipe titik peta + warna kategori||
+|3.15|Ubah warna marker|Color picker — warna marker berubah||
 
 ---
 
-## Test 4 — Form Survei Mata Air (32 field) — 12 test
-
-Form lama `spring-monitoring` (8 field) sudah diganti dengan 32 field baru.
+## Test 4 — Form Survei Mata Air (32 field) — 13 test
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|4.1|Halaman form kebuka|Buka `www.springhub.id/report/spring-monitoring` — harusnya muncul form berjudul "Survei Mata Air"||
-|4.2|Auto-fill GPS|Klik "Izinkan" saat browser minta izin lokasi — field `A4_geotag` harus terisi otomatis||
-|4.3|Auto-fill nomor WA|Login dulu, buka form — field `A3_wa` harus terisi nomor WA dari profil||
-|4.4|32 field muncul|Scroll form — harusnya ada 32 field dari A1 (Tanggal Survei) sampai E3 (Aksi)||
-|4.5|Field Select muncul|Coba field `B5_jenis` (Jenis/Tipe Mata Air) — harusnya ada 5 opsi: Memancar, Genangan, Lereng/Tebing, Celah Batu, Tidak Yakin||
-|4.6|Field Multiselect muncul|Coba field `C4_pemanfaatan` (Pemanfaatan Air) — harusnya bisa centang lebih dari 1 opsi||
-|4.7|Field Angka untuk pH/Suhu/TDS|Coba field `D1_ph` sampai `D6_debit_visual` — harusnya input angka untuk D1-D5, select untuk D6||
-|4.8|Upload 3 foto|Field foto: `B2_foto_1`, `B3_foto_2`, `B4_foto_3` — masing-masing 1 foto||
-|4.9|Kirim laporan|Isi minimal required field (*), upload 3 foto, klik Kirim — harusnya "Laporan berhasil dikirim"||
-|4.10|Validasi required|Coba klik Kirim tanpa isi field wajib — harusnya muncul pesan error||
-|4.11|Cek duplikat (radius 20m)|Field `A5_cek_duplikat` — pilih "Kunjungan Ulang" jika titik dalam radius 20m, "Baru" jika belum||
-|4.12|Old endpoint redirect|Buka `www.springhub.id/report/spring-monitoring` — tidak error 404 (slug tetap)||
-|4.13|Reverse geocode|Setelah submit, provinsi/kabupaten harus terisi otomatis dari koordinat||
+|4.1|Halaman form|`/report/spring-monitoring` — 32 field muncul||
+|4.2|Auto GPS|Klik izinkan → A4_geotag terisi||
+|4.3|Auto WA|A3_wa terisi dari profil||
+|4.4|32 field|A1 sampai E3 — text, select, location, number||
+|4.5|Select B5_jenis|5 opsi: Memancar, Genangan, Lereng, Celah Batu, Tidak Yakin||
+|4.6|Multiselect C4|Bisa centang >1 opsi pemanfaatan||
+|4.7|Field teks D1-D5|pH, suhu, TDS, EC, debit — input teks (bisa desimal)||
+|4.8|3 foto|B2_foto_1, B3_foto_2, B4_foto_3 — min **1 foto per field** (total 3)||
+|4.9|Kirim|Isi required + 3 foto → sukses||
+|4.10|Validasi required|Kosong → error||
+|4.11|Cek duplikat 20m|A5_cek_duplikat — Baru / Kunjungan Ulang||
+|4.12|Slug tetap|`/report/spring-monitoring` — tidak 404||
+|4.13|Reverse geocode|Setelah submit, provinsi otomatis||
 
 ---
 
 ## Test 5 — Form Tanam Pohon (16 field) — 6 test
 
-Form `tree-planting` sudah diupdate: SATU FORM = SATU POHON.
-
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|5.1|Halaman form kebuka|Buka `www.springhub.id/report/tree-planting` — harusnya form dengan 16 field||
-|5.2|Deskripsi "SATU FORM = SATU POHON"|Lihat deskripsi di atas form — harusnya jelas bahwa 1 form = 1 pohon||
-|5.3|Field T_tinggi|Ada select: <30 cm, 30-100 cm, 100-200 cm, >200 cm||
-|5.4|Field T_lokasi_tanam|Ada select: Sekitar Mata Air, Lahan Kritis, Pekarangan, Fasilitas Umum, Lahan Pertanian, Bantaran Sungai, Lainnya||
-|5.5|Field T_sumber|Ada select: Pembibitan Sendiri, Bantuan Dinas, Tidak Tahu, Membeli, Donasi/CSR/Komunitas||
-|5.6|Kirim + validasi|Isi required, upload foto, kirim — harus sukses||
+|5.1|Form terbuka|`/report/tree-planting` — 16 field||
+|5.2|Deskripsi|"SATU FORM = SATU POHON"||
+|5.3|T_tinggi|Select <30, 30-100, 100-200, >200 cm||
+|5.4|T_lokasi_tanam|Select 7 opsi (Mata Air, Lahan Kritis, Pekarangan, Fasum, Pertanian, Bantaran, Lainnya)||
+|5.5|T_sumber|Select 5 opsi (Sendiri, Dinas, Tidak Tahu, Beli, Donasi)||
+|5.6|Kirim + validasi|Required + foto → sukses||
 
 ---
 
@@ -135,36 +122,38 @@ Form `tree-planting` sudah diupdate: SATU FORM = SATU POHON.
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|6.1|Tombol "Lanjut catat berikutnya"|Submit tree-planting atau rorak — setelah sukses, harus ada tombol ➡️ Lanjut catat berikutnya||
-|6.2|Field tersalin|Klik "Lanjut" — field non-foto dari entri sebelumnya harus terisi (nama, kegiatan, sumber bibit, dll)||
-|6.3|GPS refresh otomatis|Klik "Lanjut" — GPS harus ambil posisi baru (muncul notif izin lokasi)||
-|6.4|Foto di-reset|Klik "Lanjut" — field foto harus kosong (siap upload foto baru)||
+|6.1|Tombol lanjut|Submit tree-planting → muncul "➡️ Lanjut catat berikutnya"||
+|6.2|Field tersalin|Nama, sumber, lokasi tanam dari entri sebelumnya||
+|6.3|GPS refresh|Posisi GPS baru setelah lanjut||
+|6.4|Foto direset|Field foto kosong — wajib upload 3 baru||
 
 ---
 
-## Test 7 — Peta & Health Score (6 test)
+## Test 7 — Peta & Marker (8 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|7.1|Peta muncul|Scroll ke section peta — harusnya peta Indonesia dengan marker-marker||
-|7.2|Marker warna berdasarkan kesehatan|Marker spring-survey harus punya warna: hijau (sehat), kuning (ringan), oranye (berat), merah (kritis)||
-|7.3|Tooltip health status|Hover marker — tooltip harus tampil label status kesehatan (Sehat / Tercemar Ringan / Tercemar Berat / Kritis)||
-|7.4|Dropdown filter|Klik dropdown "Semua Titik" — harusnya ada pilihan: Mata Air, Tanam Pohon, dll||
-|7.5|Filter berdasarkan tipe|Pilih "Mata Air" — peta harusnya cuma nunjukkin marker mata air||
-|7.6|Scroll zoom|Coba scroll di peta — peta harusnya bisa zoom in/out||
+|7.1|Spring marker (73)|Lingkaran warna hijau/kuning/oranye/merah — 8px||
+|7.2|Activity marker (7)|Lingkaran abu 8px untuk tree-planting, rorak, dll — **tanpa** lingkaran 5km||
+|7.3|Filter "Survei Mata Air"|Cuma spring marker — activity hilang||
+|7.4|Filter "Tanam Pohon"|Cuma tree-planting — spring hilang||
+|7.5|Sub filter Sehat|Spring sehat aja||
+|7.6|Sub filter Kritis|Spring kritis aja||
+|7.7|Klik marker spring|Popup: nama, status, skor, link ke `/springs/[id]`||
+|7.8|Klik marker tree-planting|Popup: jumlah + user (tanpa link detail jika gak punya springId)||
 
 ---
 
-## Test 8 — Poin & Leaderboard (6 test)
+## Test 8 — Poin (6 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|8.1|Poin bertambah setelah approve|Approve laporan ucup — poin ucup harus naik (cek di /admin/users)||
-|8.2|Poin dari DB form (bukan hardcode)|Admin edit poin form → submit → approve → poin harus sesuai yang diedit||
-|8.3|Leaderboard muncul|Buka halaman depan — harusnya ada papan peringkat volunteer teratas||
-|8.4|Streak harian|Lapor 3 hari berturut-turut — harusnya dapet bonus +5 poin (hari ke-3)||
-|8.5|Milestone 10 laporan|Kalo udah 10 laporan disetujui — harusnya dapet bonus +50 poin||
-|8.6|Threshold 20.000 poin|Ucup (20.168 pts) bisa klik "Buat Proyek" — Sari (8.750 pts) tombolnya harus terkunci||
+|8.1|Poin approve|Approve → poin user naik||
+|8.2|Poin DB form|Edit poin form → submit → approve → sesuai||
+|8.3|Leaderboard|Papan peringkat di landing page||
+|8.4|Streak 3 hari|Berturut-turut 3 hari → bonus||
+|8.5|Threshold 20K|User ≥20.000 pts bisa buat proyek||
+|8.6|Milestone|10/50/100/500 laporan → bonus||
 
 ---
 
@@ -172,11 +161,11 @@ Form `tree-planting` sudah diupdate: SATU FORM = SATU POHON.
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|9.1|Form donasi muncul|Scroll ke bagian donasi di halaman depan — harusnya ada pilih nominal||
-|9.2|Pilih nominal|Klik salah satu nominal (Rp 20K, Rp 50K, dll) — field terisi otomatis||
-|9.3|Custom nominal|Klik "Custom" — bisa isi jumlah sendiri (min Rp 1.000, max Rp 100.000.000)||
-|9.4|Amount vs tier dicek|Pilih tier "Rp 20K" tapi ubah jumlah jadi Rp 1.000.000 — harusnya ditolak||
-|9.5|Halaman sukses|Kalo bayar berhasil — harusnya diarahkan ke halaman "Pembayaran Berhasil"||
+|9.1|Form donasi|Section donasi di landing — pilih nominal||
+|9.2|Pilih nominal|Rp 20K, 50K, dll — field terisi||
+|9.3|Custom nominal|Min Rp 1.000, max Rp 100.000.000||
+|9.4|Validasi tier|Pilih 20K tapi isi 1jt → ditolak||
+|9.5|Invoice|**TERTUNDA** — butuh XENDIT_SECRET_KEY||
 
 ---
 
@@ -184,14 +173,14 @@ Form `tree-planting` sudah diupdate: SATU FORM = SATU POHON.
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|10.1|Halaman admin ditolak untuk user biasa|Login sebagai ucup, coba buka `/admin` — harusnya redirect ke halaman utama||
-|10.2|API admin ditolak|Pake terminal: `curl $API/api/admin/users` tanpa cookie — harusnya 403/401||
-|10.3|CSRF admin wajib|Coba `curl -X POST $API/api/admin/forms` tanpa CSRF — harusnya 403||
-|10.4|Rate limit terasa|Coba login 10x dalam 1 menit — harusnya ditolak "Terlalu banyak percobaan"||
-|10.5|Data sensitif aman|`curl $API/api/reports` — harusnya TIDAK ada email, nomor HP, atau lokasi presisi||
-|10.6|SQL injection gagal|Coba isi form dengan `' OR 1=1 --` — harusnya ditolak validasi||
-|10.7|XSS gagal|Coba isi form dengan `<script>alert(1)</script>` — harusnya tersimpan aman (tidak jalan)||
-|10.8|Admin bisa export data|Buka `/admin` → klik Export → pilih Users — harusnya download file CSV||
+|10.1|Admin page|User biasa buka `/admin` → redirect||
+|10.2|API admin|`curl $API/api/admin/users` tanpa cookie → 401||
+|10.3|CSRF wajib|POST tanpa CSRF → 403||
+|10.4|Rate limit|10x login 1 menit → ditolak||
+|10.5|Data sensitif|Email, HP, lokasi presisi tidak bocor||
+|10.6|SQL injection|`' OR 1=1 --` → ditolak||
+|10.7|XSS|`<script>alert(1)</script>` → aman||
+|10.8|Export CSV|Admin → Export → download CSV||
 
 ---
 
@@ -199,23 +188,24 @@ Form `tree-planting` sudah diupdate: SATU FORM = SATU POHON.
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|11.1|Landing page dark mode|Aktifkan dark mode — semua section harus berubah warna (header, peta, footer)||
-|11.2|Admin panel dark mode|Buka `/admin` di dark mode — sidebar, tabel, tombol harus ikut gelap||
-|11.3|Admin map dark mode|Buka `/admin/map` di dark mode — background harus gelap, teks terbaca||
-|11.4|Form halaman dark mode|Buka `/report/spring-monitoring` di dark mode — form harus terbaca||
-|11.5|Logo ikut berubah|Logo SpringHub harus putih di dark mode, hitam di light mode||
+|11.1|Landing page|Semua section berubah||
+|11.2|Admin panel|Sidebar, tabel, tombol gelap||
+|11.3|Admin map|Background gelap, teks terbaca||
+|11.4|Form|Form 32 field terbaca||
+|11.5|Logo|Putih di dark, hitam di light||
 
 ---
 
-## Test 12 — Akun & Profile (5 test)
+## Test 12 — Akun & Profile (6 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|12.1|Profile page|Login sebagai ucup, buka `www.springhub.id/profile` — harusnya ada info akun||
-|12.2|Nomor WA di profile|Di profile page — harusnya tampil nomor WA (jika sudah diisi)||
-|12.3|Edit nomor WA|Klik edit profile — ubah nomor WA — simpan — nomor harus berubah||
-|12.4|Riwayat poin|Di profile page — harusnya ada daftar poin yang pernah didapat||
-|12.5|Logout|Klik tombol logout — harusnya kembali ke halaman utama, menu login muncul lagi||
+|12.1|Profile page|`/profile` — info akun||
+|12.2|Nomor WA|Tampil + bisa diedit||
+|12.3|Edit WA|Edit → simpan → berubah||
+|12.4|Auto-fill WA|Buka form → A3_wa terisi dari profil||
+|12.5|Riwayat poin|Daftar poin pernah didapat||
+|12.6|Logout|Kembali ke halaman utama||
 
 ---
 
@@ -223,33 +213,31 @@ Form `tree-planting` sudah diupdate: SATU FORM = SATU POHON.
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|13.1|Tambah course|Buka `/admin/courses` → klik Tambah → isi data → simpan — harusnya muncul||
-|13.2|Edit form field|Buka `/admin/forms` → klik salah satu form → edit field → simpan — field berubah||
-|13.3|Hapus form (soft delete)|Klik hapus pada form yang punya laporan — form jadi nonaktif, data aman||
-|13.4|Ganti slug form ditolak|Coba ganti slug form yang punya laporan — harusnya ditolak dengan pesan jelas||
-|13.5|Tambah content block|Buka `/admin/content` → tambah konten baru → simpan — muncul di landing page||
-|13.6|Lihat feedback|Buka `/admin/feedback` — harusnya ada kritik/saran dari pengguna||
-|13.7|Lihat error log|Buka `/admin/errors` — harusnya ada daftar error teknis (kalo ada)||
-|13.8|Export CSV|Klik Export → pilih jenis data → download — file CSV harus terdownload||
+|13.1|Tambah course|`/admin/courses` → tambah → simpan||
+|13.2|Edit form field|`/admin/forms` → edit → simpan||
+|13.3|Hapus form|Soft delete — jadi nonaktif||
+|13.4|Ganti slug|Ditolak (punya laporan)||
+|13.5|Tambah content|`/admin/content` → simpan → muncul di landing||
+|13.6|Lihat feedback|Kritik/saran dari pengguna||
+|13.7|Error log|Daftar error teknis||
+|13.8|Export CSV|Download CSV||
 
 ---
 
 ## Test 14 — API Endpoints (10 test)
 
-Gunakan terminal. Login dulu sebagai admin.
-
 |#|Yang Dicek|Perintah|Hasil|
 |-|-|-|-|
-|14.1|Health check|`curl $API/api/health` → harusnya `{"status":"ok"}`||
-|14.2|Daftar form|`curl $API/api/forms` → harusnya array forms dengan field dan mapType||
-|14.3|Tipe titik peta|`curl $API/api/map-points/types` → harusnya 4 tipe (spring, tree-planting, trench, seedling)||
-|14.4|Leaderboard|`curl $API/api/leaderboard` → harusnya top 20 volunteer||
-|14.5|Daftar user (admin only)|`curl -b $COOKIE $API/api/admin/users` → harusnya daftar user||
-|14.6|User tanpa cookie ditolak|`curl $API/api/admin/users` → harusnya `{"error":"Unauthorized"}`||
-|14.7|Export users CSV|`curl -b $COOKIE "$API/api/admin/export?entity=users"` → download CSV||
-|14.8|Export reports + foto|`curl -b $COOKIE "$API/api/admin/export?entity=reports"` → CSV dengan kolom PhotoURLs||
-|14.9|Notifikasi|Login sebagai ucup → `curl -b $COOKIE $API/api/notifications` → daftar notif||
-|14.10|Dashboard stats|`curl $API/api/dashboard` → statistik: total reports, approved, dll||
+|14.1|Health|`curl $API/api/health` → `{"status":"ok"}`||
+|14.2|Forms|`curl $API/api/forms` → array 5 form||
+|14.3|Map types|`curl $API/api/map-points/types` → 4 tipe||
+|14.4|Leaderboard|`curl $API/api/leaderboard` → top 20||
+|14.5|Admin users|`curl -b $COOKIE $API/api/admin/users` → daftar||
+|14.6|Admin tanpa cookie|`curl $API/api/admin/users` → 401||
+|14.7|Export users|`curl -b $COOKIE "$API/api/admin/export?entity=users"` → CSV||
+|14.8|Notifikasi|Login → `curl -b $COOKIE $API/api/notifications` → daftar||
+|14.9|Dashboard|`curl $API/api/dashboard` → statistik||
+|14.10|Springs|`curl $API/api/springs` → 87 spring, 73 health score||
 
 ---
 
@@ -257,148 +245,153 @@ Gunakan terminal. Login dulu sebagai admin.
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|15.1|Halaman offline terbuka|Buka `www.springhub.id/offline` — harusnya ada tombol "Mulai Survey Offline"||
-|15.2|Setup offline — pilih form|Klik "Mulai Survey Offline" → pilih form (Survei Mata Air, Tanam Pohon, dll) → Next||
-|15.3|Cache form definition|Setelah setup, form yang dipilih harus muncul di daftar form offline||
-|15.4|Isi form offline (32 field)|Pilih Survei Mata Air — isi field-field (termasuk GPS auto-fill)||
-|15.5|Upload foto offline|Klik tombol foto, ambil minimal 3 foto — counter harus bertambah||
-|15.6|Submit offline|Klik "Simpan" — data harus tersimpan dan muncul notifikasi sukses||
-|15.7|Sinkronisasi offline→online|Kembali ke koneksi internet, buka `/offline` → klik "Sinkronkan" — data harus terkirim||
-|15.8|PWA icon baru|Di HP Android/iOS, buka menu "Add to Home Screen" — icon harus logo baru||
-|15.9|Offline langsung ke mode survey|Buka PWA saat offline — harus langsung ke halaman `/offline`, bukan landing page||
-|15.10|Offline — auto-fill WA|Login dulu, lalu offline — buka form survei — field WA harus terisi dari session cache||
+|15.1|Halaman offline|`/offline` — tombol "Mulai Survey Offline"||
+|15.2|Pilih form|Pilih Survei Mata Air 32 field||
+|15.3|Cache form|Form muncul di daftar offline||
+|15.4|Isi offline (32 field)|Termasuk GPS auto-fill||
+|15.5|Upload foto offline|3 foto (1 per field)||
+|15.6|Submit offline|Simpan → sukses||
+|15.7|Sinkronisasi|Online → `/offline` → Sinkronkan → terkirim||
+|15.8|PWA icon|Add to Home Screen — logo baru||
+|15.9|Offline langsung|Buka PWA offline → `/offline`||
+|15.10|Auto-fill WA|Login → offline → WA terisi dari cache||
 
 ---
 
-## Test 16 — PointRule & Course (4 test)
+## Test 16 — Pengajuan Proyek (10 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|16.1|Course selesai dapet poin|Buka Learning Hub → selesaikan 1 course → cek poin harus bertambah 25||
-|16.2|Admin edit poin course|Buka `/admin/points` → edit "Course Selesai" → selesaikan course → poin sesuai yang diedit||
-|16.3|Admin edit poin form|Buka `/admin/points` → edit "Spring Monitoring" → submit form → approve → poin sesuai yang diedit||
-|16.4|Poin dari DB form|Edit `pointsOnSubmit` di `/admin/forms` → submit → approve → poin sesuai (PointRule override)||
+|16.1|Akses|Login dengan Field Lead (≥20K pts) → `/projects/new`||
+|16.2|Threshold|User < 20K pts — lihat pesan "Hanya Field Lead"||
+|16.3|Form 20 field|Nama, WA, Email, Organisasi, Peran, Pengalaman, Judul, Jenis (multiselect), Geotag, Tempat, Latar Belakang, Waktu, Target, Relawan, Mitra, Biaya (5 range), Rincian, Dukungan (multiselect), Dana Ada, Catatan||
+|16.4|3 foto wajib|Upload 3 foto lokasi||
+|16.5|Komitmen|3 checkbox: lapor, review, publik — wajib centang||
+|16.6|Kirim|Submit → sukses||
+|16.7|Proposal PDF|Upload opsional||
+|16.8|Admin review|`/admin/projects` — lihat proposal||
+|16.9|Featured Projects|Landing page — card proyek unggulan muncul||
+|16.10|Donasi|Tombol donasi di halaman detail proyek||
 
 ---
 
-## Test 17 — Project & Like (6 test)
+## Test 17 — Spring Detail (6 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|17.1|FeaturedProjects di landing|Buka `/` — scroll ke section "Proyek Unggulan" — harus ada 2 card proyek + pagination dots||
-|17.2|FeaturedProjects paging|Klik next/prev pagination — harus ganti 2 card lain||
-|17.3|Halaman /projects|Buka `/projects` — harus daftar proyek dari API (bukan dummy) + pagination 9/page||
-|17.4|Detail proyek|Klik salah satu proyek → `/projects/[id]` — harus muncul detail + progress + like button + komentar||
-|17.5|Like toggle|Klik tombol like (❤️) — harus toggle filled/outline + counter berubah||
-|17.6|Komentar|Scroll ke bagian komentar — isi teks + submit — harus muncul di list||
+|17.1|Halaman spring|`/springs/[id]` — detail spring||
+|17.2|Tab Survei|Laporan survei mata air muncul||
+|17.3|Tab Tanam Pohon|Laporan tree-planting dalam 250m muncul ✅||
+|17.4|Tab Rorak|Laporan rorak dalam 250m muncul||
+|17.5|Tab Stok Bibit|Laporan seedling dalam 250m muncul||
+|17.6|Foto pagination|12 foto/klik — "Muat lebih banyak (12/68 foto)"||
 
 ---
 
-## Test 18 — Seedlings / Pasar Bibit (14 test)
+## Test 18 — Pasar Bibit (6 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|18.1|Marketplace muncul|Buka `www.springhub.id/seedlings` — harusnya grid 9 card bibit per halaman + pagination||
-|18.2|Filter provinsi|Pilih provinsi dari dropdown — card harus filter sesuai provinsi||
-|18.3|Cari bibit|Ketik "Jati" di kolom search — harusnya cuma muncul card Jati||
-|18.4|Pagination 9/page|Kalo bibit > 9, harusnya ada tombol ← Prev dan Next →||
-|18.5|Detail bibit|Klik card bibit — harusnya halaman detail dengan nama, jumlah, stok, pemilik, WA link||
-|18.6|Minta bibit|Klik "Minta", isi jumlah + pesan, kirim — harusnya sukses (butuh login)||
-|18.7|WA kontak aman|`curl $API/api/seedlings/:id` — response TIDAK boleh ada `phone`||
-|18.8|WA kontak via notifikasi|Setelah owner approve request — harusnya dapet notif berisi link WA||
-|18.9|Lapor bibit lewat form|Buka form "Seedling Stock" — isi species, jumlah, provinsi — submit — seedling harus muncul di `/api/seedlings`||
-|18.10|Seedling dari form → pending|Lapor bibit via form → seedling status harus "pending"||
-|18.11|Seedling aktif setelah approve|Admin approve laporan seedling → seedling status jadi "active"||
-|18.12|Stok bertambah (user sama)|User yang sama lapor species sama → stok seedling nambah, bukan card baru||
-|18.13|Stok berkurang (selesai)|Request → admin approve → owner approve → give → receive — stok harus berkurang||
-|18.14|Admin panel seedlings|Buka `/admin/seedlings` — daftar seedling, filter status, tombol approve/reject||
+|18.1|Marketplace|`/seedlings` — grid card, filter provinsi, search||
+|18.2|Pagination|9 card/halaman + prev/next||
+|18.3|Minta bibit|Klik "Minta" → isi jumlah → kirim (login)||
+|18.4|WA aman|API tidak bocorkan nomor HP||
+|18.5|Admin approve|Laporan seedling → approve → card aktif||
+|18.6|Selesai 2 langkah|Penyedia klik "Selesai" + penerima klik "Selesai" → stok berkurang||
 
 ---
 
-## Test 19 — Springs & Health Score (6 test)
+## Test 19 — Kolaborasi Kemitraan (3 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|19.1|Spring baru pending|Lapor Survei Mata Air → spring baru dibuat dengan status "pending"||
-|19.2|Spring tidak muncul di publik|Spring pending harusnya belum muncul di `/api/springs`||
-|19.3|Admin setujui spring|`POST /api/admin/springs/:id/approve` — spring jadi active||
-|19.4|Health score otomatis|Approve laporan Survei Mata Air → spring harus dapat `healthScore` dan `healthStatus`||
-|19.5|Cek health score via API|`curl $API/api/springs/[id]` — response harus ada `healthScore` dan `healthStatus`||
-|19.6|Search spring API|`curl "$API/api/springs/search?q=Bening"` — harusnya return spring yang cocok||
+|19.1|Form publik|Buka `/report/kolaborasi-kemitraan` — tanpa login||
+|19.2|Field 10|Jenis organisasi, nama, kontak, bentuk kolaborasi, cerita||
+|19.3|Kirim|Submit tanpa login → sukses||
 
 ---
 
-## Test 20 — Health Scoring Engine (5 test)
+## Test 20 — Health Score (5 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|20.1|Sehat|Approve laporan dengan Bening, Stabil, Tidak Ada ancaman — status harus "sehat" (≥80)||
-|20.2|Tercemar Ringan|Approve laporan dengan Agak Keruh, Berkurang, ancaman sedikit — status "ringan" (60-79)||
-|20.3|Tercemar Berat|Approve laporan dengan Keruh, Naik Turun, banyak ancaman — status "berat" (30-59)||
-|20.4|Kritis|Approve laporan dengan Kering Total — status "kritis" (<30)||
-|20.5|Tidak ada field terisi|Approve laporan dengan fieldData kosong — harusnya dapat status paling rendah||
+|20.1|Sehat (≥80)|Approve laporan dengan Bening, Stabil, Tidak Ada ancaman||
+|20.2|Ringan (60-79)|Agak Keruh, Berkurang, ancaman sedikit||
+|20.3|Berat (30-59)|Keruh, Naik Turun, banyak ancaman||
+|20.4|Kritis (<30)|Kering Total||
+|20.5|Bobot distribusi|Field kosong → bobot ke parameter lain||
 
 ---
 
-## Test 21 — Pagination & API (4 test)
+## Test 21 — Auto-link by Location (3 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|21.1|Reports pagination|`curl "$API/api/reports?page=1&per_page=10"` — response harus ada `pagination.total`, `pagination.totalPages`||
-|21.2|Projects pagination|`curl "$API/api/projects?page=1&per_page=5"` — response harus ada `pagination` object||
-|21.3|Notifications pagination|Login → `curl -b $COOKIE "$API/api/notifications?page=1&per_page=5"` — response harus ada `pagination`||
-|21.4|API v1 redirect|`curl "$API/api/v1/seedlings"` — harusnya sama kayak `curl "$API/api/seedlings"`||
+|21.1|Tree-planting dekat spring|Submit tanam pohon dalam 250m dari spring → otomatis `springId` terisi||
+|21.2|Tree-planting jauh|Submit tanam pohon >2.5km dari spring → `springId` null||
+|21.3|Spring detail|Laporan non-spring dalam 250m muncul di tab||
 
 ---
 
-## Test 22 — Backup (3 test)
+## Test 22 — Snap Grid (3 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|22.1|Backup tiap jam 3 pagi|Cek `/root/backups/` — harusnya ada file `springhub-YYYYMMDD-030001.sql.gz`||
-|22.2|Backup ukuran wajar|File backup harusnya antara 20KB - 1MB (gak 0KB)||
-|22.3|Backup terkirim ke email|Cek inbox admin@springhub.id — harusnya ada email backup dari jam 3 pagi||
+|22.1|Spring survey|5km snap ✅ (privasi)||
+|22.2|Restorasi|5km snap ✅||
+|22.3|Tanam pohon, rorak, bibit, proyek|**Tidak** di-snap — koordinat asli ✅||
 
 ---
 
-## Test 23 — Route Map (3 test)
+## Test 23 — Map Grouping (3 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|23.1|Route map terbuka|Buka `www.springhub.id/api-routes.html` — harusnya graph dengan route node + model + koneksi||
-|23.2|Filter by type|Klik filter "Admin" — graph harus filter cuma node admin + model terkait||
-|23.3|Klik node|Klik salah satu node — detail panel harus muncul (method, auth, models)||
+|23.1|Spring markers|Group per 5km grid||
+|23.2|Activity markers|Group per **250m grid**||
+|23.3|Semua marker|Ukuran **8px seragam** — tidak ada scaling||
 
 ---
 
-## Test 24 — Import Data Epicellect (3 test)
+## Test 24 — Route Map (3 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|24.1|103 data spring-survey terimport|`curl $API/api/reports?formSlug=spring-monitoring` — harusnya ada >100 entries||
-|24.2|Data dari berbagai daerah|Cek beberapa report — harusnya dari Klaten, Madura, Kebumen, Banyumas, Jombang, dll||
-|24.3|Field terisi|Buka salah satu report — field A1-E3 harus terisi (kecuali D1-D6 yang kosong)||
+|24.1|Route map terbuka|`/api-routes.html` — graph route + model||
+|24.2|Filter by type|Filter "Admin" — node merah + model||
+|24.3|Klik node|Detail panel: method, auth, models||
 
 ---
 
-## Test 25 — Auto-fill & Defaults (4 test)
+## Test 25 — Backup (3 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|25.1|Tanggal otomatis|Buka form — field A1_tanggal harus terisi tanggal hari ini||
-|25.2|Nama dari session|Buka form setelah login — A2_nama_surveyor harus terisi username||
-|25.3|Default C1_warna = Bening|Buka form — C1_warna harus default ke "Bening"||
-|25.4|Default C8 = Observasi Sendiri|Buka form — C8_sumber_info harus default ke "Observasi Sendiri"||
+|25.1|Backup jam 3 pagi|Cek `/root/backups/` — file .sql.gz||
+|25.2|Ukuran wajar|20KB - 1MB||
+|25.3|Email backup|Cek inbox admin — ada email backup||
 
 ---
 
-## Test 26 — CRUCIAL: CSRF & Login Flow (3 test)
+## Test 26 — Auto-fill & Defaults (5 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
-|26.1|CSRF token di-fetch SEBELUM login|Buka halaman login → inspect network → harus ada request ke `/api/csrf`||
-|26.2|CSRF tetap valid setelah login|Fetch CSRF token → login → pakai token yang sama untuk submit form → harusnya berhasil||
-|26.3|Admin role change|Admin ganti role user → field_lead harus muncul di dropdown||
+|26.1|Tanggal otomatis|A1_tanggal terisi hari ini||
+|26.2|Nama dari session|A2_nama_surveyor terisi username||
+|26.3|WA dari profil|A3_wa terisi nomor WA||
+|26.4|Default C1_warna|Default "Bening"||
+|26.5|Default C8|Default "Observasi Sendiri"||
+
+---
+
+## Test 27 — CRUCIAL CSRF (3 test)
+
+|#|Yang Dicek|Cara Cek|Hasil|
+|-|-|-|-|
+|27.1|CSRF fetch SEBELUM login|Buka halaman login → network → `/api/csrf`||
+|27.2|CSRF valid setelah login|Fetch token → login → pakai token sama → submit berhasil||
+|27.3|Admin role change|Admin ganti role user → field_lead muncul di dropdown||
 
 ---
 
@@ -406,30 +399,31 @@ Gunakan terminal. Login dulu sebagai admin.
 
 | Kategori | PASS | FAIL | Catatan |
 |---|---|---|---|
-| Test 1 — Buka Website (5) | | | |
+| Test 1 — Buka Website (7) | | | |
 | Test 2 — Login & Daftar (8) | | | |
 | Test 3 — Halaman Admin (15) | | | |
 | Test 4 — Form Survei 32 field (13) | | | |
 | Test 5 — Form Tanam Pohon (6) | | | |
 | Test 6 — Turbo Mode (4) | | | |
-| Test 7 — Peta & Health Score (6) | | | |
-| Test 8 — Poin & Leaderboard (6) | | | |
+| Test 7 — Peta & Marker (8) | | | |
+| Test 8 — Poin (6) | | | |
 | Test 9 — Donasi (5) | | | |
 | Test 10 — Keamanan (8) | | | |
 | Test 11 — Dark Mode (5) | | | |
-| Test 12 — Akun & Profile (5) | | | |
+| Test 12 — Akun & Profile (6) | | | |
 | Test 13 — CRUD Admin (8) | | | |
 | Test 14 — API Endpoints (10) | | | |
-| Test 15 — Offline Mode & PWA (10) | | | |
-| Test 16 — PointRule & Course (4) | | | |
-| Test 17 — Project & Like (6) | | | |
-| Test 18 — Seedlings (14) | | | |
-| Test 19 — Springs & Health Score (6) | | | |
-| Test 20 — Health Scoring Engine (5) | | | |
-| Test 21 — Pagination & API (4) | | | |
-| Test 22 — Backup (3) | | | |
-| Test 23 — Route Map (3) | | | |
-| Test 24 — Import Epic (3) | | | |
-| Test 25 — Auto-fill & Defaults (4) | | | |
-| Test 26 — CSRF Crucial (3) | | | |
-| **TOTAL** | **/** | **/** | **~195 test** |
+| Test 15 — Offline Mode (10) | | | |
+| Test 16 — Pengajuan Proyek (10) | | | |
+| Test 17 — Spring Detail (6) | | | |
+| Test 18 — Pasar Bibit (6) | | | |
+| Test 19 — Kolaborasi (3) | | | |
+| Test 20 — Health Score (5) | | | |
+| Test 21 — Auto-link (3) | | | |
+| Test 22 — Snap Grid (3) | | | |
+| Test 23 — Map Grouping (3) | | | |
+| Test 24 — Route Map (3) | | | |
+| Test 25 — Backup (3) | | | |
+| Test 26 — Auto-fill (5) | | | |
+| Test 27 — CSRF Crucial (3) | | | |
+| **TOTAL** | **/** | **/** | **~203 test** |
