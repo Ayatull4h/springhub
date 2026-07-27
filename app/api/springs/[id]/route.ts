@@ -58,7 +58,27 @@ export async function GET(
     });
 
     // Map reports → enrich with parsed fieldData + photo URLs
-    const reports = spring.reports.map((r) => {
+    // Cari juga report non-spring dalam radius 250m (≈ 0.00225°) — untuk tab aktivitas
+    const nearbyReports = spring.snappedLat && spring.snappedLng ? await prisma.report.findMany({
+      where: {
+        id: { notIn: spring.reports.map(r => r.id) },
+        status: "approved",
+        snappedLat: { gte: spring.snappedLat - 0.0025, lte: spring.snappedLat + 0.0025 },
+        snappedLng: { gte: spring.snappedLng - 0.0025, lte: spring.snappedLng + 0.0025 },
+        formSlug: { notIn: ["spring-monitoring", "spring-restoration"] },
+      },
+      include: {
+        user: { select: { id: true, username: true, email: true, region: true } },
+        photos: { select: { id: true, storagePath: true, width: true, height: true } },
+        reviewedBy: { select: { username: true } },
+      },
+      take: 100,
+      orderBy: { createdAt: "desc" },
+    }) : [];
+
+    const allReports = [...spring.reports, ...nearbyReports];
+
+    const reports = allReports.map((r) => {
       let parsedFieldData: Record<string, unknown> = {};
       try {
         parsedFieldData = JSON.parse(r.fieldData);

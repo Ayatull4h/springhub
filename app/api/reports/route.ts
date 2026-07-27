@@ -301,6 +301,23 @@ export async function POST(request: Request) {
         console.warn("[Spring] Link error:", e);
         // Non-critical — report tetap tersimpan walau tanpa springId
       }
+    } else if (formSlug !== "spring-monitoring" && formSlug !== "spring-restoration" && snappedLat !== null && snappedLng !== null) {
+      // Auto-link: cari spring di grid yang sama (5km) — karena spring location di-snap 5km
+      try {
+        const sameGridSpring = await prisma.spring.findFirst({
+          where: {
+            status: "active",
+            snappedLat: { gte: snappedLat - 0.025, lte: snappedLat + 0.025 },
+            snappedLng: { gte: snappedLng - 0.025, lte: snappedLng + 0.025 },
+          },
+        });
+        if (sameGridSpring) {
+          await prisma.report.update({
+            where: { id: report.id },
+            data: { springId: sameGridSpring.id },
+          });
+        }
+      } catch { /* non-critical */ }
     }
 
     // ── Buat Seedling dari form seedling ─────────────────────────────
