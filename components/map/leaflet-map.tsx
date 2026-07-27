@@ -291,8 +291,7 @@ export function LeafletMap({
                   color: hc.color,
                   fillColor: hc.fillColor,
                   fillOpacity: 0.8,
-                  weight: s.healthStatus === "kritis" ? 2 : 3,
-                  dashArray: s.healthStatus === "kritis" ? "4 4" : undefined,
+                  weight: 3,
                 }}
               >
                 <Tooltip direction="top" offset={[0, -8]}>
