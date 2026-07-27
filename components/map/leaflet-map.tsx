@@ -330,7 +330,7 @@ export function LeafletMap({
           const fc = getMarkerColor(sg.latestFormSlug, formColors, sg.healthStatus);
           const actCount = sg.reports.length;
           const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";
-          const detailUrl = `/springs/${sg.id}`;
+          const detailUrl = sg.id && sg.id !== "unknown" ? `/springs/${sg.id}` : `/report/${sg.reports[0]?.id || sg.id}`;
 
                   const radius = 8;
 
