@@ -385,7 +385,7 @@ echo $CSRF
 
 ---
 
-## Test 27 — Bilingual EN/ID (4 test)
+## Test 27 — Bilingual EN/ID (5 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|
