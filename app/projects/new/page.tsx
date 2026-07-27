@@ -104,6 +104,26 @@ export default function NewProjectPage() {
     if (id.startsWith("foto_")) return null; // handled separately
     if (id.startsWith("komitmen_")) return null; // handled separately
 
+    if (f.type === "multiselect" && opts.length > 0) {
+      const selected = fieldData[id] ? (fieldData[id] as string).split(",").filter(Boolean) : [];
+      return (
+        <div key={id}>
+          <label className="mb-1 block text-sm font-medium text-ink">{label} {required && <span className="text-red-500">*</span>}</label>
+          <div className="mt-1 space-y-1">
+            {opts.map((o: string) => (
+              <label key={o} className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={selected.includes(o)} onChange={e => {
+                  const newSelected = e.target.checked ? [...selected, o] : selected.filter((s: string) => s !== o);
+                  updateField(id, newSelected.join(","));
+                }} className="rounded" />
+                {o}
+              </label>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     if (f.type === "select" && opts.length > 0) {
       return (
         <div key={id}>
