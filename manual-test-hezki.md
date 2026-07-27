@@ -385,7 +385,16 @@ echo $CSRF
 
 ---
 
-## Test 27 — CRUCIAL CSRF (3 test)
+## Test 27 — Bilingual EN/ID (4 test)
+
+|#|Yang Dicek|Cara Cek|Hasil|
+|-|-|-|-|
+|27.1|Label field berubah|Ganti bahasa ke English → buka form survei → label jadi "Spring Type", "Water Color", dll||
+|27.2|Opsi select berubah|Buka form → opsi dropdown berubah Inggris (Clear, Murky, dll)||
+|27.3|Kembali ke Indonesia|Ganti ke ID → label kembali ke Bahasa Indonesia||
+|27.4|Admin edit field|Buka `/admin/forms` → edit field → ada input label Indonesia + Inggris||
+
+## Test 28 — CRUCIAL CSRF (3 test)
 
 |#|Yang Dicek|Cara Cek|Hasil|
 |-|-|-|-|

@@ -302,6 +302,7 @@ export default function AdminEditFormPage() {
     onError: (msg: string) => void;
   }) {
     const [label, setLabel] = useState(field.label);
+    const [labelEn, setLabelEn] = useState((field as any).labelEn || "");
     const [type, setType] = useState(field.type);
     const [placeholder, setPlaceholder] = useState(field.placeholder || "");
     const [helpText, setHelpText] = useState(field.helpText || "");
@@ -310,6 +311,12 @@ export default function AdminEditFormPage() {
         const parsed = JSON.parse(field.options || "[]");
         return Array.isArray(parsed) ? parsed.join("\n") : "";
       } catch { return field.options || ""; }
+    });
+    const [optionsTextEn, setOptionsTextEn] = useState(() => {
+      try {
+        const parsed = JSON.parse((field as any).optionsEn || "[]");
+        return Array.isArray(parsed) ? parsed.join("\n") : "";
+      } catch { return ""; }
     });
     const [saving, setSaving] = useState(false);
 
@@ -320,12 +327,14 @@ export default function AdminEditFormPage() {
       try {
         const body: Record<string, unknown> = {
           label: label.trim(),
+          labelEn: labelEn.trim(),
           type,
           placeholder: placeholder.trim(),
           helpText: helpText.trim(),
         };
         if (type === "select" || type === "multiselect") {
           body.options = optionsText.split(/\r?\n/).map((o) => o.trim()).filter((o) => o);
+          body.optionsEn = optionsTextEn.split(/\r?\n/).map((o) => o.trim()).filter((o) => o);
         }
         const res = await fetch(`/api/admin/forms/${formId}/fields/${field.fieldId}`, {
           method: "PUT",
@@ -363,17 +372,29 @@ export default function AdminEditFormPage() {
               className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600" />
           </div>
           <div className="space-y-1">
+            <label className="text-[10px] font-medium text-ink-muted">Label EN</label>
+            <input type="text" value={labelEn} onChange={e => setLabelEn(e.target.value)}
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600" placeholder="English translation of the label" />
+          </div>
+          <div className="space-y-1">
             <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.fieldHelpText")}</label>
             <input type="text" value={helpText} onChange={e => setHelpText(e.target.value)}
               className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600" />
           </div>
         </div>
         {(type === "select" || type === "multiselect") && (
+          <>
           <div className="mt-3 space-y-1">
             <label className="text-[10px] font-medium text-ink-muted">{t("admin.formBuilder.optionsOnePerLine")}</label>
             <textarea value={optionsText} onChange={e => setOptionsText(e.target.value)} rows={3}
               className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600" />
           </div>
+          <div className="mt-3 space-y-1">
+            <label className="text-[10px] font-medium text-ink-muted">Options EN (one per line)</label>
+            <textarea value={optionsTextEn} onChange={e => setOptionsTextEn(e.target.value)} rows={3}
+              className="w-full rounded border border-ink-line px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none dark:bg-slate-800 dark:text-white dark:border-slate-600" placeholder="English translations, same order" />
+          </div>
+          </>
         )}
         <div className="mt-3 flex justify-end gap-2">
           <button onClick={onClose} className="rounded-md border border-ink-line px-3 py-1 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700">{t("common.cancel")}</button>

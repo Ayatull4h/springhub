@@ -24,7 +24,7 @@ export async function PUT(
   }
   try {
     const body = await request.json();
-    const { fieldId, label, type, required, placeholder, helpText, options, sortOrder } = body;
+    const { fieldId, label, labelEn, type, required, placeholder, helpText, options, optionsEn, sortOrder } = body;
 
     const existing = await prisma.formField.findUnique({
       where: { formId_fieldId: { formId: params.id, fieldId: params.fieldId } },
@@ -43,6 +43,8 @@ export async function PUT(
         ...(placeholder !== undefined && { placeholder }),
         ...(helpText !== undefined && { helpText }),
         ...(options !== undefined && { options: JSON.stringify(options) }),
+        ...(labelEn !== undefined && { labelEn }),
+        ...(optionsEn !== undefined && { optionsEn: JSON.stringify(optionsEn) }),
         ...(sortOrder !== undefined && { sortOrder }),
       },
     });
