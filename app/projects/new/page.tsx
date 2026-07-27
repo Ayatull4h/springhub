@@ -251,7 +251,7 @@ export default function NewProjectPage() {
                     <span className="mt-1">Foto {i + 1}</span>
                   </>
                 )}
-                <input type="file" accept="image/*" className="hidden" onChange={e => {
+                <input type="file" accept="image/*,.heic,.heif,.HEIC,.HEIF" className="hidden" onChange={e => {
                   const file = e.target.files?.[0];
                   if (file) {
                     const newPhotos = [...photoFiles];

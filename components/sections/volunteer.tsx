@@ -19,7 +19,7 @@ import {
 import {
   PROJECT_PROPOSAL_THRESHOLD,
 } from "@/lib/data";
-import { getForm } from "@/lib/forms";
+import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
@@ -98,11 +98,7 @@ export function VolunteerActivities() {
               action,
               location: r.province || r.region || "Indonesia",
               when: timeAgo(r.createdAt),
-              points: r.formSlug === "spring-restoration" ? 100
-                    : r.formSlug === "trench-development" ? 50
-                    : r.formSlug === "tree-planting" ? 50
-                    : r.formSlug === "seedling-stock" ? 15
-                    : 25,
+              points: POINTS_MAP[r.formSlug] || 25,
               formSlug: r.formSlug,
               photoUrl: r.photo?.url || null,
             };

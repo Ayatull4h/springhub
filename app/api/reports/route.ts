@@ -321,8 +321,8 @@ export async function POST(request: Request) {
     }
 
     // ── Buat Seedling dari form seedling ─────────────────────────────
-    const species = (fieldData?.species as string || "").trim();
-    const seedlingCount = parseInt((fieldData?.count as string || "0"), 10);
+    const species = ((fieldData?.B2_nama_lokal || fieldData?.species) as string || "").trim();
+    const seedlingCount = parseInt(((fieldData?.B3_jumlah || fieldData?.count) as string || "0"), 10);
     if (species && seedlingCount > 0 && formSlug.includes("seedling")) {
       try {
         // Cari seedling yang sama (user + species + province), tambah stok

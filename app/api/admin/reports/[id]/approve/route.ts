@@ -104,7 +104,7 @@ export async function POST(
     }
 
     // ── Aktifkan seedling kalau laporan seedling ──
-    const species = (fieldData?.species as string || "").trim();
+    const species = ((fieldData?.B2_nama_lokal || fieldData?.species) as string || "").trim();
     if (report.formSlug.includes("seedling") && species) {
       const seedling = await prisma.seedling.findFirst({
         where: { userId: report.userId || "", species },
