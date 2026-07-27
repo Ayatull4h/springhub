@@ -281,7 +281,7 @@ export function LeafletMap({
         {/* ═══ Spring markers (sumber daya) ═══ */}
         {springItems?.map((s) => {
           const hc = statusColors[s.healthStatus || "sehat"] || statusColors.sehat;
-          const r = Math.min(12, 6 + (s.reportCount || 0) * 1.5);
+          const r = 8;
           return (
             <Fragment key={`spring-${s.id}`}>
               <CircleMarker
@@ -332,7 +332,7 @@ export function LeafletMap({
           const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";
           const detailUrl = `/springs/${sg.id}`;
 
-                  const radius = Math.min(12, 6 + actCount * 1.5);
+                  const radius = 8;
 
           return (
             <Fragment key={`spring-${sg.id}`}>

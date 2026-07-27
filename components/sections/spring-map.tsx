@@ -107,7 +107,7 @@ export function SpringMap() {
   const fetchReports = () => {
     setReportsLoading(true);
     setReportsError("");
-    fetch("/api/reports?limit=50")
+    fetch("/api/reports?limit=50&status=approved")
       .then((r) => r.json())
       .then((data) => setReports(data.reports || []))
       .catch(() => setReportsError("Gagal memuat data laporan"))
@@ -307,10 +307,10 @@ const formTitleI18nKey = (slug: string): string => {
     return lookup;
   }, [allForms, mapTypesWithCats]);
 
-  // Filter springs: hanya muncul jika filter = Semua atau Survei Mata Air
+  // Filter springs: hanya yang punya healthScore (sudah disurvei), muncul jika filter = Semua atau Survei Mata Air
   const visibleSprings = useMemo(() => {
     if (selectedType && selectedType !== "spring-monitoring") return [];
-    let result = springs as any[];
+    let result = (springs as any[]).filter((s: any) => s.healthScore !== null);
     if (selectedCategory?.startsWith("health:")) {
       const healthKey = selectedCategory.replace("health:", "");
       if (healthKey === "unknown") {
