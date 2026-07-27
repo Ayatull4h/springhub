@@ -107,7 +107,7 @@ export function SpringMap() {
   const fetchReports = () => {
     setReportsLoading(true);
     setReportsError("");
-    fetch("/api/reports?limit=50&status=approved")
+    fetch("/api/reports?limit=200")
       .then((r) => r.json())
       .then((data) => setReports(data.reports || []))
       .catch(() => setReportsError("Gagal memuat data laporan"))
