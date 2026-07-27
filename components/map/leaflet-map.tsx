@@ -395,6 +395,7 @@ export function LeafletMap({
                   </div>
                 </Popup>
               </CircleMarker>
+              {sg.healthStatus && (
               <Circle
                 center={[sg.snappedLat, sg.snappedLng]}
                 radius={5000}
@@ -408,6 +409,7 @@ export function LeafletMap({
                   interactive: false,
                 }}
               />
+              )}
             </Fragment>
           );
         })}
@@ -467,19 +469,6 @@ export function LeafletMap({
                   </div>
                 </Popup>
               </CircleMarker>
-              <Circle
-                center={[r.snappedLat!, r.snappedLng!]}
-                radius={5000}
-                interactive={false}
-                pathOptions={{
-                  color: fc.color,
-                  fillColor: fc.color,
-                  fillOpacity: 0.05,
-                  weight: 1,
-                  dashArray: "4 4",
-                  interactive: false,
-                }}
-              />
             </Fragment>
           );
         })}
