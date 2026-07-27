@@ -387,12 +387,11 @@ export function LeafletMap({
                         );
                       })}
                     </div>
-                    <a
-                      href={detailUrl}
-                      className="mt-2 block rounded-md bg-brand-600 px-3 py-1.5 text-center text-xs font-semibold text-white hover:bg-brand-700"
-                    >
-                      Lihat Detail →
-                    </a>
+                    {sg.id && sg.id !== "unknown" && (
+                      <a href={detailUrl} className="mt-2 block rounded-md bg-brand-600 px-3 py-1.5 text-center text-xs font-semibold text-white hover:bg-brand-700">
+                        Lihat Detail →
+                      </a>
+                    )}
                   </div>
                 </Popup>
               </CircleMarker>
