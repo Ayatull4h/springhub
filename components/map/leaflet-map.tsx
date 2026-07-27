@@ -320,7 +320,7 @@ export function LeafletMap({
                   </div>
                 </Popup>
               </CircleMarker>
-              <Circle center={[s.snappedLat, s.snappedLng]} radius={5000} pathOptions={{ color: hc.color, fillColor: hc.color, fillOpacity: 0.05, weight: 1, dashArray: "4 4" }} />
+              <Circle center={[s.snappedLat, s.snappedLng]} radius={5000} pathOptions={{ color: hc.color, fillColor: hc.color, fillOpacity: 0.05, weight: 1, dashArray: "4 4" }} interactive={false} />
             </Fragment>
           );
         })}
@@ -399,6 +399,7 @@ export function LeafletMap({
               <Circle
                 center={[sg.snappedLat, sg.snappedLng]}
                 radius={5000}
+                interactive={false}
                 pathOptions={{
                   color: fc.color,
                   fillColor: fc.color,
@@ -470,6 +471,7 @@ export function LeafletMap({
               <Circle
                 center={[r.snappedLat!, r.snappedLng!]}
                 radius={5000}
+                interactive={false}
                 pathOptions={{
                   color: fc.color,
                   fillColor: fc.color,
