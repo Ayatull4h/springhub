@@ -177,7 +177,8 @@ export function LeafletMap({
 
     for (const r of reports) {
       if (r.springId && r.snappedLat && r.snappedLng) {
-        const key = `${r.snappedLat.toFixed(3)}_${r.snappedLng.toFixed(3)}`;
+        const snapGrid = (n: number) => Math.round(n * 400) * 0.0025;
+        const key = `${snapGrid(r.snappedLat).toFixed(4)}_${snapGrid(r.snappedLng).toFixed(4)}`;
         if (!locMap.has(key)) {
           locMap.set(key, { reports: [], springIds: new Set(), springNames: new Set() });
         }
