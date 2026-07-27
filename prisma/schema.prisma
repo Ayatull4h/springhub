@@ -387,11 +387,13 @@ model FormField {
   formId      String
   fieldId     String
   label       String
+  labelEn     String   @default("")
   type        String   @default("text")
   required    Boolean  @default(false)
   placeholder String   @default("")
   helpText    String   @default("")
   options     String   @default("[]")
+  optionsEn   String   @default("[]")
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
 

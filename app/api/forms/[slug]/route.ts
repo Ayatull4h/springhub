@@ -17,11 +17,13 @@ export async function GET(
             id: true,
             fieldId: true,
             label: true,
+            labelEn: true,
             type: true,
             required: true,
             placeholder: true,
             helpText: true,
             options: true,
+            optionsEn: true,
             sortOrder: true,
           },
         },
@@ -35,9 +37,10 @@ export async function GET(
     // Parse options JSON string to array for each field
     const parsed = {
       ...form,
-      fields: form.fields.map((field: { options: string }) => ({
+      fields: form.fields.map((field: { options: string; optionsEn: string }) => ({
         ...field,
         options: safeParseJson(field.options),
+        optionsEn: safeParseJson(field.optionsEn),
       })),
     };
 

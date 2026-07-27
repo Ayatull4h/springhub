@@ -15,7 +15,7 @@ import { offlineDB } from "@/lib/offline-db";
 export default function ReportFormPage() {
   const params = useParams();
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const slug = params.slug as string;
   const form = getForm(slug);
 
@@ -93,13 +93,20 @@ export default function ReportFormPage() {
             description: data.form.description,
             pointsOnSubmit: data.form.pointsOnSubmit,
             contributionType: data.form.contributionType,
-            fields: data.form.fields.map((f: { fieldId: string; label: string; type: string; required: boolean; placeholder: string | null; helpText: string | null; options: string | string[] | null }) => {
+            fields: data.form.fields.map((f: { fieldId: string; label: string; labelEn?: string; type: string; required: boolean; placeholder: string | null; helpText: string | null; options: string | string[] | null; optionsEn?: string | string[] | null }) => {
               let options: string[];
               if (Array.isArray(f.options)) {
                 options = f.options;
               } else {
                 try { options = JSON.parse(f.options || "[]"); }
                 catch { options = []; }
+              }
+              let optionsEn: string[] = [];
+              if (Array.isArray(f.optionsEn)) {
+                optionsEn = f.optionsEn;
+              } else if (f.optionsEn) {
+                try { optionsEn = JSON.parse(f.optionsEn as string); }
+                catch {}
               }
               const staticForm = getForm(slug);
               const staticField = staticForm?.fields.find(sf => sf.id === f.fieldId);
@@ -109,11 +116,13 @@ export default function ReportFormPage() {
               return {
                 id: f.fieldId,
                 label: f.label,
+                labelEn: f.labelEn || "",
                 type: f.type,
                 required: f.required,
                 placeholder: f.placeholder || "",
                 help: f.helpText || "",
                 options,
+                optionsEn: optionsEn.length > 0 ? optionsEn : options,
               };
             }),
           });
@@ -529,12 +538,12 @@ function FieldRenderer({
   photoFiles,
   setPhotoFiles,
 }: {
-  field: FormField;
+  field: FormField & { labelEn?: string; optionsEn?: string[] };
   capturedAtDisplay?: string;
   photoFiles?: Record<string, File[]>;
   setPhotoFiles?: React.Dispatch<React.SetStateAction<Record<string, File[]>>>;
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const required = field.required ? (
     <span className="ml-1 text-red-500" aria-hidden>
       *
@@ -543,7 +552,7 @@ function FieldRenderer({
 
   const labelEl = (
     <label htmlFor={field.id} className="block text-sm font-medium text-ink">
-      {field.label}
+      {locale === "en" && field.labelEn ? field.labelEn : field.label}
       {required}
       {field.help && (
         <span className="ml-2 text-xs font-normal text-ink-subtle">{field.help}</span>
@@ -633,13 +642,13 @@ function FieldRenderer({
             required={field.required}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           >
-            <option value="">{t("form.select.placeholder")}</option>
-            {field.options?.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+             <option value="">{t("form.select.placeholder")}</option>
+             {(locale === "en" && field.optionsEn?.length ? field.optionsEn : field.options)?.map((opt: string, i: number) => (
+               <option key={opt} value={field.options?.[i] || opt}>
+                 {opt}
+               </option>
+             ))}
+           </select>
         </div>
       );
     case "province":
@@ -667,12 +676,12 @@ function FieldRenderer({
             {required}
           </legend>
           <div className="mt-2 space-y-1.5">
-            {field.options?.map((opt) => (
+            {(locale === "en" && field.optionsEn?.length ? field.optionsEn : field.options)?.map((opt: string, i: number) => (
               <label key={opt} className="flex items-center gap-2 text-sm text-ink-muted">
                 <input
                   type="checkbox"
                   name={`${field.id}[]`}
-                  value={opt}
+                  value={field.options?.[i] || opt}
                   className="h-4 w-4 rounded border-ink-line text-brand-600 focus:ring-brand-500"
                 />
                 {opt}

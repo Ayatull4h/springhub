@@ -28,11 +28,13 @@ export type FormFieldType =
 export type FormField = {
   id: string;
   label: string;
+  labelEn?: string;
   type: FormFieldType;
   required?: boolean;
   placeholder?: string;
   help?: string;
   options?: string[];
+  optionsEn?: string[];
 };
 
 export type FormSchema = {
@@ -400,7 +402,7 @@ export async function fetchForm(slug: string): Promise<FormSchema | undefined> {
   try {
     const res = await fetch("/api/forms");
     const data = await res.json();
-    const forms: { slug: string; title: string; description: string; pointsOnSubmit: number; contributionType: string; fields: { fieldId: string; label: string; type: string; required: boolean; placeholder: string; helpText: string; options: string }[] }[] = data.forms ?? [];
+    const forms: { slug: string; title: string; description: string; pointsOnSubmit: number; contributionType: string; fields: { fieldId: string; label: string; labelEn?: string; type: string; required: boolean; placeholder: string; helpText: string; options: string; optionsEn?: string }[] }[] = data.forms ?? [];
     const found = forms.find((f: { slug: string }) => f.slug === slug);
     if (found) {
       return {
@@ -412,11 +414,13 @@ export async function fetchForm(slug: string): Promise<FormSchema | undefined> {
         fields: found.fields.map((ff) => ({
           id: ff.fieldId,
           label: ff.label,
+          labelEn: ff.labelEn,
           type: ff.type as FormFieldType,
           required: ff.required,
           placeholder: ff.placeholder,
           help: ff.helpText,
           options: (() => { try { return JSON.parse(ff.options || "[]"); } catch { return []; } })(),
+          optionsEn: (() => { try { return JSON.parse(ff.optionsEn || "[]"); } catch { return []; } })(),
         })),
       };
     }
@@ -434,7 +438,7 @@ export async function fetchForms(): Promise<FormSchema[]> {
   try {
     const res = await fetch("/api/forms");
     const data = await res.json();
-    const forms: { slug: string; title: string; description: string; pointsOnSubmit: number; contributionType: string; fields: { fieldId: string; label: string; type: string; required: boolean; placeholder: string; helpText: string; options: string }[] }[] = data.forms ?? [];
+    const forms: { slug: string; title: string; description: string; pointsOnSubmit: number; contributionType: string; fields: { fieldId: string; label: string; labelEn?: string; type: string; required: boolean; placeholder: string; helpText: string; options: string; optionsEn?: string }[] }[] = data.forms ?? [];
     if (forms.length > 0) {
       return forms.map((found) => ({
         slug: found.slug,

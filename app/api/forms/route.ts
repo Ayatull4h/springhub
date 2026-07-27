@@ -15,20 +15,21 @@ export async function GET() {
           fields: {
             orderBy: { sortOrder: "asc" },
             select: {
-              id: true, fieldId: true, label: true, type: true,
+              id: true, fieldId: true, label: true, labelEn: true, type: true,
               required: true, placeholder: true, helpText: true,
-              options: true, sortOrder: true,
+              options: true, optionsEn: true, sortOrder: true,
             },
           },
           mapType: { select: { id: true, slug: true, name: true, icon: true } },
         },
       });
 
-      return data.map((form: { fields: { options: string }[] } & Record<string, unknown>) => ({
+      return data.map((form: { fields: { options: string; optionsEn: string }[] } & Record<string, unknown>) => ({
         ...form,
-        fields: form.fields.map((field: { options: string }) => ({
+        fields: form.fields.map((field: { options: string; optionsEn: string }) => ({
           ...field,
           options: safeParseJson(field.options),
+          optionsEn: safeParseJson(field.optionsEn),
         })),
       }));
     }, 300);
