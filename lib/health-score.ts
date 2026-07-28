@@ -99,6 +99,11 @@ export function computeSpringHealth(fieldData: Record<string, unknown>): HealthR
     }
   }
 
+  // Jika aliran "Kering Total", langsung kritis
+  if (aliran === "Kering Total") {
+    return { score: 10, status: "kritis" };
+  }
+
   if (totalWeight === 0) {
     return { score: 0, status: "kritis" };
   }

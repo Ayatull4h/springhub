@@ -11,6 +11,7 @@ const statusColors: Record<string, { color: string; fillColor: string; label: st
   ringan: { color: "#ca8a04", fillColor: "#eab308", label: "Tercemar Ringan" },
   berat: { color: "#ea580c", fillColor: "#f97316", label: "Tercemar Berat" },
   kritis: { color: "#dc2626", fillColor: "#ef4444", label: "Kritis" },
+  aktivitas: { color: "#94a3b8", fillColor: "#cbd5e1", label: "Aktivitas" },
 };
 
 // Map form slug to fallback status (used when no health data)
@@ -19,7 +20,7 @@ function getStatusFromForm(formSlug: string): string {
     case "spring-monitoring":
       return "sehat";
     default:
-      return "ringan";
+      return "aktivitas";
   }
 }
 
@@ -145,7 +146,7 @@ function getMarkerColor(
   if (formColors?.[formSlug]) return formColors[formSlug];
   if (healthStatus && statusColors[healthStatus]) return statusColors[healthStatus];
   const status = getStatusFromForm(formSlug);
-  return statusColors[status] ?? statusColors.kritis;
+  return statusColors[status] ?? statusColors.aktivitas;
 }
 
 export function LeafletMap({

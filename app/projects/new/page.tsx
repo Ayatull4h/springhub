@@ -77,8 +77,9 @@ export default function NewProjectPage() {
       return;
     }
 
-    if (photoFiles.length < 3) {
-      setError("Wajib upload minimal 3 foto lokasi proyek.");
+    const realFiles = photoFiles.filter(f => f && f.size > 0);
+    if (realFiles.length < 3) {
+      setError(`Wajib upload minimal 3 foto lokasi proyek. Terdeteksi: ${realFiles.length} file.`);
       setSubmitting(false);
       return;
     }
@@ -244,7 +245,7 @@ export default function NewProjectPage() {
             {[0, 1, 2].map(i => (
               <label key={i} className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-ink-line p-4 text-center text-xs text-ink-muted hover:border-brand-300">
                 {photoFiles[i] ? (
-                  <img src={URL.createObjectURL(photoFiles[i])} alt="" className="h-full w-full rounded object-cover" />
+                  <img src={URL.createObjectURL(photoFiles[i])} alt="" className="h-24 w-full rounded object-cover" />
                 ) : (
                   <>
                     <Upload className="mx-auto h-6 w-6 text-brand-500" />

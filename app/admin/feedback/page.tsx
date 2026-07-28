@@ -48,9 +48,10 @@ export default function AdminFeedbackPage() {
 
   async function updateStatus(id: string, newStatus: string) {
     try {
+      const { token: csrfToken } = await fetch("/api/csrf").then(r => r.json());
       const res = await fetch(`/api/admin/feedback/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
         body: JSON.stringify({ status: newStatus }),
       });
       if (!res.ok) {

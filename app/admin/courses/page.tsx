@@ -61,8 +61,10 @@ export default function AdminCoursesPage() {
       return;
     setDeleting(id);
     try {
+      const { token: csrfToken } = await fetch("/api/csrf").then(r => r.json());
       const res = await fetch(`/api/admin/courses/${id}`, {
         method: "DELETE",
+        headers: { "x-csrf-token": csrfToken },
       });
       if (res.ok) {
         setCourses((prev) => prev.filter((c) => c.id !== id));

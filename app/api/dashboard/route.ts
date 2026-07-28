@@ -55,7 +55,7 @@ export async function GET() {
 
       // topVolunteers
       prisma.profile.findMany({
-        where: { role: { in: ["volunteer", "admin"] }, points: { gt: 0 } },
+        where: { role: { in: ["volunteer", "field_lead", "admin"] }, points: { gt: 0 } },
         orderBy: { points: "desc" },
         take: 5,
         select: { username: true, region: true, points: true },

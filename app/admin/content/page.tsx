@@ -69,9 +69,10 @@ export default function AdminContentPage() {
     const method = editing ? "PUT" : "POST";
 
     try {
+      const { token: csrfToken } = await fetch("/api/csrf").then(r => r.json());
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
         body: JSON.stringify({ ...form, section: activeSection }),
       });
 
@@ -94,7 +95,8 @@ export default function AdminContentPage() {
   async function handleDelete(id: string) {
     if (!confirm(t("admin.content.confirmDelete"))) return;
     try {
-      const res = await fetch(`/api/admin/content/${id}`, { method: "DELETE" });
+      const { token: csrfToken } = await fetch("/api/csrf").then(r => r.json());
+      const res = await fetch(`/api/admin/content/${id}`, { method: "DELETE", headers: { "x-csrf-token": csrfToken } });
       if (res.ok) {
         fetchItems();
       } else {

@@ -88,7 +88,8 @@ export default function AdminReportsPage() {
   async function toggleActive(id: string) {
     setToggling(id);
     try {
-      const res = await fetch(`/api/admin/reports/${id}/toggle`, { method: "POST" });
+      const { token: csrfToken } = await fetch("/api/csrf").then(r => r.json());
+      const res = await fetch(`/api/admin/reports/${id}/toggle`, { method: "POST", headers: { "x-csrf-token": csrfToken } });
       if (res.ok) {
         const data = await res.json();
         setReports(prev => prev.map(r => r.id === id ? { ...r, isActive: data.isActive } : r));

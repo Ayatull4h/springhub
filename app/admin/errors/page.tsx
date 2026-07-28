@@ -118,7 +118,8 @@ export default function AdminErrorsPage() {
   async function deleteError(id: string) {
     if (!confirm("Hapus error ini?")) return;
     try {
-      await fetch(`/api/admin/errors/${id}`, { method: "DELETE" });
+      const { token: csrfToken } = await fetch("/api/csrf").then(r => r.json());
+      await fetch(`/api/admin/errors/${id}`, { method: "DELETE", headers: { "x-csrf-token": csrfToken } });
       if (selectedId === id) setSelectedId(null);
       fetchErrors();
     } catch {
@@ -129,7 +130,8 @@ export default function AdminErrorsPage() {
   async function deleteReadErrors() {
     if (!confirm(`Hapus semua ${unread} error yang sudah dibaca?`)) return;
     try {
-      const res = await fetch("/api/admin/errors", { method: "DELETE" });
+      const { token: csrfToken } = await fetch("/api/csrf").then(r => r.json());
+      const res = await fetch("/api/admin/errors", { method: "DELETE", headers: { "x-csrf-token": csrfToken } });
       const data = await res.json();
       alert(`Berhasil hapus ${data.deleted} error`);
       fetchErrors();

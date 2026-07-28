@@ -330,12 +330,12 @@ export async function POST(request: Request) {
           where: {
             userId: session?.userId || "__guest__",
             species,
-            province: (fieldData?.province as string) || "",
             status: { in: ["pending", "active"] },
           },
+          orderBy: { createdAt: "desc" },
         });
 
-        if (existing && existing.userId === session?.userId) {
+        if (existing) {
           // User sama, species sama → tambah stok
           await prisma.seedling.update({
             where: { id: existing.id },
