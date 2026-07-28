@@ -1,6 +1,6 @@
 # Manual Test — SpringHub v2.1
 
-**Tanggal**: 27 Juli 2026 (Update batch 2: admin map removed, export spring, export ZIP attempt, landing page form filter hanya DB)
+**Tanggal**: 27 Juli 2026 (Update batch 3: CSRF all admin, marker abu, seedling stock, health score kering=10, leaderboard, controlled inputs, dark mode pasar bibit)
 **Domain**: https://www.springhub.id
 **Total Test**: ~200 test case — 27 kategori
 
