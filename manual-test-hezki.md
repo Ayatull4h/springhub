@@ -1,6 +1,6 @@
 # Manual Test — SpringHub v2.1
 
-**Tanggal**: 27 Juli 2026 (Update batch 3: CSRF all admin, marker abu, seedling stock, health score kering=10, leaderboard, controlled inputs, dark mode pasar bibit)
+**Tanggal**: 27 Juli 2026 (Update batch 4: marker abu final, dark mode pasar bibit, offline WA, offline 1 foto/field, seedling real API, offline dedup, deskripsi tanam)
 **Domain**: https://www.springhub.id
 **Total Test**: ~200 test case — 27 kategori
 
