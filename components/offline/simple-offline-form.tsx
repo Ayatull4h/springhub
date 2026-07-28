@@ -27,6 +27,15 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
   const handleExit = onExit || (() => { if (typeof window !== "undefined") window.location.href = "/"; });
 
   // ── Sync status (refresh tiap 5 detik) ──────────────────────────
+  const [defaultValues, setDefaultValues] = useState<Record<string, string>>({});
+  useEffect(() => {
+    offlineDB.getSession().then(session => {
+      if (session?.phone) {
+        setDefaultValues({ A3_wa: session.phone, A_wa: session.phone });
+      }
+    }).catch(() => {});
+  }, []);
+
   const refreshSyncStatus = useCallback(async () => {
     const s = offlineDB.getSyncStatus();
     setSyncStatus(s);
@@ -404,6 +413,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 type={field.type === "phone" ? "tel" : "text"}
                 required={field.required}
                 placeholder={field.placeholder}
+                defaultValue={defaultValues?.[field.id] || ""}
                 className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white"
               />
             ) : field.type === "longtext" ? (

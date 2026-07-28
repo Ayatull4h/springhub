@@ -141,10 +141,11 @@ function FitBounds({ data }: { data: (ReportData | SpringGroup)[] }) {
 function getMarkerColor(
   formSlug: string,
   formColors?: Record<string, { color: string; fillColor: string; label: string }>,
-  healthStatus?: string
+  healthStatus?: string,
+  isActivity?: boolean
 ): { color: string; fillColor: string; label: string } {
-  if (formColors?.[formSlug]) return formColors[formSlug];
   if (healthStatus && statusColors[healthStatus]) return statusColors[healthStatus];
+  if (!isActivity && formColors?.[formSlug]) return formColors[formSlug];
   const status = getStatusFromForm(formSlug);
   return statusColors[status] ?? statusColors.aktivitas;
 }
@@ -323,7 +324,7 @@ export function LeafletMap({
 
         {/* ═══ Activity markers (laporan kegiatan) ═══ */}
         {springGroups.groups.map((sg) => {
-          const fc = getMarkerColor(sg.latestFormSlug, formColors, sg.healthStatus);
+          const fc = getMarkerColor(sg.latestFormSlug, formColors, sg.healthStatus, true);
           const actCount = sg.reports.length;
           const typeFromForm = formIconsToType[sg.latestFormSlug] || "spring";
           const detailUrl = sg.id && sg.id !== "unknown" ? `/springs/${sg.id}` : `/report/${sg.reports[0]?.id || sg.id}`;
@@ -412,7 +413,7 @@ export function LeafletMap({
 
         {/* ═══ Individual markers (no springId) — legacy fallback ═══ */}
         {springGroups.noSpring.map((r) => {
-          const fc = getMarkerColor(r.formSlug, formColors);
+          const fc = getMarkerColor(r.formSlug, formColors, undefined, true);
           const detailUrl = `/${formIconsToType[r.formSlug] || "spring"}/${r.id}`;
           return (
             <Fragment key={r.id}>

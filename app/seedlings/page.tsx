@@ -47,19 +47,45 @@ export default function SeedlingsPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [seedlings, setSeedlings] = useState<SeedlingItem[]>([]);
   const PER_PAGE = 9;
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 600);
-    return () => clearTimeout(t);
+    fetch("/api/seedlings")
+      .then(r => r.json())
+      .then(data => {
+        if (data.seedlings?.length > 0) {
+          setSeedlings(data.seedlings.map((s: any) => ({
+            id: s.id,
+            species: s.species,
+            count: s.quantity || s.count || 0,
+            province: s.province || "",
+            regency: s.regency || "",
+            owner: s.user?.username || "Petani",
+            trustScore: s.user?.trustScore || 50,
+          })));
+        } else if (Array.isArray(data)) {
+          setSeedlings(data.map((s: any) => ({
+            id: s.id,
+            species: s.species,
+            count: s.quantity || s.count || 0,
+            province: s.province || "",
+            regency: s.regency || "",
+            owner: s.user?.username || "Petani",
+            trustScore: s.user?.trustScore || 50,
+          })));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const filtered = useMemo(() =>
-    DUMMY.filter(s =>
+    seedlings.filter(s =>
       (!province || s.province === province) &&
       (!search || s.species.toLowerCase().includes(search.toLowerCase()))
     ),
-    [province, search]
+    [province, search, seedlings]
   );
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
@@ -128,13 +154,13 @@ export default function SeedlingsPage() {
                 className="card group overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-elevated hover:border-green-200"
                 style={{ animation: `fadeUp 0.5s ease-out ${i * 60}ms both` }}
               >
-                <div className="flex aspect-[16/10] items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-                  <TreePine className="h-8 w-8 text-slate-300 transition-transform duration-300 group-hover:scale-110" />
+                <div className="flex aspect-[16/10] items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700">
+                  <TreePine className="h-8 w-8 text-slate-300 transition-transform duration-300 group-hover:scale-110 dark:text-slate-500" />
                 </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-[1.0625rem] font-semibold leading-tight text-ink">{s.species}</h3>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-300">
                       <Package className="h-3 w-3" />
                       {s.count}
                     </span>

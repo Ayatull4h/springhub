@@ -77,9 +77,8 @@ export default function NewProjectPage() {
       return;
     }
 
-    const realFiles = photoFiles.filter(f => f && f.size > 0);
-    if (realFiles.length < 3) {
-      setError(`Wajib upload minimal 3 foto lokasi proyek. Terdeteksi: ${realFiles.length} file.`);
+    if (photoFiles.length < 3) {
+      setError(`Wajib upload minimal 3 foto lokasi proyek. Terdeteksi: ${photoFiles.length} file.`);
       setSubmitting(false);
       return;
     }

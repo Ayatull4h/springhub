@@ -151,17 +151,24 @@ export function QueueWorker() {
       try { await offlineDB.deleteReport(item.id); } catch {}
       try { await offlineDB.deleteDraft(item.id); } catch {}
 
-      // Juga hapus pending-report dengan formSlug + captured_at yang sama (cegah duplikat)
+      // Cegah duplikat: cek API apakah report dengan hash fieldData yang sama sudah ada
       try {
-        const allPending = await offlineDB.getAllReports();
-        const capAt = item.fieldData._captured_at;
-        for (const p of allPending) {
-          if (p.id !== item.id && p.formSlug === item.formSlug) {
-            const pData = p.fieldData as Record<string, unknown>;
-            if (pData._captured_at === capAt) {
-              await offlineDB.deleteReport(p.id);
+        const hashFields = JSON.stringify(item.fieldData);
+        const checkRes = await fetch(`/api/reports?limit=1&formSlug=${item.formSlug}`, {
+          headers: { "x-queue-worker": "true" },
+        });
+        const checkData = await checkRes.json();
+        if (checkData.reports?.length > 0) {
+          const existing = checkData.reports[0];
+          try {
+            const existingFd = typeof existing.fieldData === "string" ? JSON.parse(existing.fieldData) : existing.fieldData;
+            const existingHash = JSON.stringify(existingFd);
+            if (existingHash === hashFields) {
+              // Duplikat terdeteksi — hapus dari queue tanpa submit
+              await offlineDB.deleteQueued(item.id);
+              return { ok: true };
             }
-          }
+          } catch {}
         }
       } catch {}
 
