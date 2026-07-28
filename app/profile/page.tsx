@@ -427,7 +427,7 @@ export default function ProfilePage() {
           href="/seedlings/my-listings"
           className="card group flex items-center gap-3 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated hover:border-green-200"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-green-50 to-green-100 transition-transform duration-200 group-hover:scale-110">
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/40 dark:to-green-800/20 transition-transform duration-200 group-hover:scale-110">
             <Sprout className="h-5 w-5 text-green-600" />
           </span>
           <div>
@@ -438,9 +438,9 @@ export default function ProfilePage() {
         </Link>
         <Link
           href="/seedlings/my-requests"
-          className="card group flex items-center gap-3 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated hover:border-blue-200"
+          className="card group flex items-center gap-3 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated hover:border-blue-200 dark:hover:border-blue-700"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 transition-transform duration-200 group-hover:scale-110">
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/40 dark:to-blue-800/20 transition-transform duration-200 group-hover:scale-110">
             <FileText className="h-5 w-5 text-blue-600" />
           </span>
           <div>

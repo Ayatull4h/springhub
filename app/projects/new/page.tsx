@@ -244,7 +244,7 @@ export default function NewProjectPage() {
             {[0, 1, 2].map(i => (
               <label key={i} className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-ink-line p-4 text-center text-xs text-ink-muted hover:border-brand-300">
                 {photoFiles[i] ? (
-                  <span className="text-brand-600">{photoFiles[i].name.substring(0, 20)}</span>
+                  <img src={URL.createObjectURL(photoFiles[i])} alt="" className="h-full w-full rounded object-cover" />
                 ) : (
                   <>
                     <Upload className="mx-auto h-6 w-6 text-brand-500" />
