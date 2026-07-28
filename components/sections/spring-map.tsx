@@ -181,7 +181,8 @@ const formTitleI18nKey = (slug: string): string => {
       pointsOnSubmit: ruleMap.get(f.slug) || f.pointsOnSubmit || 0,
     }));
     const seen = new Set<string>();
-    return [...dbForms, ...staticForms].filter(f => {
+    // Prioritaskan DB forms (akurat, isActive filter dari server). Fallback ke static.
+    return (dbForms.length > 0 ? dbForms : staticForms).filter(f => {
       if (seen.has(f.slug)) return false;
       seen.add(f.slug);
       return true;
