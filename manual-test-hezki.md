@@ -1,6 +1,6 @@
 # Manual Test — SpringHub v2.1
 
-**Tanggal**: 27 Juli 2026 (Update: 12 fix deployed — auto-fill, kolaborasi, CSRF, offline cache, queue, turbo, marker, logout, dark mode, preview)
+**Tanggal**: 27 Juli 2026 (Update batch 2: admin map removed, export spring, export ZIP attempt, landing page form filter hanya DB)
 **Domain**: https://www.springhub.id
 **Total Test**: ~200 test case — 27 kategori
 
@@ -80,7 +80,7 @@ echo $CSRF
 |3.11|Edit form|Edit field → simpan — berubah||
 |3.12|Soft delete form|Hapus → form nonaktif, data aman||
 |3.13|Lihat form Survei|32 field dari A1_tanggal s/d E3_aksi||
-|3.14|Setting map|Tipe titik peta + warna kategori||
+|3.14|Export spring|Buka `/api/admin/export?entity=spring` — CSV semua spring + health score||
 |3.15|Ubah warna marker|Color picker — warna marker berubah||
 
 ---
@@ -190,7 +190,7 @@ echo $CSRF
 |-|-|-|-|
 |11.1|Landing page|Semua section berubah||
 |11.2|Admin panel|Sidebar, tabel, tombol gelap||
-|11.3|Admin map|Background gelap, teks terbaca||
+|11.3|Halaman spring detail|Background gelap, teks terbaca||
 |11.4|Form|Form 32 field terbaca||
 |11.5|Logo|Putih di dark, hitam di light||
 
