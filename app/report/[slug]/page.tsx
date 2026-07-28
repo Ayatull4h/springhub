@@ -47,11 +47,24 @@ export default function ReportFormPage() {
 
   useAutoSave(slug, fieldData, photoBlobs);
 
-  // Auto-fill A3_wa from user profile
+  // Auto-fill defaults from user profile
+  const [defaultValues, setDefaultValues] = useState<Record<string, string>>({});
   useEffect(() => {
     fetch("/api/auth/me")
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
+        const vals: Record<string, string> = {
+          C1_warna: "Bening",
+          C8_sumber_info: "Observasi Sendiri",
+          E2_tindak_lanjut: "Belum Tahu",
+        };
+        if (data?.user) {
+          vals.A2_nama_surveyor = data.user.username || "";
+          vals.A3_wa = data.user.phone || "";
+          vals.A_nama = data.user.username || "";
+          vals.A_nama_lengkap = data.user.username || "";
+        }
+        setDefaultValues(vals);
         if (data?.user?.phone) {
           setFieldData((prev) => ({ ...prev, A3_wa: data.user.phone }));
         }
@@ -498,7 +511,7 @@ export default function ReportFormPage() {
               </div>
             ) : (
               <FieldWrapper key={field.id}>
-                <FieldRenderer field={field} capturedAtDisplay={capturedAtDisplay} photoFiles={photoFiles} setPhotoFiles={setPhotoFiles} />
+                <FieldRenderer field={field} capturedAtDisplay={capturedAtDisplay} photoFiles={photoFiles} setPhotoFiles={setPhotoFiles} defaultValues={defaultValues} />
               </FieldWrapper>
             )
           ))}
@@ -537,11 +550,13 @@ function FieldRenderer({
   capturedAtDisplay,
   photoFiles,
   setPhotoFiles,
+  defaultValues,
 }: {
   field: FormField & { labelEn?: string; optionsEn?: string[] };
   capturedAtDisplay?: string;
   photoFiles?: Record<string, File[]>;
   setPhotoFiles?: React.Dispatch<React.SetStateAction<Record<string, File[]>>>;
+  defaultValues?: Record<string, string>;
 }) {
   const { t, locale } = useI18n();
   const required = field.required ? (
@@ -572,6 +587,7 @@ function FieldRenderer({
             type={field.type === "phone" ? "tel" : "text"}
             required={field.required}
             placeholder={field.placeholder}
+            defaultValue={defaultValues?.[field.id] || ""}
             pattern={field.type === "phone" ? "^(0[1-9]\\d{8,11}|\\+62\\d{8,13})$" : undefined}
             title={t("form.phone.tip")}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
@@ -587,6 +603,7 @@ function FieldRenderer({
             name={field.id}
             rows={4}
             required={field.required}
+            defaultValue={defaultValues?.[field.id] || ""}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
@@ -601,6 +618,7 @@ function FieldRenderer({
             type="number"
             min={0}
             required={field.required}
+            defaultValue={defaultValues?.[field.id] || ""}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
@@ -640,6 +658,7 @@ function FieldRenderer({
             id={field.id}
             name={field.id}
             required={field.required}
+            defaultValue={defaultValues?.[field.id] || ""}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           >
              <option value="">{t("form.select.placeholder")}</option>

@@ -4,7 +4,7 @@ import { offlineDB, type QueuedSubmission } from "@/lib/offline-db";
 import { useToast } from "@/components/toast";
 
 const SW_VERSION = "2026-07-12-v5"; // Bump this when SW changes — user perlu reopen PWA
-const MAX_RETRIES = 5;
+const MAX_RETRIES = 3;
 const POLL_INTERVAL_MS = 10_000;
 const STALE_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 hari
 
@@ -189,7 +189,9 @@ export function QueueWorker() {
         item.lastError = result.error;
         await offlineDB.queueSubmission(item);
         if (updatedRetry >= MAX_RETRIES) {
-          console.warn(`[QueueWorker] Item ${item.id} gagal ${MAX_RETRIES}x: ${result.error}. Tetap disimpan.`);
+          console.warn(`[QueueWorker] Item ${item.id} gagal ${MAX_RETRIES}x: ${result.error}. Hapus dari antrian.`);
+          await offlineDB.deleteQueued(item.id);
+          toast(`Laporan ${item.formSlug} gagal dikirim. Silakan isi ulang.`, "error");
         }
       }
     }

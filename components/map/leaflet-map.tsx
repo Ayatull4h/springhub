@@ -17,14 +17,9 @@ const statusColors: Record<string, { color: string; fillColor: string; label: st
 function getStatusFromForm(formSlug: string): string {
   switch (formSlug) {
     case "spring-monitoring":
-    case "seedling-stock":
       return "sehat";
-    case "spring-restoration":
-    case "trench-development":
-    case "tree-planting":
-      return "ringan";
     default:
-      return "kritis";
+      return "ringan";
   }
 }
 
@@ -279,8 +274,8 @@ export function LeafletMap({
           />
         )}
 
-        {/* ═══ Spring markers (sumber daya) ═══ */}
-        {springItems?.map((s) => {
+        {/* ═══ Spring markers (sumber daya) — hanya spring dengan health status ═══ */}
+        {springItems?.filter((s: any) => s.healthStatus).map((s: any) => {
           const hc = statusColors[s.healthStatus || "sehat"] || statusColors.sehat;
           const r = 8;
           return (
