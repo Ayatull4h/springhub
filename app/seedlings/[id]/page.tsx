@@ -91,7 +91,7 @@ export default function SeedlingDetailPage() {
                   {s.photos.map((p, i) => (
                     <div
                       key={i}
-                      className="flex h-14 w-18 min-w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-50"
+                      className="flex h-14 w-18 min-w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-50 dark:bg-slate-800"
                     >
                       <img src={p.storagePath} alt="" className="h-full w-full object-cover" />
                     </div>
@@ -104,7 +104,7 @@ export default function SeedlingDetailPage() {
               <Image className="h-10 w-10 text-slate-300" />
             </div>
           )}
-          <div className="mt-4 rounded-xl border border-ink-line bg-slate-50 p-4">
+          <div className="mt-4 rounded-xl border border-ink-line bg-slate-50 p-4 dark:bg-slate-800">
             <h3 className="flex items-center gap-1.5 text-sm font-semibold text-ink">
               <FileText className="h-4 w-4 text-green-600" />
               Keterangan
@@ -114,7 +114,7 @@ export default function SeedlingDetailPage() {
         </div>
 
         <div className="flex flex-col gap-3 lg:col-span-2">
-          <div className="rounded-xl border border-ink-line bg-slate-50 p-4">
+          <div className="rounded-xl border border-ink-line bg-slate-50 p-4 dark:bg-slate-800">
             <h2 className="text-xl font-bold text-ink">{s.species}</h2>
             <div className="mt-3 grid gap-1.5 text-sm">
               <div className="flex items-center justify-between"><span className="text-ink-muted">Jumlah</span><span className="font-semibold">{s.count} bibit</span></div>

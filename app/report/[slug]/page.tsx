@@ -521,7 +521,7 @@ export default function ReportFormPage() {
               </div>
             ) : (
               <FieldWrapper key={field.id}>
-                <FieldRenderer field={field} capturedAtDisplay={capturedAtDisplay} photoFiles={photoFiles} setPhotoFiles={setPhotoFiles} defaultValues={defaultValues} />
+                <FieldRenderer field={field} capturedAtDisplay={capturedAtDisplay} photoFiles={photoFiles} setPhotoFiles={setPhotoFiles} defaultValues={defaultValues} fieldData={fieldData} onFieldChange={(id, val) => setFieldData(prev => ({ ...prev, [id]: val }))} />
               </FieldWrapper>
             )
           ))}
@@ -561,12 +561,16 @@ function FieldRenderer({
   photoFiles,
   setPhotoFiles,
   defaultValues,
+  fieldData,
+  onFieldChange,
 }: {
   field: FormField & { labelEn?: string; optionsEn?: string[] };
   capturedAtDisplay?: string;
   photoFiles?: Record<string, File[]>;
   setPhotoFiles?: React.Dispatch<React.SetStateAction<Record<string, File[]>>>;
   defaultValues?: Record<string, string>;
+  fieldData?: Record<string, unknown>;
+  onFieldChange?: (id: string, value: string) => void;
 }) {
   const { t, locale } = useI18n();
   const required = field.required ? (
@@ -597,7 +601,8 @@ function FieldRenderer({
             type={field.type === "phone" ? "tel" : "text"}
             required={field.required}
             placeholder={field.placeholder}
-            defaultValue={defaultValues?.[field.id] || ""}
+            value={fieldData?.[field.id] as string || defaultValues?.[field.id] || ""}
+            onChange={e => onFieldChange?.(field.id, e.target.value)}
             pattern={field.type === "phone" ? "^(0[1-9]\\d{8,11}|\\+62\\d{8,13})$" : undefined}
             title={t("form.phone.tip")}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
