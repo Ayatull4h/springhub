@@ -43,6 +43,7 @@ export default function ReportFormPage() {
 
   // Turbo mode: simpan fieldData dari submit sebelumnya (khusus tanam pohon & rorak)
   const [prevFieldData, setPrevFieldData] = useState<Record<string, unknown> | null>(null);
+  const [turboKey, setTurboKey] = useState(0);
   const isTurboForm = slug === "tree-planting" || slug === "trench-development";
 
   useAutoSave(slug, fieldData, photoBlobs);
@@ -399,6 +400,12 @@ export default function ReportFormPage() {
                     newFieldData[key] = val;
                   }
                 }
+                // Set sebagai default values untuk form selanjutnya
+                const newDefaults: Record<string, string> = {};
+                for (const [key, val] of Object.entries(newFieldData)) {
+                  if (typeof val === "string") newDefaults[key] = val;
+                }
+                setDefaultValues(newDefaults);
                 // Reset foto — user WAJIB upload minimal 3 foto baru
                 setPhotoFiles({});
                 setPhotoBlobs([]);
@@ -406,12 +413,14 @@ export default function ReportFormPage() {
                 setPrevFieldData(null);
                 setSuccess(false);
                 setError("");
+                setTurboKey(k => k + 1);
                 // Trigger GPS refresh
                 if (navigator.geolocation) {
                   navigator.geolocation.getCurrentPosition(
                     (pos) => {
                       const newLoc = pos.coords.latitude.toFixed(6) + ', ' + pos.coords.longitude.toFixed(6);
                       setFieldData((prev) => ({ ...prev, A_geotag: newLoc, A_akurasi_gps: String(Math.round(pos.coords.accuracy)) }));
+                      setDefaultValues(prev => ({ ...prev, A_geotag: newLoc, A_akurasi_gps: String(Math.round(pos.coords.accuracy)) }));
                     },
                     () => {},
                     { enableHighAccuracy: true, timeout: 10000 }
@@ -458,6 +467,7 @@ export default function ReportFormPage() {
       )}
 
       <form
+        key={isTurboForm ? `turbo-${turboKey}` : "form"}
         onSubmit={handleSubmit}
         encType="multipart/form-data"
         className="card mt-6 space-y-5 w-full max-w-full"

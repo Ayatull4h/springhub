@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { offlineDB, type QueuedSubmission } from "@/lib/offline-db";
 import { useToast } from "@/components/toast";
 
-const SW_VERSION = "2026-07-12-v5"; // Bump this when SW changes — user perlu reopen PWA
+const SW_VERSION = "2026-07-27-v6"; // Bump this when SW changes — user perlu reopen PWA
 const MAX_RETRIES = 3;
 const POLL_INTERVAL_MS = 10_000;
 const STALE_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 hari
@@ -295,7 +295,14 @@ export function QueueWorker() {
     };
 
     // ── Simpan versi code ke localStorage — biar bisa cek user pake code terbaru ──
-    try { localStorage.setItem("sw_version", SW_VERSION); } catch {}
+    try {
+      const prevVersion = localStorage.getItem("sw_version");
+      if (prevVersion && prevVersion !== SW_VERSION) {
+        // Hapus cache form definitions lama — biar di-refresh dari server
+        try { indexedDB.deleteDatabase("springhub-offline"); } catch {}
+      }
+      localStorage.setItem("sw_version", SW_VERSION);
+    } catch {}
 
     // ── Cek update service worker ──
     if ("serviceWorker" in navigator) {

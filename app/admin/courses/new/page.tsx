@@ -90,9 +90,10 @@ export default function AdminNewCoursePage() {
 
     setSaving(true);
     try {
+      const { token: csrfToken } = await fetch("/api/csrf").then(r => r.json());
       const res = await fetch("/api/admin/courses", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
         body: JSON.stringify({
           ...form,
           slug,

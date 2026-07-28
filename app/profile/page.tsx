@@ -127,6 +127,8 @@ export default function ProfilePage() {
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
+    try { await offlineDB.clearSession(); } catch {}
+    try { await offlineDB.clearSyncStatus(); } catch {}
     router.push("/");
     router.refresh();
   }
