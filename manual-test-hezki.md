@@ -1,6 +1,6 @@
 # Manual Test — SpringHub v2.1
 
-**Tanggal**: 27 Juli 2026
+**Tanggal**: 27 Juli 2026 (Update: 12 fix deployed — auto-fill, kolaborasi, CSRF, offline cache, queue, turbo, marker, logout, dark mode, preview)
 **Domain**: https://www.springhub.id
 **Total Test**: ~200 test case — 27 kategori
 
