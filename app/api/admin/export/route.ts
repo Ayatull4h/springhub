@@ -4,13 +4,12 @@ import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { buildPhotoUrl } from "@/lib/photo-url";
 
+
 export const dynamic = "force-dynamic";
 
 function escapeCsv(val: unknown): string {
   const s = String(val ?? "");
-  if (s.includes(",") || s.includes('"') || s.includes("\n")) {
-    return `"${s.replace(/"/g, '""')}"`;
-  }
+  if (s.includes(",") || s.includes('"') || s.includes("\n")) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }
 
@@ -26,33 +25,29 @@ export async function GET(request: Request) {
 
   const url = new URL(request.url);
   const entity = url.searchParams.get("entity") || "users";
-  const startDate = url.searchParams.get("startDate");
-  const endDate = url.searchParams.get("endDate");
+  const startDate = url.searchParams.get("startDate") || url.searchParams.get("from");
+  const endDate = url.searchParams.get("endDate") || url.searchParams.get("to");
+  const springId = url.searchParams.get("springId") || url.searchParams.get("id");
+  const format = url.searchParams.get("format") || "csv";
   const notify = url.searchParams.get("notify") === "true";
 
-  const dateFilter =
-    startDate || endDate
-      ? {
-          createdAt: {
-            ...(startDate ? { gte: new Date(startDate) } : {}),
-            ...(endDate ? { lt: new Date(endDate) } : {}),
-          },
-        }
-      : {};
+  const dateFilter: Record<string, unknown> = {};
+  if (startDate || endDate) {
+    dateFilter.createdAt = {
+      ...(startDate ? { gte: new Date(startDate) } : {}),
+      ...(endDate ? { lt: new Date(endDate) } : {}),
+    };
+  }
 
   try {
     let csv = "";
     let filename = "";
-
-    switch (entity) {
+      switch (entity) {
       case "users": {
         const users = await prisma.profile.findMany({
-          where: dateFilter,
+          where: { ...dateFilter },
           orderBy: { createdAt: "desc" },
-          select: {
-            id: true, username: true, email: true, phone: true,
-            role: true, region: true, points: true, trustScore: true, createdAt: true,
-          },
+          select: { id: true, username: true, email: true, phone: true, role: true, region: true, points: true, trustScore: true, createdAt: true },
         });
         csv = toCsv(
           users.map((u) => [u.id, u.username, u.email, u.phone, u.role, u.region, String(u.points), String(u.trustScore), u.createdAt.toISOString()]),
@@ -63,19 +58,36 @@ export async function GET(request: Request) {
       }
 
       case "reports": {
+        const where: Record<string, unknown> = { ...dateFilter };
+        if (springId) where.springId = springId;
         const reports = await prisma.report.findMany({
-          where: { ...dateFilter },
+          where,
           orderBy: { createdAt: "desc" },
-          include: {
-            user: { select: { username: true } },
-            photos: { select: { id: true, storagePath: true, fieldId: true }, take: 10 },
-          },
+          include: { user: { select: { username: true } }, photos: { select: { id: true, storagePath: true, fieldId: true }, take: 10 } },
         });
         csv = toCsv(
           reports.map((r) => [r.id, r.user?.username || "guest", r.formSlug, r.status, String(r.preciseLat ?? ""), String(r.preciseLng ?? ""), String(r.snappedLat ?? ""), String(r.snappedLng ?? ""), r.reviewedById || "", r.createdAt.toISOString(), r.photos.map((p) => buildPhotoUrl(p.storagePath)).join("; ")]),
           ["ID", "User", "FormSlug", "Status", "PreciseLat", "PreciseLng", "SnappedLat", "SnappedLng", "ReviewedBy", "CreatedAt", "PhotoURLs"]
         );
-        filename = `springhub-reports-${startDate || "all"}.csv`;
+        filename = `springhub-reports-${springId || startDate || "all"}.csv`;
+        break;
+      }
+
+      case "spring": {
+        const where: Record<string, unknown> = {};
+        if (springId) where.id = springId;
+        const springs = await prisma.spring.findMany({
+          where,
+          orderBy: { name: "asc" },
+          include: {
+            _count: { select: { reports: true } },
+          },
+        });
+        csv = toCsv(
+          springs.map((s) => [s.id, s.name, s.province, s.regency, String(s.healthScore ?? ""), s.healthStatus || "", s.createdAt.toISOString(), String(s._count.reports)]),
+          ["ID", "Name", "Province", "Regency", "HealthScore", "HealthStatus", "CreatedAt", "ReportCount"]
+        );
+        filename = `springhub-springs-${springId || startDate || "all"}.csv`;
         break;
       }
 
@@ -134,44 +146,17 @@ export async function GET(request: Request) {
         break;
       }
 
-      case "photos": {
-        const photos = await prisma.reportPhoto.findMany({
-          orderBy: { createdAt: "desc" },
-          include: {
-            report: {
-              select: { id: true, formSlug: true, status: true },
-            },
-          },
-        });
-        csv = toCsv(
-          photos.map((p) => [p.id, p.report?.id || "", p.report?.formSlug || "", p.report?.status || "", p.fieldId, buildPhotoUrl(p.storagePath), p.mimeType, `${p.width}x${p.height}`, p.createdAt.toISOString()]),
-          ["PhotoID", "ReportID", "FormSlug", "ReportStatus", "FieldID", "URL", "MimeType", "Dimensions", "CreatedAt"]
-        );
-        filename = `springhub-photos-${startDate || "all"}.csv`;
-        break;
-      }
-
       default:
-        return NextResponse.json({ error: "Invalid entity. Valid: users, reports, donations, projects, feedback, points, photos" }, { status: 400 });
+        return NextResponse.json({ error: "Invalid entity. Valid: users, reports, donations, projects, feedback, points, photos, spring" }, { status: 400 });
     }
 
-    // Send email notification if requested
     if (notify && session?.userId) {
       const admin = await prisma.profile.findUnique({
         where: { id: session.userId },
         select: { email: true },
       });
       if (admin?.email) {
-        const subject = `Export ${entity} siap — ${filename}`;
-        const html = `
-          <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-            <h2 style="color: #1e293b;">Export Data Siap</h2>
-            <p style="color: #475569;">File <strong>${filename}</strong> telah siap di-download.</p>
-            <p style="color: #475569;">Total ${csv.split("\n").length - 1} baris data.</p>
-            <p style="color: #94a3b8; font-size: 12px;">Periode: ${startDate || "sejak awal"} — ${endDate || "sekarang"}</p>
-          </div>
-        `;
-        sendEmail({ to: admin.email, subject, html }).catch(() => {});
+        sendEmail({ to: admin.email, subject: `Export ${entity} siap — ${filename}`, html: `<div>File <strong>${filename}</strong> siap di-download. ${csv.split("\n").length - 1} baris data.</div>` }).catch(() => {});
       }
     }
 
@@ -179,15 +164,11 @@ export async function GET(request: Request) {
       headers: {
         "Content-Type": "application/csv; charset=utf-8",
         "Content-Disposition": `attachment; filename="${filename}"`,
-        "Content-Length": String(Buffer.byteLength(csv, "utf8")),
         "Cache-Control": "no-cache",
       },
     });
   } catch (error) {
     console.error("Export error:", error);
-    return NextResponse.json(
-      { error: getErrorMessage(error, "Terjadi kesalahan.") },
-      { status: isDatabaseError(error) ? 503 : 500 }
-    );
+    return NextResponse.json({ error: getErrorMessage(error, "Terjadi kesalahan.") }, { status: isDatabaseError(error) ? 503 : 500 });
   }
 }
