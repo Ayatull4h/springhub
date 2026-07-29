@@ -18,6 +18,9 @@ import {
   Heart,
   Download,
   Loader2,
+  Calendar,
+  FileText,
+  Users as UsersIcon,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { cn, formatNumber } from "@/lib/utils";
@@ -78,6 +81,15 @@ function ProjectDetailModal({
 }) {
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
+  const [detail, setDetail] = useState<any>(null);
+
+  useEffect(() => {
+    if (open && project) {
+      fetch(`/api/projects/${project.id}`).then(r => r.json()).then(d => {
+        if (d.project) setDetail(d.project);
+      }).catch(() => {});
+    }
+  }, [open, project]);
 
   async function handleAction(status: string) {
     if (!project) return;
@@ -90,97 +102,68 @@ function ProjectDetailModal({
 
   const status = statusConfig[project.status] ?? statusConfig.pending;
   const StatusIcon = status.icon;
+  const fd = detail?.fieldData || {};
+  const photos = detail?.photos || [];
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex-1 pr-4">
             <h3 className="text-lg font-bold text-ink">{project.title}</h3>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium", status.className)}>
-                <StatusIcon className="h-3 w-3" />
-                {status.label}
+                <StatusIcon className="h-3 w-3" /> {status.label}
               </span>
               <span className="chip bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 capitalize">{project.typeId}</span>
-              {project.region && (
-                <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
-                  <MapPin className="h-3 w-3" />
-                  {project.region}
-                </span>
-              )}
+              {project.region && <span className="inline-flex items-center gap-1 text-xs text-ink-muted"><MapPin className="h-3 w-3" />{project.region}</span>}
             </div>
           </div>
-          <button onClick={onClose} className="text-ink-muted hover:text-ink">
-            <X className="h-5 w-5" />
-          </button>
+          <button onClick={onClose} className="text-ink-muted hover:text-ink"><X className="h-5 w-5" /></button>
         </div>
 
-        {/* Summary */}
-        {project.summary && (
-          <p className="mt-4 text-sm text-ink-muted leading-relaxed">{project.summary}</p>
+        {/* Photos */}
+        {photos.length > 0 && (
+          <div className="mt-4 flex gap-2 overflow-x-auto">
+            {photos.map((p: any) => (
+              <img key={p.id} src={p.url} alt="" className="h-20 w-32 flex-shrink-0 rounded-lg object-cover border border-ink-line/30" />
+            ))}
+          </div>
         )}
 
-        {/* Financial Info */}
-        <div className="mt-5 grid grid-cols-2 gap-4 rounded-lg bg-slate-50 dark:bg-slate-900 p-4">
-          <div>
-            <span className="text-xs font-medium text-ink-subtle">Goal Amount</span>
-            <p className="mt-0.5 text-lg font-bold text-ink">
-              Rp {formatNumber(project.goalAmount)}
-            </p>
-          </div>
-          <div>
-            <span className="text-xs font-medium text-ink-subtle">Raised Amount</span>
-            <p className="mt-0.5 text-lg font-bold text-brand-600">
-              Rp {formatNumber(project.raisedAmount)}
-            </p>
-          </div>
-          <div>
-            <span className="text-xs font-medium text-ink-subtle">Donations</span>
-            <p className="mt-0.5 text-sm font-semibold text-ink">
-              {project._count.donations} transactions
-            </p>
-          </div>
-          <div>
-            <span className="text-xs font-medium text-ink-subtle">Progress</span>
-            <p className="mt-0.5 text-sm font-semibold text-ink">
-              {project.goalAmount > 0
-                ? Math.round((project.raisedAmount / project.goalAmount) * 100)
-                : 0}%
-            </p>
-          </div>
-        </div>
-
-        {/* Contact */}
+        {/* Detail Field Data */}
         <div className="mt-4 space-y-2 rounded-lg border border-ink-line p-4">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-subtle">Contact</h4>
-          <div className="grid gap-2 text-sm sm:grid-cols-3">
-            {project.contactName && (
-              <span className="inline-flex items-center gap-1.5 text-ink">
-                <User className="h-3.5 w-3.5 text-ink-muted" />
-                {project.contactName}
-              </span>
-            )}
-            {project.contactEmail && (
-              <span className="inline-flex items-center gap-1.5 text-ink">
-                <Mail className="h-3.5 w-3.5 text-ink-muted" />
-                {project.contactEmail}
-              </span>
-            )}
-            {project.contactPhone && (
-              <span className="inline-flex items-center gap-1.5 text-ink">
-                <Phone className="h-3.5 w-3.5 text-ink-muted" />
-                {project.contactPhone}
-              </span>
-            )}
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-subtle">Detail Pengajuan</h4>
+          <div className="grid gap-1.5 text-sm sm:grid-cols-2">
+            {fd.A_nama && <DetailField icon={<User className="h-3.5 w-3.5" />} label="Pengusul" value={String(fd.A_nama)} />}
+            {fd.A_wa && <DetailField icon={<Phone className="h-3.5 w-3.5" />} label="WA" value={String(fd.A_wa)} />}
+            {fd.A_email && <DetailField icon={<Mail className="h-3.5 w-3.5" />} label="Email" value={String(fd.A_email)} />}
+            {fd.A_organisasi && <DetailField icon={<User className="h-3.5 w-3.5" />} label="Organisasi" value={String(fd.A_organisasi)} />}
+            {fd.A_peran && <DetailField icon={<User className="h-3.5 w-3.5" />} label="Peran" value={String(fd.A_peran)} />}
+            {fd.A_pengalaman && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Pengalaman" value={String(fd.A_pengalaman)} />}
+            {fd.B3_tempat && <DetailField icon={<MapPin className="h-3.5 w-3.5" />} label="Lokasi" value={String(fd.B3_tempat)} />}
+            {fd.B2_jenis && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Kegiatan" value={Array.isArray(fd.B2_jenis) ? (fd.B2_jenis as string[]).join(", ") : String(fd.B2_jenis)} />}
+            {fd.C1_waktu && <DetailField icon={<Calendar className="h-3.5 w-3.5" />} label="Waktu" value={String(fd.C1_waktu)} />}
+            {fd.C2_target && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Target" value={String(fd.C2_target)} />}
+            {fd.C3_relawan && <DetailField icon={<Users className="h-3.5 w-3.5" />} label="Relawan" value={`${fd.C3_relawan} orang`} />}
+            {fd.C3_mitra && <DetailField icon={<Users className="h-3.5 w-3.5" />} label="Mitra" value={Array.isArray(fd.C3_mitra) ? (fd.C3_mitra as string[]).join(", ") : String(fd.C3_mitra)} />}
+            {fd.D1_biaya && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Biaya" value={String(fd.D1_biaya)} />}
+            {fd.D1_rincian && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Rincian" value={String(fd.D1_rincian)} />}
+            {fd.D2_dukungan && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Dukungan" value={Array.isArray(fd.D2_dukungan) ? (fd.D2_dukungan as string[]).join(", ") : String(fd.D2_dukungan)} />}
+            {fd.D2_dana_ada && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Dana Ada" value={String(fd.D2_dana_ada)} />}
+            {fd.E2_catatan && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Catatan" value={String(fd.E2_catatan)} />}
           </div>
+          {fd.B4_latar && (
+            <div className="mt-3"><h5 className="text-xs font-semibold text-ink-muted">Latar Belakang</h5><p className="mt-1 text-sm text-ink leading-relaxed">{String(fd.B4_latar)}</p></div>
+          )}
+          {/* Proposal PDF */}
+          {detail?.proposalFile && detail.proposalFile.startsWith("data:application/pdf") && (
+            <a href={detail.proposalFile} target="_blank" className="mt-2 inline-flex items-center gap-1 text-sm text-brand-600 hover:underline">
+              <Download className="h-3.5 w-3.5" /> Download Proposal PDF
+            </a>
+          )}
         </div>
 
         {/* Submitted by */}
@@ -684,6 +667,16 @@ export default function AdminProjectsPage() {
         onClose={() => setActionProject(null)}
         onAction={handleAction}
       />
+    </div>
+  );
+}
+
+function DetailField({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-1.5 text-sm">
+      <span className="text-ink-subtle">{icon}</span>
+      <span className="text-ink-muted">{label}:</span>
+      <span className="text-ink">{value}</span>
     </div>
   );
 }
