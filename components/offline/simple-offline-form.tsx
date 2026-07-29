@@ -399,6 +399,18 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         <input type="hidden" name="form_slug" value={selectedForm.slug} />
         <input type="hidden" name="_captured_at" value={capturedAt} />
 
+        {/* Notice card untuk SATU FORM = SATU POHON / RORAK */}
+        {(selectedForm?.slug === "tree-planting" || selectedForm?.slug === "trench-development") && (
+          <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-4 text-sm text-amber-800 dark:text-amber-200">
+            <strong>⚠️ {selectedForm.slug === "tree-planting" ? "SATU FORM = SATU POHON" : "SATU FORM = SATU RORAK"}</strong>
+            <p className="mt-1 text-amber-700 dark:text-amber-300">
+              {selectedForm.slug === "tree-planting"
+                ? "Setiap form hanya untuk 1 (satu) pohon."
+                : "Setiap form hanya untuk 1 (satu) rorak. Ukuran dalam CM."}
+            </p>
+          </div>
+        )}
+
         {formDef?.fields.map((field: FormField) => (
           <div key={field.id} className="w-full">
             <label htmlFor={`offline-${field.id}`} className="block text-sm font-medium text-ink">

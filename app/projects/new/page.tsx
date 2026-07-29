@@ -78,9 +78,15 @@ export default function NewProjectPage() {
       return;
     }
 
-    const currentPhotos = photoFilesRef.current.length >= 3 ? photoFilesRef.current : photoFiles;
-    if (currentPhotos.length < 3) {
-      setError(`Wajib upload minimal 3 foto lokasi proyek. Terdeteksi: ${currentPhotos.length} file.`);
+    const photoInputs = document.querySelectorAll('input[name^="foto_"]');
+    let totalFiles = 0;
+    photoInputs.forEach(input => {
+      const fileInput = input as HTMLInputElement;
+      if (fileInput.files && fileInput.files.length > 0) totalFiles += fileInput.files.length;
+    });
+    if (photoFiles.length >= 3) totalFiles = Math.max(totalFiles, photoFiles.length);
+    if (totalFiles < 3) {
+      setError(`Wajib upload minimal 3 foto lokasi proyek. Terdeteksi: ${totalFiles} file.`);
       setSubmitting(false);
       return;
     }

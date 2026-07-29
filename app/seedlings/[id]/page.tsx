@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -31,8 +31,32 @@ export default function SeedlingDetailPage() {
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [seedling, setSeedling] = useState<SeedlingDetail | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const s = DUMMY;
+  useEffect(() => {
+    fetch(`/api/seedlings/${params.id}`)
+      .then(r => r.json())
+      .then(data => {
+        const s = data.seedling || data;
+        setSeedling({
+          species: s.species || "Bibit",
+          count: s.quantity || s.stock || 0,
+          available: s.quantity || s.stock || 0,
+          province: s.province || "",
+          regency: s.regency || "",
+          owner: (s.user?.username) || "Petani",
+          ownerPhone: "",
+          trustScore: s.user?.trustScore || 50,
+          notes: s.notes || "",
+          createdAt: "",
+        });
+      })
+      .catch(() => setSeedling(DUMMY))
+      .finally(() => setLoading(false));
+  }, [params.id]);
+
+  const s = seedling || DUMMY;
 
   async function handleSubmit() {
     if (qty < 1 || qty > s.available) return;

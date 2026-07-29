@@ -48,7 +48,7 @@ export default function ReportFormPage() {
 
   useAutoSave(slug, fieldData, photoBlobs);
 
-  // Auto-fill defaults from user profile
+  // Auto-fill defaults from user profile + GPS
   const [defaultValues, setDefaultValues] = useState<Record<string, string>>({});
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
 
@@ -73,6 +73,34 @@ export default function ReportFormPage() {
         }
       })
       .catch(() => {});
+
+    // Coba ambil GPS otomatis (kalau sudah diizinkan sebelumnya)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude.toFixed(6);
+          const lng = pos.coords.longitude.toFixed(6);
+          const acc = Math.round(pos.coords.accuracy);
+          setGpsAccuracy(acc);
+          setFieldData((prev) => ({
+            ...prev,
+            A4_geotag: `${lat}, ${lng}`,
+            A_akurasi_gps: String(acc),
+            A_geotag: `${lat}, ${lng}`,
+            B3_geotag: `${lat}, ${lng}`,
+          }));
+          setDefaultValues((prev) => ({
+            ...prev,
+            A4_geotag: `${lat}, ${lng}`,
+            A_akurasi_gps: String(acc),
+            A_geotag: `${lat}, ${lng}`,
+            B3_geotag: `${lat}, ${lng}`,
+          }));
+        },
+        () => {}, // Izin ditolak atau error — diam saja
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
   }, []);
 
   // GPS location helper — update geotag + accuracy sekaligus
@@ -437,7 +465,7 @@ export default function ReportFormPage() {
                   if (typeof val === "string") newDefaults[key] = val;
                 }
                 setDefaultValues(newDefaults);
-                // Reset foto — user WAJIB upload minimal 3 foto baru
+                // Reset foto — user WAJIB upload minimal 1 foto per field
                 setPhotoFiles({});
                 setPhotoBlobs([]);
                 setFieldData(newFieldData);
@@ -781,8 +809,8 @@ function FieldRenderer({
           <div className="mt-1 flex items-center gap-2 text-xs text-ink-muted">
             <Camera className="h-3.5 w-3.5" />
             <span>{currentCount} / 5 foto</span>
-            {currentCount < 3 && (
-              <span className="font-semibold text-amber-600">(minimal 3 foto)</span>
+            {currentCount < 1 && (
+              <span className="font-semibold text-amber-600">(min 1 foto)</span>
             )}
             {maxReached && (
               <span className="font-semibold text-amber-600">(maksimal 5 foto)</span>

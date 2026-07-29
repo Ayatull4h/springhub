@@ -12,6 +12,7 @@ export async function GET(request: Request) {
     }
 
     const springs = await prisma.spring.findMany({
+      where: { status: "active" },
       select: {
         id: true,
         name: true,
