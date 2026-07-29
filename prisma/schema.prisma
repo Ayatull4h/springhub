@@ -200,6 +200,7 @@ model Report {
   mapPoint   MapPoint?     @relation(fields: [mapPointId], references: [id])
 
   pointsLogs PointsLog[]
+  seedlings  Seedling[] @relation("SeedlingReport")
   form       Form?       @relation(fields: [formSlug], references: [slug])
 
   @@index([status])
@@ -506,22 +507,27 @@ enum RequestStatus {
 }
 
 model Seedling {
-  id          String         @id @default(uuid())
-  userId      String
-  formSlug    String         @default("seedling-stock")
-  species     String         // jenis bibit (Jati, Bambu, dll)
-  quantity    Int            // jumlah awal
-  stock       Int            // stok tersisa
-  province    String
-  regency     String
-  notes       String         @default("")
-  status      SeedlingStatus @default(pending)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id           String         @id @default(uuid())
+  userId       String
+  formSlug     String         @default("seedling-stock")
+  species      String         // jenis bibit (Jati, Bambu, dll)
+  quantity     Int            // jumlah awal
+  stock        Int            // stok tersisa
+  height       String         @default("") // C2_tinggi
+  seedlingForm String         @default("") // C3_bentuk
+  readiness    String         @default("") // C4_kesiapan
+  province     String
+  regency      String
+  notes        String         @default("")
+  reportId     String?        // link ke Report asal
+  status       SeedlingStatus @default(pending)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   user     Profile           @relation(fields: [userId], references: [id])
   photos   SeedlingPhoto[]
   requests SeedlingRequest[]
+  report   Report?           @relation("SeedlingReport", fields: [reportId], references: [id], onDelete: SetNull)
 
   @@index([status])
   @@index([userId])

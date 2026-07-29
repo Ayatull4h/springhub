@@ -16,6 +16,11 @@ type SeedlingItem = {
   regency: string;
   owner: string;
   trustScore: number;
+  photoUrl?: string | null;
+  height?: string;
+  seedlingForm?: string;
+  readiness?: string;
+  userPhone?: string;
 };
 
 const DUMMY: SeedlingItem[] = [
@@ -54,27 +59,27 @@ export default function SeedlingsPage() {
     fetch("/api/seedlings")
       .then(r => r.json())
       .then(data => {
-        if (data.seedlings?.length > 0) {
-          setSeedlings(data.seedlings.map((s: any) => ({
+        const items: SeedlingItem[] = (data.seedlings || []).map((s: any) => {
+          const reportPhotos = s.report?.photos || [];
+          const photoPath = reportPhotos.length > 0
+            ? reportPhotos[0].storagePath
+            : (s.photos?.length > 0 ? s.photos[0].storagePath : null);
+          return {
             id: s.id,
             species: s.species,
-            count: s.quantity || s.count || 0,
+            count: s.quantity || 0,
             province: s.province || "",
             regency: s.regency || "",
             owner: s.user?.username || "Petani",
             trustScore: s.user?.trustScore || 50,
-          })));
-        } else if (Array.isArray(data)) {
-          setSeedlings(data.map((s: any) => ({
-            id: s.id,
-            species: s.species,
-            count: s.quantity || s.count || 0,
-            province: s.province || "",
-            regency: s.regency || "",
-            owner: s.user?.username || "Petani",
-            trustScore: s.user?.trustScore || 50,
-          })));
-        }
+            photoUrl: photoPath ? `/uploads/${photoPath}` : null,
+            height: s.height || "",
+            seedlingForm: s.seedlingForm || "",
+            readiness: s.readiness || "",
+            userPhone: s.user?.phone || "",
+          };
+        });
+        if (items.length > 0) setSeedlings(items);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -154,8 +159,12 @@ export default function SeedlingsPage() {
                 className="card group overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-elevated hover:border-green-200"
                 style={{ animation: `fadeUp 0.5s ease-out ${i * 60}ms both` }}
               >
-                <div className="flex aspect-[16/10] items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700">
-                  <TreePine className="h-8 w-8 text-slate-300 transition-transform duration-300 group-hover:scale-110 dark:text-slate-500" />
+                <div className="flex aspect-[16/10] items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 overflow-hidden">
+                  {s.photoUrl ? (
+                    <img src={s.photoUrl} alt={s.species} className="h-full w-full object-cover" />
+                  ) : (
+                    <TreePine className="h-8 w-8 text-slate-300 transition-transform duration-300 group-hover:scale-110 dark:text-slate-500" />
+                  )}
                 </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">
@@ -168,6 +177,7 @@ export default function SeedlingsPage() {
                   <div className="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
                     <MapPin className="h-3.5 w-3.5 text-slate-400" />
                     {s.regency}, {s.province}
+                    {s.height && <span className="ml-2 text-xs">· {s.height}</span>}
                   </div>
                   <div className="mt-3 flex items-center justify-between border-t border-ink-line pt-3">
                     <span className="flex items-center gap-1.5 text-sm text-ink-muted">

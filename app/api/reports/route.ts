@@ -345,17 +345,21 @@ export async function POST(request: Request) {
             },
           });
         } else {
-          // Bikin seedling baru
-          await prisma.seedling.create({
+          // Bikin seedling baru — simpan semua field dari form
+          const seedling = await prisma.seedling.create({
             data: {
               userId: session?.userId || "__guest__",
               species,
               quantity: seedlingCount,
               stock: seedlingCount,
+              height: (fieldData?.C2_tinggi as string) || "",
+              seedlingForm: (fieldData?.C3_bentuk as string) || "",
+              readiness: (fieldData?.C4_kesiapan as string) || "",
               province: (fieldData?.province as string) || "",
               regency: (fieldData?.regency as string) || "",
               notes: (fieldData?.notes as string) || "",
               status: "pending",
+              reportId: report.id,
             },
           });
         }
