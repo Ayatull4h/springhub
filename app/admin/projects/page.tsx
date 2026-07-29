@@ -147,8 +147,8 @@ function ProjectDetailModal({
             {fd.B2_jenis && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Kegiatan" value={Array.isArray(fd.B2_jenis) ? (fd.B2_jenis as string[]).join(", ") : String(fd.B2_jenis)} />}
             {fd.C1_waktu && <DetailField icon={<Calendar className="h-3.5 w-3.5" />} label="Waktu" value={String(fd.C1_waktu)} />}
             {fd.C2_target && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Target" value={String(fd.C2_target)} />}
-            {fd.C3_relawan && <DetailField icon={<Users className="h-3.5 w-3.5" />} label="Relawan" value={`${fd.C3_relawan} orang`} />}
-            {fd.C3_mitra && <DetailField icon={<Users className="h-3.5 w-3.5" />} label="Mitra" value={Array.isArray(fd.C3_mitra) ? (fd.C3_mitra as string[]).join(", ") : String(fd.C3_mitra)} />}
+            {fd.C3_relawan && <DetailField icon={<User className="h-3.5 w-3.5" />} label="Relawan" value={`${fd.C3_relawan} orang`} />}
+            {fd.C3_mitra && <DetailField icon={<User className="h-3.5 w-3.5" />} label="Mitra" value={Array.isArray(fd.C3_mitra) ? (fd.C3_mitra as string[]).join(", ") : String(fd.C3_mitra)} />}
             {fd.D1_biaya && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Biaya" value={String(fd.D1_biaya)} />}
             {fd.D1_rincian && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Rincian" value={String(fd.D1_rincian)} />}
             {fd.D2_dukungan && <DetailField icon={<FileText className="h-3.5 w-3.5" />} label="Dukungan" value={Array.isArray(fd.D2_dukungan) ? (fd.D2_dukungan as string[]).join(", ") : String(fd.D2_dukungan)} />}
