@@ -76,7 +76,7 @@
   "form.title.trench": "Pengembangan Rorak",
   "form.desc.trench": "Catat rorak (parit resapan) yang telah Anda gali. Ini membantu pengisian air tanah di daerah tangkapan mata air.",
   "form.title.planting": "Penanaman Pohon",
-  "form.desc.planting": "Catat pohon endemik/asli yang Anda tanam di sekitar mata air atau daerah tangkapannya.",
+  "form.desc.planting": "SATU FORM = SATU POHON. Catat pohon yang Anda tanam.",
   "form.title.seedling": "Stok Bibit Pohon",
   "form.desc.seedling": "Perbarui data bibit yang tersedia di persemaian Anda, agar dapat dicocokkan dengan proyek penanaman.",
   "form.points": "poin per submit",
