@@ -94,10 +94,10 @@ export async function POST(request: Request) {
   const fieldPhotos: string[] = [];
 
   for (const [key, value] of formData.entries()) {
-    if (key.startsWith("foto_") && value instanceof File && value.size > 0) {
-      photoFiles.push(value);
+    if (key.startsWith("foto_") && typeof value === "object" && value !== null && (value as any).size > 0) {
+      photoFiles.push(value as File);
       fieldPhotos.push(key);
-    } else if (key === "proposalFile" && value instanceof File) {
+    } else if (key === "proposalFile" && typeof value === "object" && value !== null) {
       const buffer = Buffer.from(await value.arrayBuffer());
       fieldData.proposalFile = `data:${value.type};base64,${buffer.toString("base64")}`;
     } else if (key !== "form_slug" && key !== "_submit_time" && key !== "_website" && key !== "_captured_at") {
@@ -137,20 +137,17 @@ export async function POST(request: Request) {
   let featuredPhotoId: string | null = null;
   for (let i = 0; i < photoFiles.length; i++) {
     const file = photoFiles[i];
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const ext = file.name.split(".").pop() || "jpg";
+    const buffer = Buffer.from(await (file as any).arrayBuffer());
+    const ext = ((file as any).name || "photo.jpg").split(".").pop() || "jpg";
     const fileName = `${project.id}/${Date.now()}-${i}.${ext}`;
     const storagePath = `projects/${fileName}`;
 
-    const { PrismaClient } = require("@prisma/client");
-    const prisma2 = new PrismaClient();
     try {
-      const photo = await prisma2.projectPhoto.create({
+      const photo = await prisma.projectPhoto.create({
         data: { projectId: project.id, storagePath, mimeType: file.type || "image/jpeg" },
       });
       if (i === 0) featuredPhotoId = photo.id;
     } catch {}
-    await prisma2.$disconnect();
   }
 
   // Set featured photo
