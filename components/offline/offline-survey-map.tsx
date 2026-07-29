@@ -482,13 +482,15 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   const handleSubmitForm = async () => {
     if (!activeForm) return;
 
-    // ── Validasi: min 1 foto per field, total min 3 foto ─────────────
+    // ── Validasi: total min 3 foto ──────────────────────────────────
+    const photoFields = activeForm.fields.filter((f: any) => f.type === "photo");
+    const minPerField = photoFields.length > 1 ? 1 : 3;
     let totalPhotos = 0;
     for (const field of activeForm.fields) {
       if (field.type === "photo") {
         const count = (formPhotos[field.id] || []).length;
-        if (count < 1) {
-          alert(`Minimal 1 foto untuk "${field.label || field.id}".`);
+        if (count < minPerField) {
+          alert(`Minimal ${minPerField} foto untuk "${field.label || field.id}". Saat ini: ${count} foto.`);
           return;
         }
         totalPhotos += count;
@@ -798,7 +800,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                           <span className="ml-1 self-center text-[10px] text-ink-muted">
                             {formPhotos[field.id].length}/5
                             {formPhotos[field.id].length < 3 && (
-                              <span className="ml-1 font-semibold text-amber-600">(min 1)</span>
+                              <span className="ml-1 font-semibold text-amber-600">(min 1 per field)</span>
                             )}
                           </span>
                         </div>

@@ -211,13 +211,17 @@ export default function ReportFormPage() {
     if (!form) return dbForm;
     // df.fieldId = field identifier (spring_name), sf.id = field identifier
     // Cocokkan: DB fieldId → static field id
-    const staticFieldMap = new Map(form.fields.map((f) => [f.id, f]));
-    const mergedFields = dbForm.fields.map((df) => {
-      const fieldId = (df as Record<string, unknown>).fieldId as string || df.id;
-      const sf = staticFieldMap.get(fieldId);
-      return sf ? { ...sf, ...df, id: fieldId, options: df.options?.length ? df.options : sf.options } : df;
-    });
-    return { ...dbForm, fields: mergedFields };
+     const staticFieldMap = new Map(form.fields.map((f) => [f.id, f]));
+     const photoFields = dbForm.fields.filter((f: any) => f.type === "photo");
+     const minPerField = photoFields.length > 1 ? 1 : 3;
+     const mergedFields = dbForm.fields.map((df: any) => {
+       const fieldId = df.fieldId || df.id;
+       const sf = staticFieldMap.get(fieldId);
+       const merged: any = sf ? { ...sf, ...df, id: fieldId, options: df.options?.length ? df.options : sf.options } : { ...df };
+       if (df.type === "photo") merged.minPerField = minPerField;
+       return merged;
+     });
+     return { ...dbForm, fields: mergedFields };
   })();
 
   // Show loading while DB form is being fetched (only when static form not found)
@@ -296,24 +300,25 @@ export default function ReportFormPage() {
       }
     }
 
-    // ── Validasi: min 1 foto per field, total min 3 foto ─────────────────
+    // ── Validasi: total min 3 foto ─────────────────────────────────────
     const photoFieldIds = activeForm.fields
       .filter((f: FormField) => f.type === "photo")
       .map((f: FormField) => f.id);
+    const minPerField = photoFieldIds.length > 1 ? 1 : 3;
     let totalPhotos = 0;
     for (const fieldId of photoFieldIds) {
       const files = formData.getAll(fieldId).filter(
         (f): f is File => f instanceof File && f.size > 0
       );
-      if (files.length < 1) {
-        setError(`Minimal 1 foto untuk "${fieldId}".`);
+      if (files.length < minPerField) {
+        setError(`Minimal ${minPerField} foto untuk "${fieldId}". Saat ini: ${files.length} foto.`);
         setLoading(false);
         return;
       }
       totalPhotos += files.length;
     }
-    if (photoFieldIds.length > 1 && totalPhotos < photoFieldIds.length) {
-      setError(`Minimal ${photoFieldIds.length} foto (1 per field). Saat ini: ${totalPhotos} foto.`);
+    if (totalPhotos < 3) {
+      setError(`Minimal total 3 foto. Saat ini: ${totalPhotos} foto.`);
       setLoading(false);
       return;
     }
@@ -809,8 +814,10 @@ function FieldRenderer({
           <div className="mt-1 flex items-center gap-2 text-xs text-ink-muted">
             <Camera className="h-3.5 w-3.5" />
             <span>{currentCount} / 5 foto</span>
-            {currentCount < 1 && (
-              <span className="font-semibold text-amber-600">(min 1 foto)</span>
+            {currentCount < ((field as any).minPerField || 3) && (
+              <span className="font-semibold text-amber-600">
+                (min {(field as any).minPerField || 3} foto)
+              </span>
             )}
             {maxReached && (
               <span className="font-semibold text-amber-600">(maksimal 5 foto)</span>
