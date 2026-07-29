@@ -137,15 +137,9 @@ export async function POST(request: Request) {
   // Upload photos — simpan file ke disk + DB
   let featuredPhotoId: string | null = null;
   for (let i = 0; i < photoFiles.length; i++) {
-    const file = photoFiles[i];
+    const file = photoFiles[i] as File;
     try {
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const result = await uploadPhoto(buffer, {
-        fieldId: `foto_${i + 1}`,
-        fileName: file.name || `photo-${Date.now()}.jpg`,
-        mimeType: file.type || "image/jpeg",
-        folder: `projects/${project.id}`,
-      });
+      const result = await uploadPhoto(file, `projects/${project.id}`);
       const photo = await prisma.projectPhoto.create({
         data: { projectId: project.id, storagePath: result.path, mimeType: file.type || "image/jpeg" },
       });

@@ -163,7 +163,7 @@ export default function SeedlingsPage() {
                   {s.photoUrl ? (
                     <img src={s.photoUrl} alt={s.species} className="h-full w-full object-cover" />
                   ) : (
-                    <TreePine className="h-8 w-8 text-slate-300 transition-transform duration-300 group-hover:scale-110 dark:text-slate-500" />
+                    <TreePine className="h-10 w-10 text-emerald-600/60 transition-transform duration-300 group-hover:scale-110 dark:text-emerald-400/60" />
                   )}
                 </div>
                 <div className="p-4">

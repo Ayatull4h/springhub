@@ -163,22 +163,20 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
     if (!selectedForm || submitting) return;
     setSubmitError("");
 
-    // ── Validasi: min 3 foto per field photo ─────────────────────────
+    // ── Validasi: total min 3 foto ──────────────────────────────────
     const formEl = e.currentTarget;
     const fd = new FormData(formEl);
-    for (const field of selectedForm.fields) {
-      if (field.type === "photo") {
-        // Cek dari state photoFiles (file yg sudah dipilih)
-        const stateCount = (photoFiles[field.id] || []).length;
-        // Cek juga dari FormData (file yg mungkin masih ada di input)
-        const fdFiles = fd.getAll(field.id).filter(
-          (f): f is File => f instanceof File && f.size > 0
-        );
-        const count = Math.max(stateCount, fdFiles.length);
-        if (count < 3) {
-          setSubmitError(`Minimal 3 foto untuk "${field.label || field.id}". Saat ini: ${count} foto.`);
-          return;
-        }
+    const photoFields = selectedForm.fields.filter((f: any) => f.type === "photo");
+    const minPerField = photoFields.length > 1 ? 1 : 3;
+    for (const field of photoFields) {
+      const stateCount = (photoFiles[field.id] || []).length;
+      const fdFiles = fd.getAll(field.id).filter(
+        (f): f is File => f instanceof File && f.size > 0
+      );
+      const count = Math.max(stateCount, fdFiles.length);
+      if (count < minPerField) {
+        setSubmitError(`Minimal ${minPerField} foto untuk "${field.label || field.id}". Saat ini: ${count} foto.`);
+        return;
       }
     }
 
