@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
+import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildPhotoUrls } from "@/lib/photo-url";
 export const dynamic = "force-dynamic";
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   try {
+    const session = await getSession();
+    const isAdmin = session?.role === "admin";
+
     const project = await prisma.project.findUnique({
       where: { id: params.id },
       include: {
@@ -15,6 +19,11 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     });
 
     if (!project) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    // Non-admin hanya bisa lihat project approved
+    if (!isAdmin && project.status !== "approved") {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 

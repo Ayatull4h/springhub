@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage } from "@/lib/prisma";
 import { logError } from "@/lib/error-logger";
-import { deletePhoto } from "@/lib/upload-photo";
+import { uploadPhoto } from "@/lib/upload-photo";
 import { buildPhotoUrls } from "@/lib/photo-url";
 export const dynamic = "force-dynamic";
 
@@ -134,18 +134,20 @@ export async function POST(request: Request) {
     },
   });
 
-  // Upload photos
+  // Upload photos — simpan file ke disk + DB
   let featuredPhotoId: string | null = null;
   for (let i = 0; i < photoFiles.length; i++) {
     const file = photoFiles[i];
-    const buffer = Buffer.from(await (file as any).arrayBuffer());
-    const ext = ((file as any).name || "photo.jpg").split(".").pop() || "jpg";
-    const fileName = `${project.id}/${Date.now()}-${i}.${ext}`;
-    const storagePath = `projects/${fileName}`;
-
     try {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const result = await uploadPhoto(buffer, {
+        fieldId: `foto_${i + 1}`,
+        fileName: file.name || `photo-${Date.now()}.jpg`,
+        mimeType: file.type || "image/jpeg",
+        folder: `projects/${project.id}`,
+      });
       const photo = await prisma.projectPhoto.create({
-        data: { projectId: project.id, storagePath, mimeType: file.type || "image/jpeg" },
+        data: { projectId: project.id, storagePath: result.path, mimeType: file.type || "image/jpeg" },
       });
       if (i === 0) featuredPhotoId = photo.id;
     } catch {}
