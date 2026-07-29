@@ -347,7 +347,11 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 </div>
                 <div>
                   <h2 className="font-semibold text-ink">{getFormTitle(f.slug, f.title || f.name, t)}</h2>
-                  <p className="text-xs text-ink-muted">{t(`form.desc.${f.slug}` as any, f.description || "")}</p>
+                  <p className="text-xs text-ink-muted">{(() => {
+                    const i18nKey = getFormI18nKey(f.slug);
+                    const descKey = i18nKey ? `form.desc.${i18nKey.replace("form.title.", "")}` : "";
+                    return descKey ? t(descKey as any, f.description || "") : (f.description || "");
+                  })()}</p>
                 </div>
               </button>
             ))}
