@@ -1,6 +1,6 @@
 "use client";
-
 import { useEffect, useState, useRef } from "react";
+export const dynamic = "force-dynamic";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, AlertCircle, CheckCircle2, Upload, FileText } from "lucide-react";
@@ -93,7 +93,9 @@ export default function NewProjectPage() {
       for (const [key, val] of Object.entries(fieldData)) {
         formData.set(key, val as string);
       }
-      for (const f of photoFiles) formData.append(f.name || "foto", f);
+      photoFiles.forEach((f, i) => {
+        if (f) formData.append(`foto_${i + 1}`, f);
+      });
       if (proposalFile) formData.append("proposalFile", proposalFile);
       formData.set("form_slug", "project-submission");
 

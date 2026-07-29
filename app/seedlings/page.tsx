@@ -1,6 +1,6 @@
 "use client";
-
 import { useState, useMemo, useEffect } from "react";
+export const dynamic = "force-dynamic";
 import Link from "next/link";
 import {
   Search, MapPin, Sprout, User, Star, ArrowRight,

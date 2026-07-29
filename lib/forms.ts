@@ -160,7 +160,7 @@ export const FORMS: FormSchema[] = [
     title: "Tanam Pohon",
     legacyTitle: "Tree Planting",
     description:
-      "SATU FORM = SATU POHON. Catat pohon yang Anda tanam di sekitar mata air.",
+      "SATU FORM = SATU POHON. Catat pohon yang Anda tanam.",
     pointsOnSubmit: 50,
     contributionType: "tree_planting",
     fields: [

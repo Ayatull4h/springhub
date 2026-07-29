@@ -1,6 +1,6 @@
 "use client";
-
 import { useState, useEffect } from "react";
+export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
