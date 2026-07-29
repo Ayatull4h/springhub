@@ -78,23 +78,13 @@ export default function NewProjectPage() {
       return;
     }
 
-    // Cek file dari React state (reliable di semua browser, termasuk HEIC)
-    const stateFiles = photoFiles.filter(f => f && f instanceof File && f.name.length > 0);
-    if (stateFiles.length >= 3) {
-      // React state aman — lanjut
-    } else {
-      // Fallback: cek DOM langsung
-      const inputs = document.querySelectorAll('input[type="file"]');
-      let domCount = 0;
-      inputs.forEach(inp => {
-        const fi = inp as HTMLInputElement;
-        if (fi.files) domCount += fi.files.length;
-      });
-      if (domCount < 3 && stateFiles.length < 3) {
-        setError(`Wajib upload minimal 3 foto lokasi proyek. State: ${stateFiles.length}, DOM: ${domCount}. Coba ambil foto ulang.`);
-        setSubmitting(false);
-        return;
-      }
+    // Cek file dari React state (reliable di semua browser, termasuk HEIC & Android)
+    // Cek file — cukup periksa bahwa ada 3 file di photoFiles (Android kadang File bukan instanceof File)
+    const hasAllPhotos = photoFiles.length >= 3 && photoFiles.every(f => f !== null && f !== undefined);
+    if (!hasAllPhotos) {
+      setError(`Ambil 3 foto dari lokasi proyek. Terdeteksi: ${photoFiles.filter(Boolean).length} file.`);
+      setSubmitting(false);
+      return;
     }
 
     try {
@@ -265,13 +255,15 @@ export default function NewProjectPage() {
                     <span className="mt-1">Foto {i + 1}</span>
                   </>
                 )}
-                <input type="file" accept="image/*,.heic,.heif,.HEIC,.HEIF" capture="environment" className="hidden" onChange={e => {
+                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={e => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    const newPhotos = [...photoFiles];
-                    newPhotos[i] = file;
-                    setPhotoFiles(newPhotos);
-                    photoFilesRef.current = newPhotos;
+                    setPhotoFiles(prev => {
+                      const next = [...prev];
+                      next[i] = file;
+                      photoFilesRef.current = next;
+                      return next;
+                    });
                   }
                 }} />
               </label>
