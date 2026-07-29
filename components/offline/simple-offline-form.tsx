@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send, RefreshCw, AlertCircle, XCircle } from "lucide-react";
 import { offlineDB } from "@/lib/offline-db";
 import { getForm, getFormTitle, type FormField, type FormSchema } from "@/lib/forms";
+import { useI18n } from "@/lib/i18n";
 import { INDONESIAN_PROVINCES } from "@/lib/provinces";
 
 /**
@@ -11,6 +12,7 @@ import { INDONESIAN_PROVINCES } from "@/lib/provinces";
  * No map, no tiles, no wizard. Just form + GPS + camera.
  */
 export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
+  const { t, locale } = useI18n();
   const [forms, setForms] = useState<any[]>([]);
   const [selectedForm, setSelectedForm] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -402,19 +404,19 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         {/* Notice card untuk SATU FORM = SATU POHON / RORAK */}
         {(selectedForm?.slug === "tree-planting" || selectedForm?.slug === "trench-development") && (
           <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-4 text-sm text-amber-800 dark:text-amber-200">
-            <strong>⚠️ {selectedForm.slug === "tree-planting" ? "SATU FORM = SATU POHON" : "SATU FORM = SATU RORAK"}</strong>
+            <strong>⚠️ {selectedForm.slug === "tree-planting" ? (locale === "en" ? "ONE FORM = ONE TREE" : "SATU FORM = SATU POHON") : (locale === "en" ? "ONE FORM = ONE PIT" : "SATU FORM = SATU RORAK")}</strong>
             <p className="mt-1 text-amber-700 dark:text-amber-300">
               {selectedForm.slug === "tree-planting"
-                ? "Setiap form hanya untuk 1 (satu) pohon."
-                : "Setiap form hanya untuk 1 (satu) rorak. Ukuran dalam CM."}
+                ? (locale === "en" ? "Log the tree you planted." : "Catat pohon yang Anda tanam.")
+                : (locale === "en" ? "One form per pit. Dimensions in CM." : "Setiap form hanya untuk 1 (satu) rorak. Ukuran dalam CM.")}
             </p>
           </div>
         )}
 
         {formDef?.fields.map((field: FormField) => (
           <div key={field.id} className="w-full">
-            <label htmlFor={`offline-${field.id}`} className="block text-sm font-medium text-ink">
-              {field.label}
+             <label htmlFor={`offline-${field.id}`} className="block text-sm font-medium text-ink">
+              {locale === "en" && field.labelEn ? field.labelEn : field.label}
               {field.required && <span className="ml-1 text-red-500">*</span>}
               {field.help && <span className="ml-2 text-xs font-normal text-ink-subtle">{field.help}</span>}
             </label>
@@ -454,8 +456,8 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white"
               >
                 <option value="">Pilih...</option>
-                {field.options?.map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
+                {(locale === "en" && field.optionsEn?.length ? field.optionsEn : field.options)?.map((opt: string, i: number) => (
+                  <option key={opt} value={field.options?.[i] || opt}>{opt}</option>
                 ))}
               </select>
             ) : field.type === "location" ? (

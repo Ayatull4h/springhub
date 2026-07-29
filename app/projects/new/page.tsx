@@ -78,17 +78,23 @@ export default function NewProjectPage() {
       return;
     }
 
-    const photoInputs = document.querySelectorAll('input[name^="foto_"]');
-    let totalFiles = 0;
-    photoInputs.forEach(input => {
-      const fileInput = input as HTMLInputElement;
-      if (fileInput.files && fileInput.files.length > 0) totalFiles += fileInput.files.length;
-    });
-    if (photoFiles.length >= 3) totalFiles = Math.max(totalFiles, photoFiles.length);
-    if (totalFiles < 3) {
-      setError(`Wajib upload minimal 3 foto lokasi proyek. Terdeteksi: ${totalFiles} file.`);
-      setSubmitting(false);
-      return;
+    // Cek file dari React state (reliable di semua browser, termasuk HEIC)
+    const stateFiles = photoFiles.filter(f => f && f instanceof File && f.name.length > 0);
+    if (stateFiles.length >= 3) {
+      // React state aman — lanjut
+    } else {
+      // Fallback: cek DOM langsung
+      const inputs = document.querySelectorAll('input[type="file"]');
+      let domCount = 0;
+      inputs.forEach(inp => {
+        const fi = inp as HTMLInputElement;
+        if (fi.files) domCount += fi.files.length;
+      });
+      if (domCount < 3 && stateFiles.length < 3) {
+        setError(`Wajib upload minimal 3 foto lokasi proyek. State: ${stateFiles.length}, DOM: ${domCount}. Coba ambil foto ulang.`);
+        setSubmitting(false);
+        return;
+      }
     }
 
     try {

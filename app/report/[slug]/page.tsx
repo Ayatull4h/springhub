@@ -312,8 +312,8 @@ export default function ReportFormPage() {
       }
       totalPhotos += files.length;
     }
-    if (totalPhotos < 3) {
-      setError(`Minimal total 3 foto. Saat ini: ${totalPhotos} foto.`);
+    if (photoFieldIds.length > 1 && totalPhotos < photoFieldIds.length) {
+      setError(`Minimal ${photoFieldIds.length} foto (1 per field). Saat ini: ${totalPhotos} foto.`);
       setLoading(false);
       return;
     }
@@ -578,7 +578,7 @@ export default function ReportFormPage() {
               <strong>⚠️ {slug === "tree-planting" ? "SATU FORM = SATU POHON" : "SATU FORM = SATU RORAK"}</strong>
               <p className="mt-1 text-amber-700 dark:text-amber-300">
                 {slug === "tree-planting"
-                  ? "Setiap form hanya untuk 1 (satu) pohon. Kalau menanam 20 pohon, isi 20 form."
+                  ? "Catat pohon yang Anda tanam."
                   : "Setiap form hanya untuk 1 (satu) rorak. Ukuran dalam CM."}
               </p>
             </div>
