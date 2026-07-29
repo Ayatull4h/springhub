@@ -1,5 +1,5 @@
 /**
- * SpringHub Service Worker v4 — Offline Survey Mode
+ * SpringHub Service Worker v5 — Offline Survey Mode
  *
  * Caches:
  * - STATIC: /_next/static/* (app shell — JS/CSS chunks)
@@ -15,11 +15,11 @@
  */
 
 const CACHE_NAMES = {
-  STATIC: "springhub-static-v4",
-  PAGES: "springhub-pages-v4",
-  TILES: "springhub-tiles-v4",
-  ASSETS: "springhub-assets-v4",
-  API: "springhub-api-v2",
+  STATIC: "springhub-static-v5",
+  PAGES: "springhub-pages-v5",
+  TILES: "springhub-tiles-v5",
+  ASSETS: "springhub-assets-v5",
+  API: "springhub-api-v3",
 };
 
 const ALL_CACHES = Object.values(CACHE_NAMES);
