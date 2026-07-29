@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send, RefreshCw, AlertCircle, XCircle } from "lucide-react";
 import { offlineDB } from "@/lib/offline-db";
-import { getForm, getFormTitle, type FormField, type FormSchema } from "@/lib/forms";
+import { getForm, getFormTitle, getFormI18nKey, type FormField, type FormSchema } from "@/lib/forms";
 import { useI18n } from "@/lib/i18n";
 import { INDONESIAN_PROVINCES } from "@/lib/provinces";
 
@@ -346,8 +346,8 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                   <Send className="h-5 w-5 text-brand-600" />
                 </div>
                 <div>
-                  <h2 className="font-semibold text-ink">{f.title || f.name}</h2>
-                  <p className="text-xs text-ink-muted">{f.description || f.slug}</p>
+                  <h2 className="font-semibold text-ink">{getFormTitle(f.slug, f.title || f.name, t)}</h2>
+                  <p className="text-xs text-ink-muted">{t(`form.desc.${f.slug}` as any, f.description || "")}</p>
                 </div>
               </button>
             ))}
@@ -374,7 +374,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         <ArrowLeft className="h-4 w-4" /> Ganti Form
       </button>
 
-      <h1 className="text-2xl font-extrabold text-ink">{formDef?.title || selectedForm.title}</h1>
+      <h1 className="text-2xl font-extrabold text-ink">{getFormTitle(selectedForm.slug, formDef?.title || selectedForm.title, t)}</h1>
 
       {/* GPS status */}
       <div className={`mt-3 flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
