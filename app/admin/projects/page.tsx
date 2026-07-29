@@ -74,7 +74,7 @@ function ProjectDetailModal({
   project: ProjectItem | null;
   open: boolean;
   onClose: () => void;
-  onAction: (id: string, status: string, note: string) => Promise<void>;
+  onAction: (id: string, status: string, note: string, featuredPhotoId?: string) => Promise<void>;
 }) {
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
@@ -82,7 +82,7 @@ function ProjectDetailModal({
   async function handleAction(status: string) {
     if (!project) return;
     setSaving(true);
-    await onAction(project.id, status, note);
+    await onAction(project.id, status, note, "");
     setSaving(false);
     onClose();
   }
