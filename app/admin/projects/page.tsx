@@ -250,7 +250,7 @@ function ActionModal({
   project: ProjectItem | null;
   open: boolean;
   onClose: () => void;
-  onAction: (id: string, status: string, note: string) => Promise<void>;
+  onAction: (id: string, status: string, note: string, featuredPhotoId?: string) => Promise<void>;
 }) {
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);

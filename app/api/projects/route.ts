@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const page = Math.max(parseInt(pageParam, 10) || 1, 1);
     const skip = (page - 1) * limit;
 
-    const where = { status: { in: ["approved" as const, "under_review" as const] } };
+    const where = { status: "approved" as const };
 
     const [projects, total] = await Promise.all([
       prisma.project.findMany({

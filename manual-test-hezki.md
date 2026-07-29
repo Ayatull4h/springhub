@@ -1,6 +1,6 @@
 # Manual Test — SpringHub v2.1
 
-**Tanggal**: 27 Juli 2026 (Update batch 4: marker abu final, dark mode pasar bibit, offline WA, offline 1 foto/field, seedling real API, offline dedup, deskripsi tanam)
+**Tanggal**: 29 Juli 2026 (Update final: project detail 20 field, featured photo admin, offline i18n, pasar bibit real data, project API fix, SW v5)
 **Domain**: https://www.springhub.id
 **Total Test**: ~200 test case — 27 kategori
 
