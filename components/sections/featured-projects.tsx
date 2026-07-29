@@ -91,8 +91,12 @@ export function FeaturedProjects() {
             return (
               <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
                 <article className="card flex flex-col overflow-hidden transition-all hover:shadow-lg">
-                  <div className="flex h-24 items-center justify-center bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
-                    <Icon className="h-10 w-10 text-sky-400/50 dark:text-sky-500/30" />
+                  <div className="flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
+                    {p.featuredPhoto?.url ? (
+                      <img src={p.featuredPhoto.url} alt={p.title} className="h-full w-full object-cover" />
+                    ) : (
+                      <Icon className="h-10 w-10 text-sky-400/50 dark:text-sky-500/30" />
+                    )}
                   </div>
                   <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
                     <span className="mb-2 inline-flex w-fit rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-900/30 dark:text-sky-300">

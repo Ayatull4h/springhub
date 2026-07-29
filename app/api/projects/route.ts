@@ -128,6 +128,7 @@ export async function POST(request: Request) {
       contactName: (fieldData.A_nama as string) || profile.username,
       contactEmail: (fieldData.A_email as string) || profile.email,
       contactPhone: (fieldData.A_wa as string) || profile.phone || "",
+      fieldData: JSON.stringify(fieldData),
       userId: session.userId,
       status: "pending",
     },

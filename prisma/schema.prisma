@@ -234,6 +234,7 @@ model Project {
   summary         String        @default("")
   region          String        @default("")
   typeId          String
+  fieldData       String        @default("{}") // JSON — 20 field dari form
   status          ProjectStatus @default(pending)
   goalAmount      Int           @default(0)
   raisedAmount    Int           @default(0)

@@ -254,19 +254,33 @@ function ActionModal({
 }) {
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
+  const [photos, setPhotos] = useState<{ id: string; url: string }[]>([]);
+  const [featured, setFeatured] = useState<string>("");
 
   useEffect(() => {
-    if (open) {
+    if (open && project) {
       setNote("");
       setSaving(false);
+      setPhotos([]);
+      setFeatured("");
+      fetch(`/api/projects/${project.id}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.project?.photos) {
+            setPhotos(data.project.photos);
+            if (data.project.featuredPhoto) setFeatured(data.project.featuredPhoto.id);
+            else if (data.project.photos.length > 0) setFeatured(data.project.photos[0].id);
+          }
+        })
+        .catch(() => {});
     }
-  }, [open]);
+  }, [open, project]);
 
   if (!open || !project) return null;
 
   const handleAction = async (status: string) => {
     setSaving(true);
-    await onAction(project.id, status, note);
+    await onAction(project.id, status, note, featured);
     setSaving(false);
     onClose();
   };
@@ -302,6 +316,19 @@ function ActionModal({
           />
         </div>
 
+        {photos.length > 0 && (
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-ink">Pilih Foto Thumbnail</label>
+            <div className="mt-1 flex flex-wrap gap-2">
+              {photos.map((p) => (
+                <button key={p.id} onClick={() => setFeatured(featured === p.id ? "" : p.id)}
+                  className={`h-16 w-24 overflow-hidden rounded-lg border-2 ${featured === p.id ? 'border-brand-500 ring-2 ring-brand-500/30' : 'border-ink-line hover:border-brand-300'}`}>
+                  <img src={p.url} alt="" className="h-full w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="mt-5 flex justify-end gap-2">
           <button
             onClick={() => handleAction("rejected")}
@@ -360,13 +387,13 @@ export default function AdminProjectsPage() {
     fetchProjects();
   }, [fetchProjects]);
 
-  async function handleAction(id: string, status: string, note: string) {
+  async function handleAction(id: string, status: string, note: string, featuredPhotoId?: string) {
     try {
       const csrf = await fetch("/api/csrf").then(r=>r.json()).then(d=>d.token||"").catch(()=>"");
       const res = await fetch(`/api/admin/projects/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
-        body: JSON.stringify({ status, note }),
+        body: JSON.stringify({ status, note, featuredPhotoId }),
       });
       if (res.ok) {
         setActionMsg(`✅ Project ${status === "approved" ? "approved" : status === "rejected" ? "rejected" : "moved to " + status}!`);

@@ -30,6 +30,19 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
 
   // ── Sync status (refresh tiap 5 detik) ──────────────────────────
   const [defaultValues, setDefaultValues] = useState<Record<string, string>>({});
+
+  // Clear old form cache — paksa refresh dari API
+  useEffect(() => {
+    try {
+      const cachedVersion = localStorage.getItem("form_cache_version");
+      if (cachedVersion !== "v2") {
+        // Hapus semua form definition yang di-cache
+        offlineDB.clearForms().catch(() => {});
+        localStorage.setItem("form_cache_version", "v2");
+      }
+    } catch {}
+  }, []);
+
   useEffect(() => {
     offlineDB.getSession().then(session => {
       if (session?.phone) {

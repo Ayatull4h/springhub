@@ -29,7 +29,7 @@ export async function PATCH(
 
   try {
     const body = await request.json();
-    const { status, note } = body;
+    const { status, note, featuredPhotoId } = body;
 
     const validStatuses = ["under_review", "approved", "rejected", "completed"];
     if (!status || !validStatuses.includes(status)) {
@@ -39,9 +39,12 @@ export async function PATCH(
       );
     }
 
+    const updateData: Record<string, unknown> = { status };
+    if (featuredPhotoId) updateData.featuredPhotoId = featuredPhotoId;
+
     const project = await prisma.project.update({
       where: { id: params.id },
-      data: { status },
+      data: updateData,
       include: { user: { select: { email: true, username: true } } },
     });
 
