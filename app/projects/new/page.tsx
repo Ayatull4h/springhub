@@ -79,10 +79,10 @@ export default function NewProjectPage() {
     }
 
     // Cek file dari React state (reliable di semua browser, termasuk HEIC & Android)
-    // Cek file — cukup periksa bahwa ada 3 file di photoFiles (Android kadang File bukan instanceof File)
-    const hasAllPhotos = photoFiles.length >= 3 && photoFiles.every(f => f !== null && f !== undefined);
-    if (!hasAllPhotos) {
-      setError(`Ambil 3 foto dari lokasi proyek. Terdeteksi: ${photoFiles.filter(Boolean).length} file.`);
+    // Cek file — pake ref biar gak stale closure
+    const currentPhotos = photoFilesRef.current.length >= 3 ? photoFilesRef.current : photoFiles;
+    if (currentPhotos.length < 3 || !currentPhotos.every(f => f !== null && f !== undefined)) {
+      setError(`Ambil 3 foto dari lokasi proyek. Terdeteksi: ${currentPhotos.filter(Boolean).length} file.`);
       setSubmitting(false);
       return;
     }
