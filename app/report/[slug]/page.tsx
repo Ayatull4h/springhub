@@ -50,6 +50,8 @@ export default function ReportFormPage() {
 
   // Auto-fill defaults from user profile
   const [defaultValues, setDefaultValues] = useState<Record<string, string>>({});
+  const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
+
   useEffect(() => {
     fetch("/api/auth/me")
       .then((r) => r.ok ? r.json() : null)
@@ -71,6 +73,35 @@ export default function ReportFormPage() {
         }
       })
       .catch(() => {});
+  }, []);
+
+  // GPS location helper — update geotag + accuracy sekaligus
+  const requestLocation = useCallback(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude.toFixed(6);
+        const lng = pos.coords.longitude.toFixed(6);
+        const acc = Math.round(pos.coords.accuracy);
+        setGpsAccuracy(acc);
+        setFieldData((prev) => ({
+          ...prev,
+          A4_geotag: `${lat}, ${lng}`,
+          A_akurasi_gps: String(acc),
+          B3_geotag: `${lat}, ${lng}`,
+          A_geotag: `${lat}, ${lng}`,
+        }));
+        setDefaultValues((prev) => ({
+          ...prev,
+          A4_geotag: `${lat}, ${lng}`,
+          A_akurasi_gps: String(acc),
+          B3_geotag: `${lat}, ${lng}`,
+          A_geotag: `${lat}, ${lng}`,
+        }));
+      },
+      () => {},
+      { enableHighAccuracy: true, timeout: 15000 }
+    );
   }, []);
 
   // Sync photoFiles → photoBlobs for auto-save (accumulated, not just last batch)
@@ -447,7 +478,6 @@ export default function ReportFormPage() {
       </Link>
 
       <h1 className="mt-4 text-3xl font-extrabold tracking-tight">{getFormTitle(activeForm.slug, activeForm.title, t)}</h1>
-      <p className="mt-2 text-ink-muted">{activeForm.description}</p>
 
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
         <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
@@ -514,6 +544,18 @@ export default function ReportFormPage() {
             </p>
           </div>
 
+          {/* Notice card untuk SATU FORM = SATU POHON / SATU RORAK */}
+          {(slug === "tree-planting" || slug === "trench-development") && (
+            <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-4 text-sm text-amber-800 dark:text-amber-200">
+              <strong>⚠️ {slug === "tree-planting" ? "SATU FORM = SATU POHON" : "SATU FORM = SATU RORAK"}</strong>
+              <p className="mt-1 text-amber-700 dark:text-amber-300">
+                {slug === "tree-planting"
+                  ? "Setiap form hanya untuk 1 (satu) pohon. Kalau menanam 20 pohon, isi 20 form."
+                  : "Setiap form hanya untuk 1 (satu) rorak. Ukuran dalam CM."}
+              </p>
+            </div>
+          )}
+
           {activeForm.fields.map((field: FormField) => (
             field.type === "date" ? (
               <div key={field.id} className="hidden" aria-hidden>
@@ -521,7 +563,7 @@ export default function ReportFormPage() {
               </div>
             ) : (
               <FieldWrapper key={field.id}>
-                <FieldRenderer field={field} capturedAtDisplay={capturedAtDisplay} photoFiles={photoFiles} setPhotoFiles={setPhotoFiles} defaultValues={defaultValues} fieldData={fieldData} onFieldChange={(id, val) => setFieldData(prev => ({ ...prev, [id]: val }))} />
+                <FieldRenderer field={field} capturedAtDisplay={capturedAtDisplay} photoFiles={photoFiles} setPhotoFiles={setPhotoFiles} defaultValues={defaultValues} fieldData={fieldData} onFieldChange={(id, val) => setFieldData(prev => ({ ...prev, [id]: val }))} onRequestLocation={requestLocation} gpsAccuracy={gpsAccuracy} />
               </FieldWrapper>
             )
           ))}
@@ -563,6 +605,8 @@ function FieldRenderer({
   defaultValues,
   fieldData,
   onFieldChange,
+  onRequestLocation,
+  gpsAccuracy,
 }: {
   field: FormField & { labelEn?: string; optionsEn?: string[] };
   capturedAtDisplay?: string;
@@ -571,6 +615,8 @@ function FieldRenderer({
   defaultValues?: Record<string, string>;
   fieldData?: Record<string, unknown>;
   onFieldChange?: (id: string, value: string) => void;
+  onRequestLocation?: () => void;
+  gpsAccuracy?: number | null;
 }) {
   const { t, locale } = useI18n();
   const required = field.required ? (
@@ -814,6 +860,19 @@ function FieldRenderer({
               required={field.required}
             />
           </div>
+          <button type="button" onClick={onRequestLocation} className="mt-1.5 text-xs text-brand-600 hover:underline flex items-center gap-1">
+            📍 Dapatkan Lokasi Saat Ini
+          </button>
+          {gpsAccuracy !== null && gpsAccuracy !== undefined && (
+            <div className={`mt-1 text-xs flex items-center gap-1 ${gpsAccuracy > 15 ? 'text-amber-600' : 'text-emerald-600'}`}>
+              <span>📍 Akurasi: {gpsAccuracy}m</span>
+              {gpsAccuracy > 15 && (
+                <button type="button" onClick={onRequestLocation} className="ml-2 underline hover:no-underline">
+                  Dapatkan Ulang
+                </button>
+              )}
+            </div>
+          )}
         </div>
       );
     default:

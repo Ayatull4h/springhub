@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, AlertCircle, CheckCircle2, Upload, FileText } from "lucide-react";
@@ -16,6 +16,7 @@ export default function NewProjectPage() {
   const [success, setSuccess] = useState(false);
   const [fieldData, setFieldData] = useState<Record<string, string>>({});
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const photoFilesRef = useRef<File[]>([]);
   const [proposalFile, setProposalFile] = useState<File | null>(null);
   const [userPoints, setUserPoints] = useState(0);
   const [userRole, setUserRole] = useState("");
@@ -77,8 +78,9 @@ export default function NewProjectPage() {
       return;
     }
 
-    if (photoFiles.length < 3) {
-      setError(`Wajib upload minimal 3 foto lokasi proyek. Terdeteksi: ${photoFiles.length} file.`);
+    const currentPhotos = photoFilesRef.current.length >= 3 ? photoFilesRef.current : photoFiles;
+    if (currentPhotos.length < 3) {
+      setError(`Wajib upload minimal 3 foto lokasi proyek. Terdeteksi: ${currentPhotos.length} file.`);
       setSubmitting(false);
       return;
     }
@@ -251,12 +253,13 @@ export default function NewProjectPage() {
                     <span className="mt-1">Foto {i + 1}</span>
                   </>
                 )}
-                <input type="file" accept="image/*,.heic,.heif,.HEIC,.HEIF" className="hidden" onChange={e => {
+                <input type="file" accept="image/*,.heic,.heif,.HEIC,.HEIF" capture="environment" className="hidden" onChange={e => {
                   const file = e.target.files?.[0];
                   if (file) {
                     const newPhotos = [...photoFiles];
                     newPhotos[i] = file;
                     setPhotoFiles(newPhotos);
+                    photoFilesRef.current = newPhotos;
                   }
                 }} />
               </label>
