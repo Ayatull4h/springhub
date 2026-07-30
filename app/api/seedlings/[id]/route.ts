@@ -10,8 +10,9 @@ export async function GET(
     const seedling = await prisma.seedling.findUnique({
       where: { id: params.id },
       include: {
-        user: { select: { id: true, username: true, points: true } },
+        user: { select: { id: true, username: true, points: true, phone: true } },
         photos: { select: { id: true, storagePath: true, createdAt: true }, orderBy: { createdAt: "asc" } },
+        report: { include: { photos: { select: { id: true, storagePath: true }, orderBy: { createdAt: "asc" }, take: 5 } } },
       },
     });
 

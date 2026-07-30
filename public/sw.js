@@ -84,9 +84,11 @@ self.addEventListener("fetch", (event) => {
     return; // network-only
   }
 
-  // ── Map tiles: cache-first ────────────────────────────────────────────
+  // ── Map tiles: let pass through (no SW intervention) ─────────────────
+  // SW intercepting tile.openstreetmap.org causes Chrome console errors
+  // when fetch fails (offline). Tiles are already cached by browser's
+  // native HTTP cache. Offline tile caching removed to avoid errors.
   if (url.hostname.includes("tile.openstreetmap.org")) {
-    event.respondWith(tileStrategy(event.request));
     return;
   }
 
