@@ -75,6 +75,45 @@ Parameter: warna air (25%), aliran (25%), perubahan debit (20%), ancaman (30%), 
 | **Map tile error** (ServiceWorker) | SW bypass tile.openstreetmap.org |
 | **Proyek selesai** — tidak ada mekanisme | Tombol "Tandai Selesai" di admin + filter completed |
 
+### Perbaikan UI & Sistem — Pengajuan Proyek (/projects/new)
+
+| Perbaikan | Detail |
+|---|---|
+| **20 field form** | Nama, WA, Email, Organisasi, Peran, Pengalaman, Judul, Jenis (multiselect), Geotag, Tempat, Latar Belakang, Waktu, Target, Relawan, Mitra, Biaya (5 range), Rincian, Dukungan (multiselect), Dana Ada, Catatan |
+| **3 foto wajib** | Upload via `foto_1/2/3` key, camera `capture="environment"`, validasi client + server |
+| **Proposal PDF** | Upload opsional, disimpan di `fieldData` JSON blob |
+| **Komitmen checkbox** | 3 checkbox: lapor, review, publik — wajib centang |
+| **GPS accuracy** | Auto-fill akurasi GPS, tampilkan peringatan jika >15m |
+| **Controlled inputs** | Semua field pake `value` + `onChange` (bukan `defaultValue`) |
+| **Photo validation** | `photoFilesRef` (ref) hindari stale closure |
+| **Turbo mode** | Simpan field dari submit sebelumnya, GPS refresh |
+| **Offline fallback** | Jika fetch gagal, simpan ke IndexedDB + QueueWorker |
+| **Server validation** | `typeof value === "object"` bukan `instanceof File`, upload ke disk via `uploadPhoto()` |
+
+### Perbaikan Proyek Unggulan (Featured Projects)
+
+| Perbaikan | Detail |
+|---|---|
+| **Featured photo picker** | Admin review modal pilih foto thumbnail sebelum approve |
+| **ProjectDetailModal** | Menampilkan fieldData (20 field), 3 foto, proposal PDF, latar belakang, contact |
+| **API featured photo** | GET `/api/projects` — `featuredPhoto` punya `url` (via `buildPhotoUrls`), `take: 5` |
+| **FeaturedProjects section** | Tampilkan thumbnail foto di card proyek unggulan |
+| **Tandai Selesai** | Tombol ungu di detail modal untuk proyek approved |
+| **Filter completed** | Proyek `completed` tidak muncul di landing page |
+
+### Penyempurnaan Form Report Your Contribution
+
+| Perbaikan | Detail |
+|---|---|
+| **Form aktif dari DB** | Landing page hanya tampilkan form dengan `isActive: true` dari database, tidak fallback ke static |
+| **Reports fetch limit** | Limit 50 → 200, API sudah filter `status: approved` |
+| **Map marker** | Hanya approved reports, hanya spring dengan healthScore, ukuran 8px seragam |
+| **Map grouping** | Spring 5km grid, Activity 250m grid |
+| **Sub filter** | Filter Sehat/Ringan/Berat/Kritis untuk spring marker |
+| **POINTS_MAP** | Volunteer section ambil poin dari `lib/forms` bukan hardcoded |
+| **Health colors** | Marker warna hijau/kuning/oranye/merah sesuai health status |
+| **Activity gray** | Marker aktivitas (non-spring) warna abu-abu, tanpa lingkaran 5km |
+
 ### Peta Interaktif
 
 - 2 layer: Mata Air (warna health score) + Aktivitas

@@ -134,6 +134,57 @@ STOK BERKURANG ✅
   </tbody>
 </table>
 
+<h3>Perbaikan UI & Sistem — Pengajuan Proyek (/projects/new)</h3>
+<table>
+  <thead>
+    <tr><th style="width:5%">No</th><th style="width:30%">Perbaikan</th><th style="width:65%">Detail</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>20 field form</td><td>Nama, WA, Email, Organisasi, Peran, Pengalaman, Judul, Jenis (multiselect), Geotag, Tempat, Latar Belakang, Waktu, Target, Relawan, Mitra, Biaya (5 range), Rincian, Dukungan (multiselect), Dana Ada, Catatan</td></tr>
+    <tr><td>2</td><td>3 foto wajib</td><td>Upload via foto_1/2/3 key, camera capture="environment", validasi client + server</td></tr>
+    <tr><td>3</td><td>Proposal PDF</td><td>Upload opsional, disimpan di fieldData JSON blob</td></tr>
+    <tr><td>4</td><td>Komitmen checkbox</td><td>3 checkbox: lapor, review, publik — wajib centang</td></tr>
+    <tr><td>5</td><td>GPS accuracy</td><td>Auto-fill akurasi GPS, tampilkan peringatan jika &gt;15m</td></tr>
+    <tr><td>6</td><td>Controlled inputs</td><td>Semua field pake value + onChange (bukan defaultValue)</td></tr>
+    <tr><td>7</td><td>Photo validation</td><td>photoFilesRef (ref) hindari stale closure</td></tr>
+    <tr><td>8</td><td>Turbo mode</td><td>Simpan field dari submit sebelumnya, GPS refresh</td></tr>
+    <tr><td>9</td><td>Offline fallback</td><td>Jika fetch gagal, simpan ke IndexedDB + QueueWorker</td></tr>
+    <tr><td>10</td><td>Server validation</td><td>typeof value === "object" bukan instanceof File, upload ke disk via uploadPhoto()</td></tr>
+  </tbody>
+</table>
+
+<h3>Perbaikan Proyek Unggulan (Featured Projects)</h3>
+<table>
+  <thead>
+    <tr><th style="width:5%">No</th><th style="width:30%">Perbaikan</th><th style="width:65%">Detail</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Featured photo picker</td><td>Admin review modal pilih foto thumbnail sebelum approve</td></tr>
+    <tr><td>2</td><td>ProjectDetailModal</td><td>Menampilkan fieldData (20 field), 3 foto, proposal PDF, latar belakang, contact</td></tr>
+    <tr><td>3</td><td>API featured photo</td><td>GET /api/projects — featuredPhoto punya url (via buildPhotoUrls), take: 5</td></tr>
+    <tr><td>4</td><td>FeaturedProjects section</td><td>Tampilkan thumbnail foto di card proyek unggulan</td></tr>
+    <tr><td>5</td><td>Tandai Selesai</td><td>Tombol ungu di detail modal untuk proyek approved</td></tr>
+    <tr><td>6</td><td>Filter completed</td><td>Proyek completed tidak muncul di landing page</td></tr>
+  </tbody>
+</table>
+
+<h3>Penyempurnaan Form Report Your Contribution</h3>
+<table>
+  <thead>
+    <tr><th style="width:5%">No</th><th style="width:30%">Perbaikan</th><th style="width:65%">Detail</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Form aktif dari DB</td><td>Landing page hanya tampilkan form dengan isActive: true dari database, tidak fallback ke static</td></tr>
+    <tr><td>2</td><td>Reports fetch limit</td><td>Limit 50 → 200, API sudah filter status: approved</td></tr>
+    <tr><td>3</td><td>Map marker</td><td>Hanya approved reports, hanya spring dengan healthScore, ukuran 8px seragam</td></tr>
+    <tr><td>4</td><td>Map grouping</td><td>Spring 5km grid, Activity 250m grid</td></tr>
+    <tr><td>5</td><td>Sub filter</td><td>Filter Sehat/Ringan/Berat/Kritis untuk spring marker</td></tr>
+    <tr><td>6</td><td>POINTS_MAP</td><td>Volunteer section ambil poin dari lib/forms bukan hardcoded</td></tr>
+    <tr><td>7</td><td>Health colors</td><td>Marker warna hijau/kuning/oranye/merah sesuai health status</td></tr>
+    <tr><td>8</td><td>Activity gray</td><td>Marker aktivitas (non-spring) warna abu-abu, tanpa lingkaran 5km</td></tr>
+  </tbody>
+</table>
+
 <h2>Bagian 2 — Kendala: Xendit & Donasi</h2>
 
 <h3>Kenapa Donasi Belum Bisa Dipakai?</h3>
