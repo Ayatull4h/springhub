@@ -58,15 +58,13 @@ export async function GET(
     });
 
     // Map reports → enrich with parsed fieldData + photo URLs
-    // Cari juga report non-spring dalam radius 250m (≈ 0.00225°) — untuk tab aktivitas
+    // Cari juga report dalam radius ~2km untuk semua tipe form (termasuk spring-monitoring yg terpisah)
     const nearbyReports = spring.snappedLat && spring.snappedLng ? await prisma.report.findMany({
       where: {
         id: { notIn: spring.reports.map(r => r.id) },
-        status: "approved",
-        snappedLat: { gte: spring.snappedLat - 0.0025, lte: spring.snappedLat + 0.0025 },
-        snappedLng: { gte: spring.snappedLng - 0.0025, lte: spring.snappedLng + 0.0025 },
-        // Previously excluded spring-monitoring/restoration, but orphaned reports without direct springId link would be invisible
-        // Now include all form types so even unlinked reports show up via snapped coords
+        isActive: true,
+        snappedLat: { gte: spring.snappedLat - 0.02, lte: spring.snappedLat + 0.02 },
+        snappedLng: { gte: spring.snappedLng - 0.02, lte: spring.snappedLng + 0.02 },
       },
       include: {
         user: { select: { id: true, username: true, email: true, region: true } },

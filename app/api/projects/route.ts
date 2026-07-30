@@ -37,21 +37,24 @@ export async function GET(request: Request) {
           createdAt: true,
           featuredPhotoId: true,
           user: { select: { username: true } },
-          photos: { select: { id: true, storagePath: true }, take: 1 },
+          photos: { select: { id: true, storagePath: true }, take: 5 },
           _count: { select: { donations: true, commentList: true, photos: true } },
         },
       }),
       prisma.project.count({ where }),
     ]);
 
-    const normalized = projects.map((p) => ({
-      ...p,
-      _count: { donations: p._count.donations, comments: p._count.commentList },
-      featuredPhoto: p.featuredPhotoId
-        ? p.photos.find(ph => ph.id === p.featuredPhotoId) || null
-        : p.photos[0] || null,
-      photos: buildPhotoUrls(p.photos),
-    }));
+    const normalized = projects.map((p) => {
+      const photosWithUrls = buildPhotoUrls(p.photos);
+      return {
+        ...p,
+        _count: { donations: p._count.donations, comments: p._count.commentList },
+        featuredPhoto: p.featuredPhotoId
+          ? photosWithUrls.find(ph => ph.id === p.featuredPhotoId) || photosWithUrls[0] || null
+          : photosWithUrls[0] || null,
+        photos: photosWithUrls,
+      };
+    });
     return NextResponse.json({ projects: normalized, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
   } catch (err) {
     console.error("[Projects GET]", err);
