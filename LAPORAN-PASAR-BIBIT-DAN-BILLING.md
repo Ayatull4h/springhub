@@ -1,6 +1,6 @@
 # Laporan Bulan Juli — SpringHub
 
-**Periode:** 24 Juni – 24 Juli 2026
+**Periode:** 24 Juni – 30 Juli 2026
 **Proyek:** SpringHub — Jaga Semesta
 
 ---
@@ -59,6 +59,21 @@ Parameter: warna air (25%), aliran (25%), perubahan debit (20%), ancaman (30%), 
 | Tanam Pohon | 100 | 100 |
 | Stok Bibit | 15 | 100 |
 | Milestone 100 | 500 | 5.000 |
+
+### Bug Fixes Batch (25–30 Juli)
+
+| Issue | Fix |
+|---|---|
+| **Proposal PDF tidak muncul** di admin review | GET `/api/projects/[id]` fallback ke `fieldData.proposalFile` |
+| **Featured photo** tidak punya URL di list API | `buildPhotoUrls()` sebelum mapping featured photo, `take: 5` |
+| **Laporan survei** tidak muncul di spring detail | Radius nearby 250m → **2km**, include semua form & status |
+| **Filter provinsi** pasar bibit kosong | Field `A_provinsi` type province di form seedling-stock; backfill SQL 4 seedling existing |
+| **Request flow** pasar bibit pakai dummy | `handleSubmit` panggil real API; `GET /api/seedling-requests` endpoint baru |
+| **My-requests & my-listings** dummy | Ganti fetch real data dari API |
+| **Detail seedling** tanpa foto dari form | Include `report.photos` di GET `/api/seedlings/[id]` |
+| **Sprite seedling** light di dark mode | Tambah `dark:` variant |
+| **Map tile error** (ServiceWorker) | SW bypass tile.openstreetmap.org |
+| **Proyek selesai** — tidak ada mekanisme | Tombol "Tandai Selesai" di admin + filter completed |
 
 ### Peta Interaktif
 
@@ -131,7 +146,7 @@ Fitur donasi menggunakan Xendit sebagai payment gateway. Backend untuk invoice d
 |---|---|
 | **Nama** | Ayatullah Reza Chalid |
 | **Peran** | Full-stack Developer SpringHub |
-| **Periode** | 24 Juni 2026 — 24 Juli 2026 |
+| **Periode** | 24 Juni 2026 — 30 Juli 2026 |
 | **Total** | **Rp2.500.000** (Dua Juta Lima Ratus Ribu Rupiah) |
 
 ### Bank Tujuan Pembayaran
