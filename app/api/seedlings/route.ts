@@ -23,14 +23,22 @@ export async function GET(request: Request) {
     if (species) where.species = { contains: species, mode: "insensitive" };
     if (province) where.province = province;
 
+    const includeBase: Record<string, unknown> = {
+      user: { select: { id: true, username: true, points: true, region: true } },
+      photos: { select: { id: true, storagePath: true }, orderBy: { createdAt: "asc" } },
+      report: { include: { photos: { select: { id: true, storagePath: true }, orderBy: { createdAt: "asc" }, take: 5 } } },
+      _count: { select: { requests: true } },
+    };
+    if (mine === "1") {
+      includeBase.requests = {
+        include: { requester: { select: { id: true, username: true, phone: true } } },
+        orderBy: { createdAt: "desc" },
+      };
+    }
+
     const seedlings = await prisma.seedling.findMany({
       where,
-      include: {
-        user: { select: { id: true, username: true, points: true, region: true } },
-        photos: { select: { id: true, storagePath: true }, orderBy: { createdAt: "asc" } },
-        report: { include: { photos: { select: { id: true, storagePath: true }, orderBy: { createdAt: "asc" }, take: 5 } } },
-        _count: { select: { requests: true } },
-      },
+      include: includeBase as any,
       orderBy: { createdAt: "desc" },
     });
 

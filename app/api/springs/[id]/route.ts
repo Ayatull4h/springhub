@@ -65,7 +65,8 @@ export async function GET(
         status: "approved",
         snappedLat: { gte: spring.snappedLat - 0.0025, lte: spring.snappedLat + 0.0025 },
         snappedLng: { gte: spring.snappedLng - 0.0025, lte: spring.snappedLng + 0.0025 },
-        formSlug: { notIn: ["spring-monitoring", "spring-restoration"] },
+        // Previously excluded spring-monitoring/restoration, but orphaned reports without direct springId link would be invisible
+        // Now include all form types so even unlinked reports show up via snapped coords
       },
       include: {
         user: { select: { id: true, username: true, email: true, region: true } },
@@ -99,7 +100,7 @@ export async function GET(
         username: r.user?.username || "Anonymous",
         region: r.user?.region || "",
         // Field-data yang relevan dari form
-        springName: (parsedFieldData.spring_name as string) || "",
+        springName: (parsedFieldData.spring_name as string) || (parsedFieldData.B1_nama as string) || "",
         province: (parsedFieldData.province as string) || "",
         regency: (parsedFieldData.regency as string) || "",
         notes: (parsedFieldData.notes as string) || "",

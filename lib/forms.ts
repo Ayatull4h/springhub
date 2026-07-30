@@ -196,6 +196,7 @@ export const FORMS: FormSchema[] = [
       { id: "A_wa", label: "Nomor WA", type: "phone", required: true },
       { id: "A_organisasi", label: "Nama Organisasi/Komunitas", type: "text" },
       { id: "A_geotag", label: "Geotag", type: "location", required: true },
+      { id: "A_provinsi", label: "Provinsi", labelEn: "Province", type: "province", required: true },
       { id: "A_entri_baru", label: "Entri Baru atau Pembaruan?", type: "select", required: true, options: ["Entri Baru", "Pembaruan Stok"] },
       { id: "A_kode_stok", label: "Kode Stok (jika pembaruan)", type: "text" },
       { id: "B1_jenis_laporan", label: "Jenis Laporan", type: "select", required: true, options: ["STOK TERSEDIA", "BIBIT DIBUTUHKAN"] },

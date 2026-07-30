@@ -103,8 +103,8 @@ export default function SeedlingsPage() {
     <main className="container-page py-8">
       <div className="mb-6">
         <h1 className="flex items-center gap-3 text-2xl font-extrabold text-ink md:text-3xl">
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-green-50 to-green-100">
-            <Sprout className="h-5 w-5 text-green-600" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/20">
+            <Sprout className="h-5 w-5 text-green-600 dark:text-green-400" />
           </span>
           Bibit
         </h1>

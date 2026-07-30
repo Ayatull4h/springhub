@@ -1,39 +1,8 @@
 "use client";
 
-import { Sprout, Check, X, CheckCheck, Clock, MessageCircle, Package } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Sprout, Check, X, CheckCheck, Clock, MessageCircle, Package, Loader2 } from "lucide-react";
 import Link from "next/link";
-
-type RequestItem = {
-  id: string; from: string; qty: number; message: string;
-  status: "pending" | "approved" | "rejected" | "fulfilled";
-  date: string;
-};
-
-type ListingItem = {
-  id: string; species: string; count: number;
-  requests: RequestItem[];
-};
-
-const DUMMY: ListingItem[] = [
-  {
-    id: "1", species: "Jati", count: 50,
-    requests: [
-      { id: "r1", from: "Budi", qty: 10, message: "Mau tanam di kebun", status: "pending", date: "2 hari lalu" },
-      { id: "r2", from: "Sari", qty: 5, message: "Buat penghijauan RT", status: "approved", date: "1 hari lalu" },
-      { id: "r3", from: "Doni", qty: 3, message: "Bibit buat kelompok tani", status: "fulfilled", date: "5 hari lalu" },
-    ],
-  },
-  {
-    id: "2", species: "Bambu Petung", count: 30,
-    requests: [
-      { id: "r4", from: "Rudi", qty: 8, message: "Mau nanam di pinggir sungai", status: "pending", date: "3 hari lalu" },
-    ],
-  },
-  {
-    id: "3", species: "Mahoni", count: 100,
-    requests: [],
-  },
-];
 
 const STATUS: Record<string, { cls: string; icon: typeof Clock; label: string; border: string }> = {
   pending:   { cls: "bg-amber-50 text-amber-700", icon: Clock, label: "Menunggu", border: "var(--amber-500)" },
@@ -42,7 +11,37 @@ const STATUS: Record<string, { cls: string; icon: typeof Clock; label: string; b
   rejected:  { cls: "bg-rose-50 text-rose-600", icon: X, label: "Ditolak", border: "var(--slate-300)" },
 };
 
+function timeAgo(date: string): string {
+  const diff = Date.now() - new Date(date).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days > 30) return `${Math.floor(days / 30)} bulan lalu`;
+  if (days > 0) return `${days} hari lalu`;
+  const hrs = Math.floor(diff / 3600000);
+  if (hrs > 0) return `${hrs} jam lalu`;
+  return "Baru saja";
+}
+
 export default function MyListingsPage() {
+  const [listings, setListings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/seedlings?mine=1")
+      .then(r => r.json())
+      .then(data => setListings(data.seedlings || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <main className="container-page py-16 text-center">
+        <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-600" />
+        <p className="mt-3 text-sm text-ink-muted">Memuat daftar bibit...</p>
+      </main>
+    );
+  }
+
   return (
     <main className="container-page py-8">
       <h1 className="mb-6 flex items-center gap-3 text-2xl font-extrabold text-ink">
@@ -53,7 +52,7 @@ export default function MyListingsPage() {
       </h1>
 
       <div className="space-y-4">
-        {DUMMY.map((listing, gi) => (
+        {listings.map((listing: any, gi: number) => (
           <div
             key={listing.id}
             className="overflow-hidden rounded-xl border border-ink-line bg-white shadow-card"
@@ -61,23 +60,23 @@ export default function MyListingsPage() {
           >
             <div className="flex items-center justify-between border-b border-ink-line px-4 py-3">
               <div>
-                <h3 className="font-semibold text-ink">{listing.species}</h3>
-                <p className="text-xs text-ink-muted">{listing.count} bibit dilaporkan</p>
+                <h3 className="font-semibold text-ink">{listing.species || "Bibit"}</h3>
+                <p className="text-xs text-ink-muted">{listing.stock || 0} bibit stok</p>
               </div>
               <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
-                {listing.requests.length} permintaan
+                {(listing.requests || []).length} permintaan
               </span>
             </div>
 
-            {listing.requests.length === 0 ? (
+            {(!listing.requests || listing.requests.length === 0) ? (
               <div className="flex flex-col items-center py-6 text-center text-sm text-ink-muted">
                 <MessageCircle className="mb-2 h-6 w-6 text-slate-300" />
                 Belum ada permintaan untuk bibit ini
               </div>
             ) : (
               <div>
-                {listing.requests.map((req, ri) => {
-                  const st = STATUS[req.status];
+                {listing.requests.map((req: any, ri: number) => {
+                  const st = STATUS[req.status] || STATUS.pending;
                   const Icon = st.icon;
                   const delay = (gi * 3 + ri) * 50;
                   return (
@@ -91,8 +90,8 @@ export default function MyListingsPage() {
                     >
                       <div className="min-w-[160px] flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <strong className="font-semibold text-ink">{req.from}</strong>
-                          <span className="text-sm text-ink-muted">minta {req.qty}</span>
+                          <strong className="font-semibold text-ink">{req.requester?.username || "Peminta"}</strong>
+                          <span className="text-sm text-ink-muted">minta {req.quantity}</span>
                           <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${st.cls}`}>
                             <Icon className="h-3 w-3" />
                             {st.label}
@@ -101,7 +100,7 @@ export default function MyListingsPage() {
                         {req.message && (
                           <p className="mt-0.5 text-xs italic text-ink-muted">&ldquo;{req.message}&rdquo;</p>
                         )}
-                        <p className="mt-0.5 text-[0.625rem] text-ink-subtle">{req.date}</p>
+                        <p className="mt-0.5 text-[0.625rem] text-ink-subtle">{timeAgo(req.createdAt)}</p>
                       </div>
                       <div className="flex gap-1.5">
                         {req.status === "pending" && (
@@ -127,6 +126,16 @@ export default function MyListingsPage() {
             )}
           </div>
         ))}
+
+        {listings.length === 0 && (
+          <div className="flex flex-col items-center py-16 text-center">
+            <Package className="mb-4 h-12 w-12 text-slate-300" />
+            <h3 className="text-lg font-semibold text-ink">Belum ada bibit</h3>
+            <Link href="/report/seedling-stock" className="btn-soft mt-4 inline-flex items-center gap-2">
+              Laporkan Stok Bibit
+            </Link>
+          </div>
+        )}
       </div>
     </main>
   );

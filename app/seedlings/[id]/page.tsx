@@ -69,9 +69,24 @@ export default function SeedlingDetailPage() {
   async function handleSubmit() {
     if (qty < 1 || qty > s.available) return;
     setSubmitting(true);
-    await new Promise(r => setTimeout(r, 1200));
-    setSubmitting(false);
-    setSubmitted(true);
+    try {
+      const { token } = await fetch("/api/csrf").then(r => r.json());
+      const res = await fetch(`/api/seedlings/${params.id}/request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { "x-csrf-token": token } : {}) },
+        body: JSON.stringify({ quantity: qty, message }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Gagal mengirim permintaan");
+        return;
+      }
+      setSubmitted(true);
+    } catch {
+      alert("Gagal terhubung ke server. Coba lagi.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {

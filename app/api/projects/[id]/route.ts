@@ -49,7 +49,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       contactName: project.contactName,
       contactEmail: project.contactEmail,
       contactPhone: project.contactPhone,
-      proposalFile: project.proposalFile || null,
+      proposalFile: project.proposalFile || (fieldData.proposalFile as string) || null,
       featuredPhoto: featured ? { id: featured.id, url: featured.url } : null,
       photos: photosWithUrls,
       fieldData,
