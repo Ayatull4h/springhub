@@ -207,6 +207,15 @@ function ProjectDetailModal({
             </div>
           </div>
         )}
+        {/* Tandai Selesai — only for approved projects */}
+        {project.status === "approved" && (
+          <div className="mt-4 flex justify-end">
+            <button onClick={() => handleAction("completed")} disabled={saving}
+              className="inline-flex items-center gap-1 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50">
+              <CheckCircle2 className="h-4 w-4" /> Tandai Selesai
+            </button>
+          </div>
+        )}
 
         {/* Close button */}
         <div className="mt-5 flex justify-end">
