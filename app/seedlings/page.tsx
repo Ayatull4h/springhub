@@ -176,7 +176,7 @@ export default function SeedlingsPage() {
                   </div>
                   <div className="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
                     <MapPin className="h-3.5 w-3.5 text-slate-400" />
-                    {s.regency}, {s.province}
+                    {s.regency || s.province ? `${s.regency}, ${s.province}` : "Lokasi tidak diketahui"}
                     {s.height && <span className="ml-2 text-xs">· {s.height}</span>}
                   </div>
                   <div className="mt-3 flex items-center justify-between border-t border-ink-line pt-3">
