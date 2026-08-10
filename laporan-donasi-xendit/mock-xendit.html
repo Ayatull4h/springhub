@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock Halaman Pembayaran Xendit</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,'Segoe UI',Roboto,sans-serif; }
+  body { background:#f5f6f8; display:flex; justify-content:center; padding:32px 16px; }
+  .page { width:420px; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,.12); }
+  .header { background:#0a2e4d; color:#fff; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; }
+  .header .brand { font-weight:700; font-size:15px; }
+  .header .brand span { color:#7dd3fc; }
+  .header .secure { font-size:11px; opacity:.85; display:flex; align-items:center; gap:6px; }
+  .body { padding:24px; }
+  .invoice-info { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:20px; }
+  .invoice-info .row { display:flex; justify-content:space-between; font-size:13px; padding:4px 0; color:#334155; }
+  .invoice-info .row strong { color:#0f172a; }
+  .invoice-info .amount { font-size:22px; font-weight:800; color:#0f172a; margin-top:6px; }
+  .invoice-info .note { font-size:11px; color:#94a3b8; margin-top:4px; }
+  .section-title { font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:.4px; margin:16px 0 8px; }
+  .method { display:flex; align-items:center; gap:12px; border:2px solid #e2e8f0; border-radius:10px; padding:12px 14px; margin-bottom:8px; cursor:pointer; background:#fff; }
+  .method.selected { border-color:#0e9f6e; background:#f0fdf9; }
+  .method .icon { width:36px; height:36px; border-radius:8px; background:#eef2f7; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:#0f172a; flex-shrink:0; }
+  .method .icon.qr { background:#fff3cd; color:#b45309; }
+  .method .icon.va { background:#e0f2fe; color:#0369a1; }
+  .method .name { flex:1; font-size:13px; font-weight:600; color:#0f172a; }
+  .method .check { width:18px; height:18px; border-radius:50%; border:2px solid #cbd5e1; }
+  .method.selected .check { border-color:#0e9f6e; background:#0e9f6e; position:relative; }
+  .method.selected .check::after { content:''; position:absolute; left:5px; top:2px; width:4px; height:8px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); }
+  .btn { width:100%; background:#0e9f6e; color:#fff; border:none; border-radius:10px; padding:14px; font-size:15px; font-weight:700; margin-top:16px; cursor:pointer; }
+  .footer-note { text-align:center; font-size:11px; color:#94a3b8; margin-top:12px; }
+  .timer { display:inline-flex; align-items:center; gap:6px; background:#fef3c7; color:#92400e; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:700; }
+  .bar { height:6px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin:12px 0 4px; }
+  .bar > div { height:100%; width:62%; background:#f59e0b; border-radius:999px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="brand">Jaga Semesta <span>· Donasi</span></div>
+    <div class="secure">&#128274; Pembayaran Aman</div>
+  </div>
+  <div class="body">
+    <div class="invoice-info">
+      <div class="row"><span>Invoice</span><strong>INV-20260730-ABC123</strong></div>
+      <div class="row"><span>Nama Donatur</span><strong>Budi Santoso</strong></div>
+      <div class="row"><span>Deskripsi</span><strong>Donasi seedling — SpringHub</strong></div>
+      <div class="amount">Rp 20.000</div>
+      <div class="bar"><div></div></div>
+      <div class="note" style="margin-top:8px"><span class="timer">&#9203; Sisa waktu 22:45:12</span></div>
+    </div>
+
+    <div class="section-title">Pilih Metode Pembayaran</div>
+
+    <div class="method">
+      <div class="icon va">VA</div>
+      <div class="name">Transfer Bank (BCA, Mandiri, BRI, dll.)</div>
+      <div class="check"></div>
+    </div>
+    <div class="method selected">
+      <div class="icon qr">QR</div>
+      <div class="name">QRIS (semua aplikasi e-wallet & m-banking)</div>
+      <div class="check"></div>
+    </div>
+    <div class="method">
+      <div class="icon">OVO</div>
+      <div class="name">OVO</div>
+      <div class="check"></div>
+    </div>
+    <div class="method">
+      <div class="icon">GP</div>
+      <div class="name">GoPay</div>
+      <div class="check"></div>
+    </div>
+    <div class="method">
+      <div class="icon">DA</div>
+      <div class="name">DANA</div>
+      <div class="check"></div>
+    </div>
+
+    <button class="btn">Bayar Sekarang</button>
+    <div class="footer-note">Dibuat dengan Xendit · Transaksi diproses oleh Xendit</div>
+  </div>
+</div>
+</body>
+</html>
