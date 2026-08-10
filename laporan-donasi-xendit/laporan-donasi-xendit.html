@@ -2,289 +2,418 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Flow Donasi SpringHub + Xendit</title>
+<title>Laporan Alur Donasi SpringHub + Xendit</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-  body { background:#f8fafc; color:#0f172a; }
-  .page { max-width:860px; margin:0 auto; padding:32px 24px 64px; }
+  /* ═══════════ Dasar — font profesional, margin, spasi ═══════════ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Liberation Serif", "DejaVu Serif", Georgia, "Times New Roman", serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1e293b;
+    background: #fff;
+  }
+  .page { max-width: 170mm; margin: 0 auto; }
 
-  /* ── Cover ── */
-  .cover { background:linear-gradient(135deg,#065f46 0%,#0d9488 60%,#0891b2 100%); border-radius:20px; padding:56px 48px; color:#fff; text-align:center; margin-bottom:40px; }
-  .cover .badge { display:inline-block; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); padding:6px 18px; border-radius:999px; font-size:12px; letter-spacing:1px; text-transform:uppercase; margin-bottom:18px; }
-  .cover h1 { font-size:34px; font-weight:800; line-height:1.25; margin-bottom:14px; }
-  .cover p { font-size:15px; opacity:.92; max-width:560px; margin:0 auto; line-height:1.7; }
-  .cover .date { margin-top:22px; font-size:13px; opacity:.8; }
+  /* ═══════════ Cover (halaman 1, terpisah) ═══════════ */
+  .cover { height: 255mm; display: flex; flex-direction: column; text-align: center; page-break-after: always; }
+  .cover-top { margin-top: 60mm; }
+  .cover .kicker { font-size: 10pt; letter-spacing: 4px; text-transform: uppercase; color: #0f766e; font-weight: bold; }
+  .cover h1 { font-size: 26pt; font-weight: bold; color: #0f172a; line-height: 1.35; margin: 10mm 0 8mm; }
+  .cover .subtitle { font-size: 13pt; color: #475569; max-width: 130mm; margin: 0 auto; line-height: 1.7; }
+  .cover .meta { margin-top: 40mm; font-size: 11pt; color: #334155; line-height: 2; }
+  .cover .brand {
+    margin: 30mm auto 0; width: 130mm; border-top: 3px double #0f766e; padding-top: 6mm;
+    font-size: 12pt; color: #0f766e; font-weight: bold; letter-spacing: 1px;
+  }
 
-  h2 { font-size:22px; font-weight:800; color:#0f172a; margin:44px 0 8px; display:flex; align-items:center; gap:10px; }
-  h2 .num { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; background:#0d9488; color:#fff; border-radius:10px; font-size:17px; flex-shrink:0; }
-  h3 { font-size:16px; font-weight:700; color:#0f172a; margin:18px 0 6px; }
-  .lead { color:#475569; font-size:14.5px; line-height:1.75; margin-bottom:14px; }
+  /* ═══════════ Daftar Isi ═══════════ */
+  .toc { page-break-after: always; padding-top: 12mm; }
+  .toc h2 { font-size: 18pt; color: #0f172a; border-bottom: 2px solid #0f766e; padding-bottom: 4px; margin-bottom: 8mm; }
+  .toc ol { list-style: none; }
+  .toc li { font-size: 11.5pt; margin-bottom: 5mm; color: #0f172a; }
+  .toc li .no { display: inline-block; width: 10mm; color: #0f766e; font-weight: bold; }
+  .toc li ul { margin: 2.5mm 0 0 12mm; }
+  .toc li ul li { font-size: 10pt; color: #475569; margin: 2mm 0; }
+  .toc li ul li::before { content: "▪ "; color: #94a3b8; }
 
-  /* ── Diagram ── */
-  .flow-diagram { display:flex; align-items:stretch; gap:8px; margin:22px 0 8px; flex-wrap:wrap; }
-  .flow-step { flex:1; min-width:150px; background:#fff; border:1.5px solid #e2e8f0; border-radius:14px; padding:16px 14px; text-align:center; position:relative; }
-  .flow-step .step-ico { font-size:26px; margin-bottom:8px; }
-  .flow-step .step-txt { font-size:12.5px; font-weight:600; color:#334155; line-height:1.45; }
-  .flow-step .step-sub { font-size:11px; color:#94a3b8; margin-top:4px; line-height:1.4; }
-  .flow-arrow { display:flex; align-items:center; color:#94a3b8; font-size:18px; font-weight:800; }
+  /* ═══════════ Ringkasan Eksekutif ═══════════ */
+  .exec-summary { page-break-after: always; padding-top: 15mm; }
+  .exec-summary h2 { font-size: 18pt; color: #0f172a; border-bottom: 2px solid #0f766e; padding-bottom: 4px; margin-bottom: 8mm; }
+  .exec-grid { width: 100%; border-collapse: separate; border-spacing: 4mm; }
+  .exec-grid td { width: 33%; border: 1px solid #e2e8f0; border-top: 4px solid #0f766e; border-radius: 4px; padding: 6mm 5mm; vertical-align: top; }
+  .exec-grid .num { font-size: 20pt; font-weight: bold; color: #0f766e; }
+  .exec-grid .lbl { font-size: 12pt; font-weight: bold; color: #0f172a; margin: 1mm 0 1mm; }
+  .exec-grid .desc { font-size: 9.5pt; color: #475569; line-height: 1.5; }
+  .exec-text { font-size: 11pt; text-align: justify; margin-top: 5mm; }
 
-  /* ── Screenshot ── */
-  .shot { background:#fff; border:1.5px solid #e2e8f0; border-radius:16px; padding:14px; margin:16px 0 6px; box-shadow:0 2px 10px rgba(15,23,42,.06); }
-  .shot img { width:100%; border-radius:10px; border:1px solid #e2e8f0; display:block; }
-  .shot .cap { font-size:12.5px; color:#64748b; padding:10px 4px 2px; }
-  .shot .cap strong { color:#0f172a; }
+  /* ═══════════ Heading berjenjang ═══════════ */
+  h1.sec { font-size: 18pt; font-weight: bold; color: #0f172a; margin: 0 0 6mm; }
+  .sec-head { border-bottom: 2px solid #0f766e; margin-bottom: 8mm; padding-bottom: 2mm; }
+  .sec-head .no { display: inline-block; background: #0f766e; color: #fff; font-size: 12pt; font-weight: bold; padding: 1mm 4mm; border-radius: 3px; margin-right: 4mm; vertical-align: middle; }
+  .sec-head h1 { display: inline; font-size: 16pt; vertical-align: middle; }
+  h2.sub { font-size: 13pt; font-weight: bold; color: #0f766e; margin: 10mm 0 3mm; }
+  h3.subsub { font-size: 11.5pt; font-weight: bold; color: #1e293b; margin: 7mm 0 2mm; }
 
-  /* ── Step list ── */
-  .step-list { counter-reset: step; }
-  .step-item { display:flex; gap:16px; background:#fff; border:1.5px solid #e2e8f0; border-radius:14px; padding:18px 18px 16px; margin-bottom:14px; }
-  .step-item .n { counter-increment: step; display:flex; align-items:center; justify-content:center; width:34px; height:34px; background:#f0fdfa; color:#0d9488; border:2px solid #99f6e4; border-radius:50%; font-weight:800; font-size:15px; flex-shrink:0; margin-top:2px; }
-  .step-item .body { flex:1; }
-  .step-item .body h4 { font-size:15px; font-weight:700; color:#0f172a; margin-bottom:4px; }
-  .step-item .body p { font-size:13.5px; color:#475569; line-height:1.7; }
+  /* ═══════════ Paragraf — justify, spasi konsisten ═══════════ */
+  p { text-align: justify; margin-bottom: 6pt; }
+  .lead { font-size: 11pt; color: #334155; }
 
-  /* ── Info boxes ── */
-  .tip { background:#eff6ff; border-left:4px solid #3b82f6; border-radius:0 12px 12px 0; padding:14px 18px; margin:14px 0; font-size:13.5px; color:#1e3a5f; line-height:1.7; }
-  .tip.green { background:#f0fdf9; border-color:#0e9f6e; color:#064e3b; }
-  .tip.amber { background:#fffbeb; border-color:#f59e0b; color:#78350f; }
-  .tip.red { background:#fef2f2; border-color:#ef4444; color:#7f1d1d; }
-  .tip b { display:block; margin-bottom:3px; }
+  /* ═══════════ Flow diagram (tabel, aman untuk wkhtmltopdf) ═══════════ */
+  .flow-table { width: 100%; border-collapse: separate; border-spacing: 2.5mm; margin: 8mm 0; }
+  .flow-table td { vertical-align: top; }
+  .flow-step { border: 1.5px solid #cbd5e1; border-top: 4px solid #0f766e; border-radius: 4px; padding: 5mm 4mm; text-align: center; page-break-inside: avoid; }
+  .flow-step .step-ico { font-size: 16pt; }
+  .flow-step .step-txt { font-size: 10pt; font-weight: bold; color: #0f172a; margin-top: 2mm; line-height: 1.4; }
+  .flow-step .step-sub { font-size: 8.5pt; color: #64748b; margin-top: 1mm; line-height: 1.4; }
+  .flow-arrow { font-size: 16pt; color: #94a3b8; text-align: center; }
 
-  table { width:100%; border-collapse:collapse; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 1px 6px rgba(15,23,42,.05); margin:14px 0; font-size:13.5px; }
-  th { background:#0f766e; color:#fff; text-align:left; padding:11px 14px; font-weight:700; font-size:12.5px; }
-  td { padding:11px 14px; border-bottom:1px solid #f1f5f9; color:#334155; vertical-align:top; }
-  tr:last-child td { border-bottom:none; }
-  td.m { font-weight:700; color:#0f172a; white-space:nowrap; }
-  .pill { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11.5px; font-weight:700; }
-  .pill.green { background:#dcfce7; color:#166534; }
-  .pill.amber { background:#fef3c7; color:#92400e; }
-  .pill.slate { background:#f1f5f9; color:#475569; }
+  /* ═══════════ Langkah-langkah (nomor di lingkaran, indentasi) ═══════════ */
+  .step { width: 100%; border-collapse: collapse; margin: 0 0 6mm; page-break-inside: avoid; }
+  .step td { vertical-align: top; }
+  .step td.n { width: 12mm; }
+  .step .num-circle { display: block; width: 9mm; height: 9mm; border-radius: 50%; background: #f0fdfa; border: 1.5px solid #0f766e; color: #0f766e; font-weight: bold; font-size: 12pt; text-align: center; line-height: 8.5mm; margin: 1mm 3mm 0 0; }
+  .step .body h3 { font-size: 12pt; color: #0f172a; margin-bottom: 2mm; }
+  .step .body p { margin-bottom: 4pt; }
 
-  .footer { text-align:center; margin-top:56px; padding-top:20px; border-top:1px dashed #cbd5e1; font-size:12px; color:#94a3b8; line-height:1.8; }
+  /* ═══════════ Gambar — konsisten, caption, anti terpotong ═══════════ */
+  .figure { margin: 7mm 0; page-break-inside: avoid; }
+  .figure .frame { border: 1px solid #e2e8f0; background: #fff; padding: 4mm; border-radius: 4px; box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08); }
+  .figure img { width: 100%; border: 1px solid #e2e8f0; display: block; }
+  .figure .caption { text-align: justify; font-size: 9.5pt; color: #475569; margin-top: 3mm; line-height: 1.55; }
+  .figure .caption b { color: #0f172a; }
+
+  /* ═══════════ Tabel ═══════════ */
+  table.data { width: 100%; border-collapse: collapse; margin: 6mm 0; font-size: 10pt; page-break-inside: avoid; }
+  table.data th { background: #f1f5f9; color: #0f172a; text-align: left; padding: 3mm 4mm; border: 1px solid #cbd5e1; font-size: 9.5pt; }
+  table.data td { padding: 3mm 4mm; border: 1px solid #e2e8f0; color: #334155; vertical-align: top; }
+  table.data tr:nth-child(even) td { background: #f8fafc; }
+  table.data td.m { font-weight: bold; color: #0f172a; white-space: nowrap; }
+  table.data td.ctr { text-align: center; }
+  .pill { display: inline-block; padding: 1mm 3mm; border-radius: 3px; font-size: 8.5pt; font-weight: bold; }
+  .pill.green { background: #dcfce7; color: #166534; }
+  .pill.amber { background: #fef3c7; color: #92400e; }
+
+  /* ═══════════ Kotak info ═══════════ */
+  .tip { border-radius: 4px; padding: 5mm 6mm; margin: 6mm 0; font-size: 10pt; line-height: 1.65; page-break-inside: avoid; }
+  .tip b { display: block; margin-bottom: 1mm; }
+  .tip.green { background: #f0fdf9; border-left: 4px solid #0f766e; color: #134e4a; }
+  .tip.amber { background: #fffbeb; border-left: 4px solid #f59e0b; color: #78350f; }
+  .tip.blue { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e3a5f; }
+
+  /* ═══════════ Penutup ═══════════ */
+  .closing { margin-top: 15mm; border-top: 3px double #0f766e; padding-top: 6mm; text-align: center; font-size: 10pt; color: #475569; line-height: 2; page-break-inside: avoid; }
+
+  /* ═══════════ Footer halaman (diulang di tiap halaman) ═══════════ */
+  .page-footer { position: fixed; bottom: -2mm; left: 0; right: 0; text-align: center; font-size: 8pt; color: #64748b; border-top: 0.5pt solid #cbd5e1; padding-top: 2mm; }
 </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- ═══════════ COVER ═══════════ -->
+  <!-- ═══════════ HALAMAN 1 — COVER ═══════════ -->
   <div class="cover">
-    <div class="badge">Panduan Sederhana</div>
-    <h1>Alur Donasi Website SpringHub<br>bersama Payment Gateway Xendit</h1>
-    <p>Dokumen ini menjelaskan langkah demi langkah bagaimana pengunjung website dapat menyumbang untuk pemulihan mata air Indonesia — dari mengisi form, membayar, sampai uangnya sampai ke proyek — dengan bahasa yang mudah dipahami.</p>
-    <div class="date">Jaga Semesta · SpringHub · 10 Agustus 2026</div>
+    <div class="cover-top">
+      <div class="kicker">Laporan Teknis</div>
+      <h1>Alur Donasi Website SpringHub<br>bersama Payment Gateway Xendit</h1>
+      <p class="subtitle">Panduan langkah demi langkah tentang cara pengunjung menyumbang untuk pemulihan mata air Indonesia — disusun dengan bahasa sederhana agar mudah dipahami oleh semua kalangan.</p>
+    </div>
+    <div class="meta">
+      <div>Disusun oleh: <b>Tim Pengembang SpringHub — Jaga Semesta</b></div>
+      <div>Website: <b>www.springhub.id</b></div>
+      <div>Tanggal: <b>10 Agustus 2026</b></div>
+    </div>
+    <div class="brand">JAGA SEMESTA · SPRINGHUB</div>
   </div>
 
-  <!-- ═══════════ APA ITU ═══════════ -->
-  <h2><span class="num">1</span> Apa Itu Donasi di SpringHub?</h2>
+  <!-- ═══════════ HALAMAN 2 — DAFTAR ISI ═══════════ -->
+  <div class="toc">
+    <h2>Daftar Isi</h2>
+    <ol>
+      <li><span class="no">1</span>Ringkasan Eksekutif</li>
+      <li><span class="no">2</span>Apa Itu Donasi di SpringHub?
+        <ul>
+          <li>Peran Xendit sebagai Payment Gateway</li>
+          <li>Ketentuan Donasi</li>
+        </ul>
+      </li>
+      <li><span class="no">3</span>Alur Donasi secara Ringkas
+        <ul>
+          <li>Diagram Alur dalam 6 Langkah</li>
+        </ul>
+      </li>
+      <li><span class="no">4</span>Alur Donasi Langkah demi Langkah
+        <ul>
+          <li>Membuka Website dan Menemukan Bagian Donasi</li>
+          <li>Memilih Paket Donasi Sesuai Dampak</li>
+          <li>Mengisi Nama dan Email</li>
+          <li>Sistem Menerbitkan Invoice (Tagihan)</li>
+          <li>Pindah ke Halaman Pembayaran Xendit</li>
+          <li>Memilih Metode Pembayaran</li>
+          <li>Xendit Mengirim Konfirmasi Otomatis</li>
+          <li>Melihat Halaman Pembayaran Berhasil</li>
+          <li>Jika Pembayaran Gagal atau Kadaluarsa</li>
+          <li>Donasi Tercatat dan Berdampak</li>
+        </ul>
+      </li>
+      <li><span class="no">5</span>Lapisan Keamanan Sistem</li>
+      <li><span class="no">6</span>Status Integrasi dan Langkah Aktivasi</li>
+    </ol>
+  </div>
+
+  <!-- ═══════════ HALAMAN 3 — RINGKASAN EKSEKUTIF ═══════════ -->
+  <div class="exec-summary">
+    <h2>1. Ringkasan Eksekutif</h2>
+    <table class="exec-grid">
+      <tr>
+        <td><div class="num">4</div><div class="lbl">Metode Bayar</div><div class="desc">Transfer Bank (Virtual Account), QRIS, e-wallet (OVO, GoPay, DANA, ShopeePay), dan kartu debit/kredit.</div></td>
+        <td><div class="num">Rp 1.000</div><div class="lbl">Donasi Minimal</div><div class="desc">Mulai dari Rp 1.000 — bisa memilih paket dampak siap pakai atau jumlah bebas.</div></td>
+        <td><div class="num">24 jam</div><div class="lbl">Masa Berlaku Invoice</div><div class="desc">Setiap tagihan berlaku 24 jam dan hanya bisa dipakai satu kali pembayaran.</div></td>
+      </tr>
+      <tr>
+        <td><div class="num">7</div><div class="lbl">Lapisan Keamanan</div><div class="desc">Validasi nominal di server, token rahasia webhook, pencocokan data, cegah duplikat, batas frekuensi, dan anti-CSRF.</div></td>
+        <td><div class="num">100%</div><div class="lbl">Kode Siap Produksi</div><div class="desc">Seluruh sistem invoice, webhook, dan halaman konfirmasi telah terpasang di website produksi.</div></td>
+        <td><div class="num">5 menit</div><div class="lbl">Menuju Aktivasi</div><div class="desc">Fitur donasi aktif segera setelah API key Xendit dimasukkan ke server — hanya perlu 5 menit.</div></td>
+      </tr>
+    </table>
+    <p class="exec-text">
+      SpringHub adalah platform komunitas untuk memantau dan memulihkan mata air di Indonesia. Fitur donasi memungkinkan pengunjung website untuk mendanai proyek restorasi — menanam bibit, membuat parit resapan, membersihkan sedimentasi, dan memantau mata air. Uang dikelola melalui <b>Xendit</b>, payment gateway lokal yang menjadi "kasir" digital: menerima pembayaran dari donatur dan menyampaikan konfirmasinya ke website secara otomatis dan aman. Laporan ini menjelaskan keseluruhan alur dalam bahasa yang mudah dipahami.
+    </p>
+  </div>
+
+  <!-- ═══════════ BAGIAN 2 ═══════════ -->
+  <div class="sec-head"><span class="no">2</span><h1>Apa Itu Donasi di SpringHub?</h1></div>
   <p class="lead">
-    SpringHub adalah platform komunitas untuk memantau dan memulihkan mata air di Indonesia. Salah satu fiturnya adalah <b>donasi</b> — pengunjung bisa menyumbang uang untuk mendanai proyek restorasi (menanam bibit, membuat parit resapan, membersihkan sedimentasi, dan memantau mata air).
-  </p>
-  <p class="lead">
-    Uang dikelola lewat <b>Xendit</b>, perusahaan payment gateway lokal terpercaya yang sudah dipakai banyak lembaga di Indonesia. Xendit bertindak seperti "kasir" — dia yang menerima pembayaran dari donatur dan menyampaikan konfirmasinya ke website SpringHub secara otomatis.
+    Donasi di SpringHub adalah cara bagi siapa pun untuk turut serta memulihkan mata air Indonesia. Pengunjung dapat memilih dampak yang ingin didanai — misalnya menanam satu bibit pohon atau membuat satu parit resapan — lalu membayar melalui berbagai metode yang umum digunakan sehari-hari.
   </p>
 
-  <table>
-    <tr><th style="width:40%">Hal</th><th>Penjelasan</th></tr>
+  <h2 class="sub">2.1 Peran Xendit sebagai Payment Gateway</h2>
+  <p>
+    Xendit adalah perusahaan penyedia layanan pembayaran (payment gateway) yang sudah dipercaya banyak lembaga di Indonesia. Dalam alur donasi ini, Xendit bertindak sebagai kasir:
+  </p>
+  <ol style="margin: 3mm 0 5mm 10mm; padding: 0; font-size: 11pt;">
+    <li style="margin-bottom: 2mm;">Menerbitkan <b>invoice</b> (tagihan digital) untuk setiap permintaan donasi;</li>
+    <li style="margin-bottom: 2mm;">Menyediakan halaman pembayaran dengan berbagai metode;</li>
+    <li style="margin-bottom: 2mm;">Menerima pembayaran dari donatur; dan</li>
+    <li>Mengirim <b>konfirmasi otomatis</b> ke website SpringHub begitu pembayaran berhasil.</li>
+  </ol>
+  <p>
+    Website SpringHub tidak pernah memproses uang secara langsung, sehingga data pembayaran donatur — seperti nomor kartu — tidak pernah tersimpan di website.
+  </p>
+
+  <h2 class="sub">2.2 Ketentuan Donasi</h2>
+  <table class="data">
+    <tr><th style="width: 38%;">Hal</th><th>Penjelasan</th></tr>
     <tr><td class="m">Siapa yang bisa donasi?</td><td>Semua orang, tanpa perlu membuat akun terlebih dahulu.</td></tr>
-    <tr><td class="m">Nominal</td><td>Mulai dari <b>Rp 1.000</b> sampai Rp 100 juta. Bisa pilih paket siap pakai atau jumlah bebas.</td></tr>
-    <tr><td class="m">Metode bayar</td><td>Transfer bank (virtual account), QRIS, OVO, GoPay, DANA, ShopeePay, dan kartu debit/kredit.</td></tr>
-    <tr><td class="m">Keamanan</td><td>Pembayaran diproses langsung oleh Xendit — website SpringHub tidak pernah melihat atau menyimpan data kartu Anda.</td></tr>
-    <tr><td class="m">Bukti</td><td>Setiap donasi mendapat nomor invoice. Donatur menerima konfirmasi saat pembayaran berhasil.</td></tr>
+    <tr><td class="m">Nominal donasi</td><td>Mulai dari Rp 1.000 hingga Rp 100.000.000.</td></tr>
+    <tr><td class="m">Metode pembayaran</td><td>Transfer bank (Virtual Account), QRIS, OVO, GoPay, DANA, ShopeePay, dan kartu debit/kredit.</td></tr>
+    <tr><td class="m">Bukti pembayaran</td><td>Setiap donasi memiliki nomor invoice unik; donatur mendapat konfirmasi saat pembayaran berhasil.</td></tr>
   </table>
 
-  <!-- ═══════════ DIAGRAM ═══════════ -->
-  <h2><span class="num">2</span> Alur Singkat dalam 6 Langkah</h2>
-  <div class="flow-diagram">
-    <div class="flow-step"><div class="step-ico">🌍</div><div class="step-txt">Buka Website</div><div class="step-sub">Pengunjung membuka springhub.id</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="step-ico">💝</div><div class="step-txt">Pilih Nominal</div><div class="step-sub">Isi form donasi: nominal, nama, email</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="step-ico">🧾</div><div class="step-txt">Invoice Terbit</div><div class="step-sub">Sistem membuat tagihan via Xendit</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="step-ico">💰</div><div class="step-txt">Bayar</div><div class="step-sub">Donatur membayar di halaman Xendit</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="step-ico">✅</div><div class="step-txt">Konfirmasi</div><div class="step-sub">Xendit memberi tahu sistem otomatis</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="step-ico">🌱</div><div class="step-txt">Dana Disalurkan</div><div class="step-sub">Donasi tercatat & mendanai proyek</div></div>
+  <!-- ═══════════ BAGIAN 3 ═══════════ -->
+  <div class="sec-head"><span class="no">3</span><h1>Alur Donasi secara Ringkas</h1></div>
+  <p class="lead">Berikut gambaran utuh alur donasi dalam 6 langkah besar:</p>
+
+  <table class="flow-table">
+    <tr>
+      <td style="width: 15%;"><div class="flow-step"><div class="step-ico">🌍</div><div class="step-txt">Buka Website</div><div class="step-sub">Pengunjung membuka springhub.id</div></div></td>
+      <td class="flow-arrow" style="width: 3%;">→</td>
+      <td style="width: 15%;"><div class="flow-step"><div class="step-ico">💝</div><div class="step-txt">Pilih Nominal</div><div class="step-sub">Isi form donasi: paket, nama, email</div></div></td>
+      <td class="flow-arrow" style="width: 3%;">→</td>
+      <td style="width: 15%;"><div class="flow-step"><div class="step-ico">🧾</div><div class="step-txt">Invoice Terbit</div><div class="step-sub">Sistem membuat tagihan via Xendit</div></div></td>
+      <td class="flow-arrow" style="width: 3%;">→</td>
+      <td style="width: 15%;"><div class="flow-step"><div class="step-ico">💰</div><div class="step-txt">Bayar</div><div class="step-sub">Donatur membayar di halaman Xendit</div></div></td>
+      <td class="flow-arrow" style="width: 3%;">→</td>
+      <td style="width: 15%;"><div class="flow-step"><div class="step-ico">✅</div><div class="step-txt">Konfirmasi</div><div class="step-sub">Xendit memberi tahu sistem otomatis</div></div></td>
+      <td class="flow-arrow" style="width: 3%;">→</td>
+      <td style="width: 15%;"><div class="flow-step"><div class="step-ico">🌱</div><div class="step-txt">Dana Tersalur</div><div class="step-sub">Donasi tercatat &amp; mendanai proyek</div></div></td>
+    </tr>
+  </table>
+
+  <p>
+    Setiap langkah di atas dijelaskan secara rinci pada bagian berikutnya, lengkap dengan tampilan halaman yang dilihat donatur.
+  </p>
+
+  <!-- ═══════════ BAGIAN 4 ═══════════ -->
+  <div class="sec-head"><span class="no">4</span><h1>Alur Donasi Langkah demi Langkah</h1></div>
+
+  <!-- Langkah 1 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">1</span></td>
+    <td class="body">
+      <h3>Membuka Website dan Menemukan Bagian Donasi</h3>
+      <p>Pengunjung membuka halaman utama www.springhub.id lalu menggulir halaman hingga menemukan bagian <b>Donasi</b>. Bagian ini menampilkan jumlah dana yang terkumpul, jumlah donatur, dan jumlah proyek yang telah didanai.</p>
+    </td>
+  </tr></table>
+  <div class="figure">
+    <div class="frame"><img src="donasi-02-section-donate.png" alt="Bagian donasi di halaman utama website"></div>
+    <div class="caption"><b>Gambar 4.1.</b> Bagian Donasi pada halaman utama website SpringHub — menampilkan total dana terkumpul, jumlah donatur, dan jumlah proyek yang didanai.</div>
   </div>
 
-  <!-- ═══════════ LANGKAH DETAIL ═══════════ -->
-  <h2><span class="num">3</span> Penjelasan Langkah demi Langkah</h2>
-
-  <div class="step-list">
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Buka website dan gulir ke bagian Donasi</h4>
-        <p>Di halaman utama www.springhub.id, pengunjung menggulir halaman ke bawah hingga menemukan bagian <b>"Donasi untuk Bumi"</b>. Bagian ini menampilkan jumlah donasi yang terkumpul, jumlah donatur, dan jumlah proyek yang didanai.</p>
-      </div>
-    </div>
-
-    <div class="shot">
-      <img src="donasi-02-section-donate.png" alt="Bagian donasi di halaman utama">
-      <div class="cap"><strong>Gambar 1.</strong> Bagian donasi di halaman utama website SpringHub — menampilkan total terkumpul, jumlah donatur, dan proyek.</div>
-    </div>
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Pilih dampak yang ingin didanai</h4>
-        <p>Pengunjung memilih paket donasi dari daftar. Setiap paket berhubungan dengan dampak nyata di lapangan:</p>
-      </div>
-    </div>
-
-    <table>
-      <tr><th>Paket</th><th>Nominal</th><th>Dampak di Lapangan</th></tr>
-      <tr><td class="m">🌱 Seedling</td><td>Rp 20.000</td><td>1 bibit pohon ditanam</td></tr>
-      <tr><td class="m">🪨 Trench</td><td>Rp 50.000</td><td>1 parit resapan (rorak) dibuat</td></tr>
-      <tr><td class="m">💧 Sediment</td><td>Rp 100.000</td><td>1 m³ sedimentasi dikeruk dari mata air</td></tr>
-      <tr><td class="m">🔭 Monitoring</td><td>Rp 1.000.000</td><td>50 mata air dipantau</td></tr>
-      <tr><td class="m">✏️ Jumlah bebas</td><td>Mulai Rp 1.000</td><td>Bebas menentukan nominal sendiri</td></tr>
-    </table>
-
-    <div class="shot">
-      <img src="donasi-03-form-tier.png" alt="Form donasi dengan paket terpilih">
-      <div class="cap"><strong>Gambar 2.</strong> Paket "Seedling — 1 bibit pohon" telah dipilih. Sistem otomatis menampilkan ringkasan dampak dan nominalnya.</div>
-    </div>
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Isi nama dan email</h4>
-        <p>Pengunjung menuliskan nama (wajib) dan email (opsional, untuk menerima konfirmasi pembayaran). Klik tombol hijau untuk melanjutkan.</p>
-      </div>
-    </div>
-
-    <div class="shot">
-      <img src="donasi-04-form-lengkap.png" alt="Form donasi lengkap terisi">
-      <div class="cap"><strong>Gambar 3.</strong> Form donasi lengkap: paket terpilih, nama "Budi Santoso", dan email donatur diisi. Tombol menampilkan nominal "Rp 20.000".</div>
-    </div>
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Sistem membuat invoice (tagihan) di Xendit</h4>
-        <p>Website mengirim permintaan ke Xendit. Xendit membuat <b>invoice</b> — tagihan digital dengan nomor unik, nominal, dan masa berlaku 24 jam. Invoice ini hanya berlaku sekali dan jumlahnya tidak bisa diubah dari luar.</p>
-      </div>
-    </div>
-
-    <div class="tip green">
-      <b>🔒 Kenapa aman?</b>
-      Jumlah yang harus dibayar sudah "dikunci" di server. Donatur tidak bisa membayar nominal yang berbeda dari yang dipilih — misalnya memilih paket Rp 20.000 tapi membayar Rp 1.000.
-    </div>
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Donatur diarahkan ke halaman pembayaran Xendit</h4>
-        <p>Tab baru terbuka menuju halaman pembayaran yang dikelola Xendit. Halaman ini menampilkan ringkasan invoice (nomor, nominal, nama) dan pilihan metode pembayaran.</p>
-      </div>
-    </div>
-
-    <div class="shot">
-      <img src="donasi-07-halaman-xendit.png" alt="Ilustrasi halaman pembayaran Xendit">
-      <div class="cap"><strong>Gambar 4.</strong> Ilustrasi halaman pembayaran Xendit (tampilan asli saat key Xendit aktif). Menampilkan nomor invoice, nominal Rp 20.000, sisa waktu 24 jam, dan pilihan metode: Transfer Bank, QRIS, OVO, GoPay, DANA.</div>
-    </div>
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Donatur membayar dengan metode pilihannya</h4>
-        <p>Beberapa contoh cara membayar:</p>
-      </div>
-    </div>
-
-    <table>
-      <tr><th>Metode</th><th>Cara Kerja</th></tr>
-      <tr><td class="m">🏦 Transfer Bank (VA)</td><td>Sistem membuat nomor virtual account (mis. 8-9 digit khusus). Donatur mentransfer lewat m-banking/ATM — contoh: 8801234567890 a.n. SpringHub.</td></tr>
-      <tr><td class="m">📱 QRIS</td><td>Scan kode QR dengan aplikasi e-wallet atau m-banking mana pun, lalu konfirmasi pembayaran.</td></tr>
-      <tr><td class="m">💚 OVO / GoPay / DANA / ShopeePay</td><td>Donatur diarahkan ke aplikasi untuk menyetujui pembayaran.</td></tr>
-      <tr><td class="m">💳 Kartu</td><td>Isi nomor kartu debit/kredit. Data kartu hanya diproses Xendit, tidak tersimpan di website.</td></tr>
-    </table>
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Xendit memberitahu website secara otomatis</h4>
-        <p>Begitu pembayaran berhasil, Xendit langsung mengirim <b>konfirmasi otomatis (webhook)</b> ke server SpringHub. Sistem memverifikasi keaslian pesan (token rahasia + pencocokan jumlah), lalu mencatat donasi sebagai <b>"Lunas"</b> di database.</p>
-      </div>
-    </div>
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Donatur melihat halaman sukses</h4>
-        <p>Setelah membayar, donatur diarahkan kembali ke website pada halaman <b>"Pembayaran Berhasil"</b>.</p>
-      </div>
-    </div>
-
-    <div class="shot">
-      <img src="donasi-05-success.png" alt="Halaman pembayaran berhasil">
-      <div class="cap"><strong>Gambar 5.</strong> Halaman "Pembayaran Berhasil" yang dilihat donatur setelah transaksi lunas.</div>
-    </div>
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Jika pembayaran gagal atau batal</h4>
-        <p>Donatur diarahkan ke halaman <b>"Pembayaran Gagal"</b> dengan tombol untuk mencoba lagi. Invoice kadaluarsa otomatis setelah 24 jam tanpa pembayaran.</p>
-      </div>
-    </div>
-
-    <div class="shot">
-      <img src="donasi-06-failed.png" alt="Halaman pembayaran gagal">
-      <div class="cap"><strong>Gambar 6.</strong> Halaman "Pembayaran Gagal" — donatur bisa kembali ke beranda atau mencoba donasi lagi.</div>
-    </div>
-
-    <div class="step-item">
-      <div class="n"></div>
-      <div class="body">
-        <h4>Donasi tercatat dan berdampak</h4>
-        <p>Donasi yang lunas masuk ke laporan admin, menambah dana proyek yang didukung, dan bila donatur memiliki akun, ia mendapat poin komunitas (1 poin per Rp 1.000). Admin memantau semua transaksi dari panel <b>Donasi</b>.</p>
-      </div>
-    </div>
+  <!-- Langkah 2 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">2</span></td>
+    <td class="body">
+      <h3>Memilih Paket Donasi Sesuai Dampak</h3>
+      <p>Pengunjung memilih paket donasi dari daftar pilihan. Setiap paket berhubungan dengan dampak nyata di lapangan:</p>
+    </td>
+  </tr></table>
+  <table class="data">
+    <tr><th style="width: 30%;">Paket</th><th style="width: 20%;">Nominal</th><th>Dampak di Lapangan</th></tr>
+    <tr><td class="m">🌱 Seedling</td><td>Rp 20.000</td><td>1 bibit pohon ditanam</td></tr>
+    <tr><td class="m">🪨 Trench</td><td>Rp 50.000</td><td>1 parit resapan (rorak) dibuat</td></tr>
+    <tr><td class="m">💧 Sediment</td><td>Rp 100.000</td><td>1 m³ sedimentasi dikeruk dari mata air</td></tr>
+    <tr><td class="m">🔭 Monitoring</td><td>Rp 1.000.000</td><td>50 mata air dipantau</td></tr>
+    <tr><td class="m">✏️ Jumlah bebas</td><td>Mulai Rp 1.000</td><td>Bebas menentukan nominal sendiri</td></tr>
+  </table>
+  <div class="figure">
+    <div class="frame"><img src="donasi-03-form-tier.png" alt="Form donasi dengan paket Seedling terpilih"></div>
+    <div class="caption"><b>Gambar 4.2.</b> Paket "Seedling — 1 bibit pohon" telah dipilih. Sistem otomatis menampilkan ringkasan dampak dan nominal paket.</div>
   </div>
 
-  <!-- ═══════════ SISI TEKNIS ═══════════ -->
-  <h2><span class="num">4</span> Bagaimana Sistem Menjaganya Tetap Aman?</h2>
-  <table>
-    <tr><th style="width:38%">Lapisan Pengaman</th><th>Fungsi</th></tr>
-    <tr><td class="m">Jumlah divalidasi di server</td><td>Nominal dicek ulang di server — paket Rp 20.000 tidak bisa dibayar Rp 1.000.</td></tr>
+  <!-- Langkah 3 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">3</span></td>
+    <td class="body">
+      <h3>Mengisi Nama dan Email</h3>
+      <p>Pengunjung mengisi <b>nama</b> (wajib) dan <b>email</b> (opsional, untuk menerima konfirmasi pembayaran). Setelah itu, tombol hijau menampilkan nominal donasi dan siap diklik untuk melanjutkan.</p>
+    </td>
+  </tr></table>
+  <div class="figure">
+    <div class="frame"><img src="donasi-04-form-lengkap.png" alt="Form donasi lengkap terisi"></div>
+    <div class="caption"><b>Gambar 4.3.</b> Form donasi lengkap: paket terpilih, nama "Budi Santoso", dan email donatur telah diisi. Tombol menampilkan nominal "Rp 20.000".</div>
+  </div>
+
+  <!-- Langkah 4 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">4</span></td>
+    <td class="body">
+      <h3>Sistem Menerbitkan Invoice (Tagihan)</h3>
+      <p>Website mengirim permintaan ke Xendit, lalu Xendit membuat <b>invoice</b> — tagihan digital dengan nomor unik, nominal, dan masa berlaku 24 jam. Invoice bersifat sekali pakai dan nominalnya tidak dapat diubah dari luar.</p>
+    </td>
+  </tr></table>
+  <div class="tip green">
+    <b>🔒 Mengapa sistem ini aman?</b>
+    Jumlah yang harus dibayar sudah "dikunci" di server. Donatur tidak dapat membayar nominal yang berbeda dari pilihannya — misalnya memilih paket Rp 20.000 tetapi membayar Rp 1.000.
+  </div>
+
+  <!-- Langkah 5 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">5</span></td>
+    <td class="body">
+      <h3>Pindah ke Halaman Pembayaran Xendit</h3>
+      <p>Tab baru terbuka menuju halaman pembayaran yang dikelola Xendit. Halaman ini menampilkan ringkasan invoice (nomor tagihan, nominal, nama donatur) beserta pilihan metode pembayaran.</p>
+    </td>
+  </tr></table>
+  <div class="figure">
+    <div class="frame"><img src="donasi-07-halaman-xendit.png" alt="Ilustrasi halaman pembayaran Xendit"></div>
+    <div class="caption"><b>Gambar 4.4.</b> Ilustrasi halaman pembayaran Xendit (tampilan asli muncul saat API key aktif). Menampilkan nomor invoice, nominal Rp 20.000, sisa waktu pembayaran, dan pilihan metode: Transfer Bank, QRIS, OVO, GoPay, DANA.</div>
+  </div>
+
+  <!-- Langkah 6 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">6</span></td>
+    <td class="body">
+      <h3>Memilih Metode Pembayaran</h3>
+      <p>Donatur membayar menggunakan metode pilihannya. Berikut contoh cara kerja setiap metode:</p>
+    </td>
+  </tr></table>
+  <table class="data">
+    <tr><th style="width: 30%;">Metode</th><th>Cara Kerja</th></tr>
+    <tr><td class="m">🏦 Transfer Bank (VA)</td><td>Sistem membuat nomor Virtual Account khusus (misalnya 8–9 digit). Donatur mentransfer lewat m-banking atau ATM — contoh: 8801234567890 a.n. SpringHub.</td></tr>
+    <tr><td class="m">📱 QRIS</td><td>Memindai kode QR dengan aplikasi e-wallet atau m-banking mana pun, lalu menyetujui pembayaran.</td></tr>
+    <tr><td class="m">💚 OVO / GoPay / DANA / ShopeePay</td><td>Donatur diarahkan ke aplikasi untuk menyetujui pembayaran.</td></tr>
+    <tr><td class="m">💳 Kartu debit/kredit</td><td>Mengisi nomor kartu. Data kartu hanya diproses oleh Xendit dan tidak tersimpan di website.</td></tr>
+  </table>
+
+  <!-- Langkah 7 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">7</span></td>
+    <td class="body">
+      <h3>Xendit Mengirim Konfirmasi Otomatis</h3>
+      <p>Begitu pembayaran berhasil, Xendit langsung mengirim <b>konfirmasi otomatis (webhook)</b> ke server SpringHub. Sistem memverifikasi keaslian pesan — melalui token rahasia dan pencocokan jumlah — lalu mencatat donasi sebagai <b>Lunas</b> di database.</p>
+    </td>
+  </tr></table>
+
+  <!-- Langkah 8 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">8</span></td>
+    <td class="body">
+      <h3>Melihat Halaman Pembayaran Berhasil</h3>
+      <p>Setelah membayar, donatur diarahkan kembali ke website pada halaman <b>Pembayaran Berhasil</b>.</p>
+    </td>
+  </tr></table>
+  <div class="figure">
+    <div class="frame"><img src="donasi-05-success.png" alt="Halaman pembayaran berhasil"></div>
+    <div class="caption"><b>Gambar 4.5.</b> Halaman "Pembayaran Berhasil" yang dilihat donatur setelah transaksi lunas.</div>
+  </div>
+
+  <!-- Langkah 9 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">9</span></td>
+    <td class="body">
+      <h3>Jika Pembayaran Gagal atau Kadaluarsa</h3>
+      <p>Donatur diarahkan ke halaman <b>Pembayaran Gagal</b> dengan tombol untuk mencoba kembali. Invoice yang tidak dibayar akan kadaluarsa otomatis setelah 24 jam.</p>
+    </td>
+  </tr></table>
+  <div class="figure">
+    <div class="frame"><img src="donasi-06-failed.png" alt="Halaman pembayaran gagal"></div>
+    <div class="caption"><b>Gambar 4.6.</b> Halaman "Pembayaran Gagal" — donatur dapat kembali ke beranda atau mencoba donasi lagi.</div>
+  </div>
+
+  <!-- Langkah 10 -->
+  <table class="step"><tr>
+    <td class="n"><span class="num-circle">10</span></td>
+    <td class="body">
+      <h3>Donasi Tercatat dan Berdampak</h3>
+      <p>Donasi yang lunas tercatat dalam laporan admin, menambah dana proyek yang didukung, dan bila donatur memiliki akun, ia memperoleh poin komunitas (1 poin per Rp 1.000). Admin memantau seluruh transaksi dari panel <b>Donasi</b>.</p>
+    </td>
+  </tr></table>
+
+  <!-- ═══════════ BAGIAN 5 ═══════════ -->
+  <div class="sec-head"><span class="no">5</span><h1>Lapisan Keamanan Sistem</h1></div>
+  <p class="lead">Sistem donasi dilindungi beberapa lapisan pengaman yang bekerja bersamaan:</p>
+  <table class="data">
+    <tr><th style="width: 34%;">Lapisan Pengaman</th><th>Fungsi</th></tr>
+    <tr><td class="m">Validasi jumlah di server</td><td>Nominal dicek ulang di server — paket Rp 20.000 tidak dapat dibayar dengan nominal lain.</td></tr>
     <tr><td class="m">Token rahasia webhook</td><td>Konfirmasi dari Xendit ditandatangani token rahasia; pesan tanpa token yang benar ditolak.</td></tr>
-    <tr><td class="m">Pencocokan data</td><td>Sistem memastikan nomor invoice dan jumlah pembayaran sesuai catatan sebelum menandai lunas.</td></tr>
-    <tr><td class="m">Pembayaran ganda dicegah</td><td>Satu invoice hanya bisa lunas sekali — duplikat konfirmasi diabaikan.</td></tr>
-    <tr><td class="m">Batasan frekuensi</td><td>Pembatasan jumlah permintaan per orang untuk mencegah penyalahgunaan.</td></tr>
+    <tr><td class="m">Pencocokan data transaksi</td><td>Nomor invoice dan jumlah pembayaran dicocokkan dengan catatan sebelum ditandai lunas.</td></tr>
+    <tr><td class="m">Pencegahan pembayaran ganda</td><td>Satu invoice hanya dapat lunas satu kali; konfirmasi duplikat diabaikan.</td></tr>
+    <tr><td class="m">Pembatasan frekuensi</td><td>Jumlah permintaan per orang dibatasi untuk mencegah penyalahgunaan.</td></tr>
     <tr><td class="m">Anti-CSRF</td><td>Form donasi dilindungi token anti pemalsuan permintaan lintas situs.</td></tr>
   </table>
 
-  <!-- ═══════════ STATUS ═══════════ -->
-  <h2><span class="num">5</span> Status Integrasi Saat Ini</h2>
-  <p class="lead">Seluruh kode untuk alur di atas sudah selesai dan terpasang di website produksi (www.springhub.id). Fitur donasi akan <b>aktif</b> segera setelah dua kunci (API key) dari dashboard akun Xendit dimasukkan ke server.</p>
+  <!-- ═══════════ BAGIAN 6 ═══════════ -->
+  <div class="sec-head"><span class="no">6</span><h1>Status Integrasi dan Langkah Aktivasi</h1></div>
+  <p class="lead">Seluruh kode untuk alur di atas telah selesai dan terpasang di website produksi www.springhub.id. Fitur donasi akan <b>aktif</b> segera setelah dua kunci dari dashboard akun Xendit dimasukkan ke server.</p>
 
-  <table>
-    <tr><th>Komponen</th><th>Status</th><th>Keterangan</th></tr>
-    <tr><td class="m">Form donasi (tampilan)</td><td><span class="pill green">Selesai</span></td><td>Sudah live di website</td></tr>
-    <tr><td class="m">Pembuatan invoice Xendit</td><td><span class="pill green">Selesai</span></td><td>Kode siap, menunggu API key</td></tr>
-    <tr><td class="m">Penerimaan konfirmasi (webhook)</td><td><span class="pill green">Selesai</span></td><td>Dengan verifikasi token keamanan</td></tr>
-    <tr><td class="m">Halaman sukses / gagal</td><td><span class="pill green">Selesai</span></td><td>Sudah live di website</td></tr>
-    <tr><td class="m">Laporan donasi admin</td><td><span class="pill green">Selesai</span></td><td>Panel admin siap</td></tr>
-    <tr><td class="m">API key Xendit</td><td><span class="pill amber">Menunggu</span></td><td>Perlu kunci dari dashboard Xendit client — 5 menit untuk dipasang</td></tr>
+  <table class="data">
+    <tr><th style="width: 42%;">Komponen</th><th style="width: 14%;">Status</th><th>Keterangan</th></tr>
+    <tr><td class="m">Form donasi (tampilan)</td><td class="ctr"><span class="pill green">Selesai</span></td><td>Sudah terpasang di website</td></tr>
+    <tr><td class="m">Pembuatan invoice Xendit</td><td class="ctr"><span class="pill green">Selesai</span></td><td>Kode siap, menunggu API key</td></tr>
+    <tr><td class="m">Penerimaan konfirmasi (webhook)</td><td class="ctr"><span class="pill green">Selesai</span></td><td>Dengan verifikasi token keamanan</td></tr>
+    <tr><td class="m">Halaman berhasil / gagal</td><td class="ctr"><span class="pill green">Selesai</span></td><td>Sudah terpasang di website</td></tr>
+    <tr><td class="m">Laporan donasi admin</td><td class="ctr"><span class="pill green">Selesai</span></td><td>Panel admin siap</td></tr>
+    <tr><td class="m">API key Xendit</td><td class="ctr"><span class="pill amber">Menunggu</span></td><td>Kunci dari dashboard Xendit client — 5 menit untuk dipasang</td></tr>
   </table>
 
   <div class="tip amber">
-    <b>⚙️ Yang perlu dilakukan agar donasi aktif:</b>
-    1) Client membuat/mengaktifkan akun Xendit → 2) Salin <b>API key</b> dan <b>webhook token</b> dari dashboard → 3) Masukkan ke server (5 menit) → 4) Test satu transaksi sungguhan Rp 1.000. Setelah itu fitur donasi 100% berjalan.
+    <b>⚙️ Langkah aktivasi (hanya 5 menit):</b>
+    1) Client membuat atau mengaktifkan akun Xendit → 2) Menyalin API key dan webhook token dari dashboard → 3) Memasukkan ke server → 4) Melakukan satu uji transaksi sungguhan sebesar Rp 1.000. Setelah itu fitur donasi berjalan 100%.
   </div>
 
-  <div class="tip">
+  <div class="tip blue">
     <b>📷 Catatan gambar</b>
-    Gambar 1–6 diambil langsung dari website produksi www.springhub.id. Gambar 4 (halaman Xendit) adalah ilustrasi berdasarkan tampilan standar Xendit — tampilan sesungguhnya akan muncul setelah API key aktif.
+    Gambar 4.1–4.3 dan 4.5–4.6 diambil langsung dari website produksi www.springhub.id. Gambar 4.4 (halaman Xendit) adalah ilustrasi berdasarkan tampilan standar Xendit — tampilan sesungguhnya muncul setelah API key aktif.
   </div>
 
-  <div class="footer">
-    Dokumen disusun oleh Jaga Semesta — Tim Pengembang SpringHub<br>
+  <div class="closing">
+    Dokumen disusun oleh Tim Pengembang SpringHub — Jaga Semesta<br>
     www.springhub.id · 10 Agustus 2026
   </div>
+
 </div>
+
+<div class="page-footer">Jaga Semesta · SpringHub — Laporan Alur Donasi Xendit · www.springhub.id</div>
 </body>
 </html>
