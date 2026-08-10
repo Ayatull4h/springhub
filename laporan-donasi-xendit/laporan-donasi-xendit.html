@@ -77,9 +77,9 @@
   .step .body p { margin-bottom: 4pt; }
 
   /* ═══════════ Gambar — konsisten, caption, anti terpotong ═══════════ */
-  .figure { margin: 7mm 0; page-break-inside: avoid; }
+  .figure { margin: 7mm 0; page-break-inside: avoid; break-inside: avoid; }
   .figure .frame { border: 1px solid #e2e8f0; background: #fff; padding: 4mm; border-radius: 4px; box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08); }
-  .figure img { width: 100%; border: 1px solid #e2e8f0; display: block; }
+  .figure img { max-width: 100%; height: auto; border: 1px solid #e2e8f0; display: block; margin: 0 auto; max-height: 175mm; }
   .figure .caption { text-align: justify; font-size: 9.5pt; color: #475569; margin-top: 3mm; line-height: 1.55; }
   .figure .caption b { color: #0f172a; }
 
@@ -103,9 +103,6 @@
 
   /* ═══════════ Penutup ═══════════ */
   .closing { margin-top: 15mm; border-top: 3px double #0f766e; padding-top: 6mm; text-align: center; font-size: 10pt; color: #475569; line-height: 2; page-break-inside: avoid; }
-
-  /* ═══════════ Footer halaman (diulang di tiap halaman) ═══════════ */
-  .page-footer { position: fixed; bottom: -2mm; left: 0; right: 0; text-align: center; font-size: 8pt; color: #64748b; border-top: 0.5pt solid #cbd5e1; padding-top: 2mm; }
 </style>
 </head>
 <body>
@@ -413,7 +410,5 @@
   </div>
 
 </div>
-
-<div class="page-footer">Jaga Semesta · SpringHub — Laporan Alur Donasi Xendit · www.springhub.id</div>
 </body>
 </html>
