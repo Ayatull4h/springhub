@@ -7,6 +7,7 @@
 // Docs: https://developers.xendit.co/
 
 const XENDIT_API_BASE = "https://api.xendit.co";
+const REQUEST_TIMEOUT_MS = 15_000;
 
 export type DonationTier = {
   id: string;
@@ -34,6 +35,26 @@ export const PAYMENT_METHODS = [
   { id: "card",     label: "Debit / Credit Card", group: "card" },
   { id: "va",       label: "Virtual Account",     group: "va" },
 ] as const;
+
+/**
+ * Payment methods passed to Xendit v2 invoice `payment_methods`.
+ * Channel codes — including BANK_TRANSFER (VA), the most widely used
+ * method in Indonesia, plus e-wallets and QRIS.
+ */
+export const DEFAULT_PAYMENT_METHODS = [
+  "BANK_TRANSFER",
+  "CREDIT_CARD",
+  "OVO",
+  "GOPAY",
+  "DANA",
+  "SHOPEEPAY",
+  "QRIS",
+] as const;
+
+/** Returns true when Xendit is configured (secret key + webhook token present). */
+export function isXenditConfigured(): boolean {
+  return Boolean(process.env.XENDIT_SECRET_KEY && process.env.XENDIT_WEBHOOK_TOKEN);
+}
 
 export type CreateInvoiceInput = {
   externalId: string;
@@ -84,9 +105,10 @@ export async function createInvoice(
     }/donate/failed`,
   };
 
-  if (input.paymentMethods?.length) {
-    body.payment_methods = input.paymentMethods;
-  }
+  const paymentMethods = input.paymentMethods?.length
+    ? input.paymentMethods
+    : (DEFAULT_PAYMENT_METHODS as readonly string[]);
+  body.payment_methods = paymentMethods;
 
   const res = await fetch(`${XENDIT_API_BASE}/v2/invoices`, {
     method: "POST",
@@ -96,6 +118,7 @@ export async function createInvoice(
       "X-IDEMPOTENCY-KEY": input.externalId,
     },
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
 
   if (!res.ok) {
