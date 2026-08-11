@@ -49,7 +49,7 @@ Community-driven monitoring & restoration of Indonesia's artesian springs.
 - **Form submission:** Anti-spam layers: honeypot (hidden `_website`), time gate (<3s = bot), rate limit (5/day guest).
 - **Notifications:** Model `Notification` exists — create on events (report approved, seedling request, etc.) via Prisma.
 - **Docker build:** `output: "standalone"` in next.config.mjs. See `Dockerfile` + `docker-compose.yml`. CI in `.github/workflows/deploy.yml`.
-- **Demo accounts:** `admin@springhub.id`/`demo12345` (admin, 99,999 pts), `vol@springhub.id`/`vol12345` (volunteer, 8,750 pts), `ucup@springhub.id`/`ucup12345` (volunteer, 20,168 pts).
+- **Demo accounts:** `admin@springhub.id`/`demo12345` (admin, 99,999 pts), `volunteer@springhub.id`/`vol12345` (volunteer, 8,750 pts), `ucup@springhub.id`/`ucup12345` (volunteer, 20,168 pts).
 - **Offline PWA:** IndexedDB wrapper in `lib/offline-db.ts` (10 object stores). QueueWorker auto-syncs every 10s.
 
 ## Route Index
@@ -96,7 +96,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 |---|---|---|---|
 | `admin@springhub.id` | `demo12345` | admin | 99.999 |
 | `ucup@springhub.id` | `ucup12345` | volunteer | 20.168 (bisa project) |
-| `vol@springhub.id` | `vol12345` | volunteer | 8.750 (belum bisa project) |
+| `volunteer@springhub.id` | `vol12345` | volunteer | 8.750 (belum bisa project) |
 
 ---
 
