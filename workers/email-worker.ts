@@ -1,15 +1,9 @@
 import { Worker } from "bullmq";
 import { sendEmail } from "../lib/email";
 import logger from "../lib/logger";
+import { redisConnectionFromUrl } from "../lib/redis-connection";
 
-const connection = {
-  host: process.env.REDIS_QUEUE_URL
-    ? new URL(process.env.REDIS_QUEUE_URL).hostname
-    : "localhost",
-  port: process.env.REDIS_QUEUE_URL
-    ? parseInt(new URL(process.env.REDIS_QUEUE_URL).port || "6379", 10)
-    : 6379,
-};
+const connection = redisConnectionFromUrl(process.env.REDIS_QUEUE_URL);
 
 const worker = new Worker(
   "email",

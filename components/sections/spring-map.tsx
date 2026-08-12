@@ -89,6 +89,22 @@ type ReportItem = {
   user?: { username: string; region: string };
 };
 
+type MapPointItem = {
+  id: string;
+  type: { id: string; slug: string; name: string; icon: string };
+  category: { id: string; slug: string; name: string; color: string } | null;
+  name: string;
+  slug: string;
+  snappedLat: number | null;
+  snappedLng: number | null;
+  province: string;
+  regency: string;
+  reportCount: number;
+  latestReport: { id: string; formSlug: string; createdAt: string } | null;
+};
+
+const PAGE_SIZE = 200;
+
 export function SpringMap() {
   const { t } = useI18n();
   const [selectedType, setSelectedType] = useState("");
@@ -97,6 +113,9 @@ export function SpringMap() {
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
   const [reportsError, setReportsError] = useState("");
+  const [totalReports, setTotalReports] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [mapPoints, setMapPoints] = useState<MapPointItem[]>([]);
   const [springs, setSprings] = useState<unknown[]>([]);
   const [dynamicForms, setDynamicForms] = useState<Array<{ slug: string; title: string; pointsOnSubmit: number }>>([]);
   const [formsError, setFormsError] = useState("");
@@ -104,20 +123,67 @@ export function SpringMap() {
   const [mapTypesWithCats, setMapTypesWithCats] = useState<Array<{ slug: string; id: string; name: string; categories: CategoryItem[] }>>([]);
   const [showGuide, setShowGuide] = useState(false);
 
-  const fetchReports = () => {
+  const fetchReports = async (fetchPage = 1, mode: "replace" | "merge" = "replace") => {
     setReportsLoading(true);
     setReportsError("");
-    fetch("/api/reports?limit=200")
-      .then((r) => r.json())
-      .then((data) => setReports(data.reports || []))
-      .catch(() => setReportsError("Gagal memuat data laporan"))
-      .finally(() => setReportsLoading(false));
+    try {
+      const res = await fetch(`/api/reports?page=${fetchPage}&limit=${PAGE_SIZE}`);
+      const data = await res.json();
+      const items: ReportItem[] = data.reports || [];
+      setTotalReports(data.pagination?.total ?? data.stats?.total ?? 0);
+      setReports((prev) => {
+        if (mode === "replace") return items;
+        const merged = new Map(prev.map((r) => [r.id, r]));
+        for (const r of items) merged.set(r.id, r);
+        return Array.from(merged.values());
+      });
+    } catch {
+      setReportsError("Gagal memuat data laporan");
+    } finally {
+      setReportsLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchReports();
-    const interval = setInterval(fetchReports, 30000);
+    fetchReports(1, "replace");
+    const interval = setInterval(() => fetchReports(1, "merge"), 30000);
     return () => clearInterval(interval);
+  }, []);
+
+  const hasMoreReports = totalReports > reports.length;
+
+  const loadMoreReports = async () => {
+    if (loadingMore || !hasMoreReports) return;
+    setLoadingMore(true);
+    const nextPage = Math.floor(reports.length / PAGE_SIZE) + 1;
+    await fetchReports(nextPage, "merge");
+    setLoadingMore(false);
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadMapPoints = async () => {
+      const all: MapPointItem[] = [];
+      let fetchPage = 1;
+      let totalPages = 1;
+      do {
+        try {
+          const res = await fetch(`/api/map-points?page=${fetchPage}&limit=${PAGE_SIZE}`);
+          const data = await res.json();
+          if (!data?.points?.length && fetchPage > 1) break;
+          all.push(...(data.points || []));
+          totalPages = data.pagination?.totalPages || 1;
+        } catch {
+          break;
+        }
+        fetchPage += 1;
+      } while (fetchPage <= totalPages && fetchPage <= 10);
+      if (!cancelled) setMapPoints(all);
+    };
+    loadMapPoints();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -391,8 +457,33 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         </div>
         <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
-          <LeafletMap reports={visible} springs={visibleSprings as any[]} formColors={formColors} formLookup={formLookup} />
+          <LeafletMap
+            reports={visible}
+            springs={visibleSprings as any[]}
+            formColors={formColors}
+            formLookup={formLookup}
+            mapPoints={mapPoints}
+          />
         </div>
+        {hasMoreReports && (
+          <div className="border-t border-ink-line px-4 py-3 text-center dark:border-slate-700">
+            <button
+              onClick={loadMoreReports}
+              disabled={loadingMore}
+              className="inline-flex items-center gap-2 rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white disabled:opacity-50"
+            >
+              {loadingMore ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> {t("map.loadingMore")}
+                </>
+              ) : (
+                <>
+                  {t("map.loadMore")} ({reports.length}/{totalReports})
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Below the map: report details (left) + Report Your Contribution (right) */}
@@ -400,7 +491,7 @@ const formTitleI18nKey = (slug: string): string => {
 
         {reportsError && (
           <div className="lg:col-span-12 rounded-md bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-300">
-            {reportsError}. <button onClick={fetchReports} className="underline font-medium">Coba lagi</button>
+            {reportsError}. <button onClick={() => fetchReports(1, "replace")} className="underline font-medium">Coba lagi</button>
           </div>
         )}
 

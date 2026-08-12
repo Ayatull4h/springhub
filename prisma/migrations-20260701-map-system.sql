@@ -18,33 +18,33 @@ ON CONFLICT (slug) DO NOTHING;
 -- 2. Buat kategori untuk tiap tipe
 -- Spring categories
 INSERT INTO "MapPointCategory" (id, "typeId", slug, name, color, "sortOrder", "createdAt")
-SELECT gen_random_uuid()::text, id, 'sehat', 'Sehat', '#22c55e', 1, NOW() FROM "MapPointType" WHERE slug = 'spring'
-WHERE NOT EXISTS (SELECT 1 FROM "MapPointCategory" WHERE slug = 'sehat' AND "typeId" = (SELECT id FROM "MapPointType" WHERE slug = 'spring'));
+SELECT gen_random_uuid()::text, t.id, 'sehat', 'Sehat', '#22c55e', 1, NOW() FROM "MapPointType" t WHERE t.slug = 'spring'
+AND NOT EXISTS (SELECT 1 FROM "MapPointCategory" c WHERE c.slug = 'sehat' AND c."typeId" = t.id);
 
 INSERT INTO "MapPointCategory" (id, "typeId", slug, name, color, "sortOrder", "createdAt")
-SELECT gen_random_uuid()::text, id, 'terdegradasi', 'Terdegradasi', '#ef4444', 2, NOW() FROM "MapPointType" WHERE slug = 'spring'
-WHERE NOT EXISTS (SELECT 1 FROM "MapPointCategory" WHERE slug = 'terdegradasi' AND "typeId" = (SELECT id FROM "MapPointType" WHERE slug = 'spring'));
+SELECT gen_random_uuid()::text, t.id, 'terdegradasi', 'Terdegradasi', '#ef4444', 2, NOW() FROM "MapPointType" t WHERE t.slug = 'spring'
+AND NOT EXISTS (SELECT 1 FROM "MapPointCategory" c WHERE c.slug = 'terdegradasi' AND c."typeId" = t.id);
 
 INSERT INTO "MapPointCategory" (id, "typeId", slug, name, color, "sortOrder", "createdAt")
-SELECT gen_random_uuid()::text, id, 'restorasi', 'Dalam Restorasi', '#f59e0b', 3, NOW() FROM "MapPointType" WHERE slug = 'spring'
-WHERE NOT EXISTS (SELECT 1 FROM "MapPointCategory" WHERE slug = 'restorasi' AND "typeId" = (SELECT id FROM "MapPointType" WHERE slug = 'spring'));
+SELECT gen_random_uuid()::text, t.id, 'restorasi', 'Dalam Restorasi', '#f59e0b', 3, NOW() FROM "MapPointType" t WHERE t.slug = 'spring'
+AND NOT EXISTS (SELECT 1 FROM "MapPointCategory" c WHERE c.slug = 'restorasi' AND c."typeId" = t.id);
 
 -- Conservation categories (contoh untuk uji coba)
 INSERT INTO "MapPointCategory" (id, "typeId", slug, name, color, "sortOrder", "createdAt")
-SELECT gen_random_uuid()::text, id, 'pohon-hampir-punah', 'Pohon Hampir Punah', '#dc2626', 1, NOW() FROM "MapPointType" WHERE slug = 'conservation'
-WHERE NOT EXISTS (SELECT 1 FROM "MapPointCategory" WHERE slug = 'pohon-hampir-punah' AND "typeId" = (SELECT id FROM "MapPointType" WHERE slug = 'conservation'));
+SELECT gen_random_uuid()::text, t.id, 'pohon-hampir-punah', 'Pohon Hampir Punah', '#dc2626', 1, NOW() FROM "MapPointType" t WHERE t.slug = 'conservation'
+AND NOT EXISTS (SELECT 1 FROM "MapPointCategory" c WHERE c.slug = 'pohon-hampir-punah' AND c."typeId" = t.id);
 
 INSERT INTO "MapPointCategory" (id, "typeId", slug, name, color, "sortOrder", "createdAt")
-SELECT gen_random_uuid()::text, id, 'pohon-terkonservasi', 'Pohon Terkonservasi', '#16a34a', 2, NOW() FROM "MapPointType" WHERE slug = 'conservation'
-WHERE NOT EXISTS (SELECT 1 FROM "MapPointCategory" WHERE slug = 'pohon-terkonservasi' AND "typeId" = (SELECT id FROM "MapPointType" WHERE slug = 'conservation'));
+SELECT gen_random_uuid()::text, t.id, 'pohon-terkonservasi', 'Pohon Terkonservasi', '#16a34a', 2, NOW() FROM "MapPointType" t WHERE t.slug = 'conservation'
+AND NOT EXISTS (SELECT 1 FROM "MapPointCategory" c WHERE c.slug = 'pohon-terkonservasi' AND c."typeId" = t.id);
 
 INSERT INTO "MapPointCategory" (id, "typeId", slug, name, color, "sortOrder", "createdAt")
-SELECT gen_random_uuid()::text, id, 'ikan-hampir-punah', 'Ikan Hampir Punah', '#b91c1c', 3, NOW() FROM "MapPointType" WHERE slug = 'conservation'
-WHERE NOT EXISTS (SELECT 1 FROM "MapPointCategory" WHERE slug = 'ikan-hampir-punah' AND "typeId" = (SELECT id FROM "MapPointType" WHERE slug = 'conservation'));
+SELECT gen_random_uuid()::text, t.id, 'ikan-hampir-punah', 'Ikan Hampir Punah', '#b91c1c', 3, NOW() FROM "MapPointType" t WHERE t.slug = 'conservation'
+AND NOT EXISTS (SELECT 1 FROM "MapPointCategory" c WHERE c.slug = 'ikan-hampir-punah' AND c."typeId" = t.id);
 
 INSERT INTO "MapPointCategory" (id, "typeId", slug, name, color, "sortOrder", "createdAt")
-SELECT gen_random_uuid()::text, id, 'ikan-terkonservasi', 'Ikan Terkonservasi', '#15803d', 4, NOW() FROM "MapPointType" WHERE slug = 'conservation'
-WHERE NOT EXISTS (SELECT 1 FROM "MapPointCategory" WHERE slug = 'ikan-terkonservasi' AND "typeId" = (SELECT id FROM "MapPointType" WHERE slug = 'conservation'));
+SELECT gen_random_uuid()::text, t.id, 'ikan-terkonservasi', 'Ikan Terkonservasi', '#15803d', 4, NOW() FROM "MapPointType" t WHERE t.slug = 'conservation'
+AND NOT EXISTS (SELECT 1 FROM "MapPointCategory" c WHERE c.slug = 'ikan-terkonservasi' AND c."typeId" = t.id);
 
 -- 3. Hubungkan Form ke MapPointType
 UPDATE "Form" SET "mapTypeId" = (SELECT id FROM "MapPointType" WHERE slug = 'spring')

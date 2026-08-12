@@ -17,6 +17,16 @@ export default function SignInPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  function safeRedirect(raw: string | null): string {
+    if (!raw) return "/";
+    const value = raw.trim();
+    if (!value.startsWith("/")) return "/";
+    if (value.startsWith("//") || value.includes("\\")) return "/";
+    if (value.includes(":")) return "/";
+    if (/[\u0000-\u001f]/.test(value)) return "/";
+    return value;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -56,9 +66,9 @@ export default function SignInPage() {
         }
       }
 
-      // Redirect to home or the page they came from
+      // Redirect to home or the page they came from (relative paths only)
       const params = new URLSearchParams(window.location.search);
-      const redirect = params.get("redirect") || "/";
+      const redirect = safeRedirect(params.get("redirect"));
       window.location.href = redirect;
     } catch {
       setError(t("auth.signIn.networkError"));

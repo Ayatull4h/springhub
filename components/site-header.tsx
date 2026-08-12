@@ -9,6 +9,7 @@ import { useI18n } from "@/lib/i18n";
 import { useDarkMode } from "@/lib/darkmode";
 
 import { fetchAndCacheSession } from "@/lib/session-cache";
+import { offlineDB } from "@/lib/offline-db";
 
 type UserInfo = {
   id: string;
@@ -49,6 +50,9 @@ export function SiteHeader() {
   }, []);
 
   async function handleLogout() {
+    try {
+      await offlineDB.clearSession();
+    } catch {}
     await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
     router.refresh();

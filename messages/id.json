@@ -9,12 +9,10 @@
   "nav.join": "Daftar",
   "nav.admin": "Admin",
   "nav.language": "ID",
-
   "hero.title": "Restorasi Mata Air<br/>Berbasis Komunitas",
   "hero.subtitle": "Bergabunglah dalam gerakan akar rumput untuk melindungi dan merestorasi mata air artesis Indonesia yang berharga. Pantau, pulihkan, dan lestarikan sumber air kita untuk generasi mendatang.",
   "hero.cta.start": "Mulai Memantau",
   "hero.cta.back": "Kembali ke Jaga Semesta",
-
   "dashboard.title": "Dampak",
   "dashboard.titleAccent": "Real-Time",
   "dashboard.description": "Pantau dampak kolektif kami di seluruh Indonesia.",
@@ -39,7 +37,6 @@
   "dashboard.volunteers": "Relawan Teratas",
   "dashboard.volunteers.pts": "poin",
   "dashboard.springTimeline": "Spring Monitoring",
-
   "map.title": "Peta Mata Air",
   "map.titleAccent": "Interaktif",
   "map.description": "Jelajahi mata air di seluruh Indonesia. Lihat status terkini, laporan komunitas, dan kontribusikan pengamatan Anda sendiri.",
@@ -68,7 +65,6 @@
   "map.show": "Tampilkan:",
   "map.unknownLocation": "Lokasi tidak diketahui",
   "map.noReports": "Belum ada laporan",
-
   "form.title.monitoring": "Survei Mata Air",
   "form.desc.monitoring": "Catat kondisi mata air saat ini — debit, kualitas air, kebersihan, dan foto dengan lokasi geografis.",
   "form.title.restoration": "Restorasi Mata Air",
@@ -114,7 +110,6 @@
   "form.notFound": "Formulir tidak ditemukan",
   "form.notFoundDesc": "Formulir yang Anda cari tidak ada.",
   "form.backToHome": "Kembali ke Beranda",
-
   "form.field.springName": "Nama mata air",
   "form.field.village": "Desa",
   "form.field.subdistrict": "Kecamatan",
@@ -153,7 +148,6 @@
   "form.field.updateDate": "Tanggal update",
   "form.field.extraInfo": "Keterangan tambahan",
   "form.field.yourPhone": "Nomor HP koordinator",
-
   "volunteer.title": "Aktivitas",
   "volunteer.titleAccent": "Relawan",
   "volunteer.description": "Bergabunglah dengan ribuan pahlawan lingkungan yang membuat perubahan di seluruh Indonesia. Dapatkan poin, dan buka kelayakan untuk mengajukan proyek restorasi mata air Anda sendiri setelah mencapai {threshold} poin.",
@@ -169,18 +163,15 @@
   "volunteer.locked": "Terkunci",
   "volunteer.pts": "poin",
   "volunteer.form": "Formulir",
-
   "learn.title": "Pusat",
   "learn.titleAccent": "Pembelajaran",
   "learn.description": "Perluas pengetahuan Anda dengan kursus kami tentang konservasi mata air, penanaman pohon, dan kearifan air tradisional.",
   "learn.modules": "{count} modul",
   "learn.startCourse": "Mulai Kursus",
-
   "media.title": "Media",
   "media.titleAccent": "Terbaru",
   "media.description": "Acara, publikasi, dan liputan pers dari Jaga Semesta dan SpringHub.",
   "media.visitYoutube": "Kunjungi YouTube Kami",
-
   "donate.title": "Dukung",
   "donate.titleAccent": "Upaya Konservasi",
   "donate.description": "Donasi diproses melalui Xendit (kartu, virtual account, e-wallet, QRIS). Setiap rupiah dikaitkan dengan output terukur yang dilaporkan oleh relawan lapangan kami — dan hanya proyek yang terverifikasi admin yang dapat didanai.",
@@ -229,12 +220,10 @@
   "donate.statusUnderReview": "Dalam Review",
   "donate.statusRejected": "Ditolak",
   "donate.supporters": "{count} pendukung",
-
   "project.verified": "Terverifikasi",
   "project.underReview": "Dalam Review",
   "project.rejected": "Ditolak",
   "project.supporters": "pendukung",
-
   "auth.signIn.title": "Selamat datang kembali",
   "auth.signIn.subtitle": "Masuk ke akun SpringHub Anda",
   "auth.signIn.email": "Email",
@@ -248,7 +237,6 @@
   "auth.signIn.joinNow": "Daftar Sekarang",
   "auth.signIn.error": "Login gagal. Silakan coba lagi.",
   "auth.signIn.networkError": "Kesalahan jaringan. Silakan coba lagi.",
-
   "auth.join.title": "Bergabung SpringHub",
   "auth.join.subtitle": "Buat akun dan mulai berkontribusi",
   "auth.join.username": "Nama Tampilan (opsional)",
@@ -262,7 +250,6 @@
   "auth.join.signInLink": "Masuk",
   "auth.join.error": "Pendaftaran gagal. Silakan coba lagi.",
   "auth.join.networkError": "Kesalahan jaringan. Silakan coba lagi.",
-
   "profile.title": "Profil Saya",
   "profile.backToHome": "Kembali ke Beranda",
   "profile.logout": "Keluar",
@@ -297,7 +284,6 @@
   "profile.claimNone": "Tidak ada laporan sesi sebelumnya untuk diklaim.",
   "profile.claimSuccess": "✅ {count} laporan dari sesi sebelumnya berhasil diklaim!",
   "profile.claiming": "Memeriksa laporan sesi sebelumnya...",
-
   "report.formNotFound": "Formulir tidak ditemukan",
   "report.formNotFoundDesc": "Formulir yang Anda cari tidak ada.",
   "report.backToHome": "Kembali ke Beranda",
@@ -312,7 +298,6 @@
   "report.submitReport": "Kirim Laporan",
   "report.error": "Gagal mengirim. Silakan coba lagi.",
   "report.errorNetwork": "Kesalahan jaringan. Silakan coba lagi.",
-
   "footer.tagline": "Memberdayakan komunitas di seluruh Indonesia untuk melindungi dan merestorasi sumber air kita yang berharga melalui upaya konservasi kolaboratif.",
   "footer.stayUpdated": "Tetap Terupdate",
   "footer.newsletterPlaceholder": "Masukkan email Anda",
@@ -338,7 +323,6 @@
   "footer.phone": "Telepon",
   "footer.email": "Email",
   "footer.address": "Alamat",
-
   "admin.dashboard": "Ikhtisar Dashboard",
   "admin.welcome": "Data real-time dari database PostgreSQL.",
   "admin.totalUsers": "Total Pengguna",
@@ -382,7 +366,6 @@
   "admin.status.failed": "Gagal",
   "admin.lastSync": "Data langsung dari PostgreSQL",
   "admin.environment": "SpringHub / Lokal",
-
   "admin.sidebar.dashboard": "Dashboard",
   "admin.sidebar.users": "Pengguna",
   "admin.sidebar.trustScore": "Trust Score",
@@ -404,7 +387,6 @@
   "admin.sidebar.logout": "Keluar",
   "admin.sidebar.toggleMenu": "Buka menu",
   "admin.sidebar.closeMenu": "Tutup menu",
-
   "admin.forms.title": "Formulir",
   "admin.forms.total": "{count} formulir total",
   "admin.forms.createNew": "Buat Form Baru",
@@ -421,7 +403,6 @@
   "admin.forms.deleteSuccess": "Form telah dinonaktifkan",
   "admin.forms.failedDelete": "Gagal menghapus form",
   "admin.forms.failedToggle": "Gagal mengubah status form",
-
   "admin.formBuilder.editForm": "Edit Form",
   "admin.formBuilder.loading": "Memuat...",
   "admin.formBuilder.failedLoadForm": "Gagal memuat form",
@@ -481,7 +462,6 @@
   "admin.formBuilder.placeholderTitle": "Monitoring Mata Air",
   "admin.formBuilder.placeholderSlug": "monitoring-mata-air",
   "admin.formBuilder.placeholderLabel": "Label field",
-
   "admin.courses.title": "Kursus",
   "admin.courses.total": "{count} kursus total",
   "admin.courses.new": "Kursus Baru",
@@ -494,7 +474,6 @@
   "admin.courses.confirmDelete": "Hapus kursus \"{title}\"? Tindakan ini tidak bisa dibatalkan.",
   "admin.courses.failedDelete": "Gagal menghapus kursus",
   "admin.courses.failedLoad": "Gagal memuat kursus",
-
   "admin.courseEditor.editCourse": "Edit Course",
   "admin.courseEditor.editDesc": "Perbarui detail kursus dan modul",
   "admin.courseEditor.failedLoad": "Gagal memuat kursus",
@@ -533,7 +512,6 @@
   "admin.courseEditor.placeholderDescription": "Pelajari dasar-dasar ekosistem mata air...",
   "admin.courseEditor.placeholderDuration": "45 mnt",
   "admin.courseEditor.materialFileLabel": "File Materi (PDF opsional)",
-
   "admin.points.title": "Aturan Poin",
   "admin.points.total": "{count} aturan · {active} aktif",
   "admin.points.addRule": "Tambah Aturan",
@@ -572,7 +550,6 @@
   "admin.points.createFailed": "Gagal menambahkan aturan",
   "admin.points.deleteFailed": "Gagal menghapus aturan",
   "admin.points.deleted": "Aturan berhasil dihapus",
-
   "admin.content.title": "Manajemen Konten",
   "admin.content.add": "Tambah {section}",
   "admin.content.noItems": "Belum ada item {section}.",
@@ -593,7 +570,6 @@
   "admin.content.sortOrder": "Urutan",
   "admin.content.openLink": "Buka tautan",
   "admin.content.sort": "Urutan: {order}",
-
   "admin.trustScore.title": "Manajemen Trust Score",
   "admin.trustScore.summary": "{count} pengguna · {low} risiko rendah · {blocked} terblokir",
   "admin.trustScore.searchPlaceholder": "Cari pengguna...",
@@ -617,7 +593,6 @@
   "admin.trustScore.invalidValue": "Nilai harus antara 0–100",
   "admin.trustScore.saveFailed": "Gagal menyimpan",
   "admin.trustScore.pts": "pts",
-
   "learn.page.subtitle": "Tingkatkan pengetahuanmu tentang konservasi mata air melalui kursus interaktif",
   "learn.course.modules": "{count} modul",
   "learn.course.start": "Mulai Belajar",
@@ -629,7 +604,7 @@
   "learn.course.review": "Review",
   "learn.course.startModule": "Mulai",
   "learn.course.locked": "Terkunci",
-  "learn.course.completed": "Selesai!",
+  "learn.course.completed": "Selesai",
   "learn.course.progress": "{completed}/{total} modul",
   "learn.course.signInPrompt": "Silakan masuk untuk melacak progres",
   "learn.course.moduleCompleted": "Modul selesai!",
@@ -637,7 +612,6 @@
   "learn.course.networkError": "Kesalahan jaringan. Silakan coba lagi.",
   "learn.course.backToCourse": "Kembali ke kursus",
   "learn.course.moduleOfLabel": "Modul {current} dari {total}",
-  "learn.course.completed": "Selesai",
   "learn.course.lockPrevModules": "Selesaikan modul sebelumnya terlebih dahulu",
   "learn.course.lockPrevDesc": "Modul ini terkunci sampai kamu menyelesaikan modul sebelumnya di kursus ini.",
   "learn.course.lockSignIn": "Masuk untuk melacak progres",
@@ -651,26 +625,20 @@
   "learn.course.markComplete": "Tandai Selesai",
   "learn.course.viewCourse": "Lihat Kursus",
   "learn.course.next": "Selanjutnya",
-
   "notFound.title": "Halaman Tidak Ditemukan",
   "notFound.desc": "Halaman yang Anda cari tidak ditemukan. Mungkin telah dipindahkan atau dihapus.",
   "notFound.cta": "Kembali ke Beranda",
-
   "error.title": "Terjadi Kesalahan",
   "error.desc": "Terjadi kesalahan. Silakan coba refresh halaman.",
   "error.cta": "Coba Lagi",
-
   "loading": "Memuat...",
-
   "validation.required": "Field ini wajib diisi",
   "validation.email": "Email tidak valid",
   "validation.password": "Kata sandi minimal 6 karakter",
   "validation.username": "Username minimal 2 karakter",
   "validation.phone": "Format nomor HP tidak valid. Gunakan 08xx atau +62xx",
   "validation.donation": "Minimum donasi Rp 1.000",
-
   "reports.form": "Formulir",
-
   "common.of": "dari",
   "common.previous": "Sebelumnya",
   "common.unknownLocation": "Lokasi tidak diketahui",
@@ -697,7 +665,6 @@
   "common.select": "Pilih...",
   "common.guest": "Tamu",
   "common.anonymous": "Anonim",
-
   "projects.new.notEligible": "Poin Belum Mencukupi",
   "projects.new.needMorePoints": "Kamu membutuhkan minimal {threshold} poin untuk mengajukan proyek. Saat ini kamu memiliki {current} poin.",
   "projects.new.pointsNeeded": "Kumpulkan {remaining} poin lagi dengan mengirim laporan lapangan!",
@@ -732,7 +699,6 @@
   "projects.new.cancel": "Batal",
   "projects.new.submitting": "Mengirim...",
   "projects.new.submitProject": "Kirim Proposal Proyek",
-
   "status.what": "Apa arti warna ini?",
   "status.title": "Status Mata Air",
   "status.healthy": "Sehat",
@@ -742,7 +708,6 @@
   "status.degraded": "Terdegradasi",
   "status.degradedDesc": "Perlu intervensi",
   "status.gotIt": "Mengerti",
-
   "projects.type.spring_restoration": "Restorasi Mata Air",
   "projects.type.tree_planting": "Penanaman Pohon",
   "projects.type.trench_development": "Pengembangan Rorak",
@@ -751,10 +716,8 @@
   "projects.underReview": "Dalam Review",
   "projects.collected": "terkumpul",
   "projects.supporters": "pendukung",
-
   "donate.customOption": "Custom — IDR",
   "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Kartu • Virtual Account",
-
   "pwa.guide.title": "Install SpringHub untuk akses cepat dari layar utama",
   "pwa.guide.androidTitle": "Android — Chrome",
   "pwa.guide.androidStep1": "Buka <strong>www.springhub.id</strong> di Chrome",
@@ -771,10 +734,8 @@
   "pwa.guide.otherAndroid": "Tap ⋮ → &quot;Add to Home Screen&quot; → &quot;Install&quot;",
   "pwa.guide.otherIos": "Tap 📤 → &quot;Add to Home Screen&quot; → &quot;Add&quot;",
   "pwa.guide.pcNote": "PC/Laptop: buka langsung di browser. Mode offline tetap bisa diakses via ikon PWA setelah di-install.",
-
   "locale.en": "EN",
   "locale.id": "ID",
-
   "offline.title": "Mode Offline Survei",
   "offline.checkLogin": "Kamu harus login untuk menggunakan mode offline",
   "offline.checkPwa": "Install aplikasi dari browser dulu",
@@ -783,7 +744,6 @@
   "offline.notLogin": "Belum login",
   "offline.appInstalled": "Aplikasi terinstall",
   "offline.installApp": "Install aplikasi dulu",
-
   "offline.tutorial.cacheTitle": "Cache Data",
   "offline.tutorial.cacheDesc": "Form, definisi field, dan tile peta akan disimpan ke penyimpanan lokal perangkat.",
   "offline.tutorial.gpsTitle": "Lokasi & GPS",
@@ -793,12 +753,10 @@
   "offline.tutorial.syncTitle": "Sinkronisasi",
   "offline.tutorial.syncDesc": "Data dikirim ke server saat keluar. Data lokal dihapus setelah berhasil.",
   "offline.tutorial.agree": "Saya setuju dengan ketentuan penggunaan cache & penyimpanan lokal",
-
   "offline.selectForm": "Pilih Form Survei",
   "offline.selectFormDesc": "Pilih form yang mau diisi selama survei",
   "offline.selectArea": "Pilih Area Survei",
   "offline.selectAreaDesc": "Tentukan area untuk pre-cache tile peta",
-
   "offline.survey.distance": "{km} km",
   "offline.survey.markers": "{count} catatan",
   "offline.survey.markSpring": "Catat Mata Air",
@@ -807,7 +765,6 @@
   "offline.survey.gpsStart": "Mulai Tracking GPS",
   "offline.survey.gpsActive": "Tracking Aktif",
   "offline.survey.searchingGps": "Mencari lokasi...",
-
   "offline.sync.confirm": "Keluar Mode Offline",
   "offline.sync.confirmDesc": "Data akan dikirim ke server. Pastikan koneksi stabil.",
   "offline.sync.photos": "{count} foto — Wajib diupload",
@@ -820,11 +777,9 @@
   "offline.sync.done": "Selesai!",
   "offline.sync.retry": "Coba Lagi",
   "offline.sync.back": "Kembali ke Mode Offline",
-
   "offline.installPrompt": "Install SpringHub untuk mode offline",
   "offline.installDesc": "Aplikasi perlu diinstall agar bisa menyimpan data lokal.",
   "offline.install": "Install Aplikasi",
-
   "offline.activate": "Aktifkan Mode Offline",
   "offline.setup": "Persiapan Survei",
   "offline.tutorialData": "Data disimpan lokal di HP-mu. Tidak perlu sinyal selama survei.",
@@ -865,7 +820,6 @@
   "offline.minutes": "menit lalu",
   "offline.hours": "jam lalu",
   "offline.days": "hari lalu",
-
   "offline.ready": "Siap! Mode Offline Aktif",
   "offline.readyFull": "Map, GPS tracking, dan form sudah siap. Kamu bisa survey tanpa sinyal.",
   "offline.readySave": "Form sudah siap. Laporan akan tersimpan lokal dan dikirim saat online.",
@@ -916,7 +870,6 @@
   "offline.uploadFailed": "Upload gagal",
   "offline.syncComplete": "Semua data berhasil terkirim! Data lokal dihapus.",
   "offline.goBack": "Kembali ke Beranda",
-
   "notifications.title": "Notifikasi",
   "notifications.subtitle": "Aktivitas dan pemberitahuan akun kamu",
   "notifications.loadError": "Gagal memuat notifikasi",
@@ -927,9 +880,7 @@
   "notifications.backToHome": "Kembali ke Beranda",
   "notifications.viewDetail": "Lihat detail",
   "notifications.markRead": "Tandai dibaca",
-
   "media.empty": "Belum ada konten media. Nanti periksa lagi!",
-
   "reportIssue.title": "Laporkan Masalah / Kritik & Saran",
   "reportIssue.subtitle": "Pilih salah satu atau keduanya",
   "reportIssue.thankYou": "Terima kasih!",
@@ -954,7 +905,6 @@
   "reportIssue.fillAtLeastOne": "Isi setidaknya satu bagian — bug atau kritik/saran.",
   "reportIssue.failedSend": "Gagal mengirim laporan.",
   "reportIssue.genericError": "Terjadi kesalahan.",
-
   "about.title": "Tentang",
   "about.titleBrand": "SpringHub",
   "about.description": "SpringHub adalah platform berbasis komunitas untuk <strong>pemantauan dan restorasi mata air</strong> di Indonesia. Kami menghubungkan relawan dan mitra untuk melindungi sumber air bersih.",
@@ -975,5 +925,54 @@
   "about.ctaTitle": "Ikut Berkontribusi",
   "about.ctaDesc": "Setiap laporan, donasi, dan aksi kecil berarti untuk masa depan air bersih Indonesia.",
   "about.ctaJoin": "Gabung Sekarang",
-  "about.ctaMap": "Lihat Peta"
+  "about.ctaMap": "Lihat Peta",
+  "admin.content.addTitle": "Tambah {title}",
+  "admin.points.add": "Tambah Aturan",
+  "admin.points.deleteBtn": "Hapus",
+  "admin.points.tableActions": "Aksi",
+  "admin.points.tableCategory": "Kategori",
+  "admin.points.tableDesc": "Deskripsi",
+  "admin.points.tableIcon": "Ikon",
+  "admin.points.tableName": "Nama",
+  "admin.points.tableNo": "No",
+  "admin.points.tablePoints": "Poin",
+  "admin.points.tableStatus": "Status",
+  "admin.reviews.featured": "Terpilih sebagai thumbnail",
+  "admin.reviews.selectFeatured": "Klik ⭐ untuk pilih thumbnail",
+  "auth.join.hidePassword": "Sembunyikan kata sandi",
+  "auth.join.showPassword": "Tampilkan kata sandi",
+  "common.loading": "Memuat...",
+  "common.photos": "Foto",
+  "dashboard.noData": "Belum ada data",
+  "form.timestamp": "Waktu Laporan",
+  "spring.lastUpdated": "Terakhir diperbarui {date}",
+  "admin.sidebar.orphanReports": "Laporan Yatim",
+  "admin.orphans.title": "Laporan Yatim",
+  "admin.orphans.description": "Laporan yang belum terkait ke mata air",
+  "admin.orphans.statusAll": "Semua status",
+  "admin.orphans.selected": "{count} dipilih",
+  "admin.orphans.clearSelection": "Bersihkan pilihan",
+  "admin.orphans.linkToSpring": "Link ke mata air",
+  "admin.orphans.springSearchPlaceholder": "Cari nama mata air (min 2 huruf)",
+  "admin.orphans.linkButton": "Link",
+  "admin.orphans.chosenSpring": "Mata air tujuan",
+  "admin.orphans.createSpring": "Buat spring dari laporan",
+  "admin.orphans.createNamePlaceholder": "Nama mata air (otomatis dari laporan)",
+  "admin.orphans.createProvince": "Provinsi",
+  "admin.orphans.createRegency": "Kabupaten/Kota",
+  "admin.orphans.createButton": "Buat Spring",
+  "admin.orphans.autoName": "Nama otomatis",
+  "admin.orphans.selectAll": "Pilih semua di halaman",
+  "admin.orphans.empty": "Tidak ada laporan yatim. Semua laporan sudah ter-link.",
+  "admin.orphans.loadFailed": "Gagal memuat laporan yatim",
+  "admin.orphans.linkIncomplete": "Pilih mata air tujuan dan minimal satu laporan dulu",
+  "admin.orphans.confirmLink": "Link laporan ke spring",
+  "admin.orphans.linkSuccess": "{count} laporan ter-link ke {name}",
+  "admin.orphans.linkFailed": "Gagal menautkan laporan",
+  "admin.orphans.noSelection": "Pilih minimal satu laporan dulu",
+  "admin.orphans.confirmCreate": "Buat spring baru bernama",
+  "admin.orphans.createSuccess": "Spring berhasil dibuat",
+  "admin.orphans.createFailed": "Gagal membuat spring",
+  "map.loadMore": "Muat lebih banyak laporan",
+  "map.loadingMore": "Memuat lebih banyak..."
 }

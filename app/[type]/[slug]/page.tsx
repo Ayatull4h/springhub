@@ -119,12 +119,31 @@ export default function MapPointDetailPage() {
   }
 
   if (error || !point) {
+    const isActivityReport =
+      ["tanam-pohon", "trench", "seedling", "spring-restoration"].includes(type) && error === "Titik tidak ditemukan";
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-lg text-ink-muted">{error || "Titik tidak ditemukan"}</p>
-        <Link href="/" className="text-brand-600 hover:underline">
-          Kembali ke beranda
-        </Link>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
+        {isActivityReport ? (
+          <>
+            <div className="grid h-14 w-14 place-items-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-300">
+              <MapPin className="h-7 w-7" />
+            </div>
+            <p className="text-lg font-semibold text-ink dark:text-white">Detail laporan kegiatan</p>
+            <p className="max-w-md text-sm text-ink-muted">
+              Detail laporan kegiatan sedang disiapkan. Laporan ini belum terkait ke mata air terverifikasi — admin akan menautkannya segera.
+            </p>
+            <Link href="/#map" className="mt-2 text-brand-600 hover:underline">
+              Kembali ke peta
+            </Link>
+          </>
+        ) : (
+          <>
+            <p className="text-lg text-ink-muted">{error || "Titik tidak ditemukan"}</p>
+            <Link href="/" className="text-brand-600 hover:underline">
+              Kembali ke beranda
+            </Link>
+          </>
+        )}
       </div>
     );
   }

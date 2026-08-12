@@ -6,7 +6,7 @@ import { User, Mail, MapPin, Phone, Sparkles, Shield, FileText, LogOut, ArrowLef
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { offlineDB } from "@/lib/offline-db";
-import { fetchAndCacheSession } from "@/lib/session-cache";
+import { fetchAndCacheSession, clearAllOfflineUserData } from "@/lib/session-cache";
 
 type ProfileData = {
   id: string;
@@ -127,7 +127,7 @@ export default function ProfilePage() {
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    try { await offlineDB.clearSession(); } catch {}
+    try { await clearAllOfflineUserData(); } catch {}
     try { await offlineDB.clearSyncStatus(); } catch {}
     router.push("/");
     router.refresh();

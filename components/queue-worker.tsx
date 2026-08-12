@@ -69,12 +69,13 @@ export function QueueWorker() {
 
   /** Helper: submit satu item dari queue ke server — return { ok, error? } */
   async function submitQueueItem(item: QueuedSubmission): Promise<{ ok: boolean; error?: string }> {
-    // Coba dapetin CSRF token (best-effort — server bypass pake x-queue-worker kalo gak ada)
+    // Ambil CSRF token just-in-time (cookie + header harus cocok — lihat lib/csrf.ts)
     const csrfToken = await getCsrfToken();
 
     try {
       const formData = new FormData();
       formData.set("form_slug", item.formSlug);
+      if (item.clientCorrelationId) formData.set("clientCorrelationId", item.clientCorrelationId);
       formData.set("_captured_at", (item.fieldData._captured_at as string) || new Date().toISOString());
       formData.set("_submit_time", String(Date.now() - 10000));
       formData.set("_website", "");
@@ -91,7 +92,6 @@ export function QueueWorker() {
           method: "POST",
           headers: {
             ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
-            "x-queue-worker": "true",
           },
           body: formData,
           signal: controller.signal,
@@ -132,7 +132,7 @@ export function QueueWorker() {
 
               const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
                 method: "POST",
-                headers: { ...(photoCsrf ? { "x-csrf-token": photoCsrf } : {}), "x-queue-worker": "true" },
+                headers: { ...(photoCsrf ? { "x-csrf-token": photoCsrf } : {}) },
                 body: photoPayload,
                 signal: (() => { const c = new AbortController(); setTimeout(() => c.abort(), 30000); return c.signal; })(),
               });
@@ -154,9 +154,7 @@ export function QueueWorker() {
       // Cegah duplikat: cek API apakah report dengan hash fieldData yang sama sudah ada
       try {
         const hashFields = JSON.stringify(item.fieldData);
-        const checkRes = await fetch(`/api/reports?limit=1&formSlug=${item.formSlug}`, {
-          headers: { "x-queue-worker": "true" },
-        });
+        const checkRes = await fetch(`/api/reports?limit=1&formSlug=${item.formSlug}`);
         const checkData = await checkRes.json();
         if (checkData.reports?.length > 0) {
           const existing = checkData.reports[0];
@@ -181,8 +179,8 @@ export function QueueWorker() {
 
   /** Helper: proses submission-queue + pending-reports */
   async function processAllQueues() {
-    // Proses submission-queue dulu
-    const queue = await offlineDB.getAllQueued();
+    // Proses submission-queue dulu — hanya item yang boleh retry (getRetryableQueued)
+    const queue = await offlineDB.getRetryableQueued();
     let successCount = 0;
 
     for (const item of queue) {
@@ -191,57 +189,76 @@ export function QueueWorker() {
         await offlineDB.deleteQueued(item.id);
         successCount++;
       } else {
-        const updatedRetry = (item.retryCount || 0) + 1;
-        item.retryCount = updatedRetry;
-        item.lastError = result.error;
-        await offlineDB.queueSubmission(item);
-        if (updatedRetry >= MAX_RETRIES) {
-          console.warn(`[QueueWorker] Item ${item.id} gagal ${MAX_RETRIES}x: ${result.error}. Hapus dari antrian.`);
-          await offlineDB.deleteQueued(item.id);
-          toast(`Laporan ${item.formSlug} gagal dikirim. Silakan isi ulang.`, "error");
+        const isPermanent = result.error?.startsWith("HTTP 4") || /Invalid CSRF|Validasi gagal|Form tidak dikenal|Terlalu banyak/.test(result.error || "");
+        await offlineDB.markQueuedAttempted(item.id, { error: result.error, permanent: isPermanent });
+        console.warn(`[QueueWorker] Item ${item.id} gagal (${isPermanent ? "permanent" : "retry"}): ${result.error}`);
+        if (isPermanent) {
+          toast(`Laporan ${item.formSlug} ditolak server. Periksa data di daftar "perlu perbaikan".`, "error");
         }
       }
     }
 
-    // Juga proses pending-reports (dari OfflineSurveyMap)
+    // Juga proses pending-reports (dari OfflineSurveyMap) — item queue sudah
+      // diproses di atas; loop ini hanya membersihkan sisa pending yang sukses
+      // dan memigrasikan yang gagal ke submission-queue (retry gating).
     const pending = await offlineDB.getAllReports();
     for (const report of pending) {
+      const existingInQueue = await offlineDB.getQueued(report.id);
       const queueItem: QueuedSubmission = {
         id: report.id,
         formSlug: report.formSlug,
         fieldData: report.fieldData as Record<string, unknown>,
-        photoBlobs: [],
+        photoBlobs: existingInQueue?.photoBlobs || [],
         csrfToken: "",
         createdAt: report.createdAt,
         retryCount: 0,
+        clientCorrelationId: report.clientCorrelationId || generateCorrelationIdSafe(),
       };
 
-      // Ambil foto dari photo-blobs yang related
-      try {
-        const photos = await offlineDB.getPhotosByReport(report.id);
-        for (const p of photos) {
-          queueItem.photoBlobs.push({
-            fieldId: p.fieldId,
-            blob: p.blob,
-            fileName: p.fileName,
-            mimeType: p.mimeType,
-          });
-        }
-      } catch {}
+      // Ambil foto dari photo-blobs yang related (kalau belum ada di queue)
+      if (queueItem.photoBlobs.length === 0) {
+        try {
+          const photos = await offlineDB.getPhotosByReport(report.id);
+          for (const p of photos) {
+            queueItem.photoBlobs.push({
+              fieldId: p.fieldId,
+              blob: p.blob,
+              fileName: p.fileName,
+              mimeType: p.mimeType,
+            });
+          }
+        } catch {}
+      }
 
-      const result = await submitQueueItem(queueItem);
+      if (!existingInQueue) {
+        try { await offlineDB.queueSubmission(queueItem); } catch { /* tetap di pending */ }
+      }
+
+      const result = existingInQueue ? { ok: false as const, error: "in-queue" } : await submitQueueItem(queueItem);
       if (result.ok) {
         await offlineDB.deleteReport(report.id);
+        await offlineDB.deleteQueued(report.id).catch(() => {});
         successCount++;
+      } else if (!existingInQueue) {
+        const isPermanent = result.error?.startsWith("HTTP 4") || /Invalid CSRF|Validasi gagal|Form tidak dikenal/.test(result.error || "");
+        await offlineDB.markQueuedAttempted(report.id, { error: result.error, permanent: isPermanent });
       }
     }
 
     return successCount;
   }
 
+  /** Fallback correlation id — sama dengan yang dipakai lib/offline-db */
+  function generateCorrelationIdSafe(): string {
+    if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
+    return `corr-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
   useEffect(() => {
     const processQueue = async () => { // eslint-disable-line react-hooks/exhaustive-deps
       if (processingRef.current) return;
+      // Jangan sync saat tab tidak terlihat — hemat baterai, tetap aman
+      if (document.hidden) return;
       processingRef.current = true;
       try {
         // Jangan sync kalo offline — tunggu online event
@@ -302,14 +319,16 @@ export function QueueWorker() {
     };
 
     // ── Simpan versi code ke localStorage — biar bisa cek user pake code terbaru ──
-    try {
-      const prevVersion = localStorage.getItem("sw_version");
-      if (prevVersion && prevVersion !== SW_VERSION) {
-        // Hapus cache form definitions lama — biar di-refresh dari server
-        try { indexedDB.deleteDatabase("springhub-offline"); } catch {}
-      }
-      localStorage.setItem("sw_version", SW_VERSION);
-    } catch {}
+    (async () => {
+      try {
+        const prevVersion = localStorage.getItem("sw_version");
+        if (prevVersion && prevVersion !== SW_VERSION) {
+          // Migrasi selektif — hanya store yang skemanya berubah (tidak menghapus antrean)
+          try { await offlineDB.migrateOnVersionBump(); } catch {}
+        }
+        localStorage.setItem("sw_version", SW_VERSION);
+      } catch {}
+    })();
 
     // ── Cek update service worker ──
     if ("serviceWorker" in navigator) {

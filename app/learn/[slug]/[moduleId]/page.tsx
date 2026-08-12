@@ -15,7 +15,6 @@ import {
   AlertCircle,
   Lock,
 } from "lucide-react";
-import { sanitizeHtml } from "@/lib/sanitize";
 import { useI18n } from "@/lib/i18n";
 
 type Module = {
@@ -71,13 +70,14 @@ export default function LearnModulePage() {
         if (!r.ok) throw new Error("Not found");
         return r.json();
       })
-      .then((data) => {
+      .then(async (data) => {
         setCourse(data.course);
         const mod = data.course.modules.find(
           (m: Module) => m.id === moduleId
         );
         if (mod) {
-          setModule(mod);
+          // Konten sudah di-sanitize server-side di /api/courses/[slug]
+          setModule({ ...mod, content: mod.content || "" });
           setCurrentIndex(data.course.modules.indexOf(mod));
         } else {
           setError(t("learn.course.notFound"));
@@ -254,12 +254,12 @@ export default function LearnModulePage() {
             </div>
           )}
 
-          {/* Module content */}
+          {/* Module content — sudah di-sanitize saat fetch (DOMPurify) */}
           <div className="card">
             {module.content ? (
               <div
                 className="prose prose-sm max-w-none text-ink dark:prose-invert"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(module.content) }}
+                dangerouslySetInnerHTML={{ __html: module.content }}
               />
             ) : (
               <div className="flex flex-col items-center py-8 text-center">

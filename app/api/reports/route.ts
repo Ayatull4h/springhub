@@ -16,14 +16,10 @@ const GUEST_DAILY_LIMIT = 5; // guest only — volunteer & admin unlimited
 
 export async function POST(request: Request) {
   try {
-    // CSRF check — QueueWorker bypass (custom header gak bisa dikirim cross-origin tanpa preflight)
-    const isQueueWorker = request.headers.get("x-queue-worker") === "true";
-
-    if (!isQueueWorker) {
-      const csrfToken = request.headers.get("x-csrf-token");
-      if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
-        return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
-      }
+    // CSRF check — berlaku untuk semua client tanpa terkecuali
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
     }
 
     const session = await getSession();
@@ -94,7 +90,7 @@ export async function POST(request: Request) {
     const fieldKeys = Object.keys(shape);
 
     for (const [key, value] of formData.entries()) {
-      if (key === "form_slug" || key === "_submit_time" || key === "_website") continue;
+      if (key === "form_slug" || key === "_submit_time" || key === "_website" || key === "clientCorrelationId") continue;
 
       // Handle location fields
       if (key === "location_lat" || key.endsWith("_lat")) {
@@ -243,20 +239,52 @@ export async function POST(request: Request) {
     }
     // Volunteer & admin: no daily limit
 
-    // Create the report
-    const report = await prisma.report.create({
-      data: {
-        userId: session?.userId ?? null,
-        guestId: session?.userId ? null : guestId,
-        formSlug,
-        status: session?.userId ? "pending" : "pending",
-        fieldData: JSON.stringify(fieldData),
-        preciseLat,
-        preciseLng,
-        snappedLat,
-        snappedLng,
-      },
-    });
+    // ── Idempotency: dedupe offline retry (clientCorrelationId konsisten antar retry) ──
+    const clientCorrelationId = (formData.get("clientCorrelationId") as string | null)?.slice(0, 100) || null;
+    if (clientCorrelationId) {
+      const existing = await prisma.report.findFirst({
+        where: { clientCorrelationId },
+        select: { id: true },
+      });
+      if (existing) {
+        return NextResponse.json({
+          success: true,
+          duplicated: true,
+          report: { id: existing.id },
+        });
+      }
+    }
+
+    // Create the report — P2002 saat idempotency race (2 POST bersamaan) → anggap sukses
+    let report;
+    try {
+      report = await prisma.report.create({
+        data: {
+          userId: session?.userId ?? null,
+          guestId: session?.userId ? null : guestId,
+          formSlug,
+          status: session?.userId ? "pending" : "pending",
+          fieldData: JSON.stringify(fieldData),
+          preciseLat,
+          preciseLng,
+          snappedLat,
+          snappedLng,
+          ...(clientCorrelationId ? { clientCorrelationId } : {}),
+        },
+      });
+    } catch (createErr) {
+      const code = (createErr as { code?: string })?.code;
+      if (code === "P2002" && clientCorrelationId) {
+        const winner = await prisma.report.findFirst({
+          where: { clientCorrelationId },
+          select: { id: true },
+        });
+        if (winner) {
+          return NextResponse.json({ success: true, duplicated: true, report: { id: winner.id } });
+        }
+      }
+      throw createErr;
+    }
 
     // ── Link or create Spring ────────────────────────────────────────
     const springName = ((fieldData?.B1_nama || fieldData?.spring_name) as string || "").trim();

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { getSession, deactivateUserSessions } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";
 import { auditLog } from "@/lib/audit";
 export const dynamic = "force-dynamic";
@@ -33,6 +33,8 @@ export async function PUT(
       data: { role },
       select: { id: true, username: true, role: true },
     });
+    // Cabut semua sesi aktif user — role baru berlaku seketika (revocation ledger)
+    await deactivateUserSessions(params.id);
     auditLog("put user", "put user");
 
 

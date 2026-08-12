@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtVerify } from "jose";
-import { getJwtSecret } from "@/lib/jwt";
-
-const SECRET = getJwtSecret();
+import { jwtVerify, type JWTPayload } from "jose";
+import { verifyJwtWithRotation } from "@/lib/jwt";
 
 const SESSION_COOKIE = "session";
 const GUEST_COOKIE = "guest_session_id";
@@ -11,6 +9,46 @@ const GUEST_COOKIE = "guest_session_id";
 const ADMIN_ROUTES = ["/admin"];
 const AUTH_ROUTES = ["/sign-in", "/join"];
 const PROJECT_CREATE = "/projects/new";
+
+function ipv4ToInt(ip: string): number | null {
+  let value = ip.trim();
+  if (value.toLowerCase().startsWith("::ffff:")) value = value.slice(7);
+  const match = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(value);
+  if (!match) return null;
+  const octets = match.slice(1).map(Number);
+  if (octets.some((o) => o > 255)) return null;
+  return ((octets[0] * 256 + octets[1]) * 256 + octets[2]) * 256 + octets[3];
+}
+
+function isIpInCidr(ip: string, cidr: string): boolean {
+  const [rangeIp, prefixStr] = cidr.split("/");
+  const prefix = prefixStr ? Number(prefixStr) : 32;
+  if (!Number.isInteger(prefix) || prefix < 0 || prefix > 32) return false;
+  const ipInt = ipv4ToInt(ip);
+  const rangeInt = ipv4ToInt(rangeIp);
+  if (ipInt === null || rangeInt === null) return false;
+  const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
+  return (ipInt & mask) === (rangeInt & mask);
+}
+
+// x-real-ip diset oleh nginx dan tidak bisa dipalsukan dari luar.
+// x-forwarded-for hanya dipakai sebagai fallback (misal request langsung ke VPS).
+function getClientIp(request: NextRequest): string {
+  const real = request.headers.get("x-real-ip");
+  if (real && ipv4ToInt(real) !== null) return real;
+  const xff = request.headers.get("x-forwarded-for");
+  if (xff) {
+    const first = xff.split(",")[0]?.trim();
+    if (first && ipv4ToInt(first) !== null) return first;
+  }
+  return "";
+}
+
+// Fail-closed: whitelist diset tapi IP tidak valid/tidak terdeteksi → DENY.
+function isAllowedIp(ip: string, ranges: string[]): boolean {
+  if (ip === "" || ipv4ToInt(ip) === null) return false;
+  return ranges.some((range) => isIpInCidr(ip, range));
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -32,11 +70,11 @@ export async function middleware(request: NextRequest) {
 
   if (sessionToken) {
     try {
-      const { payload } = await jwtVerify(sessionToken, SECRET);
-      if (!payload || typeof payload !== "object") {
-        session = null;
-      } else {
-        const p = payload as Record<string, unknown>;
+      const result = await verifyJwtWithRotation<JWTPayload>(sessionToken, (secret) =>
+        jwtVerify(sessionToken, secret).then((r) => r.payload)
+      );
+      if (result?.payload && typeof result.payload === "object") {
+        const p = result.payload as Record<string, unknown>;
         session = {
           userId: typeof p.userId === "string" ? p.userId : "",
           role: typeof p.role === "string" ? p.role : "user",
@@ -61,15 +99,9 @@ export async function middleware(request: NextRequest) {
     // IP whitelist untuk admin (optional)
     const allowedCidrs = process.env.ADMIN_ALLOWED_IPS;
     if (allowedCidrs) {
-      const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "";
       const ranges = allowedCidrs.split(",").map(s => s.trim()).filter(Boolean);
-      if (ip && ranges.length > 0) {
-        const allowed = ranges.some(range =>
-          range.includes("/") ? ip.startsWith(range.split("/")[0].split(".").slice(0, 2).join(".")) : ip === range
-        );
-        if (!allowed) {
-          return new NextResponse("Access denied: IP not allowed", { status: 403 });
-        }
+      if (ranges.length > 0 && !isAllowedIp(getClientIp(request), ranges)) {
+        return new NextResponse("Access denied: IP not allowed", { status: 403 });
       }
     }
   }

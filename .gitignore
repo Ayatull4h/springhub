@@ -76,3 +76,8 @@ MANUAL-TEST-PART-2*.md
 *.csv
 *.pdf
 baca.*.txt
+.env.staging
+scripts/htpasswd-staging
+scripts/htpasswd-preview
+playwright-report/
+k6/

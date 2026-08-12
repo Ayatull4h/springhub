@@ -30,6 +30,8 @@ const nextConfig = {
       "bullmq",
       "nodemailer",
       "pino",
+      "jsdom",
+      "dompurify",
     ],
   },
   async headers() {

@@ -512,6 +512,8 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
         csrfToken: "",
         guestId: null,
         createdAt: Date.now(),
+        // Idempotency key — UUID TETAP, dipakai server untuk dedupe retry
+        clientCorrelationId: offlineDB.generateCorrelationId(),
       };
 
       // Save photos as blobs

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send, RefreshCw, AlertCircle, XCircle } from "lucide-react";
-import { offlineDB } from "@/lib/offline-db";
+import { offlineDB, type QueuedSubmission } from "@/lib/offline-db";
 import { getForm, getFormTitle, getFormI18nKey, type FormField, type FormSchema } from "@/lib/forms";
 import { useI18n } from "@/lib/i18n";
 import { INDONESIAN_PROVINCES } from "@/lib/provinces";
@@ -51,11 +51,18 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
     }).catch(() => {});
   }, []);
 
+  const [failedQueue, setFailedQueue] = useState<QueuedSubmission[]>([]);
+
   const refreshSyncStatus = useCallback(async () => {
+    // Hemat baterai: jangan polling saat tab tersembunyi (background)
+    if (typeof document !== "undefined" && document.hidden) return;
     const s = offlineDB.getSyncStatus();
     setSyncStatus(s);
     const q = await offlineDB.getAllQueued();
     setQueueCount(q.length);
+    // Item gagal permanen / cap attempts — tampil di "perlu perbaikan"
+    const failed = await offlineDB.getFailedQueued().catch(() => []);
+    setFailedQueue(failed);
     // Cek juga pending-reports
     const p = await offlineDB.getAllReports();
     if (p.length > 0) setQueueCount(prev => prev + p.length);
@@ -64,8 +71,10 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
   useEffect(() => {
     refreshSyncStatus();
     const iv = setInterval(refreshSyncStatus, 5000);
+    const onVisible = () => { if (!document.hidden) refreshSyncStatus(); };
+    document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("online", refreshSyncStatus);
-    return () => { clearInterval(iv); window.removeEventListener("online", refreshSyncStatus); };
+    return () => { clearInterval(iv); document.removeEventListener("visibilitychange", onVisible); window.removeEventListener("online", refreshSyncStatus); };
   }, [refreshSyncStatus]);
 
   // Real-time timestamp (captured saat komponen mount)
@@ -238,6 +247,8 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         csrfToken: "",
         createdAt: Date.now(),
         retryCount: 0,
+        // Idempotency key — UUID TETAP, dipakai server untuk dedupe retry
+        clientCorrelationId: offlineDB.generateCorrelationId(),
       });
 
       setSubmitted(true);
@@ -336,6 +347,43 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                   <RefreshCw className="h-3.5 w-3.5" />
                   Sync
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Perlu Perbaikan — gagal permanen / cap attempts ───────── */}
+        {failedQueue.length > 0 && (
+          <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="mt-0.5 h-5 w-5 flex-none text-red-500" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-ink">
+                  {failedQueue.length} laporan perlu perbaikan
+                </p>
+                <p className="mt-0.5 text-xs text-ink-muted">
+                  Laporan ini gagal diproses server dan tidak akan dicoba otomatis lagi.
+                  {failedQueue[0]?.lastError && ` — ${failedQueue[0].lastError}`}
+                </p>
+                <div className="mt-2 space-y-1.5">
+                  {failedQueue.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between gap-2 rounded-md bg-white/70 px-2.5 py-1.5 text-xs dark:bg-slate-800/70">
+                      <span className="min-w-0 flex-1 truncate text-ink-subtle">
+                        {item.formSlug} <span className="text-ink-subtle/70">({item.failureCount ?? item.retryCount ?? 0}x)</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await offlineDB.deleteQueued(item.id).catch(() => {});
+                          refreshSyncStatus();
+                        }}
+                        className="flex-none rounded-md px-2 py-1 font-semibold text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/40"
+                      >
+                        Hapus
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

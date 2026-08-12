@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MapContainer, TileLayer, CircleMarker, Tooltip, Popup, Circle, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Tooltip, Popup, Circle, Pane, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 // Health-status based colors for springs:
@@ -64,6 +64,33 @@ const formIcons: Record<string, string> = {
   "trench-development": "🕳️",
   "seedling-stock": "🌰",
 };
+
+type MapPointItem = {
+  id: string;
+  type: { id: string; slug: string; name: string; icon: string };
+  category: { id: string; slug: string; name: string; color: string } | null;
+  name: string;
+  slug: string;
+  snappedLat: number | null;
+  snappedLng: number | null;
+  province: string;
+  regency: string;
+  reportCount: number;
+  latestReport: { id: string; formSlug: string; createdAt: string } | null;
+};
+
+const mapPointTypeColors: Record<string, string> = {
+  spring: "#2563eb",
+  "tree-planting": "#16a34a",
+  trench: "#d97706",
+  conservation: "#0891b2",
+  seedling: "#0d9488",
+};
+
+const mapPointMainTypes = ["spring", "tree-planting", "trench", "conservation"];
+
+const snapGrid = (n: number) => Math.round(n * 400) * 0.0025;
+const gridKey = (lat: number, lng: number) => `${snapGrid(lat).toFixed(4)}_${snapGrid(lng).toFixed(4)}`;
 
 function FitBounds({ data }: { data: (ReportData | SpringGroup)[] }) {
   const map = useMap();
@@ -155,11 +182,13 @@ export function LeafletMap({
   springs: springItems,
   formColors,
   formLookup,
+  mapPoints,
 }: {
   reports: ReportData[];
   springs?: { id: string; name: string; snappedLat: number; snappedLng: number; healthScore: number | null; healthStatus: string | null; reportCount: number }[];
   formColors?: Record<string, { color: string; fillColor: string; label: string }>;
   formLookup?: Record<string, { title: string; typeSlug: string }>;
+  mapPoints?: MapPointItem[];
 }) {
   const router = useRouter();
   const [tileError, setTileError] = useState(false);
@@ -250,6 +279,16 @@ export function LeafletMap({
     [springGroups]
   );
 
+  const mapPointSpringLinks = useMemo(() => {
+    const link: Record<string, string> = {};
+    for (const r of reports) {
+      if (r.springId && r.snappedLat !== null && r.snappedLng !== null) {
+        link[gridKey(r.snappedLat, r.snappedLng)] = r.springId;
+      }
+    }
+    return link;
+  }, [reports]);
+
   return (
     <div className="relative h-full w-full">
       <MapContainer
@@ -321,6 +360,58 @@ export function LeafletMap({
             </Fragment>
           );
         })}
+
+        {mapPoints && mapPoints.length > 0 && (
+          <Pane name="map-points" style={{ zIndex: 500 }}>
+            {mapPoints.filter((p) => mapPointMainTypes.includes(p.type.slug)).map((p) => {
+              if (p.snappedLat === null || p.snappedLng === null) return null;
+              const color = p.category?.color || mapPointTypeColors[p.type.slug] || "#6b7280";
+              const springId = mapPointSpringLinks[gridKey(p.snappedLat, p.snappedLng)];
+              return (
+                <Fragment key={`mp-${p.id}`}>
+                  <CircleMarker
+                    center={[p.snappedLat, p.snappedLng]}
+                    radius={6}
+                    pathOptions={{
+                      color: "#ffffff",
+                      fillColor: color,
+                      fillOpacity: 0.9,
+                      weight: 2,
+                    }}
+                  >
+                    <Tooltip direction="top" offset={[0, -8]}>
+                      <div className="max-w-[180px] text-xs leading-relaxed">
+                        <strong>{p.name}</strong>
+                        <br />
+                        <span className="text-ink-muted">{p.reportCount} laporan</span>
+                      </div>
+                    </Tooltip>
+                    <Popup>
+                      <div className="min-w-[200px] text-sm">
+                        <strong className="text-base">{p.name}</strong>
+                        <div className="mt-1 flex items-center gap-2">
+                          <span className="text-xs" style={{ color }}>●</span>
+                          <span className="text-xs font-medium">{p.category?.name || p.type.name}</span>
+                        </div>
+                        <div className="mt-1 text-xs text-ink-muted">
+                          {[p.province, p.regency].filter(Boolean).join(", ") || "Lokasi tidak diketahui"}
+                        </div>
+                        <div className="mt-1 text-xs text-ink-muted">{p.reportCount} laporan</div>
+                        {springId ? (
+                          <a href={`/springs/${springId}`} className="mt-2 block rounded-md bg-brand-600 px-3 py-1.5 text-center text-xs font-semibold text-white hover:bg-brand-700">Lihat Detail →</a>
+                        ) : (
+                          <div className="mt-2 rounded-md bg-slate-50 px-3 py-1.5 text-center text-xs text-ink-subtle dark:bg-slate-800">
+                            Menunggu laporan terverifikasi
+                          </div>
+                        )}
+                      </div>
+                    </Popup>
+                  </CircleMarker>
+                </Fragment>
+              );
+            })}
+          </Pane>
+        )}
 
         {/* ═══ Activity markers (laporan kegiatan) ═══ */}
         {springGroups.groups.map((sg) => {

@@ -1,8 +1,16 @@
-name: Deploy to VPS
+name: Deploy SpringHub
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - develop
+      - "feat/**"
+      - "fix/**"
+      - "refactor/**"
+      - "chore/**"
+  pull_request:
+    types: [closed]
   workflow_dispatch:
 
 jobs:
@@ -19,35 +27,115 @@ jobs:
       - run: npx tsc --noEmit
       - run: npx vitest run
 
-  build-and-deploy:
+  # ── PRODUKSI: hanya dari branch main ─────────────────────────────────────
+  deploy-production:
     needs: test
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Build Docker image
-        run: |
-          docker build -t springhub-web:latest .
-          docker tag springhub-web:latest ghcr.io/${{ github.repository }}/springhub-web:latest
-
-      - name: Push to registry
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker push ghcr.io/${{ github.repository }}/springhub-web:latest
-
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.0.3
+      - uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /opt/springhub
-            docker compose pull
-            docker compose up -d --force-recreate web worker
+            set -e
+            cd /root/springhub
+            git fetch origin main
+            git checkout main
+            git pull --ff-only origin main
+            npm ci
+            npx prisma generate
+            # Migrasi hanya jalan kalau ada migration baru (aman diulang)
+            docker compose --env-file .env run --rm web npx prisma migrate deploy || true
+            docker compose build web worker
+            docker compose up -d --force-recreate web worker nginx
             docker image prune -f
-            echo "Deploy completed at $(date)"
+            curl -fsS http://127.0.0.1:31759/api/health || echo "WARN: health check gagal, cek log"
+
+  # ── STAGING: dari branch develop ─────────────────────────────────────────
+  deploy-staging:
+    needs: test
+    if: github.ref_name == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            cd /root/springhub
+            git fetch origin develop
+            git checkout develop
+            git pull --ff-only origin develop
+            npm ci
+            npx prisma generate
+            ./scripts/setup-htpasswd-staging.sh
+            docker compose --env-file .env.staging -f docker-compose.staging.yml -p staging build web
+            docker compose --env-file .env.staging -f docker-compose.staging.yml -p staging up -d postgres redis
+            # Migrasi staging (migrate deploy + db push untuk tabel db-push-only)
+            docker compose --env-file .env.staging -f docker-compose.staging.yml -p staging run --rm web npx prisma migrate deploy || true
+            docker compose --env-file .env.staging -f docker-compose.staging.yml -p staging run --rm web npx prisma db push || true
+            docker compose --env-file .env.staging -f docker-compose.staging.yml -p staging up -d --force-recreate web worker nginx
+            docker image prune -f
+            curl -fsS http://127.0.0.1:31760/api/health || echo "WARN: staging health check gagal"
+
+  # ── PREVIEW per-branch fitur: <branch>.staging.springhub.id ──────────────
+  deploy-preview:
+    needs: test
+    if: startsWith(github.ref_name, 'feat/') || startsWith(github.ref_name, 'fix/') || startsWith(github.ref_name, 'refactor/') || startsWith(github.ref_name, 'chore/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compute preview name + port
+        id: meta
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          name=$(echo "$BRANCH" | sed -E 's#(feat|fix|refactor|chore)/##' | tr '[:upper:]_' '[:lower:]-' | tr -cd 'a-z0-9-' | head -c 30)
+          hash=$(printf '%s' "$name" | cksum | awk '{print $1}')
+          port=$(( 32000 + (hash % 399) ))
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "port=$port" >> "$GITHUB_OUTPUT"
+      - uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: PREVIEW_NAME,PREVIEW_PORT
+          script: |
+            set -e
+            cd /root/springhub
+            git fetch origin ${{ github.ref_name }}
+            git checkout -B ${{ github.ref_name }} origin/${{ github.ref_name }} || git checkout ${{ github.ref_name }}
+            git pull --ff-only origin ${{ github.ref_name }}
+            npm ci
+            npx prisma generate
+            export PREVIEW_NAME=$PREVIEW_NAME PREVIEW_PORT=$PREVIEW_PORT
+            docker compose -p preview-$PREVIEW_NAME -f docker-compose.preview.yml build web
+            docker compose -p preview-$PREVIEW_NAME -f docker-compose.preview.yml up -d --force-recreate web
+            docker image prune -f
+            curl -fsS http://127.0.0.1:$PREVIEW_PORT/api/health || echo "WARN: preview health check gagal"
+
+  # ── Teardown preview saat PR/branch ditutup ───────────────────────────────
+  teardown-preview:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compute preview name
+        id: meta
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          name=$(echo "$BRANCH" | sed -E 's#(feat|fix|refactor|chore)/##' | tr '[:upper:]_' '[:lower:]-' | tr -cd 'a-z0-9-' | head -c 30)
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+      - uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: PREVIEW_NAME
+          script: |
+            cd /root/springhub
+            docker compose -p preview-$PREVIEW_NAME -f docker-compose.preview.yml down --remove-orphans || true

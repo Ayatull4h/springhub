@@ -16,8 +16,32 @@ function img(label: string, w = 800, h = 600, bg = "059669"): string {
   return `https://placehold.co/${w}x${h}/${bg}/ffffff?text=${encodeURIComponent(label)}`;
 }
 
+// ─── Pengaman: JANGAN pernah hapus data tanpa sengaja ──────────────────────
+// Seed ini MENGHAPUS semua data (deleteMany) lalu menanam data demo.
+// Default: hanya jalan di database kosong. Untuk memaksa (mis. staging/dev
+// yang memang kosong), set SEED_FORCE=1 atau SEED_ALLOW_WIPE=true.
+async function assertSafeToWipe() {
+  const existing = await prisma.profile.count();
+  if (existing === 0) return;
+  const force =
+    process.env.SEED_FORCE === "1" || process.env.SEED_ALLOW_WIPE === "true";
+  if (force) {
+    console.warn(
+      `⚠️  SEED_FORCE aktif — ${existing} profil akan DIHAPUS dan diganti data demo.`
+    );
+    return;
+  }
+  console.error(
+    `🛑 DIHENTIKAN: database tidak kosong (${existing} profil ditemukan).\n` +
+      `Seed ini MENGHAPUS SEMUA data. Jalankan hanya di database kosong,\n` +
+      `atau set SEED_FORCE=1 bila benar-benar yakin.`
+  );
+  process.exit(1);
+}
+
 async function main() {
   console.log("🌱 Seeding SpringHub database...\n");
+  await assertSafeToWipe();
 
   // ── 0. Clean existing data ──────────────────────────────────────────────
   await prisma.trackingPoint.deleteMany();

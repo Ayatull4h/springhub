@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
+import { randomUUID } from "crypto";
 import { createInvoice, DONATION_TIERS } from "@/lib/xendit";
 import { getSession } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";
@@ -74,42 +75,75 @@ export async function POST(request: Request) {
     }
 
     // Generate unique external ID
-    const externalId = `DON-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-
-    // ── Create real Xendit invoice ──
-    const invoice = await createInvoice({
-      externalId,
-      amount,
-      payerEmail: donorEmail || undefined,
-      description: projectId
-        ? `Donasi untuk proyek — SpringHub`
-        : tierId
-          ? `Donasi ${tierId} — SpringHub`
-          : "Donasi SpringHub",
-      paymentMethods: ["OVO", "GOPAY", "DANA", "SHOPEEPAY", "QRIS"],
-    });
+    const externalId = `DON-${randomUUID()}`;
 
     // ── Persist donation record ──
-    const donation = await prisma.donation.create({
+    const created = await prisma.donation.create({
       data: {
         userId: session?.userId ?? null,
         projectId: projectId || null,
-        invoiceId: invoice.id,
         externalId,
         amountIdr: amount,
         tierId: tierId || "",
         donorName: donorName.trim(),
         donorEmail: donorEmail || "",
         status: "pending",
-        expiresAt: invoice.expiryDate ? new Date(invoice.expiryDate) : new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
     });
+
+    // ── Create real Xendit invoice ──
+    let invoice: Awaited<ReturnType<typeof createInvoice>>;
+    try {
+      invoice = await createInvoice({
+        externalId,
+        amount,
+        payerEmail: donorEmail || undefined,
+        description: projectId
+          ? `Donasi untuk proyek — SpringHub`
+          : tierId
+            ? `Donasi ${tierId} — SpringHub`
+            : "Donasi SpringHub",
+        paymentMethods: ["OVO", "GOPAY", "DANA", "SHOPEEPAY", "QRIS"],
+      });
+    } catch (error) {
+      try {
+        await prisma.donation.update({
+          where: { id: created.id },
+          data: { status: "failed" },
+        });
+      } catch (updateError) {
+        console.error(
+          "Failed to mark donation failed:",
+          updateError instanceof Error ? updateError.message : updateError
+        );
+      }
+      throw error;
+    }
+
+    let savedInvoiceId = "";
+    try {
+      const updated = await prisma.donation.update({
+        where: { id: created.id },
+        data: {
+          invoiceId: invoice.id,
+          expiresAt: invoice.expiryDate
+            ? new Date(invoice.expiryDate)
+            : new Date(Date.now() + 24 * 60 * 60 * 1000),
+        },
+      });
+      savedInvoiceId = updated.invoiceId;
+    } catch (updateError) {
+      console.error(
+        "Failed to attach Xendit invoice id:",
+        updateError instanceof Error ? updateError.message : updateError
+      );
+    }
 
     return NextResponse.json({
       success: true,
       donation: {
-        id: donation.id,
-        invoiceId: donation.invoiceId,
+        id: created.id,
+        invoiceId: savedInvoiceId,
       },
       invoiceUrl: invoice.invoiceUrl,
     });

@@ -23,6 +23,7 @@ import {
   Menu,
   X,
   Sprout,
+  Link2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
@@ -32,6 +33,7 @@ const sidebar = [
   { label: "admin.sidebar.users", href: "/admin/users", icon: Users },
   { label: "admin.sidebar.trustScore", href: "/admin/trust-score", icon: ShieldCheck },
   { label: "admin.sidebar.reports", href: "/admin/reports", icon: FileText },
+  { label: "admin.sidebar.orphanReports", href: "/admin/orphans", icon: Link2 },
   { label: "admin.sidebar.forms", href: "/admin/forms", icon: ClipboardList },
   { label: "admin.sidebar.donations", href: "/admin/donations", icon: Heart },
   { label: "admin.sidebar.points", href: "/admin/points", icon: Award },

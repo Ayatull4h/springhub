@@ -408,15 +408,23 @@ export default function AdminErrorsPage() {
                 {selectedError.url && (
                   <div>
                     <span className="font-medium text-ink">URL</span>
-                    <a
-                      href={selectedError.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-0.5 flex items-center gap-1 break-all text-brand-600 hover:underline"
-                    >
-                      {selectedError.url}
-                      <ExternalLink className="h-3 w-3 flex-shrink-0" />
-                    </a>
+                    {(() => {
+                      const u = selectedError.url || "";
+                      const safe = /^https?:\/\//i.test(u) && !/[\u0000-\u001f]/.test(u);
+                      return safe ? (
+                        <a
+                          href={u}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-0.5 flex items-center gap-1 break-all text-brand-600 hover:underline"
+                        >
+                          {u}
+                          <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                        </a>
+                      ) : (
+                        <p className="mt-0.5 break-all font-mono text-xs text-ink-muted">{u}</p>
+                      );
+                    })()}
                   </div>
                 )}
 

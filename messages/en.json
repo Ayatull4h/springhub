@@ -9,12 +9,10 @@
   "nav.join": "Join Now",
   "nav.admin": "Admin",
   "nav.language": "EN",
-
   "hero.title": "Community-Driven<br/>Spring Restoration",
   "hero.subtitle": "Join the grassroots movement to protect and restore Indonesia's precious artesian springs. Monitor, restore, and preserve our water sources for future generations.",
   "hero.cta.start": "Start Monitoring",
   "hero.cta.back": "Back to Jaga Semesta",
-
   "dashboard.title": "Real-Time Impact",
   "dashboard.titleAccent": "Dashboard",
   "dashboard.description": "Track our collective impact across Indonesia.",
@@ -39,7 +37,6 @@
   "dashboard.volunteers": "Top Volunteers",
   "dashboard.volunteers.pts": "pts",
   "dashboard.springTimeline": "Spring Monitoring",
-
   "map.title": "Interactive Spring",
   "map.titleAccent": "Map",
   "map.description": "Explore springs across Indonesia. View their current status, community reports, and contribute your own observations.",
@@ -68,7 +65,6 @@
   "map.show": "Show:",
   "map.unknownLocation": "Unknown Location",
   "map.noReports": "No reports yet",
-
   "form.title.monitoring": "Spring Survey",
   "form.desc.monitoring": "Log a spring's current condition — flow, water quality, cleanliness, and a geo-tagged photo.",
   "form.title.restoration": "Spring Restoration",
@@ -114,7 +110,6 @@
   "form.notFound": "Form not found",
   "form.notFoundDesc": "The form you're looking for doesn't exist.",
   "form.backToHome": "Back to Home",
-
   "form.field.springName": "Spring name",
   "form.field.village": "Village",
   "form.field.subdistrict": "Sub-district",
@@ -153,7 +148,6 @@
   "form.field.updateDate": "Update date",
   "form.field.extraInfo": "Additional information",
   "form.field.yourPhone": "Coordinator phone",
-
   "volunteer.title": "Volunteer",
   "volunteer.titleAccent": "Activities",
   "volunteer.description": "Join thousands of environmental heroes making a difference across Indonesia. Earn points, and unlock eligibility to submit your own spring restoration project once you reach {threshold} pts.",
@@ -169,18 +163,15 @@
   "volunteer.locked": "Locked",
   "volunteer.pts": "pts",
   "volunteer.form": "Form",
-
   "learn.title": "Learning",
   "learn.titleAccent": "Hub",
   "learn.description": "Expand your knowledge with our courses on spring conservation, tree planting, and traditional water wisdom.",
   "learn.modules": "{count} modules",
   "learn.startCourse": "Start Course",
-
   "media.title": "Latest",
   "media.titleAccent": "Media",
   "media.description": "Events, publications, and press from Jaga Semesta and SpringHub.",
   "media.visitYoutube": "Visit our YouTube",
-
   "donate.title": "Support",
   "donate.titleAccent": "Conservation Efforts",
   "donate.description": "Donations are processed through Xendit (cards, virtual accounts, e-wallets, QRIS). Every rupiah is tied to a measurable output reported by our field volunteers — and only admin-verified projects are open for funding.",
@@ -229,12 +220,10 @@
   "donate.statusUnderReview": "Under Review",
   "donate.statusRejected": "Rejected",
   "donate.supporters": "{count} supporters",
-
   "project.verified": "Verified",
   "project.underReview": "Under Review",
   "project.rejected": "Rejected",
   "project.supporters": "supporters",
-
   "auth.signIn.title": "Welcome back",
   "auth.signIn.subtitle": "Sign in to your SpringHub account",
   "auth.signIn.email": "Email",
@@ -248,7 +237,6 @@
   "auth.signIn.joinNow": "Join Now",
   "auth.signIn.error": "Login failed. Please try again.",
   "auth.signIn.networkError": "Network error. Please try again.",
-
   "auth.join.title": "Join SpringHub",
   "auth.join.subtitle": "Create an account and start contributing",
   "auth.join.username": "Display Name (optional)",
@@ -262,7 +250,6 @@
   "auth.join.signInLink": "Sign In",
   "auth.join.error": "Registration failed. Please try again.",
   "auth.join.networkError": "Network error. Please try again.",
-
   "profile.title": "My Profile",
   "profile.backToHome": "Back to Home",
   "profile.logout": "Logout",
@@ -297,7 +284,6 @@
   "profile.claimNone": "No previous session reports to claim.",
   "profile.claimSuccess": "✅ {count} reports from previous session claimed!",
   "profile.claiming": "Checking for previous session reports...",
-
   "report.formNotFound": "Form not found",
   "report.formNotFoundDesc": "The form you're looking for doesn't exist.",
   "report.backToHome": "Back to Home",
@@ -312,7 +298,6 @@
   "report.submitReport": "Submit Report",
   "report.error": "Submission failed. Please try again.",
   "report.errorNetwork": "Network error. Please try again.",
-
   "footer.tagline": "Empowering communities across Indonesia to protect and restore our precious water sources through collaborative conservation efforts.",
   "footer.stayUpdated": "Stay Updated",
   "footer.newsletterPlaceholder": "Enter your email",
@@ -338,7 +323,6 @@
   "footer.phone": "Phone",
   "footer.email": "Email",
   "footer.address": "Address",
-
   "admin.dashboard": "Dashboard Overview",
   "admin.welcome": "Real-time data from PostgreSQL database.",
   "admin.totalUsers": "Total Users",
@@ -382,7 +366,6 @@
   "admin.status.failed": "Failed",
   "admin.lastSync": "Live data from PostgreSQL",
   "admin.environment": "SpringHub / Local",
-
   "admin.sidebar.dashboard": "Dashboard",
   "admin.sidebar.users": "Users",
   "admin.sidebar.trustScore": "Trust Score",
@@ -404,7 +387,6 @@
   "admin.sidebar.logout": "Logout",
   "admin.sidebar.toggleMenu": "Toggle menu",
   "admin.sidebar.closeMenu": "Close menu",
-
   "admin.forms.title": "Forms",
   "admin.forms.total": "{count} form{plural} total",
   "admin.forms.createNew": "Create New Form",
@@ -421,7 +403,6 @@
   "admin.forms.deleteSuccess": "Form has been deactivated",
   "admin.forms.failedDelete": "Failed to delete form",
   "admin.forms.failedToggle": "Failed to toggle form status",
-
   "admin.formBuilder.editForm": "Edit Form",
   "admin.formBuilder.loading": "Loading...",
   "admin.formBuilder.failedLoadForm": "Failed to load form",
@@ -481,7 +462,6 @@
   "admin.formBuilder.placeholderTitle": "Spring Monitoring",
   "admin.formBuilder.placeholderSlug": "spring-monitoring",
   "admin.formBuilder.placeholderLabel": "Field label",
-
   "admin.courses.title": "Courses",
   "admin.courses.total": "{count} course{plural} total",
   "admin.courses.new": "New Course",
@@ -494,7 +474,6 @@
   "admin.courses.confirmDelete": "Delete course \"{title}\"? This action cannot be undone.",
   "admin.courses.failedDelete": "Failed to delete course",
   "admin.courses.failedLoad": "Failed to load courses",
-
   "admin.courseEditor.editCourse": "Edit Course",
   "admin.courseEditor.editDesc": "Update course details and modules",
   "admin.courseEditor.failedLoad": "Failed to load course",
@@ -533,7 +512,6 @@
   "admin.courseEditor.placeholderDescription": "Learn the fundamentals of spring ecosystems...",
   "admin.courseEditor.placeholderDuration": "45 min",
   "admin.courseEditor.materialFileLabel": "Material File (PDF optional)",
-
   "admin.points.title": "Point Rules",
   "admin.points.total": "{count} rules · {active} active",
   "admin.points.addRule": "Add Rule",
@@ -572,7 +550,6 @@
   "admin.points.createFailed": "Failed to add rule",
   "admin.points.deleteFailed": "Failed to delete rule",
   "admin.points.deleted": "Rule deleted successfully",
-
   "admin.content.title": "Content Manager",
   "admin.content.add": "Add {section}",
   "admin.content.noItems": "No {section} items yet.",
@@ -593,7 +570,6 @@
   "admin.content.sortOrder": "Sort Order",
   "admin.content.openLink": "Open link",
   "admin.content.sort": "Sort: {order}",
-
   "admin.trustScore.title": "Trust Score Management",
   "admin.trustScore.summary": "{count} users · {low} low risk · {blocked} blocked",
   "admin.trustScore.searchPlaceholder": "Search users...",
@@ -617,7 +593,6 @@
   "admin.trustScore.invalidValue": "Value must be between 0–100",
   "admin.trustScore.saveFailed": "Failed to save",
   "admin.trustScore.pts": "pts",
-
   "learn.page.subtitle": "Expand your knowledge about spring conservation through interactive courses",
   "learn.course.modules": "{count} module{plural}",
   "learn.course.start": "Start Course",
@@ -629,7 +604,7 @@
   "learn.course.review": "Review",
   "learn.course.startModule": "Start",
   "learn.course.locked": "Locked",
-  "learn.course.completed": "Completed!",
+  "learn.course.completed": "Completed",
   "learn.course.progress": "{completed}/{total} modules",
   "learn.course.signInPrompt": "Please sign in to track your progress",
   "learn.course.moduleCompleted": "Module completed!",
@@ -637,7 +612,6 @@
   "learn.course.networkError": "Network error. Please try again.",
   "learn.course.backToCourse": "Back to course",
   "learn.course.moduleOfLabel": "Module {current} of {total}",
-  "learn.course.completed": "Completed",
   "learn.course.lockPrevModules": "Complete previous modules first",
   "learn.course.lockPrevDesc": "This module is locked until you complete the previous ones in this course.",
   "learn.course.lockSignIn": "Sign in to track your progress",
@@ -651,26 +625,20 @@
   "learn.course.markComplete": "Mark as Complete",
   "learn.course.viewCourse": "View Course",
   "learn.course.next": "Next",
-
   "notFound.title": "Page Not Found",
   "notFound.desc": "The page you're looking for could not be found. It may have been moved or deleted.",
   "notFound.cta": "Back to Home",
-
   "error.title": "Something went wrong",
   "error.desc": "An error occurred. Please try refreshing the page.",
   "error.cta": "Try Again",
-
   "loading": "Loading...",
-
   "validation.required": "This field is required",
   "validation.email": "Invalid email",
   "validation.password": "Password must be at least 6 characters",
   "validation.username": "Username must be at least 2 characters",
   "validation.phone": "Invalid phone format. Use 08xx or +62xx",
   "validation.donation": "Minimum donation is Rp 1.000",
-
   "reports.form": "Form",
-
   "common.of": "of",
   "common.previous": "Previous",
   "common.unknownLocation": "Unknown Location",
@@ -697,7 +665,6 @@
   "common.select": "Select...",
   "common.guest": "Guest",
   "common.anonymous": "Anonymous",
-
   "projects.new.notEligible": "Points not enough yet",
   "projects.new.needMorePoints": "You need at least {threshold} points to propose a project. You currently have {current} points.",
   "projects.new.pointsNeeded": "Accumulate {remaining} more points by submitting field reports!",
@@ -732,7 +699,6 @@
   "projects.new.cancel": "Cancel",
   "projects.new.submitting": "Submitting...",
   "projects.new.submitProject": "Submit Project Proposal",
-
   "status.what": "What do these colors mean?",
   "status.title": "Spring Status",
   "status.healthy": "Healthy",
@@ -742,7 +708,6 @@
   "status.degraded": "Degraded",
   "status.degradedDesc": "Needs intervention",
   "status.gotIt": "Got it",
-
   "projects.type.spring_restoration": "Spring Restoration",
   "projects.type.tree_planting": "Tree Planting",
   "projects.type.trench_development": "Trench Development",
@@ -751,10 +716,8 @@
   "projects.underReview": "Under Review",
   "projects.collected": "collected",
   "projects.supporters": "supporters",
-
   "donate.customOption": "Custom — IDR",
   "donate.paymentMethods": "OVO • GoPay • DANA • QRIS • Card • Virtual Account",
-
   "pwa.guide.title": "Install SpringHub for quick access from your home screen",
   "pwa.guide.androidTitle": "Android — Chrome",
   "pwa.guide.androidStep1": "Open <strong>www.springhub.id</strong> in Chrome",
@@ -771,10 +734,8 @@
   "pwa.guide.otherAndroid": "Tap ⋮ → &quot;Add to Home Screen&quot; → &quot;Install&quot;",
   "pwa.guide.otherIos": "Tap 📤 → &quot;Add to Home Screen&quot; → &quot;Add&quot;",
   "pwa.guide.pcNote": "PC/Laptop: open directly in browser. Offline mode is available via the PWA icon once installed.",
-
   "locale.en": "EN",
   "locale.id": "ID",
-
   "offline.title": "Offline Survey Mode",
   "offline.checkLogin": "You must be logged in to use offline mode",
   "offline.checkPwa": "Install the app from your browser first",
@@ -783,7 +744,6 @@
   "offline.notLogin": "Not logged in",
   "offline.appInstalled": "App installed",
   "offline.installApp": "Install app first",
-
   "offline.tutorial.cacheTitle": "Data Cache",
   "offline.tutorial.cacheDesc": "Forms, field definitions, and map tiles will be stored on your device.",
   "offline.tutorial.gpsTitle": "Location & GPS",
@@ -793,12 +753,10 @@
   "offline.tutorial.syncTitle": "Sync",
   "offline.tutorial.syncDesc": "Data is uploaded when you exit. Local data is deleted after successful sync.",
   "offline.tutorial.agree": "I agree to the cache & local storage terms",
-
   "offline.selectForm": "Select Survey Forms",
   "offline.selectFormDesc": "Choose which forms to fill during the survey",
   "offline.selectArea": "Select Survey Area",
   "offline.selectAreaDesc": "Choose the area to pre-cache map tiles",
-
   "offline.survey.distance": "{km} km",
   "offline.survey.markers": "{count} records",
   "offline.survey.markSpring": "Mark Spring",
@@ -807,7 +765,6 @@
   "offline.survey.gpsStart": "Start GPS Tracking",
   "offline.survey.gpsActive": "Tracking Active",
   "offline.survey.searchingGps": "Finding location...",
-
   "offline.sync.confirm": "Exit Offline Mode",
   "offline.sync.confirmDesc": "Data will be uploaded to the server. Ensure stable connection.",
   "offline.sync.photos": "{count} photos — Required to upload",
@@ -820,11 +777,9 @@
   "offline.sync.done": "Done!",
   "offline.sync.retry": "Retry",
   "offline.sync.back": "Back to Offline Mode",
-
   "offline.installPrompt": "Install SpringHub for offline mode",
   "offline.installDesc": "The app needs to be installed to store local data.",
   "offline.install": "Install App",
-
   "offline.activate": "Activate Offline Mode",
   "offline.setup": "Prepare Survey",
   "offline.tutorialData": "Data is stored locally on your device. No internet needed during survey.",
@@ -865,7 +820,6 @@
   "offline.minutes": "minutes ago",
   "offline.hours": "hours ago",
   "offline.days": "days ago",
-
   "offline.ready": "Ready! Offline Mode Active",
   "offline.readyFull": "Map, GPS tracking, and forms are ready. You can survey without signal.",
   "offline.readySave": "Forms ready. Reports will be saved locally and sent when online.",
@@ -916,7 +870,6 @@
   "offline.uploadFailed": "Upload failed",
   "offline.syncComplete": "All data uploaded successfully! Local data deleted.",
   "offline.goBack": "Back to Home",
-
   "notifications.title": "Notifications",
   "notifications.subtitle": "Your account activity and alerts",
   "notifications.loadError": "Failed to load notifications",
@@ -927,9 +880,7 @@
   "notifications.backToHome": "Back to Home",
   "notifications.viewDetail": "View details",
   "notifications.markRead": "Mark as read",
-
   "media.empty": "No media content yet. Check back soon!",
-
   "reportIssue.title": "Report Issue / Feedback",
   "reportIssue.subtitle": "Choose one or both",
   "reportIssue.thankYou": "Thank you!",
@@ -954,7 +905,6 @@
   "reportIssue.fillAtLeastOne": "Fill at least one section — bug or criticism/suggestion.",
   "reportIssue.failedSend": "Failed to send report.",
   "reportIssue.genericError": "An error occurred.",
-
   "about.title": "About",
   "about.titleBrand": "SpringHub",
   "about.description": "SpringHub is a community-driven platform for <strong>monitoring and restoring artesian springs</strong> across Indonesia. We connect volunteers and partners to protect our clean water sources.",
@@ -975,5 +925,54 @@
   "about.ctaTitle": "Join the Movement",
   "about.ctaDesc": "Every report, donation, and small action matters for the future of Indonesia's clean water.",
   "about.ctaJoin": "Join Now",
-  "about.ctaMap": "View Map"
+  "about.ctaMap": "View Map",
+  "admin.content.addTitle": "Add {title}",
+  "admin.points.add": "Add Rule",
+  "admin.points.deleteBtn": "Delete",
+  "admin.points.tableActions": "Actions",
+  "admin.points.tableCategory": "Category",
+  "admin.points.tableDesc": "Description",
+  "admin.points.tableIcon": "Icon",
+  "admin.points.tableName": "Name",
+  "admin.points.tableNo": "No",
+  "admin.points.tablePoints": "Points",
+  "admin.points.tableStatus": "Status",
+  "admin.reviews.featured": "Selected as thumbnail",
+  "admin.reviews.selectFeatured": "Click ⭐ to select thumbnail",
+  "auth.join.hidePassword": "Hide password",
+  "auth.join.showPassword": "Show password",
+  "common.loading": "Loading...",
+  "common.photos": "Photos",
+  "dashboard.noData": "No data yet",
+  "form.timestamp": "Report time",
+  "spring.lastUpdated": "Last updated {date}",
+  "admin.sidebar.orphanReports": "Orphan Reports",
+  "admin.orphans.title": "Orphan Reports",
+  "admin.orphans.description": "Reports not linked to any spring yet",
+  "admin.orphans.statusAll": "All statuses",
+  "admin.orphans.selected": "{count} selected",
+  "admin.orphans.clearSelection": "Clear selection",
+  "admin.orphans.linkToSpring": "Link to spring",
+  "admin.orphans.springSearchPlaceholder": "Search spring name (min 2 chars)",
+  "admin.orphans.linkButton": "Link",
+  "admin.orphans.chosenSpring": "Target spring",
+  "admin.orphans.createSpring": "Create spring from reports",
+  "admin.orphans.createNamePlaceholder": "Spring name (auto from report)",
+  "admin.orphans.createProvince": "Province",
+  "admin.orphans.createRegency": "Regency/City",
+  "admin.orphans.createButton": "Create Spring",
+  "admin.orphans.autoName": "Auto name",
+  "admin.orphans.selectAll": "Select all on page",
+  "admin.orphans.empty": "No orphan reports. All reports are linked.",
+  "admin.orphans.loadFailed": "Failed to load orphan reports",
+  "admin.orphans.linkIncomplete": "Choose a spring and select at least one report first",
+  "admin.orphans.confirmLink": "Link reports to spring",
+  "admin.orphans.linkSuccess": "{count} reports linked to {name}",
+  "admin.orphans.linkFailed": "Failed to link reports",
+  "admin.orphans.noSelection": "Select at least one report first",
+  "admin.orphans.confirmCreate": "Create a new spring named",
+  "admin.orphans.createSuccess": "Spring created",
+  "admin.orphans.createFailed": "Failed to create spring",
+  "map.loadMore": "Load more reports",
+  "map.loadingMore": "Loading more..."
 }

@@ -1,0 +1,56 @@
+# Preview per-branch fitur: <branch>.staging.springhub.id
+# Memakai postgres/redis/volume staging (bukan produksi!). Web saja.
+# Deploy: docker compose -p preview-<branch> -f docker-compose.preview.yml up -d --build
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: springhub-preview-${PREVIEW_NAME}:latest
+    container_name: web-${PREVIEW_NAME}
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      DATABASE_URL: "postgresql://springhub:${DB_PASSWORD}@staging-postgres:5432/springhub_staging?connection_limit=5&pool_timeout=10"
+      REDIS_URL: "redis://default:${REDIS_PASSWORD}@staging-redis:6379/1"
+      REDIS_QUEUE_URL: "redis://default:${REDIS_PASSWORD}@staging-redis:6379/1"
+      UPLOAD_DIR: "/data/uploads"
+      UPLOAD_URL_PREFIX: "/uploads"
+      PORT: "31760"
+    ports:
+      - "127.0.0.1:${PREVIEW_PORT}:31760"
+    volumes:
+      - uploads_staging_data:/data/uploads
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:31760/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+    networks:
+      - default
+      - staging_net
+
+networks:
+  staging_net:
+    external: true
+    name: staging_default
+
+volumes:
+  uploads_staging_data:
+    external: true
+    name: staging_uploads_staging_data

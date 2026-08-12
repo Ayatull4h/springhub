@@ -89,3 +89,29 @@ export async function fetchAndCacheSession(): Promise<{
 
   return { user: null, fromCache: false };
 }
+
+/**
+ * Hapus session cache IndexedDB (dipakai saat logout).
+ * Idempotent — aman dipanggil berkali-kali.
+ */
+export async function clearCachedSession(): Promise<void> {
+  try {
+    await offlineDB.clearSession();
+  } catch {
+    // IndexedDB tidak tersedia — non-critical
+  }
+}
+
+/**
+ * Logout lengkap: bersihkan SEMUA data offline milik user dari perangkat
+ * (session cache, pending queue, foto, draft, tracking, config survey).
+ * Cache global (form definitions & tile cache) DIKEEP.
+ * Idempotent — aman dipanggil berkali-kali (misal dari site-header & profile).
+ */
+export async function clearAllOfflineUserData(): Promise<void> {
+  try {
+    await offlineDB.clearAllForUser();
+  } catch {
+    // IndexedDB tidak tersedia — non-critical
+  }
+}

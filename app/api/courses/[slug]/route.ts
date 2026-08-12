@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { sanitizeHtml } from "@/lib/sanitize";
 export const dynamic = "force-dynamic";
 
 // GET /api/courses/[slug] — detail course termasuk semua modul
+// Konten modul di-sanitize di server (DOMPurify) sebelum dikirim ke client.
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
@@ -15,7 +17,17 @@ export async function GET(
     if (!course) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
-    return NextResponse.json({ course });
+    const sanitized = {
+      ...course,
+      description: course.description ? await sanitizeHtml(course.description) : "",
+      modules: await Promise.all(
+        course.modules.map(async (m) => ({
+          ...m,
+          content: m.content ? await sanitizeHtml(m.content) : "",
+        }))
+      ),
+    };
+    return NextResponse.json({ course: sanitized });
   } catch (error) {
     console.error("Course fetch error:", error instanceof Error ? error.message : error);
     return NextResponse.json(

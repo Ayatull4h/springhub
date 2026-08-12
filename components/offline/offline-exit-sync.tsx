@@ -392,6 +392,10 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
           formData.set("form_slug", report.formSlug);
           formData.set("_submit_time", String(Date.now()));
           formData.set("_website", ""); // honeypot
+          // Idempotency key — UUID tetap; server dedupe kalau retry double-submit
+          if (report.clientCorrelationId) {
+            formData.set("clientCorrelationId", report.clientCorrelationId);
+          }
 
           for (const [key, value] of Object.entries(report.fieldData)) {
             formData.set(key, String(value ?? ""));

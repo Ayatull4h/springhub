@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
-import { timingSafeEqual } from "crypto";
+import { createHash, timingSafeEqual } from "crypto";
 import type { DonationStatus } from "@prisma/client";
 import { webhookLimiter } from "@/lib/rate-limit";
 
 /**
  * Xendit webhook handler for payment status notifications.
  *
- * Verifies callback using both token comparison (timing-safe) and
- * Xendit's recommended HMAC-SHA256 signature verification.
+ * Verifies callback using the x-callback-token header via constant-time
+ * comparison. When XENDIT_WEBHOOK_TOKEN is not configured the webhook is
+ * rejected outright — except in staging (NEXT_PUBLIC_STAGING=true) where
+ * the payload is accepted and logged for testing.
  *
  * Docs: https://developers.xendit.co/api-reference/#webhooks
  */
@@ -24,12 +26,18 @@ export async function POST(request: Request) {
 
     const expectedToken = process.env.XENDIT_WEBHOOK_TOKEN;
 
-    if (expectedToken) {
+    if (!expectedToken) {
+      if (process.env.NEXT_PUBLIC_STAGING === "true") {
+        console.warn("XENDIT_WEBHOOK_TOKEN tidak diset — menerima webhook (staging log-only)");
+      } else {
+        console.error("XENDIT_WEBHOOK_TOKEN tidak diset — menolak webhook");
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+    } else {
       const token = request.headers.get("x-callback-token") || "";
-      const tokenBuf = Buffer.from(token);
-      const expectedBuf = Buffer.from(expectedToken);
-
-      if (tokenBuf.length !== expectedBuf.length || !timingSafeEqual(tokenBuf, expectedBuf)) {
+      const tokenHash = createHash("sha256").update(token).digest();
+      const expectedHash = createHash("sha256").update(expectedToken).digest();
+      if (!timingSafeEqual(tokenHash, expectedHash)) {
         console.warn("Invalid webhook callback token");
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
@@ -39,27 +47,9 @@ export async function POST(request: Request) {
     const safeLog = { id: body.id, external_id: body.external_id, status: body.status };
     console.log("Xendit webhook received:", JSON.stringify(safeLog));
 
-    // Verify Xendit webhook signature using HMAC-SHA256
-    // Ref: https://developers.xendit.co/api-reference/#webhooks
-    if (expectedToken) {
-      const callbackSignature = request.headers.get("x-callback-signature");
-      if (callbackSignature) {
-        const { createHmac } = await import("crypto");
-        const computedSignature = createHmac("sha256", expectedToken)
-          .update(JSON.stringify(body))
-          .digest("hex");
-        const sigBuf = Buffer.from(callbackSignature);
-        const compBuf = Buffer.from(computedSignature);
-        if (sigBuf.length === compBuf.length && !timingSafeEqual(sigBuf, compBuf)) {
-          console.warn("Invalid webhook signature");
-          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-      }
-    }
-
     const { id, external_id, status, paid_at } = body;
 
-    if (!id) {
+    if (!id && !external_id) {
       return NextResponse.json({ error: "Missing invoice id" }, { status: 400 });
     }
 
@@ -79,7 +69,9 @@ export async function POST(request: Request) {
     // ── Idempotency check ──
     // Xendit may send duplicate webhooks. Check if already processed.
     const existing = await prisma.donation.findFirst({
-      where: { invoiceId: id },
+      where: external_id
+        ? { OR: [{ invoiceId: id || "" }, { externalId: external_id }] }
+        : { invoiceId: id },
       select: { id: true, status: true, projectId: true, amountIdr: true, userId: true, donorName: true, donorEmail: true, tierId: true },
     });
 
@@ -92,16 +84,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, status: "already_processed" });
     }
 
-    // ── Atomic transaction ──
-    // Update donation + add points + update project raisedAmount in one transaction
-    await prisma.$transaction(async (tx) => {
-      await tx.donation.update({
-        where: { id: existing.id },
+    // ── Atomic compare-and-set: only one concurrent webhook wins ──
+    const claimed = await prisma.$transaction(async (tx) => {
+      const cas = await tx.donation.updateMany({
+        where: {
+          id: existing.id,
+          status: localStatus === "paid" ? { not: "paid" } : "pending",
+        },
         data: {
           status: localStatus as DonationStatus,
           paidAt: paid_at ? new Date(paid_at) : localStatus === "paid" ? new Date() : null,
         },
       });
+
+      if (cas.count !== 1) return false;
 
       // If payment succeeded, award points and update project
       if (localStatus === "paid" && existing.userId) {
@@ -123,7 +119,7 @@ export async function POST(request: Request) {
         });
 
         // Notifikasi admin ada donasi baru
-        const admins = await prisma.profile.findMany({
+        const admins = await tx.profile.findMany({
           where: { role: "admin" },
           select: { id: true },
         });
@@ -147,7 +143,13 @@ export async function POST(request: Request) {
           });
         }
       }
+
+      return true;
     });
+
+    if (!claimed) {
+      return NextResponse.json({ success: true, status: "already_processed" });
+    }
 
     console.log(`Donation ${localStatus} — processed ${existing.id}`);
 

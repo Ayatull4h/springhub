@@ -224,3 +224,14 @@ export async function POST(request: Request, { params }: { params: { id: string 
 - **Seedling UI**: 4 file digabung jadi 1 `public/seedlings.html` dengan tab navigation.
 - **Git conflict resolved**: Merge branch `master` ke `main`. 3 file conflict resolved.
 - **Commit**: `308a5b8`
+
+### 12 Agustus 2026 — Sesi 15: Hardening + Staging Deploy
+- **Input hardening**: 83 field string di `lib/forms.ts` dibatasi `.max(500)` (cerita/catatan 5000) — cegah payload raksasa ✅
+- **XSS course content**: Sanitasi DOMPurify 2 lapis dipindah ke server `app/api/courses/[slug]/route.ts` (jsdom tidak boleh masuk bundle client; ditambah `jsdom`+`dompurify` ke `serverComponentsExternalPackages`). Verifikasi live: `<script>`, `onerror`, `javascript:` URL, `<iframe>` semua dibersihkan ✅
+- **Bug fix**: syntax `lib/sanitize.ts`, `await` di luar async (queue-worker version bump), regex `{1,30}` di nginx-staging.conf (`server_name ~^(?<sub>[a-z0-9-]+)` — kurung kurawal di-parse nginx sebagai blok) ✅
+- **Test suite disinkronkan**: 8 test gagal PRE-EXISTING (key skema sudah diganti Indonesia, nilai POINTS_MAP baru: monitoring 100 / restoration 1000 / trench 500 / planting 100 / seedling 100). 37/37 hijau ✅
+- **Secrets scan**: bersih (hanya kredensial demo e2e/k6). File sampah `10s`/`Postgres` dihapus, `playwright-report/` + `k6/` masuk `.gitignore` ✅
+- **CRITICAL — seed.ts destruktif**: `prisma/seed.ts` menghapus SEMUA data (`deleteMany` seluruh tabel) tanpa pengaman. **Sekarang dijaga**: hanya jalan di DB kosong, harus `SEED_FORCE=1` untuk memaksa. Jangan pernah `db seed` ke DB berisi! ✅
+- **Staging deployed**: stack paralel di VPS (port 5433/6380/31760/8080), DB staging di-restore dari `backups/springhub-20260812-0513.dump`, 10 migrasi di-baseline (`migrate resolve --applied`), `fix-orphan-reports` 0 klaster. Health OK, login admin OK, webhook duplikat → `already_processed` (poin +50 tepat sekali, CAS atomic). Nginx staging: basic auth aktif ✅
+- **Catatan**: worker log ada warning BullMQ "eviction policy should be noeviction" (bukan blocker, konfigurasi Redis lama). Seed ke staging = jangan, data sudah dari dump.
+- **Blocked (sama seperti sesi sebelumnya)**: Xendit key asli (client), Cloudflare R2, wildcard DNS `*.staging.springhub.id` (butuh aksi di panel Cloudflare)

@@ -1,14 +1,28 @@
 import { NextResponse } from "next/server";
-import { SignJWT, type JWTPayload } from "jose";
+import { randomBytes, createHash } from "crypto";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
-import { getJwtSecret } from "@/lib/jwt";
 import { sendEmail, buildResetPasswordEmail } from "@/lib/email";
 import { authLimiter } from "@/lib/rate-limit";
 import { auditLog } from "@/lib/audit";
+import { getClientIp } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-const SECRET = getJwtSecret();
+const TOKEN_TTL_MIN = 30;
+
+type PasswordResetTokenRow = {
+  id: string;
+  expiresAt: Date;
+  usedAt: Date | null;
+  profileId: string;
+};
+
+const pwdResetTokens = (prisma as unknown as {
+  passwordResetToken: {
+    create(args: { data: { tokenHash: string; expiresAt: Date; profileId: string } }): Promise<{ id: string }>;
+    findUnique(args: { where: { tokenHash: string } }): Promise<PasswordResetTokenRow | null>;
+  };
+}).passwordResetToken;
 
 export async function POST(request: Request) {
   try {
@@ -25,24 +39,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, message: genericMessage });
     }
 
-    // Rate limit per email
-    const limiter = await authLimiter.check(`forgot-pw:${email}`);
-    if (!limiter.allowed) {
+    const emailLimiter = await authLimiter.check(`forgot-pw:${email}`);
+    if (!emailLimiter.allowed) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti." }, { status: 429 });
+    }
+    const ipLimiter = await authLimiter.check(`forgot-pw-ip:${getClientIp(request)}`);
+    if (!ipLimiter.allowed) {
       return NextResponse.json({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti." }, { status: 429 });
     }
 
-    const jwtPayload: JWTPayload = { email, userId: profile.id };
-    const token = await new SignJWT(jwtPayload)
-      .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime("1h")
-      .sign(SECRET);
+    const token = randomBytes(32).toString("hex");
+    const tokenHash = createHash("sha256").update(token).digest("hex");
+    await pwdResetTokens.create({
+      data: {
+        tokenHash,
+        expiresAt: new Date(Date.now() + TOKEN_TTL_MIN * 60_000),
+        profileId: profile.id,
+      },
+    });
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
     auditLog("forgot-password", `Reset requested for ${email}`);
 
-    // Send email (or log in dev mode)
+    if ((process.env.EMAIL_PROVIDER || "log") === "log") {
+      console.log(`[EMAIL] Password reset link for ${email}: ${resetUrl}`);
+    }
     const emailContent = buildResetPasswordEmail(resetUrl);
     await sendEmail({
       to: email,
