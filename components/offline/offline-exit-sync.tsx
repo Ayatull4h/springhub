@@ -518,9 +518,10 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     const allTracks = await offlineDB.getAllTrackingPoints();
     if (allTracks.length > 0) {
       try {
+        const { token } = await fetch("/api/csrf").then(r => r.json());
         await fetch("/api/offline/sync", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...(token ? { "x-csrf-token": token } : {}) },
           body: JSON.stringify({
             trackingPoints: allTracks.map((t) => ({
               lat: t.lat,
@@ -550,7 +551,11 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     setProgress({ current: 2, total: 3 });
 
     try {
-      await fetch("/api/offline/session", { method: "DELETE" });
+      const { token } = await fetch("/api/csrf").then(r => r.json());
+      await fetch("/api/offline/session", {
+        method: "DELETE",
+        headers: token ? { "x-csrf-token": token } : {},
+      });
     } catch {}
     setProgress({ current: 3, total: 3 });
 

@@ -1,21 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, User, MapPin, Clock, Phone, PhoneCall, X, Inbox, Loader2 } from "lucide-react";
+import { FileText, User, MapPin, Clock, CheckCheck, X, Inbox, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 type RequestItem = {
   id: string; species: string; qty: number;
   owner: string; location: string;
-  status: "pending" | "approved" | "rejected" | "fulfilled" | "cancelled";
+  status: "pending" | "completed" | "rejected" | "cancelled";
   date: string; phone?: string;
 };
 
 const STATUS: Record<string, { cls: string; icon: typeof Clock; label: string }> = {
   pending:   { cls: "bg-amber-50 text-amber-700", icon: Clock, label: "Menunggu" },
-  approved:  { cls: "bg-green-50 text-green-700", icon: Phone, label: "Disetujui" },
+  completed: { cls: "bg-emerald-50 text-emerald-700", icon: CheckCheck, label: "Selesai" },
   rejected:  { cls: "bg-rose-50 text-rose-600", icon: X, label: "Ditolak" },
-  fulfilled: { cls: "bg-blue-50 text-blue-600", icon: Phone, label: "Selesai" },
   cancelled: { cls: "bg-slate-100 text-slate-500", icon: X, label: "Dibatalkan" },
 };
 
@@ -32,14 +31,46 @@ function timeAgo(date: string): string {
 export default function MyRequestsPage() {
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [confirming, setConfirming] = useState<Record<string, boolean>>({});
+  const [msg, setMsg] = useState("");
 
-  useEffect(() => {
+  const fetchRequests = () => {
+    setLoading(true);
     fetch("/api/seedling-requests?type=outgoing")
       .then(r => r.json())
       .then(data => setRequests(data.requests || []))
       .catch(() => {})
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchRequests();
   }, []);
+
+  // Konfirmasi penerimaan bibit — kurangi stok + tandai selesai (server-side)
+  const handleConfirmReceive = async (seedlingId: string, requestId: string) => {
+    setConfirming((c) => ({ ...c, [requestId]: true }));
+    setMsg("");
+    try {
+      const { token } = await fetch("/api/csrf").then(r => r.json());
+      const res = await fetch(`/api/seedlings/${seedlingId}/confirm-receive`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-csrf-token": token },
+        body: JSON.stringify({ requestId }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setMsg(d.error || "Gagal konfirmasi penerimaan");
+      } else {
+        setMsg("Bibit berhasil diterima. Terima kasih!");
+        fetchRequests();
+      }
+    } catch (e) {
+      console.error(e);
+      setMsg("Gagal konfirmasi penerimaan");
+    }
+    setConfirming((c) => ({ ...c, [requestId]: false }));
+  };
 
   if (loading) {
     return (
@@ -58,6 +89,12 @@ export default function MyRequestsPage() {
         </span>
         Permintaanku
       </h1>
+
+      {msg && (
+        <p className="mb-3 rounded-md bg-brand-50 px-3 py-2 text-xs text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+          {msg}
+        </p>
+      )}
 
       {requests.length === 0 ? (
         <div className="flex animate-fade flex-col items-center py-16 text-center">
@@ -96,21 +133,12 @@ export default function MyRequestsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   {r.status === "pending" && (
-                    <button className="btn-sm btn-danger inline-flex items-center gap-1"
-                      onClick={() => alert("Fitur batalkan belum tersedia")}>
-                      <X className="h-3 w-3" />Batalkan
+                    <button className="btn-sm btn-primary inline-flex items-center gap-1"
+                      disabled={confirming[r.id]}
+                      onClick={() => handleConfirmReceive(r.seedling?.id || r.seedlingId, r.id)}>
+                      <CheckCheck className="h-3 w-3" />
+                      {confirming[r.id] ? "Memproses..." : "Konfirmasi Terima"}
                     </button>
-                  )}
-                  {r.status === "approved" && r.owner?.phone && (
-                    <>
-                      <span className="flex items-center gap-1 text-sm text-ink-muted">
-                        <Phone className="h-3.5 w-3.5 text-green-500" />
-                        {r.owner.phone}
-                      </span>
-                      <a href={`tel:${r.owner.phone}`} className="btn-sm btn-soft inline-flex items-center gap-1">
-                        <PhoneCall className="h-3 w-3" />Hubungi
-                      </a>
-                    </>
                   )}
                 </div>
               </div>

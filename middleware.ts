@@ -53,18 +53,6 @@ function isAllowedIp(ip: string, ranges: string[]): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // API routes: prevent CDN caching so data always fresh
-  if (pathname.startsWith("/api/")) {
-    const response = NextResponse.next();
-    response.headers.set(
-      "Cache-Control",
-      "no-cache, no-store, must-revalidate"
-    );
-    response.headers.set("Pragma", "no-cache");
-    response.headers.set("Expires", "0");
-    return response;
-  }
-
   const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
   let session: { userId: string; role: string } | null = null;
 
@@ -83,6 +71,32 @@ export async function middleware(request: NextRequest) {
     } catch {
       // Invalid token
     }
+  }
+
+  // API routes: prevent CDN caching so data always fresh
+  if (pathname.startsWith("/api/")) {
+    const response = NextResponse.next();
+    response.headers.set(
+      "Cache-Control",
+      "no-cache, no-store, must-revalidate"
+    );
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+
+    // Admin API: role + IP whitelist (H-3 — middleware sebelumnya tidak menjangkau /api/)
+    if (pathname.startsWith("/api/admin/")) {
+      if (!session || session.role !== "admin") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      }
+      const allowedCidrs = process.env.ADMIN_ALLOWED_IPS;
+      if (allowedCidrs) {
+        const ranges = allowedCidrs.split(",").map(s => s.trim()).filter(Boolean);
+        if (ranges.length > 0 && !isAllowedIp(getClientIp(request), ranges)) {
+          return NextResponse.json({ error: "Access denied: IP not allowed" }, { status: 403 });
+        }
+      }
+    }
+    return response;
   }
 
   if (!request.cookies.get(GUEST_COOKIE)?.value) {
@@ -121,6 +135,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

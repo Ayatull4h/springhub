@@ -54,20 +54,18 @@ export default function AdminReviewPage() {
     setLoading(true);
     fetch("/api/admin/reports?status=pending")
       .then((r) => r.json())
-      .then(async (data) => {
+      .then((data) => {
         const pending = (data.reports ?? []);
         setReports(pending);
-        // Fetch photos for each pending report
+        // Photos sudah disertakan di response (buildPhotoUrls di server)
         const photoMap: Record<string, ReportPhoto[]> = {};
-        await Promise.all(pending.map(async (r: ReportItem) => {
-          try {
-            const res = await fetch(`/api/reports/${r.id}/photos`);
-            if (res.ok) {
-              const json = await res.json();
-              photoMap[r.id] = json.photos || [];
-            }
-          } catch {}
-        }));
+        for (const r of pending) {
+          photoMap[r.id] = (r.photos ?? []).map((p: { id: string; url: string; fieldId: string }) => ({
+            id: p.id,
+            url: p.url,
+            fieldId: p.fieldId,
+          }));
+        }
         setPhotos(photoMap);
       })
       .catch(console.error)
@@ -242,6 +240,11 @@ export default function AdminReviewPage() {
                     <p className="mt-1 text-[10px] text-ink-subtle">
                       {featured[r.id] ? t("admin.reviews.featured", "Terpilih sebagai thumbnail") : t("admin.reviews.selectFeatured", "Klik ⭐ untuk pilih thumbnail")}
                     </p>
+                  </div>
+                )}
+                {(!photos[r.id] || photos[r.id].length === 0) && (
+                  <div className="mt-3 rounded-md border border-amber-300/50 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+                    ⚠️ Tidak ada foto terlampir — laporan ini seharusnya punya minimal 3 foto.
                   </div>
                 )}
 

@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { sendEmail } from "@/lib/email";
+import { escapeHtml } from "@/lib/sanitize";
 import { verifyCsrfToken } from "@/lib/csrf";
 import { auditLog } from "@/lib/audit";
 
@@ -48,16 +49,19 @@ export async function PATCH(
       include: { user: { select: { email: true, username: true } } },
     });
 
-    // Send email notification to project owner
+    // Send email notification to project owner (M-2: escape semua input user)
     if (project.user?.email) {
       const label = STATUS_LABELS[status] || status;
-      const subject = `Proyek "${project.title}" — ${label}`;
+      const safeTitle = escapeHtml(project.title);
+      const safeUsername = escapeHtml(project.user.username || "");
+      const safeNote = note ? escapeHtml(String(note)) : "";
+      const subject = `Proyek "${safeTitle}" — ${label}`;
       const html = `
         <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
           <h2 style="color: #1e293b;">Status Proyek Diperbarui</h2>
-          <p style="color: #475569;">Halo <strong>${project.user.username}</strong>,</p>
-          <p style="color: #475569;">Proyek <strong>"${project.title}"</strong> sekarang berstatus: <strong>${label}</strong>.</p>
-          ${note ? `<p style="color: #475569;">Catatan admin: ${note}</p>` : ""}
+          <p style="color: #475569;">Halo <strong>${safeUsername}</strong>,</p>
+          <p style="color: #475569;">Proyek <strong>"${safeTitle}"</strong> sekarang berstatus: <strong>${label}</strong>.</p>
+          ${safeNote ? `<p style="color: #475569;">Catatan admin: ${safeNote}</p>` : ""}
           <p style="color: #94a3b8; font-size: 12px;">Login untuk melihat detail: ${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/admin/projects</p>
         </div>
       `;

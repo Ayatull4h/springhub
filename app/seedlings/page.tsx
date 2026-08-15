@@ -23,17 +23,6 @@ type SeedlingItem = {
   userPhone?: string;
 };
 
-const DUMMY: SeedlingItem[] = [
-  { id: "1", species: "Jati", count: 50, province: "Jawa Barat", regency: "Bandung", owner: "Asep", trustScore: 85 },
-  { id: "2", species: "Bambu Petung", count: 30, province: "Jawa Barat", regency: "Bogor", owner: "Sari", trustScore: 92 },
-  { id: "3", species: "Mahoni", count: 100, province: "Jawa Barat", regency: "Garut", owner: "Budi", trustScore: 78 },
-  { id: "4", species: "Sengon", count: 25, province: "Jawa Timur", regency: "Malang", owner: "Dewi", trustScore: 88 },
-  { id: "5", species: "Suren", count: 40, province: "Jawa Tengah", regency: "Solo", owner: "Joko", trustScore: 90 },
-  { id: "6", species: "Kaliandra", count: 200, province: "Jawa Timur", regency: "Banyuwangi", owner: "Rina", trustScore: 95 },
-  { id: "7", species: "Acacia", count: 75, province: "Jawa Barat", regency: "Sukabumi", owner: "Agus", trustScore: 82 },
-  { id: "8", species: "Albasia", count: 60, province: "Jawa Tengah", regency: "Semarang", owner: "Fitri", trustScore: 87 },
-];
-
 function SkeletonCard() {
   return (
     <div className="card pointer-events-none" aria-hidden>

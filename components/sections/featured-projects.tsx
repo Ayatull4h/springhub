@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight, ArrowLeft, ArrowRightCircle, Heart, MessageSquare,
-  MapPin, TreePine, Droplets, Users,
+  MapPin, TreePine, Droplets, Users, FolderOpen,
 } from "lucide-react";
-import { featuredProjects as dummyData } from "@/lib/data";
 import { formatNumber } from "@/lib/utils";
 
 type ProjectItem = {
@@ -25,19 +24,6 @@ type ProjectItem = {
   photos?: { url: string }[];
 };
 
-const DUMMY: ProjectItem[] = dummyData.map((d, i) => ({
-  id: `dummy-${i}`,
-  title: d.title,
-  summary: d.summary,
-  region: d.region,
-  status: d.status,
-  goalAmount: d.goal,
-  raisedAmount: d.raised,
-  typeId: d.typeId,
-  likes: d.likes,
-  comments: d.comments,
-}));
-
 const TYPE_INFO: Record<string, { icon: typeof TreePine; label: string }> = {
   spring_restoration: { icon: Droplets, label: "Restorasi Mata Air" },
   "spring-restoration": { icon: Droplets, label: "Restorasi Mata Air" },
@@ -53,7 +39,7 @@ const TYPE_INFO: Record<string, { icon: typeof TreePine; label: string }> = {
 const PER_PAGE = 2;
 
 export function FeaturedProjects() {
-  const [allProjects, setAllProjects] = useState<ProjectItem[]>(DUMMY);
+  const [allProjects, setAllProjects] = useState<ProjectItem[]>([]);
   const [page, setPage] = useState(0);
 
   useEffect(() => {
@@ -62,7 +48,7 @@ export function FeaturedProjects() {
       .then((data) => {
         if (data.projects?.length) {
           const approved = data.projects.filter((p: ProjectItem) => p.status === "approved");
-          if (approved.length > 0) setAllProjects(approved);
+          setAllProjects(approved);
         }
       })
       .catch(() => {});
@@ -84,6 +70,15 @@ export function FeaturedProjects() {
         </p>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
+          {allProjects.length === 0 && (
+            <div className="col-span-2 card flex flex-col items-center py-10 text-center">
+              <FolderOpen className="h-8 w-8 text-sky-400/60" />
+              <p className="mt-2 text-sm text-ink-muted">Belum ada proyek yang disetujui.</p>
+              <Link href="/projects" className="btn-soft mt-3 inline-flex items-center gap-2 text-xs">
+                Lihat Semua Proyek <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          )}
           {visible.map((p) => {
             const info = TYPE_INFO[p.typeId] || { icon: TreePine, label: p.typeId };
             const Icon = info.icon;

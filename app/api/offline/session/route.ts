@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { verifyCsrfToken } from "@/lib/csrf";
 
 /**
  * POST /api/offline/session
@@ -8,6 +9,12 @@ import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
  */
 export async function POST(request: Request) {
   try {
+    // CSRF
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
+    }
+
     const session = await getSession();
     if (!session?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -72,8 +79,14 @@ export async function GET() {
  * DELETE /api/offline/session
  * Close active session
  */
-export async function DELETE() {
+export async function DELETE(request: Request) {
   try {
+    // CSRF
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
+    }
+
     const session = await getSession();
     if (!session?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

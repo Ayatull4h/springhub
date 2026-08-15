@@ -2,13 +2,31 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { apiLimiter } from "@/lib/rate-limit";
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
+    // CSRF
+    const csrfToken = req.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
+    }
+
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Rate limit
+    const limitResult = await apiLimiter.check(`like:${session.userId}`);
+    if (!limitResult.allowed) {
+      return NextResponse.json(
+        { error: "Terlalu banyak permintaan. Silakan coba lagi nanti." },
+        { status: 429 }
+      );
+    }
+
     const { id } = params;
     const userId = session.userId;
 

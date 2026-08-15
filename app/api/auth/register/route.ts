@@ -3,7 +3,7 @@ import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
-import { hashPassword, createSession, getSession } from "@/lib/auth";
+import { hashPassword, createSession, getSession, getClientIp } from "@/lib/auth";
 import { getExistingGuestId } from "@/lib/guest";
 import { authLimiter } from "@/lib/rate-limit";
 import { auditLog } from "@/lib/audit";
@@ -21,7 +21,8 @@ const registerSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    // M-1: pakai getClientIp (x-real-ip dari nginx, tak bisa di-spoof)
+    const ip = getClientIp(request);
     const ipLimiter = await authLimiter.check(`register:${ip}`);
     if (!ipLimiter.allowed) {
       return NextResponse.json(

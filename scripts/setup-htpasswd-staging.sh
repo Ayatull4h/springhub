@@ -32,5 +32,5 @@ else
   printf '%s:%s\n' "$PREVIEW_BASIC_USER" "$(cat /tmp/stg_pw2.$$)" > scripts/htpasswd-preview
   rm -f /tmp/stg_pw.$$ /tmp/stg_pw2.$$
 fi
-chmod 600 scripts/htpasswd-staging scripts/htpasswd-preview
+chmod 644 scripts/htpasswd-staging scripts/htpasswd-preview
 echo "htpasswd siap: scripts/htpasswd-staging + scripts/htpasswd-preview"

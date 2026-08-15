@@ -27,68 +27,72 @@ export async function POST(request: Request) {
     let approved = 0;
     let healthScored = 0;
 
-    for (const report of pending) {
-      // Approve
-      await prisma.report.update({
-        where: { id: report.id },
-        data: { status: "approved", reviewedById: session.userId },
-      });
+    // Transaksi penuh: gagal di tengah = rollback semua (bukan status parsial)
+    await prisma.$transaction(async (tx) => {
+      for (const report of pending) {
+        // Approve
+        await tx.report.update({
+          where: { id: report.id },
+          data: { status: "approved", reviewedById: session.userId },
+        });
 
-      // Health scoring for spring-survey
-      if (report.formSlug === "spring-monitoring" && report.springId) {
-        try {
-          const fd = JSON.parse(
-            typeof report.fieldData === "string" ? report.fieldData : "{}"
-          );
-          const health = computeSpringHealth(fd);
-          await prisma.spring.update({
-            where: { id: report.springId },
+        // Health scoring for spring-survey
+        if (report.formSlug === "spring-monitoring" && report.springId) {
+          try {
+            const fd = JSON.parse(
+              typeof report.fieldData === "string" ? report.fieldData : "{}"
+            );
+            const health = computeSpringHealth(fd);
+            await tx.spring.update({
+              where: { id: report.springId },
+              data: {
+                healthScore: health.score,
+                healthStatus: health.status,
+                lastSurveyedAt: new Date(),
+              },
+            });
+            healthScored++;
+          } catch {}
+        }
+
+        // Points
+        if (report.userId) {
+          const ptsMap: Record<string, number> = {
+            "spring-monitoring": 100,
+            "spring-restoration": 1000,
+            "trench-development": 500,
+            "tree-planting": 100,
+            "seedling-stock": 100,
+          };
+          const pts = ptsMap[report.formSlug] || 25;
+          await tx.pointsLog.create({
             data: {
-              healthScore: health.score,
-              healthStatus: health.status,
-              lastSurveyedAt: new Date(),
+              userId: report.userId,
+              reportId: report.id,
+              amount: pts,
+              reason: `Approved ${report.formSlug}`,
+              metadata: JSON.stringify({ batchApprove: true }),
             },
           });
-          healthScored++;
-        } catch {}
+        }
+
+        approved++;
       }
 
-      // Points
-      if (report.userId) {
-        const ptsMap: Record<string, number> = {
-          "spring-monitoring": 100,
-          "spring-restoration": 1000,
-          "trench-development": 500,
-          "tree-planting": 100,
-          "seedling-stock": 100,
-        };
-        const pts = ptsMap[report.formSlug] || 25;
-        await prisma.pointsLog.create({
-          data: {
-            userId: report.userId,
-            reportId: report.id,
-            amount: pts,
-            reason: `Approved ${report.formSlug}`,
-            metadata: JSON.stringify({ batchApprove: true }),
-          },
-        });
-      }
-
-      approved++;
-    }
-
-    // Recalculate all user points
-    const users = await prisma.profile.findMany({ select: { id: true } });
-    for (const u of users) {
-      const total = await prisma.pointsLog.aggregate({
-        where: { userId: u.id },
+      // Recalculate semua poin user — satu aggregate per user di dalam transaksi
+      const users = await tx.profile.findMany({ select: { id: true } });
+      const totals = await tx.pointsLog.groupBy({
+        by: ["userId"],
         _sum: { amount: true },
       });
-      await prisma.profile.update({
-        where: { id: u.id },
-        data: { points: total._sum.amount || 0 },
-      });
-    }
+      const totalMap = new Map(totals.map((t) => [t.userId, t._sum.amount || 0]));
+      for (const u of users) {
+        await tx.profile.update({
+          where: { id: u.id },
+          data: { points: totalMap.get(u.id) ?? 0 },
+        });
+      }
+    }, { timeout: 120000 });
 
     auditLog("approve-all", `Approved ${approved} pending reports`);
 

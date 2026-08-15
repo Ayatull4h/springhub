@@ -17,15 +17,6 @@ type SeedlingDetail = {
   photos?: { storagePath: string }[];
 };
 
-const DUMMY: SeedlingDetail = {
-  species: "Jati", count: 50, available: 40,
-  province: "Jawa Barat", regency: "Bandung",
-  owner: "Asep", ownerPhone: "0812-3456-7890", trustScore: 85,
-  notes: "Bibit siap tanam, sudah disemai 3 bulan. Tinggi rata-rata 50 cm. Lokasi di daerah Cimenyan, Bandung. Hubungi untuk koordinasi ambil bibit.",
-  createdAt: "10 Jul 2026",
-  photos: [],
-};
-
 export default function SeedlingDetailPage() {
   const params = useParams();
   const [qty, setQty] = useState(1);
@@ -37,7 +28,10 @@ export default function SeedlingDetailPage() {
 
   useEffect(() => {
     fetch(`/api/seedlings/${params.id}`)
-      .then(r => r.json())
+      .then(async r => {
+        if (!r.ok) throw new Error("Not found");
+        return r.json();
+      })
       .then(data => {
         const s = data.seedling || data;
         const reportPhotos = s.report?.photos || [];
@@ -60,11 +54,11 @@ export default function SeedlingDetailPage() {
           photos: allPhotos.map((p: any) => ({ storagePath: p.storagePath.startsWith("http") ? p.storagePath : `/uploads/${p.storagePath}` })),
         });
       })
-      .catch(() => setSeedling(DUMMY))
+      .catch(() => setSeedling(null))
       .finally(() => setLoading(false));
   }, [params.id]);
 
-  const s = seedling || DUMMY;
+  const s = seedling || ({} as SeedlingDetail);
 
   async function handleSubmit() {
     if (qty < 1 || qty > s.available) return;

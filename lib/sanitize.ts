@@ -77,9 +77,15 @@ export async function sanitizeHtml(html: string): Promise<string> {
 }
 
 /**
- * Sinkron API untuk memanggil sanitizeHtml.
- * Dipakai ketika DOMPurify sudah di-cache.
+ * Escape HTML untuk konteks non-HTML (email, log, dll).
+ * Berbeda dari sanitizeHtml (yang mengizinkan subset tag aman),
+ * escapeHtml menghilangkan SEMUA markup.
  */
-export function sanitizeHtmlSync(html: string): string {
-  return html;
+export function escapeHtml(input: string): string {
+  return String(input)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

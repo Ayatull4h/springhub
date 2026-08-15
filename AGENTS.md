@@ -58,7 +58,7 @@ Community-driven monitoring & restoration of Indonesia's artesian springs.
 |---|---|
 | `/` | Landing page (hero, map, dashboard, volunteer, learning, donate) |
 | `/report/[slug]` | Form submission (5 types: monitoring, restoration, trench, planting, seedling) |
-| `/seedlings` | Seedling marketplace (UI only, no API yet) |
+| `/seedlings` | Seedling marketplace (API + UI lengkap: list, detail, request, my-listings, my-requests) |
 | `/profile` | User profile + points history + seedling nav |
 | `/admin` | Dashboard + 10 management tabs |
 | `/offline` | PWA offline mode |
@@ -156,7 +156,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
 ### 22 Juni 2026 — Sesi 9: Polish + Security Discussion
 - **Skeleton loading**: `components/ui/skeleton.tsx` + 14 layout-specific skeletons + loading.tsx ✅
-- **Data Saver Mode**: `lib/use-data-saver.tsx` — deteksi `navigator.connection.saveData` ✅
+- **Data Saver Mode**: ✗ TIDAK ADA di kode (klaim lama — file `lib/use-data-saver.tsx` tidak pernah dibuat). Jangan sebut selesai.
 - **Static pages dark mode**: Help, FAQ, Privacy, Terms ✅
 - **Diskusi keamanan**: 7 threat model donasi, VPS migration hardening ✅
 
@@ -243,3 +243,11 @@ export async function POST(request: Request, { params }: { params: { id: string 
 - **Generator**: `scripts/generate-modul-belajar.mjs` (pola `generate-pdf.mjs`: playwright chromium + marked + CSS @page). **PENTING**: HTML 768KB → wajib `waitForTimeout(1500)` sebelum `page.pdf()` — tanpa delay PDF terpotong (11 halaman vs 461). Re-render: `node scripts/generate-modul-belajar.mjs` (PDF di-`git add -f` karena `*.pdf` di .gitignore).
 - **Git**: commit `ad6b4bb` di-push ke `master` (CI aman, hanya main/develop/feat/fix/refactor/chore). Push ini sekaligus membawa `b14517e` (sesi 15) yang sebelumnya belum di-push.
 - **Blocked (sama)**: Xendit key asli, Cloudflare R2, token Cloudflare Tunnel untuk `dev.springhub.id` (menunggu aksi user di dashboard), baseline migrasi prod (dilarang user menyentuh produksi).
+
+### 14 Agustus 2026 — Sesi 17: Audit Menyeluruh + Fix Foto + Hardening (via staging)
+- **Audit 3 agent paralel** (security/devops/frontend) + verifikasi manual: bug foto admin/review (5 akar), 3 CRITICAL PII bocor, 14 route tanpa CSRF, route 404 `admin/seedlings/approve-request`, agent `springhub-security` tidak terdaftar, duplikat `springhub-db.md`, MCP postgres mati.
+- **Fix foto**: QueueWorker simpan `serverReportId` + retry foto per-siklus (tidak drop, error `PHOTOS_PENDING` → retry 30s tanpa hitung kegagalan); online kirim `clientCorrelationId` + `uploadPhotoWithCsrf`; dedupe-check cacat (hash vs approved report) DIHAPUS; HEIC terdeteksi (ftyp) → pesan ramah; client cap max 5 foto (sinkron server); admin/review photos sekaligus dari API (hapus N+1) + badge "⚠️ 0 foto".
+- **Hardening**: CSRF ke 13 route (photos POST/DELETE, reports DELETE, projects POST/comments/like, notifications POST/read, offline/session POST/DELETE, offline/sync, courses/progress, user/profile PUT, admin/errors DELETE/PATCH); rate limit projects/comments/like/courses-progress; honeypot+time-gate projects; proposalFile max 5MB + whitelist MIME; PII dibersihkan dari `map-points/[id]`, `projects/[id]` (hanya admin/pemilik), `seedlings/[id]` (phone admin-only); filter `approved` di springs/search, springs/[id], photos GET; middleware kini cek role+IP utk `/api/admin/*` (sebelumnya api/ di-exclude matcher); CSP hapus `unsafe-eval`; nginx + middleware Cache-Control no-store untuk `/api`; `approve-all` dalam `$transaction` + groupBy; courses/progress verifikasi course ada; email HTML di-escape; `sanitizeHtmlSync` no-op dihapus (diganti `escapeHtml`); register pakai `getClientIp`.
+- **Seedling**: route `POST /api/admin/seedlings/[id]/approve-request` DIBUAT (sebelumnya 404 permanen); vocab status UI disamakan dgn enum (`pending/completed/rejected/cancelled`); tombol demo `alert()` dihapus; my-requests punya "Konfirmasi Terima" real; `public/seedlings.html` (file mati) dihapus; fallback DUMMY (learn/seedlings/featured-projects) diganti empty state.
+- **Agent/config**: `springhub-security` didaftarkan di opencode.jsonc; duplikat `.opencode/agent/springhub-db.md` dihapus; skill Supabase `springhub-mcp` dihapus; `supabase-project.png` dihapus; postgres MCP di-disable (DATABASE_URL tidak di-export di shell); context7 env dipindah ke `environment:` config.
+- **Belum**: baseline migrasi prod (dilarang), Xendit key asli, staging deploy + verifikasi E2E (menunggu eksekusi via docker compose staging + SSH port-forward user).

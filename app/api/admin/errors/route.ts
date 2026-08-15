@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { auditLog } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -68,23 +70,38 @@ export async function GET(request: Request) {
  * Hapus semua error yang sudah dibaca (read = true).
  */
 export async function DELETE(request: Request) {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  try {
+    // CSRF
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
+    }
+
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    const profile = await prisma.profile.findUnique({
+      where: { id: session.userId },
+      select: { role: true },
+    });
+
+    if (!profile || profile.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const result = await prisma.appError.deleteMany({
+      where: { read: true },
+    });
+
+    auditLog("delete errors", `Hapus ${result.count} error yang sudah dibaca`);
+    return NextResponse.json({ deleted: result.count });
+  } catch (error) {
+    console.error("Admin errors DELETE error:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: "Gagal menghapus error log" },
+      { status: 500 }
+    );
   }
-
-  const profile = await prisma.profile.findUnique({
-    where: { id: session.userId },
-    select: { role: true },
-  });
-
-  if (!profile || profile.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  const result = await prisma.appError.deleteMany({
-    where: { read: true },
-  });
-
-  return NextResponse.json({ deleted: result.count });
 }

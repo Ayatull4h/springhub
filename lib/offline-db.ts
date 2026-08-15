@@ -151,6 +151,12 @@ export type QueuedSubmission = {
   state?: "queued" | "failed";
   /** Total kegagalan — cap MAX_FAILED_ATTEMPTS (20), lalu tampil di UI */
   failureCount?: number;
+  /**
+   * ID report yang sudah berhasil dibuat di server. Setelah laporan tersimpan,
+   * foto yang gagal tetap antre dan di-retry pada siklus berikutnya via ID ini
+   * (tidak perlu POST /api/reports lagi).
+   */
+  serverReportId?: string;
 };
 
 type DBSchema = {

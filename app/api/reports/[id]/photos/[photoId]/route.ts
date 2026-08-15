@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { getGuestId } from "@/lib/guest";
 import { deletePhoto } from "@/lib/upload-photo";
+import { verifyCsrfToken } from "@/lib/csrf";
 
 /**
  * DELETE /api/reports/[id]/photos/[photoId]
@@ -11,10 +12,16 @@ import { deletePhoto } from "@/lib/upload-photo";
  * Hanya pemilik laporan atau admin yang bisa hapus.
  */
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: { id: string; photoId: string } }
 ) {
   try {
+    // CSRF
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
+    }
+
     const session = await getSession();
     const guestId = getGuestId();
 

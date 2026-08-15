@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
+import { apiLimiter } from "@/lib/rate-limit";
 
 // GET /api/courses/progress — progress user yang login
 export async function GET() {
@@ -26,29 +28,58 @@ export async function GET() {
 
 // PUT /api/courses/progress — update progress modul
 export async function PUT(request: Request) {
-  const session = await getSession();
-  if (!session?.userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
   try {
+    // CSRF
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
+    }
+
+    const session = await getSession();
+    if (!session?.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate limit — cegah klaim poin massal
+    const limitResult = await apiLimiter.check(`course-progress:${session.userId}`);
+    if (!limitResult.allowed) {
+      return NextResponse.json(
+        { error: "Terlalu banyak permintaan. Silakan coba lagi nanti." },
+        { status: 429 }
+      );
+    }
+
     const { courseId, courseSlug, completedModules, totalModules } =
       await request.json();
-    const completed = completedModules >= totalModules;
+
+    // H-5: verifikasi course benar-benar ada + slug cocok (cegah klaim poin kursus fiktif)
+    const course = await prisma.course.findFirst({
+      where: { OR: [{ id: courseId || "" }, { slug: courseSlug || "" }] },
+      select: { id: true, slug: true },
+    });
+    if (!course) {
+      return NextResponse.json({ error: "Course tidak ditemukan" }, { status: 404 });
+    }
+    const actualSlug = course.slug;
+    const actualCourseId = course.id;
+    const total = Math.min(Math.max(Number(totalModules) || 1, 1), 100);
+    const completedCount = Math.min(Math.max(Number(completedModules) || 0, 0), total);
+    const completed = completedCount >= total;
 
     const progress = await prisma.coursesProgress.upsert({
       where: {
         userId_courseSlug: {
           userId: session.userId,
-          courseSlug: courseSlug || "",
+          courseSlug: actualSlug,
         },
       },
-      update: { completedModules, totalModules, completed, courseId },
+      update: { completedModules: completedCount, totalModules: total, completed, courseId: actualCourseId },
       create: {
         userId: session.userId,
-        courseId: courseId || "",
-        courseSlug: courseSlug || "",
-        completedModules,
-        totalModules,
+        courseId: actualCourseId,
+        courseSlug: actualSlug,
+        completedModules: completedCount,
+        totalModules: total,
         completed,
       },
     });
@@ -59,7 +90,7 @@ export async function PUT(request: Request) {
       const existing = await prisma.pointsLog.findFirst({
         where: {
           userId: session.userId,
-          reason: { contains: `Course ${courseSlug}` },
+          reason: { contains: `Course ${actualSlug}` },
         },
       });
       if (!existing) {
@@ -72,8 +103,8 @@ export async function PUT(request: Request) {
           data: {
             userId: session.userId,
             amount: coursePoints,
-            reason: `Course ${courseSlug} completed`,
-            metadata: JSON.stringify({ courseSlug }),
+            reason: `Course ${actualSlug} completed`,
+            metadata: JSON.stringify({ courseSlug: actualSlug }),
           },
         });
         await prisma.profile.update({

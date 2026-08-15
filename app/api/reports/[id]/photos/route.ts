@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth";
 import { getGuestId } from "@/lib/guest";
 import { uploadPhoto } from "@/lib/upload-photo";
 import { buildPhotoUrls } from "@/lib/photo-url";
+import { verifyCsrfToken } from "@/lib/csrf";
 
 /**
  * POST /api/reports/[id]/photos
@@ -23,6 +24,12 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    // CSRF
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
+    }
+
     const session = await getSession();
     const guestId = getGuestId();
 
@@ -58,7 +65,7 @@ export async function POST(
 
     const formData = await request.formData();
     const file = formData.get("photo") as File | null;
-    const fieldId = (formData.get("field_id") as string) || "photo";
+    const fieldId = ((formData.get("field_id") as string) || "photo").slice(0, 100);
 
     if (!file) {
       return NextResponse.json(
@@ -102,13 +109,36 @@ export async function POST(
 
 /**
  * GET /api/reports/[id]/photos
- * List all photos belonging to a report (publicly accessible).
+ * List photos milik laporan. Publik hanya bisa lihat laporan approved;
+ * pemilik laporan atau admin bisa lihat semua status.
  */
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getSession();
+    const guestId = getGuestId();
+
+    const report = await prisma.report.findUnique({
+      where: { id: params.id },
+      select: { userId: true, guestId: true, status: true },
+    });
+
+    if (!report) {
+      return NextResponse.json({ error: "Report not found" }, { status: 404 });
+    }
+
+    // Publik: hanya laporan approved. Pemilik/admin: semua status.
+    const isOwner =
+      (session?.userId && report.userId === session.userId) ||
+      (!session?.userId && guestId && report.guestId === guestId);
+    const isAdmin = session?.role === "admin";
+
+    if (report.status !== "approved" && !isOwner && !isAdmin) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
     const photos = await prisma.reportPhoto.findMany({
       where: { reportId: params.id },
       orderBy: { createdAt: "asc" },

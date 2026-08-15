@@ -13,7 +13,8 @@ export async function GET(request: Request) {
 
     const springs = await prisma.spring.findMany({
       where: {
-        status: { in: ["pending", "active"] },
+        // C-2: publik hanya melihat spring yang sudah disetujui
+        status: "active",
         name: { contains: q, mode: "insensitive" },
       },
       select: {

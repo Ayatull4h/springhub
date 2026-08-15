@@ -1,6 +1,7 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "plan",
+  "model": "opencode-go/deepseek-v4-flash",
 
   "instructions": ["AGENTS.md"],
 
@@ -65,6 +66,11 @@
       "mode": "subagent",
       "description": "Vitest, Playwright, React Testing Library — QA & testing",
       "permission": { "edit": "allow", "bash": "allow" }
+    },
+    "springhub-security": {
+      "mode": "subagent",
+      "description": "Security auditor untuk SpringHub — RLS, enkripsi, SQL injection, XSS, CSRF, rate limit, auth, data privacy, secrets scan",
+      "permission": { "edit": "allow", "bash": "allow" }
     }
   },
 
@@ -91,19 +97,20 @@
     },
     "context7": {
       "type": "local",
-      "command": ["node_modules/.bin/context7-mcp", "--api-key", "ctx7sk-4a75b399-9229-45e9-9398-cb9b44bb09d0"],
-      "enabled": true
+      "command": ["node_modules/.bin/context7-mcp", "--api-key", "{env:CTX7_API_KEY}"],
+      "enabled": true,
+      "environment": { "CTX7_API_KEY": "{env:CTX7_API_KEY}" }
     },
     "supermemory": {
       "type": "remote",
       "url": "https://mcp.supermemory.ai/mcp",
       "enabled": true,
-      "headers": { "Authorization": "Bearer sm_7St9xgpRkBWeYdXsBXfvR4_MVf2IYsQAl0CoHZvetbgufewRj4loobuDezhLMTXCqQc1GHdIlpVYs19AYgi4qc8" }
+      "headers": { "Authorization": "Bearer {env:SUPERMEMORY_TOKEN}" }
     },
     "postgres": {
       "type": "local",
       "command": ["npx", "-y", "@anthropic/mcp-server-postgres", "{env:DATABASE_URL}"],
-      "enabled": true
+      "enabled": false
     }
   }
 }

@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sprout, Check, X, CheckCheck, Clock, MessageCircle, Package, Loader2 } from "lucide-react";
+import { Sprout, X, CheckCheck, Clock, MessageCircle, Package, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 const STATUS: Record<string, { cls: string; icon: typeof Clock; label: string; border: string }> = {
   pending:   { cls: "bg-amber-50 text-amber-700", icon: Clock, label: "Menunggu", border: "var(--amber-500)" },
-  approved:  { cls: "bg-green-50 text-green-700", icon: Check, label: "Disetujui", border: "var(--green-500)" },
-  fulfilled: { cls: "bg-blue-50 text-blue-600", icon: CheckCheck, label: "Selesai", border: "var(--blue-500)" },
-  rejected:  { cls: "bg-rose-50 text-rose-600", icon: X, label: "Ditolak", border: "var(--slate-300)" },
+  completed: { cls: "bg-emerald-50 text-emerald-700", icon: CheckCheck, label: "Selesai", border: "var(--green-500)" },
+  rejected:  { cls: "bg-rose-50 text-rose-600", icon: X, label: "Ditolak", border: "var(--rose-500)" },
+  cancelled: { cls: "bg-slate-100 text-slate-500", icon: X, label: "Dibatalkan", border: "var(--slate-300)" },
 };
 
 function timeAgo(date: string): string {
@@ -104,19 +104,9 @@ export default function MyListingsPage() {
                       </div>
                       <div className="flex gap-1.5">
                         {req.status === "pending" && (
-                          <>
-                            <button className="btn-sm btn-soft inline-flex items-center gap-1" onClick={() => alert("Disetujui (demo)")}>
-                              <Check className="h-3 w-3" />Setujui
-                            </button>
-                            <button className="btn-sm btn-danger inline-flex items-center gap-1" onClick={() => alert("Ditolak (demo)")}>
-                              <X className="h-3 w-3" />Tolak
-                            </button>
-                          </>
-                        )}
-                        {req.status === "approved" && (
-                          <button className="btn-sm btn-blue inline-flex items-center gap-1" onClick={() => alert("Selesai (demo)")}>
-                            <CheckCheck className="h-3 w-3" />Selesai
-                          </button>
+                          <span className="text-[11px] text-ink-muted">
+                            Menunggu peminta konfirmasi penerimaan
+                          </span>
                         )}
                       </div>
                     </div>

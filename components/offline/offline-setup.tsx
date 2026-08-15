@@ -469,18 +469,23 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
     });
 
     // Create offline session on server
-    fetch("/api/offline/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        selectedForms: Array.from(selectedForms),
-        mode,
-        radiusKm: selectedRadius,
-        qualityLevel: selectedQuality,
-      }),
-    }).catch(() => {
-      // Silently fail — session is optional, survey works offline
-    });
+    fetch("/api/csrf")
+      .then(r => r.json())
+      .then(({ token }) =>
+        fetch("/api/offline/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...(token ? { "x-csrf-token": token } : {}) },
+          body: JSON.stringify({
+            selectedForms: Array.from(selectedForms),
+            mode,
+            radiusKm: selectedRadius,
+            qualityLevel: selectedQuality,
+          }),
+        })
+      )
+      .catch(() => {
+        // Silently fail — session is optional, survey works offline
+      });
 
     onComplete();
   };

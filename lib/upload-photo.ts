@@ -28,6 +28,14 @@ function detectMimeFromBuffer(buffer: Buffer): string {
   if (buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x38) return "image/gif";
   // BMP: 42 4D
   if (buffer[0] === 0x42 && buffer[1] === 0x4d) return "image/bmp";
+  // HEIC/HEIF: ISO BMFF box (ftyp) — bytes 4-7 = "ftyp", major brand di bytes 8-11
+  if (
+    buffer.length >= 12 &&
+    buffer[4] === 0x66 && buffer[5] === 0x74 && buffer[6] === 0x79 && buffer[7] === 0x70 &&
+    /^heic|^heix|^hevc|^mif1|^msf1|^avif/.test(buffer.subarray(8, 12).toString("latin1"))
+  ) {
+    return "image/heic";
+  }
   // Default
   return "image/jpeg";
 }
@@ -47,6 +55,11 @@ export async function uploadPhoto(
   const detectedMime = detectMimeFromBuffer(initialBuffer);
   const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
   if (!allowedTypes.includes(detectedMime)) {
+    if (detectedMime === "image/heic") {
+      throw new Error(
+        "Format HEIC/HEIF (iPhone) belum didukung. Ubah ke JPG dulu di Pengaturan Kamera (Format → Paling Kompatibel), lalu coba lagi."
+      );
+    }
     throw new Error(
       `Format foto harus JPG, PNG, atau WebP (terdeteksi: ${detectedMime})`
     );

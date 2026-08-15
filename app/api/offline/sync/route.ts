@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { verifyCsrfToken } from "@/lib/csrf";
 export const dynamic = "force-dynamic";
 
 /**
@@ -10,6 +11,12 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(request: Request) {
   try {
+    // CSRF
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
+    }
+
     const session = await getSession();
     if (!session?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,6 +24,29 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const { trackingPoints, totalDistance, springCount } = body;
+
+    // M-5: batasi jumlah titik + validasi koordinat (cegah DB bloat/DoS)
+    const points = Array.isArray(trackingPoints) ? trackingPoints.slice(0, 500) : [];
+    for (const tp of points) {
+      if (typeof tp.lat !== "number" || typeof tp.lng !== "number") {
+        return NextResponse.json(
+          { error: "Data titik tidak valid" },
+          { status: 400 }
+        );
+      }
+      if (tp.lat < -90 || tp.lat > 90 || tp.lng < -180 || tp.lng > 180) {
+        return NextResponse.json(
+          { error: "Koordinat di luar rentang valid" },
+          { status: 400 }
+        );
+      }
+      if (tp.recordedAt && isNaN(new Date(tp.recordedAt).getTime())) {
+        return NextResponse.json(
+          { error: "Waktu titik tidak valid" },
+          { status: 400 }
+        );
+      }
+    }
 
     // Get active session
     const activeSession = await prisma.offlineSession.findFirst({
@@ -28,17 +58,17 @@ export async function POST(request: Request) {
     }
 
     // Save tracking points
-    if (Array.isArray(trackingPoints) && trackingPoints.length > 0) {
+    if (points.length > 0) {
       await prisma.trackingPoint.createMany({
-        data: trackingPoints.map((tp: any) => ({
+        data: points.map((tp: any) => ({
           sessionId: activeSession.id,
           lat: tp.lat,
           lng: tp.lng,
-          accuracy: tp.accuracy ?? null,
+          accuracy: typeof tp.accuracy === "number" ? tp.accuracy : null,
           // Dukungan field markerType (frontend) + isSpringMarker/springName (backend)
           isSpringMarker: tp.isSpringMarker ?? (tp.markerType === "spring"),
           springName: tp.springName ?? (tp.markerType === "spring" ? (tp.name ?? null) : null),
-          recordedAt: new Date(tp.recordedAt),
+          recordedAt: tp.recordedAt ? new Date(tp.recordedAt) : new Date(),
         })),
         skipDuplicates: true,
       });
@@ -48,14 +78,14 @@ export async function POST(request: Request) {
     await prisma.offlineSession.update({
       where: { id: activeSession.id },
       data: {
-        totalDistance: totalDistance ?? null,
+        totalDistance: typeof totalDistance === "number" ? totalDistance : null,
       },
     });
 
     return NextResponse.json({
       success: true,
       stats: {
-        trackingPoints: trackingPoints?.length ?? 0,
+        trackingPoints: points.length,
         springCount: springCount ?? 0,
         totalDistance: totalDistance ?? null,
       },

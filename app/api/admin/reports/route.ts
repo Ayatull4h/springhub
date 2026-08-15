@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
+import { buildPhotoUrls } from "@/lib/photo-url";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
@@ -33,7 +34,7 @@ export async function GET(request: Request) {
           user: { select: { id: true, username: true, email: true } },
           reviewedBy: { select: { username: true } },
           pointsLogs: { select: { amount: true } },
-          photos: { select: { id: true, storagePath: true }, take: 1, orderBy: { createdAt: "asc" } },
+          photos: { select: { id: true, storagePath: true, fieldId: true }, orderBy: { createdAt: "asc" } },
           _count: { select: { photos: true } },
         },
       }),
@@ -42,6 +43,7 @@ export async function GET(request: Request) {
 
     const mapped = reports.map((r) => ({
       ...r,
+      photos: buildPhotoUrls(r.photos),
       submitter: r.user
         ? { type: "user", id: r.user.id, name: r.user.username, email: r.user.email }
         : { type: "guest", id: r.guestId, name: `Guest (${r.guestId?.slice(0, 8)}...)`, email: null },

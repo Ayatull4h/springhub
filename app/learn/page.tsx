@@ -22,54 +22,6 @@ type Course = {
   modules: Module[];
 };
 
-const DUMMY_COURSES: Course[] = [
-  {
-    id: "dummy-1",
-    slug: "dasar-konservasi-mata-air",
-    title: "Dasar-Dasar Konservasi Mata Air",
-    description: "Pelajari konsep fundamental konservasi mata air, siklus hidrologi, dan pentingnya menjaga sumber air bersih di Indonesia.",
-    level: "Pemula",
-    duration: "45 menit",
-    icon: "book",
-    modules: [
-      { id: "m1", title: "Apa Itu Mata Air?", sortOrder: 1 },
-      { id: "m2", title: "Siklus Hidrologi", sortOrder: 2 },
-      { id: "m3", title: "Ancaman terhadap Mata Air", sortOrder: 3 },
-    ],
-  },
-  {
-    id: "dummy-2",
-    slug: "teknik-restorasi-spring",
-    title: "Teknik Restorasi Mata Air",
-    description: "Panduan langkah demi langkah untuk merestorasi mata air yang rusak, termasuk teknik pengerukan dan penataan area sekitar.",
-    level: "Menengah",
-    duration: "60 menit",
-    icon: "book",
-    modules: [
-      { id: "m1", title: "Identifikasi Kerusakan", sortOrder: 1 },
-      { id: "m2", title: "Teknik Pengerukan", sortOrder: 2 },
-      { id: "m3", title: "Penataan Bibir Mata Air", sortOrder: 3 },
-      { id: "m4", title: "Pasca-Restorasi", sortOrder: 4 },
-    ],
-  },
-  {
-    id: "dummy-3",
-    slug: "monitoring-berbasis-komunitas",
-    title: "Monitoring Berbasis Komunitas",
-    description: "Cara melakukan monitoring mata air secara partisipatif bersama masyarakat, termasuk pengukuran debit dan kualitas air.",
-    level: "Lanjutan",
-    duration: "90 menit",
-    icon: "book",
-    modules: [
-      { id: "m1", title: "Pengantar Monitoring", sortOrder: 1 },
-      { id: "m2", title: "Alat dan Bahan", sortOrder: 2 },
-      { id: "m3", title: "Pengukuran Debit Air", sortOrder: 3 },
-      { id: "m4", title: "Uji Kualitas Air", sortOrder: 4 },
-      { id: "m5", title: "Pelaporan Data", sortOrder: 5 },
-    ],
-  },
-];
-
 export default function LearnPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,11 +33,9 @@ export default function LearnPage() {
       .then((data) => {
         if (data.courses?.length) {
           setCourses(data.courses);
-        } else {
-          setCourses(DUMMY_COURSES);
         }
       })
-      .catch(() => setCourses(DUMMY_COURSES))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
@@ -107,6 +57,11 @@ export default function LearnPage() {
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-brand-600" />
+          </div>
+        ) : courses.length === 0 ? (
+          <div className="flex flex-col items-center py-16 text-center">
+            <BookOpen className="h-10 w-10 text-brand-300" />
+            <p className="mt-3 text-sm text-ink-muted">Belum ada kursus. Nantikan modul belajar segera.</p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

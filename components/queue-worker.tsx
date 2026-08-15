@@ -67,12 +67,62 @@ export function QueueWorker() {
     return "";
   }
 
+  /** Helper: upload semua foto item ke reportId — return sisa foto yang gagal */
+  async function uploadItemPhotos(
+    item: QueuedSubmission,
+    reportId: string
+  ): Promise<Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>> {
+    const remaining: typeof item.photoBlobs = [];
+    for (const pb of item.photoBlobs) {
+      try {
+        const photoCsrf = await getCsrfToken();
+        const blob = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
+        const photoPayload = new FormData();
+        photoPayload.append("photo", blob, pb.fileName || `photo-${Date.now()}.jpg`);
+        photoPayload.append("field_id", pb.fieldId);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        try {
+          const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
+            method: "POST",
+            headers: { ...(photoCsrf ? { "x-csrf-token": photoCsrf } : {}) },
+            body: photoPayload,
+            signal: controller.signal,
+          });
+          if (!photoRes.ok) remaining.push(pb);
+        } catch {
+          remaining.push(pb);
+        } finally {
+          clearTimeout(timeoutId);
+        }
+      } catch {
+        remaining.push(pb);
+      }
+    }
+    return remaining;
+  }
+
   /** Helper: submit satu item dari queue ke server — return { ok, error? } */
   async function submitQueueItem(item: QueuedSubmission): Promise<{ ok: boolean; error?: string }> {
     // Ambil CSRF token just-in-time (cookie + header harus cocok — lihat lib/csrf.ts)
     const csrfToken = await getCsrfToken();
 
     try {
+      // ── Laporan sudah tersimpan di server? Upload foto saja ─────────
+      if (item.serverReportId) {
+        const remaining = await uploadItemPhotos(item, item.serverReportId);
+        if (remaining.length > 0) {
+          // Simpan sisa foto untuk retry siklus berikutnya (tidak di-drop)
+          await offlineDB.updateQueued(item.id, {
+            photoBlobs: remaining,
+            serverReportId: item.serverReportId,
+          });
+          return { ok: false, error: "PHOTOS_PENDING" };
+        }
+        return { ok: true };
+      }
+
       const formData = new FormData();
       formData.set("form_slug", item.formSlug);
       if (item.clientCorrelationId) formData.set("clientCorrelationId", item.clientCorrelationId);
@@ -116,59 +166,22 @@ export function QueueWorker() {
       }
 
       const data = await res.json();
+      const reportId = data.report?.id;
 
-      // Upload photos AFTER report sukses
-      if (data.report?.id && item.photoBlobs?.length > 0) {
-        const reportId = data.report.id;
-        for (let attempt = 0; attempt < 3; attempt++) {
-          const remaining: typeof item.photoBlobs = [];
-          for (const pb of item.photoBlobs) {
-            try {
-              const photoCsrf = await getCsrfToken();
-              const blob = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
-              const photoPayload = new FormData();
-              photoPayload.append("photo", blob, pb.fileName || `photo-${Date.now()}.jpg`);
-              photoPayload.append("field_id", pb.fieldId);
-
-              const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
-                method: "POST",
-                headers: { ...(photoCsrf ? { "x-csrf-token": photoCsrf } : {}) },
-                body: photoPayload,
-                signal: (() => { const c = new AbortController(); setTimeout(() => c.abort(), 30000); return c.signal; })(),
-              });
-              if (!photoRes.ok) remaining.push(pb);
-            } catch {
-              remaining.push(pb);
-            }
-          }
-          item.photoBlobs = remaining;
-          if (remaining.length === 0) break;
-          await new Promise(r => setTimeout(r, 1000));
+      // ── Upload foto: gagal → simpan serverReportId + retry siklus berikutnya ──
+      if (reportId && item.photoBlobs?.length > 0) {
+        const remaining = await uploadItemPhotos(item, reportId);
+        if (remaining.length > 0) {
+          await offlineDB.updateQueued(item.id, {
+            photoBlobs: remaining,
+            serverReportId: reportId,
+          });
+          return { ok: false, error: "PHOTOS_PENDING" };
         }
+      } else if (reportId) {
+        // Report tanpa foto (atau foto sudah tidak ada) — tandai tersimpan
+        await offlineDB.updateQueued(item.id, { serverReportId: reportId });
       }
-
-      // Bersihin pending-reports / drafts yg mungkin tersisa (pakai item.id yg sama)
-      try { await offlineDB.deleteReport(item.id); } catch {}
-      try { await offlineDB.deleteDraft(item.id); } catch {}
-
-      // Cegah duplikat: cek API apakah report dengan hash fieldData yang sama sudah ada
-      try {
-        const hashFields = JSON.stringify(item.fieldData);
-        const checkRes = await fetch(`/api/reports?limit=1&formSlug=${item.formSlug}`);
-        const checkData = await checkRes.json();
-        if (checkData.reports?.length > 0) {
-          const existing = checkData.reports[0];
-          try {
-            const existingFd = typeof existing.fieldData === "string" ? JSON.parse(existing.fieldData) : existing.fieldData;
-            const existingHash = JSON.stringify(existingFd);
-            if (existingHash === hashFields) {
-              // Duplikat terdeteksi — hapus dari queue tanpa submit
-              await offlineDB.deleteQueued(item.id);
-              return { ok: true };
-            }
-          } catch {}
-        }
-      } catch {}
 
       return { ok: true };
     } catch (err) {
@@ -187,7 +200,13 @@ export function QueueWorker() {
       const result = await submitQueueItem(item);
       if (result.ok) {
         await offlineDB.deleteQueued(item.id);
+        // Bersihin pending-reports / drafts yg mungkin tersisa (pakai item.id yg sama)
+        try { await offlineDB.deleteReport(item.id); } catch {}
+        try { await offlineDB.deleteDraft(item.id); } catch {}
         successCount++;
+      } else if (result.error === "PHOTOS_PENDING") {
+        // Foto belum semua terkirim — retry cepat (30 detik), jangan hitung sebagai kegagalan
+        await offlineDB.updateQueued(item.id, { nextRetryAt: Date.now() + 30_000 });
       } else {
         const isPermanent = result.error?.startsWith("HTTP 4") || /Invalid CSRF|Validasi gagal|Form tidak dikenal|Terlalu banyak/.test(result.error || "");
         await offlineDB.markQueuedAttempted(item.id, { error: result.error, permanent: isPermanent });

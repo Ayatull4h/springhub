@@ -17,9 +17,6 @@ type RequestItem = {
 
 const LBL: Record<string, string> = {
   pending: "Menunggu",
-  admin_approved: "Admin Setuju",
-  owner_approved: "Pemilik Setuju",
-  given: "Diberikan",
   completed: "Selesai",
   rejected: "Ditolak",
   cancelled: "Dibatalkan",
@@ -27,9 +24,6 @@ const LBL: Record<string, string> = {
 
 const CLS: Record<string, string> = {
   pending: "bg-amber-50 text-amber-700",
-  admin_approved: "bg-blue-50 text-blue-700",
-  owner_approved: "bg-green-50 text-green-700",
-  given: "bg-purple-50 text-purple-700",
   completed: "bg-emerald-50 text-emerald-700",
   rejected: "bg-red-50 text-red-700",
   cancelled: "bg-slate-100 text-slate-600",
@@ -38,30 +32,47 @@ const CLS: Record<string, string> = {
 export default function AdminSeedlingRequestsPage() {
   const [requests, setRequests] = useState<RequestItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [msg, setMsg] = useState("");
+  const [processing, setProcessing] = useState<Record<string, boolean>>({});
 
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const csrf = await fetch("/api/csrf").then(r => r.json());
-      const res = await fetch("/api/admin/seedlings/requests", {
-        headers: { "x-csrf-token": csrf.token },
-      });
+      const res = await fetch("/api/admin/seedlings/requests");
+      if (!res.ok) {
+        setMsg("Gagal memuat permintaan");
+        return;
+      }
       const d = await res.json();
       setRequests(d.requests || []);
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error(e); setMsg("Gagal memuat permintaan"); }
     setLoading(false);
   };
 
   useEffect(() => { fetchRequests(); }, []);
 
   const handleAdminApprove = async (seedlingId: string, requestId: string) => {
-    const csrf = await fetch("/api/csrf").then(r => r.json());
-    await fetch(`/api/admin/seedlings/${seedlingId}/approve-request`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-csrf-token": csrf.token },
-      body: JSON.stringify({ requestId }),
-    });
-    fetchRequests();
+    setProcessing((p) => ({ ...p, [requestId]: true }));
+    setMsg("");
+    try {
+      const { token } = await fetch("/api/csrf").then(r => r.json());
+      const res = await fetch(`/api/admin/seedlings/${seedlingId}/approve-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-csrf-token": token },
+        body: JSON.stringify({ requestId }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setMsg(d.error || "Gagal menyetujui permintaan");
+      } else {
+        setMsg("Permintaan disetujui!");
+        fetchRequests();
+      }
+    } catch (e) {
+      console.error(e);
+      setMsg("Gagal menyetujui permintaan");
+    }
+    setProcessing((p) => ({ ...p, [requestId]: false }));
   };
 
   return (
@@ -69,6 +80,12 @@ export default function AdminSeedlingRequestsPage() {
       <h1 className="text-xl font-bold text-ink flex items-center gap-2 mb-4">
         <Sprout className="h-5 w-5 text-green-600" /> Permintaan Bibit
       </h1>
+
+      {msg && (
+        <p className="mb-3 rounded-md bg-brand-50 px-3 py-2 text-xs text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+          {msg}
+        </p>
+      )}
 
       {loading ? <p className="text-ink-muted">Memuat...</p> : requests.length === 0 ? (
         <p className="text-ink-muted">Belum ada permintaan</p>
@@ -104,8 +121,9 @@ export default function AdminSeedlingRequestsPage() {
                   <td className="py-2 px-2">
                     {r.status === "pending" && (
                       <button onClick={() => handleAdminApprove(r.seedlingId, r.id)}
-                        className="px-2 py-1 text-xs rounded bg-green-500 text-white hover:bg-green-600">
-                        Setujui
+                        disabled={processing[r.id]}
+                        className="px-2 py-1 text-xs rounded bg-green-500 text-white hover:bg-green-600 disabled:opacity-50">
+                        {processing[r.id] ? "Memproses..." : "Setujui"}
                       </button>
                     )}
                   </td>

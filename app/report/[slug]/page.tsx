@@ -246,42 +246,6 @@ export default function ReportFormPage() {
     );
   }
 
-  async function uploadReportPhotos(
-    reportId: string,
-    formData: FormData,
-    fields: FormField[],
-  ): Promise<string[]> {
-    const errors: string[] = [];
-    const photoFieldIds = fields.filter((f: FormField) => f.type === "photo").map((f: FormField) => f.id);
-    for (const fieldId of photoFieldIds) {
-      const files = formData.getAll(fieldId);
-      for (const file of files) {
-        if (file && file instanceof File && file.size > 0) {
-          try {
-            const photoPayload = new FormData();
-            photoPayload.append("photo", file);
-            photoPayload.append("field_id", fieldId);
-            const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
-              method: "POST",
-              body: photoPayload,
-            });
-            if (!photoRes.ok) {
-              const photoData = await photoRes.json().catch(() => null);
-              errors.push(
-                (photoData?.error || "")
-                  ? `Foto ${file.name}: ${photoData?.error}`
-                  : `Foto ${file.name} gagal diupload`
-              );
-            }
-          } catch {
-            errors.push(`Foto ${file.name} gagal — cek koneksi`);
-          }
-        }
-      }
-    }
-    return errors;
-  }
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!activeForm) return;
@@ -300,7 +264,7 @@ export default function ReportFormPage() {
       }
     }
 
-    // ── Validasi: total min 3 foto ─────────────────────────────────────
+    // ── Validasi: total min 3, max 5 foto ──────────────────────────────
     const photoFieldIds = activeForm.fields
       .filter((f: FormField) => f.type === "photo")
       .map((f: FormField) => f.id);
@@ -322,11 +286,56 @@ export default function ReportFormPage() {
       setLoading(false);
       return;
     }
+    if (totalPhotos > 5) {
+      setError(`Maksimal 5 foto per laporan. Saat ini: ${totalPhotos} foto. Hapus sebagian lalu kirim ulang.`);
+      setLoading(false);
+      return;
+    }
 
     formData.set("form_slug", activeForm.slug);
     formData.set("_submit_time", pageLoadTime.toString());
     formData.set("_website", honeypot);
     formData.set("_captured_at", capturedAt);
+
+    // Idempotency key: UUID tetap untuk sesi form ini — server dedupe retry
+    if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+      formData.set("clientCorrelationId", crypto.randomUUID());
+    }
+
+    // Upload foto dengan CSRF header (route sekarang mewajibkan CSRF)
+    const uploadPhotoWithCsrf = async (reportId: string, fd: FormData, fields: FormField[]) => {
+      const { token: csrf } = await fetch("/api/csrf").then(r => r.json());
+      const photoFieldIds = fields.filter((f: FormField) => f.type === "photo").map((f: FormField) => f.id);
+      const errors: string[] = [];
+      for (const fieldId of photoFieldIds) {
+        const files = fd.getAll(fieldId);
+        for (const file of files) {
+          if (file && file instanceof File && file.size > 0) {
+            try {
+              const photoPayload = new FormData();
+              photoPayload.append("photo", file);
+              photoPayload.append("field_id", fieldId);
+              const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
+                method: "POST",
+                headers: csrf ? { "x-csrf-token": csrf } : {},
+                body: photoPayload,
+              });
+              if (!photoRes.ok) {
+                const photoData = await photoRes.json().catch(() => null);
+                errors.push(
+                  photoData?.error
+                    ? `Foto ${file.name}: ${photoData.error}`
+                    : `Foto ${file.name} gagal diupload`
+                );
+              }
+            } catch {
+              errors.push(`Foto ${file.name} gagal — cek koneksi`);
+            }
+          }
+        }
+      }
+      return errors;
+    };
 
     try {
       const { token } = await fetch("/api/csrf").then(r => r.json());
@@ -359,7 +368,7 @@ export default function ReportFormPage() {
           }
           const retryData = await retryRes.json();
           if (retryData.report?.id) {
-            await uploadReportPhotos(retryData.report.id, formData, activeForm.fields);
+            await uploadPhotoWithCsrf(retryData.report.id, formData, activeForm.fields);
           }
           setSuccess(true);
           return;
@@ -378,7 +387,7 @@ export default function ReportFormPage() {
       // ── Upload photos after successful report creation ────────────
       let photoErrors: string[] = [];
       if (data.report?.id) {
-        photoErrors = await uploadReportPhotos(data.report.id, formData, activeForm.fields);
+        photoErrors = await uploadPhotoWithCsrf(data.report.id, formData, activeForm.fields);
       }
 
       // If photos failed, warn but still show success

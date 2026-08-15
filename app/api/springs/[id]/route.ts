@@ -12,7 +12,8 @@ export async function GET(
       where: { id: params.id },
       include: {
         reports: {
-          where: { isActive: true },
+          // C-2: hanya report approved yang tampil publik
+          where: { isActive: true, status: "approved" },
           orderBy: { createdAt: "desc" },
           select: {
             id: true,
@@ -63,6 +64,7 @@ export async function GET(
       where: {
         id: { notIn: spring.reports.map(r => r.id) },
         isActive: true,
+        status: "approved",
         snappedLat: { gte: spring.snappedLat - 0.02, lte: spring.snappedLat + 0.02 },
         snappedLng: { gte: spring.snappedLng - 0.02, lte: spring.snappedLng + 0.02 },
       },
