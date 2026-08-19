@@ -27,25 +27,27 @@
 
 ## 1. Cara Masuk dari PC
 
-> Staging berjalan di VPS. Ada **2 cara** mengaksesnya dari PC Windows kamu.
+> Staging berjalan di VPS. Ada **2 cara** mengaksesnya dari jaringan kamu (PC Windows).
+>
+> ℹ️ **Catatan jaringan (19 Agustus):** jaringan kampus/kantor kamu memblokir port 22 (SSH standar). Solusi yang sudah aktif: **SSH di port 2222** + **akses langsung ke staging via port 8080** (hanya dari IP kamu).
 
-### Cara A — Tunnel SSH (disarankan, paling aman)
+### Cara B — Akses langsung dari browser (✅ AKTIF, cara tercepat)
 
-**Langkah 1 — Jalankan tunnel** (dari PowerShell/CMD, tanpa install apa pun — OpenSSH sudah bawaan Windows 10/11):
+Tanpa PowerShell, langsung buka di browser:
 ```
-ssh -L 8080:127.0.0.1:8080 root@IP-VPS
+http://76.13.198.18:8080
 ```
-> Ganti `IP-VPS` dengan alamat IP VPS. Jendela ini **harus tetap terbuka** selama sesi.
+> Port 8080 sudah di-allow dari IP kamu saja (`36.50.112.37`) — bukan terbuka ke semua internet.
 
-**Langkah 2 — Buka di browser:**
+### Cara A — Tunnel SSH (port 2222)
+
+Kalau kamu tetap ingin tunnel SSH (misal untuk akses DB via psql), pakai port **2222** (port 22 diblokir jaringanmu):
 ```
-http://localhost:8080
+ssh -p 2222 -L 8080:127.0.0.1:8080 root@76.13.198.18
 ```
+Lalu buka `http://localhost:8080`. Jendela ini **harus tetap terbuka** selama sesi.
 
-### Cara B — Akses langsung tanpa SSH (opsional, setelah diminta)
-
-Bisa dibuka langsung dari browser PC tanpa PowerShell, mis. `http://IP-VPS:8080`.
-> Status: **belum diaktifkan** (nginx staging masih bind `127.0.0.1`). Hubungi assistant untuk mengubah bind menjadi `0.0.0.0` bila kamu mau cara ini.
+> SSH reguler `ssh root@76.13.198.18` (port 22) TIDAK jalan dari jaringan kampus/kantor — pakai `-p 2222`.
 
 ### Untuk kedua cara — Basic Auth (pop-up di browser):
 
@@ -77,15 +79,15 @@ Bisa dibuka langsung dari browser PC tanpa PowerShell, mis. `http://IP-VPS:8080`
 |---|---|---|
 | Laporan pending | **203** | 4 lama + **199 impor baru** — siap untuk approve/reject |
 | Laporan approved | 249 | sudah tampil publik |
-| Mata air aktif | 73 | tampil di `/springs` |
-| Spring pending baru | 187 | dari impor — tunggu approve di `/admin/map/springs` |
+| Mata air aktif | **73** | tampil di `/springs` — termasuk 1 hasil impor ("Mata air Pluneng") |
+| Spring pending | **219** | 198 hasil impor + 21 lama — approve di `/admin/map/springs` |
 | Foto laporan | ~1.200 | 551 foto baru hasil impor (proses ulang 720p) |
 | Bibit (seedling) | 6 | tersedia di marketplace |
 | Permintaan bibit pending | 1 | dari "Admin Demo" untuk bibit "Jarise" |
 | Kursus | 3 | di `/learn` |
 | Proyek | 12 | di `/projects` |
 | Donasi | 6 | riwayat (pembayaran asli nonaktif) |
-| User | 12 | termasuk akun demo |
+| User | 13 | termasuk akun demo + `epicollect` |
 
 ---
 
@@ -96,7 +98,9 @@ Data survei mata air dari Epicollect5 (form `pemantauan-mata-air` + `jaga-semest
 **Yang diimpor:**
 - **199 laporan** `spring-monitoring` — status **pending** (siap di-review) — atas nama akun `epicollect@springhub.id`
 - **551 foto asli** didownload dari Epicollect5 → diproses ulang (resize 720p + watermark) → tampil di `/uploads/reports/...`
-- **187 Spring baru** status pending (per nama mata air, di-dedupe)
+- **199 Spring** terhubung ke laporan (relasi `springId`): 198 pending + 1 sudah active
+
+**Verifikasi kelengkapan (19 Agustus):** 199/199 laporan ada di DB (23 dari file lama + 176 dari file baru, semua ec5_uuid cocok 1:1, tanpa duplikat). Foto 551/551 tersimpan.
 
 **Cakupan wilayah:** Kebumen, Klaten, Magelang, Pamekasan, Sleman, Kediri, dan lainnya.
 
@@ -104,9 +108,9 @@ Data survei mata air dari Epicollect5 (form `pemantauan-mata-air` + `jaga-semest
 
 | # | Langkah | Akun | Hasil | Status |
 |---|---|---|---|---|
-| D0-1 | Buka `/admin/review` | admin | Ribuan laporan impor + foto tampil | ☐ |
+| D0-1 | Buka `/admin/review` | admin | 203 laporan pending (199 impor) + foto tampil | ☐ |
 | D0-2 | Filter/kategori laporan → pilih beberapa → **Approve** | admin | Status → approved + poin + muncul di peta | ☐ |
-| D0-3 | Buka `/admin/map/springs` | admin | **187 Spring pending** — approve beberapa | ☐ |
+| D0-3 | Buka `/admin/map/springs` | admin | **219 Spring pending** (198 impor + 21 lama) — approve beberapa | ☐ |
 | D0-4 | Cek `/springs` publik | publik | Spring yang di-approve tampil dengan foto | ☐ |
 | D0-5 | Buka profile `epicollect@springhub.id` | admin | 199 laporan atas nama akun ini | ☐ |
 
@@ -301,7 +305,7 @@ Login **admin** → buka `/admin`:
 
 ## 15. K. Data Langsung dari Database
 
-Dari **VPS** (SSH), cek data staging langsung:
+Dari **VPS** (SSH port 2222), cek data staging langsung:
 
 ```bash
 # Masuk psql staging
@@ -313,8 +317,17 @@ Query yang berguna:
 -- Laporan pending (203 — termasuk 199 hasil impor)
 SELECT id, "formSlug", "createdAt"::date FROM "Report" WHERE status='pending';
 
--- Laporan hasil impor Epicollect5
+-- Laporan hasil impor Epicollect5 (199)
 SELECT count(*) FROM "Report" WHERE "clientCorrelationId" IS NOT NULL;
+
+-- Spring per status (219 pending / 73 active)
+SELECT status, count(*) FROM "Spring" GROUP BY status;
+
+-- Spring hasil impor (relasi ke laporan epicollect)
+SELECT s.status, count(*) FROM "Spring" s
+  JOIN "Report" r ON r."springId" = s.id
+  WHERE r."clientCorrelationId" IS NOT NULL
+  GROUP BY s.status;
 
 -- Foto satu laporan
 SELECT "storagePath" FROM "ReportPhoto" WHERE "reportId"='<report-id>';
@@ -325,7 +338,7 @@ SELECT species, quantity, stock, status FROM "Seedling";
 -- Permintaan bibit
 SELECT * FROM "SeedlingRequest";
 
--- Spring pending (187 hasil impor) — approve di /admin/map/springs
+-- Spring pending (219) — approve di /admin/map/springs
 SELECT name, "snappedLat", "snappedLng" FROM "Spring" WHERE status='pending';
 
 -- Buat user jadi admin (hati-hati, hanya staging!)
