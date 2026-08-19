@@ -71,7 +71,8 @@ export default function ProfilePage() {
     setClaiming(true);
     setClaimError("");
     try {
-      const res = await fetch("/api/auth/claim-guest", { method: "POST" });
+      const { token } = await fetch("/api/csrf").then(r => r.json()).catch(() => ({ token: "" }));
+      const res = await fetch("/api/auth/claim-guest", { method: "POST", headers: { "x-csrf-token": token } });
       const data = await res.json();
       if (res.ok) {
         setClaimResult(data);
@@ -126,7 +127,8 @@ export default function ProfilePage() {
   }
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    const { token } = await fetch("/api/csrf").then(r => r.json()).catch(() => ({ token: "" }));
+    await fetch("/api/auth/logout", { method: "POST", headers: { "x-csrf-token": token } });
     try { await clearAllOfflineUserData(); } catch {}
     try { await offlineDB.clearSyncStatus(); } catch {}
     router.push("/");

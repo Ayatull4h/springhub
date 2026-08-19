@@ -19,7 +19,6 @@ export type DonationTier = {
 };
 
 export const DONATION_TIERS: DonationTier[] = [
-  { id: "seedling",   amountIdr:    20_000, label: "Rp 20K",   impact: "1 tree seedling" },
   { id: "trench",     amountIdr:    50_000, label: "Rp 50K",   impact: "1 trench (rorak)" },
   { id: "sediment",   amountIdr:   100_000, label: "Rp 100K",  impact: "1 m³ sediment removed from a spring" },
   { id: "monitoring", amountIdr: 1_000_000, label: "Rp 1 juta", impact: "50 springs monitored" },

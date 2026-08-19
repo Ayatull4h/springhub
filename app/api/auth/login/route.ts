@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { verifyPassword, createSession, getSession, getClientIp } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
 import { getExistingGuestId } from "@/lib/guest";
 import { authLimiter, loginLockout } from "@/lib/rate-limit";
 import { auditLog } from "@/lib/audit";
@@ -16,6 +17,11 @@ const DUMMY_PASSWORD_HASH = "$2b$12$msG/.NLlzDcFEYRy.6i8PeweEPzXOcDd9SAqtOydJQAm
 
 export async function POST(request: Request) {
   try {
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+
     const ip = getClientIp(request);
     const ipLimiter = await authLimiter.check(`login:${ip}`);
     if (!ipLimiter.allowed) {
@@ -54,14 +60,9 @@ export async function POST(request: Request) {
 
     if (!profile || !valid) {
       if (profile) {
-        const lockoutCheck = await loginLockout.check(`lock:${ip}:${profile.id}`);
-        if (!lockoutCheck.allowed) {
-          const minutesRemaining = Math.ceil((lockoutCheck.resetAt - Date.now()) / 60000);
-          return NextResponse.json(
-            { error: `Akun terkunci karena terlalu banyak percobaan. Coba lagi dalam ${minutesRemaining} menit.` },
-            { status: 429 }
-          );
-        }
+        // Lockout tetap dihitung, tapi respons disamakan agar attacker
+        // tidak bisa membedakan email terdaftar vs tidak (enumeration oracle).
+        await loginLockout.check(`lock:${ip}:${profile.id}`);
       }
       return NextResponse.json(
         { error: "Email atau password salah" },

@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
-**Tanggal**: 9 Juli 2026 (Update: Course-PointRule, PointRule award, route map)
+**Tanggal**: 19 Agustus 2026 (Update Sesi 18: hardening keamanan + hapus tier donasi "tree seedling")
 **Domain**: https://www.springhub.id
-**Total Test**: ~155 test case — 14 kategori
+**Total Test**: ~188 test case — 23 kategori
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -14,7 +14,7 @@
 |---|---|---|---|
 | **Admin** | `admin@springhub.id` | `demo12345` | Lihat semua data, approve laporan, atur map, kelola user |
 | **Ucup** | `ucup@springhub.id` | `ucup12345` | Volunteer dengan **20.168 poin** — bisa buat proyek baru |
-| **Sari** | `vol@springhub.id` | `vol12345` | Volunteer dengan **8.750 poin** — belum bisa buat proyek |
+| **Sari** | `volunteer@springhub.id` | `vol12345` | Volunteer dengan **8.750 poin** — belum bisa buat proyek |
 
 ---
 
@@ -26,14 +26,14 @@ Buka Terminal (Command Prompt / PowerShell / Terminal):
 COOKIE="/tmp/springhub.txt"
 API="https://www.springhub.id"
 
-# Login sebagai admin
+# Ambil token CSRF DULU (sejak sesi 18, login juga wajib CSRF)
+CSRF=$(curl -sk -c $COOKIE -b $COOKIE $API/api/csrf | python3 -c "import json,sys; print(json.load(sys.stdin).get('token',''))")
+
+# Login sebagai admin (wajib header x-csrf-token)
 curl -sk -c $COOKIE -b $COOKIE -X POST $API/api/auth/login \
   -H "Content-Type: application/json" \
+  -H "x-csrf-token: $CSRF" \
   -d '{"email":"admin@springhub.id","password":"demo12345"}'
-
-# Ambil token CSRF (dibutuhkan untuk kirim form)
-CSRF=$(curl -sk -c $COOKIE -b $COOKIE $API/api/csrf | python3 -c "import json,sys; print(json.load(sys.stdin).get('token',''))")
-echo $CSRF
 ```
 
 ---
@@ -51,18 +51,20 @@ echo $CSRF
 
 ---
 
-## Test 2 — Login & Daftar (8 test)
+## Test 2 — Login & Daftar (10 test)
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
 | 2.1 | Halaman login terbuka | Buka `www.springhub.id/sign-in` — harusnya ada form email + password | |
 | 2.2 | Login admin berhasil | Isi email `admin@springhub.id`, password `demo12345`, klik Login — harusnya masuk ke halaman utama | |
 | 2.3 | Password salah ditolak | Isi email `admin@springhub.id`, password `salah` — harusnya muncul "Email atau password salah" | |
-| 2.4 | Lockout (5x salah) | Coba login 5 kali dengan password salah — setelah percobaan ke-5 harusnya muncul "Akun terkunci karena terlalu banyak percobaan" | |
+| 2.4 | Lockout (5x salah) | Coba login 5 kali dengan password salah — lockout tetap dihitung, tapi pesan SELALU "Email atau password salah" (401). Respons disamakan agar email tidak bisa di-enum (sejak sesi 18) | |
 | 2.5 | Register halaman terbuka | Buka `www.springhub.id/join` — harusnya ada form email + password + username | |
 | 2.6 | Password lemah ditolak | Coba daftar dengan password `123` — harusnya ditolak, minimal 8 karakter | |
 | 2.7 | Password tanpa huruf besar ditolak | Coba daftar dengan password `abcdefgh1` — harusnya ditolak, harus ada huruf BESAR | |
 | 2.8 | Email duplikat ditolak | Coba daftar dengan email `admin@springhub.id` — harusnya muncul "Email sudah terdaftar" | |
+| 2.9 | Login tanpa CSRF ditolak | `curl -X POST $API/api/auth/login` tanpa header `x-csrf-token` — harusnya **403 "Invalid CSRF token"** | |
+| 2.10 | Forgot password tanpa CSRF ditolak | `curl -X POST $API/api/auth/forgot-password` tanpa CSRF — harusnya **403**; dengan CSRF → pesan generic "Jika email terdaftar, link reset telah dikirim" | |
 
 ---
 
@@ -139,19 +141,20 @@ echo $CSRF
 
 ---
 
-## Test 7 — Donasi (5 test)
+## Test 7 — Donasi (6 test)
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
 | 7.1 | Form donasi muncul | Scroll ke bagian donasi di halaman depan — harusnya ada pilih nominal | |
-| 7.2 | Pilih nominal | Klik salah satu nominal (Rp 20K, Rp 50K, dll) — field terisi otomatis | |
+| 7.2 | Pilih nominal | Klik salah satu nominal (Rp 50K, Rp 100K, Rp 1 juta) — field terisi otomatis. Tier **"tree seedling" Rp 20K SUDAH DIHAPUS** sejak sesi 18 | |
 | 7.3 | Custom nominal | Klik "Custom" — bisa isi jumlah sendiri (min Rp 1.000, max Rp 100.000.000) | |
-| 7.4 | Amount vs tier dicek | Pilih tier "Rp 20K" tapi ubah jumlah jadi Rp 1.000.000 — harusnya ditolak | |
+| 7.4 | Amount vs tier dicek | Pilih tier "Rp 50K" tapi ubah jumlah jadi Rp 1.000.000 — harusnya ditolak | |
 | 7.5 | Halaman sukses | Kalo bayar berhasil — harusnya diarahkan ke halaman "Pembayaran Berhasil" | |
+| 7.6 | Tier seedling tidak ada | Buka dropdown donasi — pilihan "1 tree seedling" TIDAK BOLEH muncul (hanya trench, sediment, monitoring, custom) | |
 
 ---
 
-## Test 8 — Keamanan (8 test)
+## Test 8 — Keamanan (11 test)
 
 | # | Yang Dicek | Cara Cek | Hasil |
 |---|---|---|---|
@@ -164,6 +167,8 @@ echo $CSRF
 | 8.7 | XSS gagal | Coba isi form dengan `<script>alert(1)</script>` — harusnya tersimpan aman (tidak jalan) | |
 | 8.8 | Admin bisa export data | Buka `/admin` → klik Export → pilih Users — harusnya download file CSV | |
 | 8.9 | Approve/reject pake CSRF | Buka Review Queue → klik Approve/Reject — harusnya berhasil (gak error "Invalid CSRF token") | |
+| 8.10 | CVE-2025-29927 ter-patch | `curl -H "x-middleware-subrequest: middleware" $API/admin` — harusnya **403** (bukan 200/redirect). Header ini diblokir middleware sejak sesi 18 | |
+| 8.11 | Auth route tanpa CSRF | `curl -X POST $API/api/auth/login` tanpa CSRF → **403**; `curl -X POST $API/api/auth/logout` tanpa CSRF → **403** | |
 
 ---
 
@@ -371,13 +376,13 @@ Gunakan terminal untuk test ini.
 | Kategori | PASS | FAIL | Catatan |
 |---|---|---|---|---|
 | Test 1 — Buka Website (6) | 6 | 0 | |
-| Test 2 — Login & Daftar (8) | 8 | 0 | |
+| Test 2 — Login & Daftar (10) | 8 | 0 | 2 test baru (CSRF auth) belum diverifikasi |
 | Test 3 — Halaman Admin (18) | 18 | 0 | |
 | Test 4 — Form & Laporan (11) | 11 | 0 | |
 | Test 5 — Peta (6) | 6 | 0 | |
 | Test 6 — Poin & Leaderboard (6) | 6 | 0 | |
-| Test 7 — Donasi (5) | 5 | 0 | |
-| Test 8 — Keamanan (9) | 9 | 0 | |
+| Test 7 — Donasi (6) | 5 | 0 | 1 test baru (tier seedling hilang) belum diverifikasi |
+| Test 8 — Keamanan (11) | 9 | 0 | 2 test baru (CVE + CSRF auth) belum diverifikasi |
 | Test 9 — Dark Mode (5) | 5 | 0 | |
 | Test 10 — Akun & Profile (4) | 4 | 0 | |
 | Test 11 — CRUD Admin (8) | 8 | 0 | |
@@ -393,4 +398,4 @@ Gunakan terminal untuk test ini.
 | Test 21 — Springs (6) | 6 | 0 | |
 | Test 22 — Pagination & Versioning (4) | 4 | 0 | |
 | Test 23 — Backup (3) | 3 | 0 | |
-| **TOTAL** | **/** | **/** | **183 test** |
+| **TOTAL** | **/** | **/** | **188 test** |

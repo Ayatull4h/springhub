@@ -33,9 +33,10 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
     try {
+      const { token: csrf } = await fetch("/api/csrf").then((r) => r.json());
       const res = await fetch("/api/auth/reset-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
         body: JSON.stringify({ token, password }),
       });
 

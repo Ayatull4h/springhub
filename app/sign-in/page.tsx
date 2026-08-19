@@ -33,9 +33,10 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
+      const { token } = await fetch("/api/csrf").then((r) => r.json());
       const res = await fetch("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": token },
         body: JSON.stringify({ email, password }),
       });
 

@@ -53,7 +53,7 @@ export function SiteHeader() {
     try {
       await offlineDB.clearSession();
     } catch {}
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/csrf").then(r => r.json()).then(d => fetch("/api/auth/logout", { method: "POST", headers: { "x-csrf-token": d.token } })).catch(() => {});
     setUser(null);
     router.refresh();
   }

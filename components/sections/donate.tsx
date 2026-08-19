@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, CheckCircle2, Loader2, Sprout, Layers, Droplets, Telescope } from "lucide-react";
+import { Heart, CheckCircle2, Loader2, Layers, Droplets, Telescope } from "lucide-react";
 import { DONATION_TIERS } from "@/lib/xendit";
 import { useI18n } from "@/lib/i18n";
 
 const tierIcons: Record<string, React.ReactNode> = {
-  seedling: <Sprout className="h-4 w-4 text-emerald-600" />,
   trench: <Layers className="h-4 w-4 text-amber-600" />,
   sediment: <Droplets className="h-4 w-4 text-blue-600" />,
   monitoring: <Telescope className="h-4 w-4 text-purple-600" />,

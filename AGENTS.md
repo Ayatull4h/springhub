@@ -2,7 +2,7 @@
 
 Community-driven monitoring & restoration of Indonesia's artesian springs.
 
-**Stack:** Next.js 14 App Router · TypeScript strict · Tailwind CSS 3.4 · Leaflet · PostgreSQL + Prisma 7.8 · Redis · Docker VPS
+**Stack:** Next.js 14.2 App Router · TypeScript strict · Tailwind CSS 3.4 · Leaflet · PostgreSQL + Prisma 7.9 · Redis · Docker VPS
 
 ---
 
@@ -251,3 +251,17 @@ export async function POST(request: Request, { params }: { params: { id: string 
 - **Seedling**: route `POST /api/admin/seedlings/[id]/approve-request` DIBUAT (sebelumnya 404 permanen); vocab status UI disamakan dgn enum (`pending/completed/rejected/cancelled`); tombol demo `alert()` dihapus; my-requests punya "Konfirmasi Terima" real; `public/seedlings.html` (file mati) dihapus; fallback DUMMY (learn/seedlings/featured-projects) diganti empty state.
 - **Agent/config**: `springhub-security` didaftarkan di opencode.jsonc; duplikat `.opencode/agent/springhub-db.md` dihapus; skill Supabase `springhub-mcp` dihapus; `supabase-project.png` dihapus; postgres MCP di-disable (DATABASE_URL tidak di-export di shell); context7 env dipindah ke `environment:` config.
 - **Belum**: baseline migrasi prod (dilarang), Xendit key asli, staging deploy + verifikasi E2E (menunggu eksekusi via docker compose staging + SSH port-forward user).
+
+### 19 Agustus 2026 — Sesi 18: Security Hardening + Deploy Staging & Produksi
+- **Data epicollect**: akar masalah foto `/springs` = report masih pending (hanya approved yang tampil). Mass-approve staging: 199/199 report, 551/551 foto, 189 spring active (total 261). 23 report 1-foto di-approve via bypass env `ALLOW_LOW_PHOTO_APPROVE` sementara → **di-revert total** (route original, env dihapus). Audit foto lengkap: semua file sudah di staging, 27 placeholder `placehold.co` (bukan foto), 100 file orphan dari report terhapus (tidak bisa dipasang). Data 24 Juli: akun `dirgapala@sttkd.ac.id` (106 report tree-planting, 236 foto, 65 orphan → kasus `fix-orphan-reports.ts`).
+- **Security fixes (staging + produksi)**:
+  - **CVE-2025-29927** (middleware bypass): upgrade next 14.2.5 → **14.2.35** + blokir header `x-middleware-subrequest` di `middleware.ts` (verified: `/admin`+header → 403).
+  - **CSRF di route auth** (sebelumnya login/register/forgot-password/reset-password/logout TANPA CSRF): `verifyCsrfToken()` ditambah di 6 route + 5 halaman frontend (sign-in, join, forgot, reset) + 4 pemanggil logout + claim-guest di profile. Semua pakai pola just-in-time `fetch("/api/csrf")`. Login verified: tanpa token 403, dengan token OK (API + UI Playwright).
+  - **Enumeration oracle**: login return 401 generic (lockout tetap dihitung, respons disamakan); forgot-password rate-limit dipindah SEBELUM lookup email.
+  - **Deps**: sharp 0.34.5→0.35.3, postcss 8.5.16→8.5.26, jose→6.2.9, nodemailer 8→9, @sentry/nextjs→10.70.0, prisma 7.8.0→**7.9.1** (+adapter-pg). npm audit prod sisa: deepmerge-ts (via @prisma/config, CLI-only), image-size (via pptxgenjs), postcss bawaan next, + 3 advisory next (DoS, hanya patch di Next 15.5.10+) → **accepted risk, upgrade Next 15 dijadwalkan sesi terpisah**.
+  - **Redis**: `allkeys-lru` → **`noeviction`** (BullMQ jobs tidak boleh di-evict) di compose staging + produksi.
+  - **Worker**: compose hanya jalankan email-worker → sekarang `email-worker + image-worker`; `image-worker.ts` TIDAK pakai password redis (bug NOAUTH) → pakai `redisConnectionFromUrl`. Staging 0 NOAUTH.
+  - **Deploy**: typecheck 0, lint 0 (warning lama), test 37/37, build OK. Staging (build `staging-web`, image worker `springhub-staging-web` HARUS di-build terpisah `docker build -t springhub-staging-web .`) + **produksi di-deploy** (build web+worker, recreate redis/web/worker, restart nginx utk DNS refresh). Produksi verified: health 200, login CSRF 403/OK, CVE patched.
+- **Catatan deploy**: nginx perlu restart setelah web container di-recreate (resolve IP lama → 502). Worker container dengan `image:` terpisah tidak ikut ter-rebuild saat `build web` — build image worker secara eksplisit.
+- **Tier donasi "tree seedling" DIHAPUS** (permintaan user): `lib/xendit.ts` (DONATION_TIERS) hapus tier seedling Rp 20K; bersihkan ikon `Sprout` di `components/sections/donate.tsx` + `🌱` di `_senior/components/DonationCard.tsx`. Deploy staging+produksi. Sisa tier: trench/sediment/monitoring/custom. Data lama `tierId: "seedling"` di DB tetap (history). Docs testing di-update: `MANUAL-TEST-FINAL.md` (+5 test CSRF/CVE/tier) & `PANDUAN-TESTING-STAGING.md` (F4/F5 + H6-H8).
+- **Belum**: upgrade Next 15 (task terpisah), baseline migrasi prod (dilarang), Xendit key asli, staging verifikasi E2E penuh.

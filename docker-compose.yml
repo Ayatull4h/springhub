@@ -34,7 +34,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD belum di-set}
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD belum di-set}
     volumes:
       - redis_data:/data
     ports:
@@ -106,7 +106,7 @@ services:
     environment:
       REDIS_URL: "redis://default:${REDIS_PASSWORD:?REDIS_PASSWORD belum di-set}@redis:6379"
       REDIS_QUEUE_URL: "redis://default:${REDIS_PASSWORD:?REDIS_PASSWORD belum di-set}@redis:6379"
-    command: npx tsx workers/email-worker.ts
+    command: sh -c "npx tsx workers/email-worker.ts & npx tsx workers/image-worker.ts; wait"
     security_opt:
       - no-new-privileges:true
     cap_drop:

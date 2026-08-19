@@ -1,6 +1,6 @@
 # 🧪 Panduan Uji Coba Lengkap SpringHub — STAGING
 
-**Versi:** 19 Agustus 2026 · **Target:** Staging (kode sesi 17 + impor data Epicollect5)
+**Versi:** 19 Agustus 2026 · **Target:** Staging (kode sesi 18: hardening keamanan + hapus tier donasi "tree seedling" + impor data Epicollect5)
 **Status uji coba:** gunakan checklist di bawah — centang ☑ saat berhasil.
 
 ---
@@ -197,6 +197,8 @@ Data survei mata air dari Epicollect5 (form `pemantauan-mata-air` + `jaga-semest
 | F1 | Buka section donasi (landing `/` atau `/donate`) | Tampil (banner atau info) | ☐ |
 | F2 | Klik donasi | **TIDAK muncul pesan internal** (sebelumnya bocor "XENDIT_SECRET_KEY is not set") — pakai pesan aman | ☐ |
 | F3 | `/admin/donations` | Riwayat 6 donasi + tombol Export CSV | ☐ |
+| F4 | Buka dropdown tier donasi (landing `/`) | Pilihan **"1 tree seedling" TIDAK ADA** (dihapus sesi 18) — hanya trench (Rp 50K), sediment (Rp 100K), monitoring (Rp 1jt), custom | ☐ |
+| F5 | Tier lama masih tampil sebagai history | `/admin/donations` → kolom Tier — donasi lama dengan tier `seedling` tetap tampil (data history, tidak dihapus) | ☐ |
 
 > ⚠️ Pembayaran asli **tidak bisa diuji** di staging (butuh Xendit key real). Yang diuji hanya perilaku aman saat key kosong.
 
@@ -214,7 +216,7 @@ Data survei mata air dari Epicollect5 (form `pemantauan-mata-air` + `jaga-semest
 
 ---
 
-## 12. H. Keamanan (CSRF / PII)
+## 12. H. Keamanan (CSRF / CVE / PII)
 
 Uji lewat **DevTools (F12) → Console** di browser. Jalankan potongan ini:
 
@@ -252,6 +254,26 @@ fetch("/api/health").then(r => {
   console.log("H5 Cache-Control:", r.headers.get("cache-control"));
 });
 ```
+```js
+// H6: login tanpa CSRF → harus 403 (sejak sesi 18)
+fetch("/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email: "admin@springhub.id", password: "demo12345" })
+}).then(r => console.log("H6 login no CSRF:", r.status));
+```
+```js
+// H7: CVE-2025-29927 — header bypass middleware → harus 403 (sejak sesi 18)
+fetch("/admin", { headers: { "x-middleware-subrequest": "middleware" } }).then(r => console.log("H7 middleware bypass:", r.status));
+```
+```js
+// H8: forgot-password tanpa CSRF → harus 403; dengan CSRF → pesan generic (sejak sesi 18)
+fetch("/api/auth/forgot-password", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email: "nonexist@test.id" })
+}).then(r => console.log("H8 forgot no CSRF:", r.status));
+```
 
 | # | Hasil yang Diharapkan | Status |
 |---|---|---|
@@ -260,6 +282,9 @@ fetch("/api/health").then(r => {
 | H3 | `403` | ☐ |
 | H4 | `false` (phone tidak bocor) | ☐ |
 | H5 | `no-cache, no-store, must-revalidate` | ☐ |
+| H6 | `403` | ☐ |
+| H7 | `403` | ☐ |
+| H8 | `403` | ☐ |
 
 ---
 

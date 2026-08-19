@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Heart, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { DONATION_TIERS } from "@/lib/xendit";
 
-const TIER_ICONS: Record<string, string> = { seedling: "🌱", trench: "🛠️", sediment: "🗑️", monitoring: "📊" };
+const TIER_ICONS: Record<string, string> = { trench: "🛠️", sediment: "🗑️", monitoring: "📊" };
 
 export function DonationCard() {
   const [tierId, setTierId] = useState("");

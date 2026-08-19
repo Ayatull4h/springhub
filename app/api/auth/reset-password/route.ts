@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 import { hashPassword, deactivateUserSessions } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
 import { authLimiter } from "@/lib/rate-limit";
 import { auditLog } from "@/lib/audit";
+import { getClientIp } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +34,16 @@ function isValidPassword(password: string): boolean {
 
 export async function POST(request: Request) {
   try {
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+
+    const ipLimiter = await authLimiter.check(`reset-pw-ip:${getClientIp(request)}`);
+    if (!ipLimiter.allowed) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti." }, { status: 429 });
+    }
+
     const { token, password } = await request.json();
 
     if (!token || !password) {

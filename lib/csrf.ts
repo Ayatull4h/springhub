@@ -8,7 +8,7 @@ const CSRF_COOKIE = "csrf_token";
 const CSRF_HEADER = "x-csrf-token";
 
 export async function generateCsrfToken(isSecure?: boolean): Promise<string> {
-  const token = await new SignJWT({} as JWTPayload)
+  const token = await new SignJWT({ type: "csrf" } as JWTPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("1h")
     .sign(SECRET);

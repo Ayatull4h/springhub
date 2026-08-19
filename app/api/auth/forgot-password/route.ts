@@ -5,6 +5,7 @@ import { sendEmail, buildResetPasswordEmail } from "@/lib/email";
 import { authLimiter } from "@/lib/rate-limit";
 import { auditLog } from "@/lib/audit";
 import { getClientIp } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -26,9 +27,20 @@ const pwdResetTokens = (prisma as unknown as {
 
 export async function POST(request: Request) {
   try {
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+
     const { email } = await request.json();
     if (!email) {
       return NextResponse.json({ error: "Email wajib diisi" }, { status: 400 });
+    }
+
+    // Rate limit SEBELUM lookup — cegah enumeration via perbedaan 429/200
+    const ipLimiter = await authLimiter.check(`forgot-pw-ip:${getClientIp(request)}`);
+    if (!ipLimiter.allowed) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti." }, { status: 429 });
     }
 
     // Always return the same message to prevent email enumeration
@@ -41,10 +53,6 @@ export async function POST(request: Request) {
 
     const emailLimiter = await authLimiter.check(`forgot-pw:${email}`);
     if (!emailLimiter.allowed) {
-      return NextResponse.json({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti." }, { status: 429 });
-    }
-    const ipLimiter = await authLimiter.check(`forgot-pw-ip:${getClientIp(request)}`);
-    if (!ipLimiter.allowed) {
       return NextResponse.json({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti." }, { status: 429 });
     }
 

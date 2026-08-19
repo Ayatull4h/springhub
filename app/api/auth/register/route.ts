@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { hashPassword, createSession, getSession, getClientIp } from "@/lib/auth";
+import { verifyCsrfToken } from "@/lib/csrf";
 import { getExistingGuestId } from "@/lib/guest";
 import { authLimiter } from "@/lib/rate-limit";
 import { auditLog } from "@/lib/audit";
@@ -21,6 +22,11 @@ const registerSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+
     // M-1: pakai getClientIp (x-real-ip dari nginx, tak bisa di-spoof)
     const ip = getClientIp(request);
     const ipLimiter = await authLimiter.check(`register:${ip}`);

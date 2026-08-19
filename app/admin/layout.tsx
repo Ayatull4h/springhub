@@ -82,7 +82,8 @@ export default function AdminLayout({
   }, []);
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    const { token } = await fetch("/api/csrf").then(r => r.json()).catch(() => ({ token: "" }));
+    await fetch("/api/auth/logout", { method: "POST", headers: { "x-csrf-token": token } });
     router.push("/");
     router.refresh();
   }
