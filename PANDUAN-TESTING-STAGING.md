@@ -1,46 +1,60 @@
 # 🧪 Panduan Uji Coba Lengkap SpringHub — STAGING
 
-**Versi:** 15 Agustus 2026 · **Target:** Staging (kode sesi 17, commit `0920bf0`)
+**Versi:** 19 Agustus 2026 · **Target:** Staging (kode sesi 17 + impor data Epicollect5)
 **Status uji coba:** gunakan checklist di bawah — centang ☑ saat berhasil.
 
 ---
 
 ## Daftar Isi
-1. [Cara Masuk](#1-cara-masuk)
+1. [Cara Masuk dari PC](#1-cara-masuk-dari-pc)
 2. [Akun Uji](#2-akun-uji)
 3. [Data yang Tersedia di Staging](#3-data-yang-tersedia-di-staging)
-4. [A. Alur Utama Laporan (fokus: foto)](#a-alur-utama-laporan)
-5. [B. Foto — 3 Kasus yang Diperbaiki](#b-foto--3-kasus-yang-diperbaiki)
-6. [C. Marketplace Bibit (Seedling)](#c-marketplace-bibit-seedling)
-7. [D. Kursus & Poin](#d-kursus--poin)
-8. [E. Proyek](#e-proyek)
-9. [F. Donasi](#f-donasi)
-10. [G. Offline / PWA](#g-offline--pwa)
-11. [H. Keamanan (CSRF / PII)](#h-keamanan-csrf--pii)
-12. [I. Halaman Publik & Info](#i-halaman-publik--info)
-13. [J. Admin Panel — Semua Tab](#j-admin-panel--semua-tab)
-14. [K. Data Langsung dari Database](#k-data-langsung-dari-database)
-15. [Log Hasil](#15-log-hasil)
+4. [Data Baru Impor Epicollect5 (199 laporan!)](#4-data-baru-impor-epicollect5)
+5. [A. Alur Utama Laporan (fokus: foto)](#a-alur-utama-laporan)
+6. [B. Foto — 3 Kasus yang Diperbaiki](#b-foto--3-kasus-yang-diperbaiki)
+7. [C. Marketplace Bibit (Seedling)](#c-marketplace-bibit-seedling)
+8. [D. Kursus & Poin](#d-kursus--poin)
+9. [E. Proyek](#e-proyek)
+10. [F. Donasi](#f-donasi)
+11. [G. Offline / PWA](#g-offline--pwa)
+12. [H. Keamanan (CSRF / PII)](#h-keamanan-csrf--pii)
+13. [I. Halaman Publik & Info](#i-halaman-publik--info)
+14. [J. Admin Panel — Semua Tab](#j-admin-panel--semua-tab)
+15. [K. Data Langsung dari Database](#k-data-langsung-dari-database)
+16. [Log Hasil](#16-log-hasil)
 
 ---
 
-## 1. Cara Masuk
+## 1. Cara Masuk dari PC
 
-**Langkah 1 — Tunnel SSH** (dari PC Windows, PowerShell/CMD):
+> Staging berjalan di VPS. Ada **2 cara** mengaksesnya dari PC Windows kamu.
+
+### Cara A — Tunnel SSH (disarankan, paling aman)
+
+**Langkah 1 — Jalankan tunnel** (dari PowerShell/CMD, tanpa install apa pun — OpenSSH sudah bawaan Windows 10/11):
 ```
 ssh -L 8080:127.0.0.1:8080 root@IP-VPS
 ```
-> Jendela PowerShell ini **harus tetap terbuka** selama uji coba.
+> Ganti `IP-VPS` dengan alamat IP VPS. Jendela ini **harus tetap terbuka** selama sesi.
 
 **Langkah 2 — Buka di browser:**
 ```
 http://localhost:8080
 ```
-**Langkah 3 — Basic Auth staging** (muncul pop-up pertama kali):
-- User: `181ff4f6c436d9a69f9dd12e`
-- Pass: `1a20e619d2d431d66ac60b17`
 
-**Langkah 4 — Login aplikasi** dengan akun yang sesuai (lihat tabel akun).
+### Cara B — Akses langsung tanpa SSH (opsional, setelah diminta)
+
+Bisa dibuka langsung dari browser PC tanpa PowerShell, mis. `http://IP-VPS:8080`.
+> Status: **belum diaktifkan** (nginx staging masih bind `127.0.0.1`). Hubungi assistant untuk mengubah bind menjadi `0.0.0.0` bila kamu mau cara ini.
+
+### Untuk kedua cara — Basic Auth (pop-up di browser):
+
+| | |
+|---|---|
+| User | `181ff4f6c436d9a69f9dd12e` |
+| Pass | `1a20e619d2d431d66ac60b17` |
+
+**Langkah terakhir — Login aplikasi** dengan akun sesuai tabel di bawah.
 
 ---
 
@@ -51,7 +65,7 @@ http://localhost:8080
 | Admin | `admin@springhub.id` | `demo12345` | Akses semua `/admin/*`, approve/reject, setujui bibit |
 | Field Lead | `ucup@springhub.id` | `ucup12345` | Bisa buat proyek + bibit |
 | Volunteer | `volunteer@springhub.id` | `vol12345` | Isi form, minta bibit |
-| User khusus kamu *(opsional)* | — | — | Bisa dibuatkan via DB bila diminta |
+| **Data Epicollect5** | `epicollect@springhub.id` | `epicollect12345` | Pemilik 199 laporan impor |
 
 > 💡 Tips: pakai 2 browser berbeda (mis. Chrome untuk admin, Firefox/incognito untuk volunteer) supaya bisa test dua peran sekaligus tanpa login bolak-balik.
 
@@ -61,9 +75,11 @@ http://localhost:8080
 
 | Data | Jumlah | Catatan |
 |---|---|---|
-| Laporan pending | 4 | 3 monitoring + 1 tree-planting — siap untuk approve/reject |
+| Laporan pending | **203** | 4 lama + **199 impor baru** — siap untuk approve/reject |
 | Laporan approved | 249 | sudah tampil publik |
 | Mata air aktif | 73 | tampil di `/springs` |
+| Spring pending baru | 187 | dari impor — tunggu approve di `/admin/map/springs` |
+| Foto laporan | ~1.200 | 551 foto baru hasil impor (proses ulang 720p) |
 | Bibit (seedling) | 6 | tersedia di marketplace |
 | Permintaan bibit pending | 1 | dari "Admin Demo" untuk bibit "Jarise" |
 | Kursus | 3 | di `/learn` |
@@ -73,7 +89,34 @@ http://localhost:8080
 
 ---
 
-## 4. A. Alur Utama Laporan
+## 4. Data Baru Impor Epicollect5 (199 laporan!)
+
+Data survei mata air dari Epicollect5 (form `pemantauan-mata-air` + `jaga-semesta-spring-tracker-4`) sudah diimpor ke staging — **19 Agustus 2026**, script `scripts/import-epicollect.ts`.
+
+**Yang diimpor:**
+- **199 laporan** `spring-monitoring` — status **pending** (siap di-review) — atas nama akun `epicollect@springhub.id`
+- **551 foto asli** didownload dari Epicollect5 → diproses ulang (resize 720p + watermark) → tampil di `/uploads/reports/...`
+- **187 Spring baru** status pending (per nama mata air, di-dedupe)
+
+**Cakupan wilayah:** Kebumen, Klaten, Magelang, Pamekasan, Sleman, Kediri, dan lainnya.
+
+**Cara terbaik memakainya untuk uji coba:**
+
+| # | Langkah | Akun | Hasil | Status |
+|---|---|---|---|---|
+| D0-1 | Buka `/admin/review` | admin | Ribuan laporan impor + foto tampil | ☐ |
+| D0-2 | Filter/kategori laporan → pilih beberapa → **Approve** | admin | Status → approved + poin + muncul di peta | ☐ |
+| D0-3 | Buka `/admin/map/springs` | admin | **187 Spring pending** — approve beberapa | ☐ |
+| D0-4 | Cek `/springs` publik | publik | Spring yang di-approve tampil dengan foto | ☐ |
+| D0-5 | Buka profile `epicollect@springhub.id` | admin | 199 laporan atas nama akun ini | ☐ |
+
+> 💡 **Poin tidak otomatis** diberikan saat impor — poin hanya bertambah saat admin **Approve** laporan (sesuai desain aplikasi). Jadi impor ini sekaligus jadi "bahan latihan" alur review: dari 203 pending, approve beberapa saja untuk uji coba.
+
+> ℹ️ Impor **tidak menyentuh produksi** — hanya DB `springhub_staging` di VPS.
+
+---
+
+## 5. A. Alur Utama Laporan
 
 **Tujuan:** memastikan laporan + foto masuk benar sampai di admin dan tampil publik.
 
@@ -90,7 +133,7 @@ http://localhost:8080
 
 ---
 
-## 5. B. Foto — 3 Kasus yang Diperbaiki
+## 6. B. Foto — 3 Kasus yang Diperbaiki
 
 | # | Langkah | Hasil yang Diharapkan | Status |
 |---|---|---|---|
@@ -101,7 +144,7 @@ http://localhost:8080
 
 ---
 
-## 6. C. Marketplace Bibit (Seedling)
+## 7. C. Marketplace Bibit (Seedling)
 
 **Tujuan:** alur 2 arah (lapor bibit → minta bibit → setujui → terima).
 
@@ -118,7 +161,7 @@ http://localhost:8080
 
 ---
 
-## 7. D. Kursus & Poin
+## 8. D. Kursus & Poin
 
 | # | Langkah | Hasil yang Diharapkan | Status |
 |---|---|---|---|
@@ -129,7 +172,7 @@ http://localhost:8080
 
 ---
 
-## 8. E. Proyek
+## 9. E. Proyek
 
 | # | Langkah | Akun | Hasil yang Diharapkan | Status |
 |---|---|---|---|---|
@@ -143,7 +186,7 @@ http://localhost:8080
 
 ---
 
-## 9. F. Donasi
+## 10. F. Donasi
 
 | # | Langkah | Hasil yang Diharapkan | Status |
 |---|---|---|---|
@@ -155,7 +198,7 @@ http://localhost:8080
 
 ---
 
-## 10. G. Offline / PWA
+## 11. G. Offline / PWA
 
 | # | Langkah | Hasil yang Diharapkan | Status |
 |---|---|---|---|
@@ -167,7 +210,7 @@ http://localhost:8080
 
 ---
 
-## 11. H. Keamanan (CSRF / PII)
+## 12. H. Keamanan (CSRF / PII)
 
 Uji lewat **DevTools (F12) → Console** di browser. Jalankan potongan ini:
 
@@ -216,7 +259,7 @@ fetch("/api/health").then(r => {
 
 ---
 
-## 12. I. Halaman Publik & Info
+## 13. I. Halaman Publik & Info
 
 | Route | Isi | Status |
 |---|---|---|
@@ -231,7 +274,7 @@ fetch("/api/health").then(r => {
 
 ---
 
-## 13. J. Admin Panel — Semua Tab
+## 14. J. Admin Panel — Semua Tab
 
 Login **admin** → buka `/admin`:
 
@@ -256,7 +299,7 @@ Login **admin** → buka `/admin`:
 
 ---
 
-## 14. K. Data Langsung dari Database
+## 15. K. Data Langsung dari Database
 
 Dari **VPS** (SSH), cek data staging langsung:
 
@@ -267,8 +310,11 @@ docker exec staging-postgres psql -U springhub -d springhub_staging
 
 Query yang berguna:
 ```sql
--- Laporan pending
+-- Laporan pending (203 — termasuk 199 hasil impor)
 SELECT id, "formSlug", "createdAt"::date FROM "Report" WHERE status='pending';
+
+-- Laporan hasil impor Epicollect5
+SELECT count(*) FROM "Report" WHERE "clientCorrelationId" IS NOT NULL;
 
 -- Foto satu laporan
 SELECT "storagePath" FROM "ReportPhoto" WHERE "reportId"='<report-id>';
@@ -279,13 +325,16 @@ SELECT species, quantity, stock, status FROM "Seedling";
 -- Permintaan bibit
 SELECT * FROM "SeedlingRequest";
 
+-- Spring pending (187 hasil impor) — approve di /admin/map/springs
+SELECT name, "snappedLat", "snappedLng" FROM "Spring" WHERE status='pending';
+
 -- Buat user jadi admin (hati-hati, hanya staging!)
 -- UPDATE "Profile" SET role='admin' WHERE email='email-kamu@contoh.com';
 ```
 
 ---
 
-## 15. Log Hasil
+## 16. Log Hasil
 
 Isi saat selesai:
 
@@ -311,4 +360,5 @@ __________________________________________
 
 1. **Semua data staging TERPISAH dari produksi** — mengubah apa pun di staging aman, tidak menyentuh `www.springhub.id`.
 2. **Jangan menjalankan `fix-orphan-reports --apply` ke produksi** (hanya staging, kalau diuji).
-3. Jika menemukan bug: catat langkah + pesan error + screenshot, lalu laporkan.
+3. **Jangan menjalankan `import-epicollect.ts --apply` ke produksi** — script ini dibuat khusus DB staging.
+4. Jika menemukan bug: catat langkah + pesan error + screenshot, lalu laporkan.
