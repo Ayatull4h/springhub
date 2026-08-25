@@ -383,7 +383,9 @@ export default function ReportFormPage() {
 
       if (!res.ok) {
         const fieldErrors = data.details
-          ? Object.values(data.details).flat().join(", ")
+          ? Object.entries(data.details)
+              .map(([k, v]) => `${k}: ${(v as string[]).join(", ")}`)
+              .join("; ")
           : "";
         const errMsg = fieldErrors || (typeof data.error === "string" ? data.error : t("report.error"));
         setError(errMsg);
@@ -712,7 +714,8 @@ function FieldRenderer({
             name={field.id}
             rows={4}
             required={field.required}
-            defaultValue={defaultValues?.[field.id] || ""}
+            value={fieldData?.[field.id] as string || defaultValues?.[field.id] || ""}
+            onChange={e => onFieldChange?.(field.id, e.target.value)}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
@@ -725,9 +728,10 @@ function FieldRenderer({
             id={field.id}
             name={field.id}
             type="number"
+            value={fieldData?.[field.id] as string || defaultValues?.[field.id] || ""}
+            onChange={e => onFieldChange?.(field.id, e.target.value)}
             min={0}
             required={field.required}
-            defaultValue={defaultValues?.[field.id] || ""}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           />
         </div>
@@ -767,7 +771,8 @@ function FieldRenderer({
             id={field.id}
             name={field.id}
             required={field.required}
-            defaultValue={defaultValues?.[field.id] || ""}
+            value={fieldData?.[field.id] as string || defaultValues?.[field.id] || ""}
+            onChange={e => onFieldChange?.(field.id, e.target.value)}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           >
              <option value="">{t("form.select.placeholder")}</option>
@@ -787,6 +792,8 @@ function FieldRenderer({
             id={field.id}
             name={field.id}
             required={field.required}
+            value={fieldData?.[field.id] as string || defaultValues?.[field.id] || ""}
+            onChange={e => onFieldChange?.(field.id, e.target.value)}
             className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:bg-slate-800 dark:text-white"
           >
             <option value="">{t("form.select.placeholder")}</option>
