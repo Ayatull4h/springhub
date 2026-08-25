@@ -2,12 +2,18 @@ import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { buildPhotoUrl } from "@/lib/photo-url";
+import { publicLimiter } from "@/lib/rate-limit";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+    const limit = await publicLimiter.check(`springs-id:${ip}`);
+    if (!limit.allowed) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
+    }
     const spring = await prisma.spring.findUnique({
       where: { id: params.id },
       include: {
@@ -69,7 +75,7 @@ export async function GET(
         snappedLng: { gte: spring.snappedLng - 0.02, lte: spring.snappedLng + 0.02 },
       },
       include: {
-        user: { select: { id: true, username: true, email: true, region: true } },
+        user: { select: { id: true, username: true, region: true } },
         photos: { select: { id: true, storagePath: true, width: true, height: true } },
         reviewedBy: { select: { username: true } },
       },

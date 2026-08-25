@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     }
 
     const springs = await prisma.spring.findMany({
-      where: { id: { in: ids } },
+      where: { id: { in: ids }, status: "active" },
       select: {
         id: true,
         name: true,
