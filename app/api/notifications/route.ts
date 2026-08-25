@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { getSession, isAdmin } from "@/lib/auth";
 import { logError } from "@/lib/error-logger";
 import { sendNotificationEmail } from "@/lib/email";
 import { verifyCsrfToken } from "@/lib/csrf";
+import { apiLimiter, publicLimiter } from "@/lib/rate-limit";
 export const dynamic = "force-dynamic";
 
 // GET /api/notifications — list notifications for current user
@@ -11,6 +12,11 @@ export async function GET(request: Request) {
   try {
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const limiter = session.userId ? apiLimiter : publicLimiter;
+    const key = session.userId ? `notifications-get:${session.userId}` : `notifications-get:${request.headers.get("x-forwarded-for") || "unknown"}`;
+    const lim = await limiter.check(key);
+    if (!lim.allowed) return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
 
     const url = new URL(request.url);
     const limitParam = url.searchParams.get("limit") || url.searchParams.get("per_page") || "50";
@@ -42,7 +48,6 @@ export async function GET(request: Request) {
 // POST /api/notifications — create notification (admin or system use)
 export async function POST(req: Request) {
   try {
-    // CSRF
     const csrfToken = req.headers.get("x-csrf-token");
     if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
       return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
@@ -50,6 +55,14 @@ export async function POST(req: Request) {
 
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Hanya admin boleh buat notifikasi manual (cegah email-bombing self-spam)
+    if (!(await isAdmin())) {
+      return NextResponse.json({ error: "Forbidden: admin only" }, { status: 403 });
+    }
+
+    const lim = await apiLimiter.check(`notifications-post:${session.userId}`);
+    if (!lim.allowed) return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
 
     const body = await req.json();
     // Whitelist tipe + batas panjang (M-1/L-1: cegah self-spam & input tak terduga)

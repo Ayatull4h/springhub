@@ -1,9 +1,16 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logError } from "@/lib/error-logger";
+import { publicLimiter } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+    const rateLimit = await publicLimiter.check(`map-points:${ip}`);
+    if (!rateLimit.allowed) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
+    }
+
     const { searchParams } = new URL(request.url);
     const typeSlug = searchParams.get("type");
     const categorySlug = searchParams.get("category");

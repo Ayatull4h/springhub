@@ -2,10 +2,17 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage } from "@/lib/prisma";
 import { verifyCsrfToken } from "@/lib/csrf";
+import { publicLimiter, apiLimiter } from "@/lib/rate-limit";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+    const limit = await publicLimiter.check(`seedlings:${ip}`);
+    if (!limit.allowed) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
+    }
+
     const { searchParams } = new URL(request.url);
     const mine = searchParams.get("mine");
     const species = searchParams.get("species");
@@ -53,12 +60,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+    const session = await getSession();
+    const limiter = session?.userId ? apiLimiter : publicLimiter;
+    const key = session?.userId ? `seedlings-post:${session.userId}` : `seedlings-post:${ip}`;
+    const l = await limiter.check(key);
+    if (!l.allowed) return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
+
     const csrfToken = request.headers.get("x-csrf-token");
     if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
       return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
     }
 
-    const session = await getSession();
     if (!session?.userId) {
       return NextResponse.json({ error: "Harus login dulu" }, { status: 401 });
     }
