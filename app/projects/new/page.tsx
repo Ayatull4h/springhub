@@ -1,10 +1,16 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 export const dynamic = "force-dynamic";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, AlertCircle, CheckCircle2, Upload, FileText } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+
+function BlobPreview({ file }: { file: File }) {
+  const url = useMemo(() => URL.createObjectURL(file), [file]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return <img src={url} alt="" className="h-24 w-full rounded object-cover" />;
+}
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -250,7 +256,7 @@ export default function NewProjectPage() {
             {[0, 1, 2].map(i => (
               <label key={i} className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-ink-line p-4 text-center text-xs text-ink-muted hover:border-brand-300">
                 {photoFiles[i] ? (
-                  <img src={URL.createObjectURL(photoFiles[i])} alt="" className="h-24 w-full rounded object-cover" />
+                  <BlobPreview file={photoFiles[i]} />
                 ) : (
                   <>
                     <Upload className="mx-auto h-6 w-6 text-brand-500" />

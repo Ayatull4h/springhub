@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import {
   MapPin,
@@ -44,6 +44,12 @@ function MapFallback({ message = "Map tidak tersedia di perangkat ini" }: { mess
       </div>
     </div>
   );
+}
+
+function BlobPreview({ file, alt }: { file: File; alt: string }) {
+  const url = useMemo(() => URL.createObjectURL(file), [file]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return <img src={url} alt={alt} className="h-full w-full object-cover" />;
 }
 
 // ─── Dynamic import for survey map (SSR=false) ──────────────────────────────
@@ -791,12 +797,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                         <div className="mt-1 flex flex-wrap gap-1">
                           {formPhotos[field.id].map((file, idx) => (
                             <div key={idx} className="relative h-12 w-12 overflow-hidden rounded-lg border border-ink-line">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt={`Photo ${idx + 1}`}
-                                className="h-full w-full object-cover"
-                              />
+                              <BlobPreview file={file} alt={`Photo ${idx + 1}`} />
                             </div>
                           ))}
                           <span className="ml-1 self-center text-[10px] text-ink-muted">

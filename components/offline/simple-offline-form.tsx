@@ -1,11 +1,17 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send, RefreshCw, AlertCircle, XCircle } from "lucide-react";
 import { offlineDB, type QueuedSubmission } from "@/lib/offline-db";
 import { getForm, getFormTitle, getFormI18nKey, type FormField, type FormSchema } from "@/lib/forms";
 import { useI18n } from "@/lib/i18n";
 import { INDONESIAN_PROVINCES } from "@/lib/provinces";
+
+function BlobPreview({ file, alt }: { file: File; alt: string }) {
+  const url = useMemo(() => URL.createObjectURL(file), [file]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return <img src={url} alt={alt} className="h-full w-full object-cover" />;
+}
 
 /**
  * SimpleOfflineForm — Simplified PWA offline mode.
@@ -598,11 +604,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                   <div className="mt-2 flex flex-wrap gap-2">
                     {(photoFiles[field.id] || []).map((file, idx) => (
                       <div key={idx} className="relative h-16 w-16 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-700">
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={`Foto ${idx + 1}`}
-                          className="h-full w-full object-cover"
-                        />
+                        <BlobPreview file={file} alt={`Foto ${idx + 1}`} />
                         <button
                           type="button"
                           onClick={() => removePhoto(field.id, idx)}

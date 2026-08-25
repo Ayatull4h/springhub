@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Sparkles, AlertCircle, Loader2, CheckCircle2, WifiOff, Camera } from "lucide-react";
@@ -11,6 +11,12 @@ import { useI18n } from "@/lib/i18n";
 import { LocationPicker } from "@/components/map/location-picker";
 import { useAutoSave } from "@/lib/use-auto-save";
 import { offlineDB } from "@/lib/offline-db";
+
+function BlobPreview({ file, alt }: { file: File; alt: string }) {
+  const url = useMemo(() => URL.createObjectURL(file), [file]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return <img src={url} alt={alt} className="h-full w-full object-cover" />;
+}
 
 export default function ReportFormPage() {
   const params = useParams();
@@ -46,7 +52,7 @@ export default function ReportFormPage() {
   const [turboKey, setTurboKey] = useState(0);
   const isTurboForm = slug === "tree-planting" || slug === "trench-development";
 
-  useAutoSave(slug, fieldData, photoBlobs);
+  useAutoSave(slug, `draft-${slug}-${pageLoadTime}`, fieldData, photoBlobs);
 
   // Auto-fill defaults from user profile + GPS
   const [defaultValues, setDefaultValues] = useState<Record<string, string>>({});
@@ -838,11 +844,7 @@ function FieldRenderer({
             <div className="mt-2 flex flex-wrap gap-2">
               {accumulated.map((file, idx) => (
                 <div key={idx} className="group relative h-16 w-16 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-700">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={`Foto ${idx + 1}`}
-                    className="h-full w-full object-cover"
-                  />
+                  <BlobPreview file={file} alt={`Foto ${idx + 1}`} />
                   <button
                     type="button"
                     onClick={() => {

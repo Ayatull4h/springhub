@@ -1,11 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Bug, MessageSquare, Image, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 
 type FeedbackType = "bug" | "kritik" | "saran" | "both" | "";
+
+function BlobPreview({ file, alt }: { file: File; alt: string }) {
+  const url = useMemo(() => URL.createObjectURL(file), [file]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return <img src={url} alt={alt} className="h-full w-full object-cover" />;
+}
 
 function toBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -199,11 +205,7 @@ export default function ReportIssuePage() {
               <div className="mt-2 flex flex-wrap gap-2">
                 {screenshots.map((file, idx) => (
                   <div key={idx} className="group relative h-20 w-20 overflow-hidden rounded-lg border border-ink-line bg-slate-100 dark:bg-slate-700">
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt={`Screenshot ${idx + 1}`}
-                      className="h-full w-full object-cover"
-                    />
+                    <BlobPreview file={file} alt={`Screenshot ${idx + 1}`} />
                     <button
                       type="button"
                       onClick={() => setScreenshots((prev) => prev.filter((_, i) => i !== idx))}

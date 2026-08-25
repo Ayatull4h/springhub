@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { offlineDB, type QueuedSubmission } from "@/lib/offline-db";
+import { offlineDB, type QueuedSubmission, MAX_FAILED_ATTEMPTS } from "@/lib/offline-db";
 import { useToast } from "@/components/toast";
 
 const SW_VERSION = "2026-07-29-v7"; // Bump this when SW changes — user perlu reopen PWA
-const MAX_RETRIES = 3;
+const MAX_RETRIES = MAX_FAILED_ATTEMPTS;
 const POLL_INTERVAL_MS = 10_000;
 const STALE_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 hari
 

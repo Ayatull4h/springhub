@@ -8,8 +8,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useDarkMode } from "@/lib/darkmode";
 
-import { fetchAndCacheSession } from "@/lib/session-cache";
-import { offlineDB } from "@/lib/offline-db";
+import { fetchAndCacheSession, clearAllOfflineUserData } from "@/lib/session-cache";
 
 type UserInfo = {
   id: string;
@@ -51,7 +50,7 @@ export function SiteHeader() {
 
   async function handleLogout() {
     try {
-      await offlineDB.clearSession();
+      await clearAllOfflineUserData();
     } catch {}
     await fetch("/api/csrf").then(r => r.json()).then(d => fetch("/api/auth/logout", { method: "POST", headers: { "x-csrf-token": d.token } })).catch(() => {});
     setUser(null);
