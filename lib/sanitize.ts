@@ -7,11 +7,11 @@
  * Catatan: modul ini tidak boleh dipakai di Edge runtime (pakai jsdom).
  */
 
-const BLOCKED_HTML = /<(script|style|iframe|object|embed|link|meta|base|form|input|button|textarea|select|option|svg|math|template|noscript|applet|audio|video|source|track|embed|object)\b/i;
+const BLOCKED_HTML = /<(script|style|iframe|object|embed|link|meta|base|form|input|button|textarea|select|option|svg|math|template|noscript|applet|audio|video|source|track)\b/i;
 
-const BLOCKED_ATTR = /\son(?:error|load|click|mouseover|mouseout|mousedown|mouseup|focus|blur|change|submit|keydown|keyup|keypress|dblclick|contextmenu|drag|drop|paste|input|wheel|animationstart|animationend|transitionend|begin|end)\s*=/i;
+const BLOCKED_ATTR = /\son(?:error|load|click|mouseover|mouseout|mousedown|mouseup|focus|blur|change|submit|keydown|keyup|keypress|dblclick|contextmenu|drag|drop|paste|input|wheel|animationstart|animationend|transitionend|begin|end)\s*=/gi;
 
-const BLOCKED_PROTO = /(?:href|src|action|formaction|data|xlink:href)\s*=\s*(?:["']\s*)?(?:javascript|vbscript|data|file|jar|blob):/i;
+const BLOCKED_PROTO = /(?:href|src|action|formaction|data|xlink:href)\s*=\s*(?:["']\s*)?(?:javascript|vbscript|data|file|jar|blob):/gi;
 
 type DomPurifyModule = {
   sanitize: (html: string, opts?: Record<string, unknown>) => string;
@@ -61,7 +61,7 @@ export async function sanitizeHtml(html: string): Promise<string> {
     cleaned = cleaned.replace(/(<\/?(?:script|style|iframe|object|embed|link|meta|base|form|input|button|textarea|select|option|svg|math|template|noscript|applet|audio|video|source|track)\b[^>]*>)/gi, "");
   }
   cleaned = cleaned.replace(BLOCKED_ATTR, (m) => m.replace(/=.*$/, '=""'));
-  cleaned = cleaned.replace(BLOCKED_PROTO, (m) => m.replace(/:\s*.+$/i, ":\"\""));
+  cleaned = cleaned.replace(BLOCKED_PROTO, (m) => m.replace(/:\s*.+$/i, ":\"\"")); // global via BLOCKED_* flags, sanitize all occurrences
 
   // Lapis 2 — DOMPurify penuh (parsing ulang, buang card/on*:
   try {
