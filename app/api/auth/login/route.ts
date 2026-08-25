@@ -54,16 +54,21 @@ export async function POST(request: Request) {
 
     const profile = await prisma.profile.findUnique({ where: { email: normalizedEmail } });
 
+    if (profile) {
+      const lock = await loginLockout.check(`lock:${ip}:${profile.id}`);
+      if (!lock.allowed) {
+        return NextResponse.json(
+          { error: `Akun terkunci, coba lagi dalam ${Math.ceil((lock.resetAt - Date.now()) / 60000)} menit` },
+          { status: 429 }
+        );
+      }
+    }
+
     // bcrypt.compare selalu dijalankan (hash asli atau dummy) agar timing tidak
     // membocorkan apakah email terdaftar.
     const valid = await verifyPassword(password, profile?.passwordHash ?? DUMMY_PASSWORD_HASH);
 
     if (!profile || !valid) {
-      if (profile) {
-        // Lockout tetap dihitung, tapi respons disamakan agar attacker
-        // tidak bisa membedakan email terdaftar vs tidak (enumeration oracle).
-        await loginLockout.check(`lock:${ip}:${profile.id}`);
-      }
       return NextResponse.json(
         { error: "Email atau password salah" },
         { status: 401 }

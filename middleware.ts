@@ -53,8 +53,7 @@ function isAllowedIp(ip: string, ranges: string[]): boolean {
 export async function middleware(request: NextRequest) {
   // CVE-2025-29927: header ini hanya boleh berasal dari internal Next.js.
   // Jika attacker mengirimnya, middleware dilewati → blokir langsung.
-  const subrequest = request.headers.get("x-middleware-subrequest");
-  if (subrequest && subrequest.split(":").includes("middleware")) {
+  if (request.headers.has("x-middleware-subrequest")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

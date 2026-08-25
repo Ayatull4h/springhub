@@ -1,17 +1,16 @@
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
-import { getJwtSecret } from "./jwt";
-
-const SECRET = getJwtSecret();
+import { getJwtSecret, verifyJwtWithRotation } from "./jwt";
 
 const CSRF_COOKIE = "csrf_token";
 const CSRF_HEADER = "x-csrf-token";
 
 export async function generateCsrfToken(isSecure?: boolean): Promise<string> {
+  const secret = getJwtSecret();
   const token = await new SignJWT({ type: "csrf" } as JWTPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("1h")
-    .sign(SECRET);
+    .sign(secret);
 
   const cookieStore = cookies();
   cookieStore.set(CSRF_COOKIE, token, {
@@ -39,8 +38,12 @@ export async function verifyCsrfToken(token: string): Promise<boolean> {
   }
 
   try {
-    await jwtVerify(token, SECRET);
-    await jwtVerify(cookieToken, SECRET);
+    const headerOk = await verifyJwtWithRotation(token, (secret) => jwtVerify(token, secret));
+    const cookieOk = await verifyJwtWithRotation(cookieToken, (secret) => jwtVerify(cookieToken, secret));
+    if (!headerOk || !cookieOk) {
+      console.warn("[CSRF] verification error: invalid signature or expired");
+      return false;
+    }
     const match = token === cookieToken;
     if (!match) console.warn("[CSRF] token mismatch");
     return match;

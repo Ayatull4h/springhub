@@ -2,17 +2,17 @@ import { NextResponse } from "next/server";
 import { SignJWT } from "jose";
 import { getJwtSecret } from "@/lib/jwt";
 
-const SECRET = getJwtSecret();
 const CSRF_COOKIE = "csrf_token";
 
 export async function GET(request: Request) {
   const proto = request.headers.get("x-forwarded-proto") || request.headers.get("x-forwarded-scheme") || "https";
   const isSecure = proto === "https";
 
-  const token = await new SignJWT({})
+  const secret = getJwtSecret();
+  const token = await new SignJWT({ type: "csrf" })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("1h")
-    .sign(SECRET);
+    .sign(secret);
 
   const res = NextResponse.json({ token });
   res.headers.set("Set-Cookie", `${CSRF_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600; ${isSecure ? "Secure;" : ""}`);

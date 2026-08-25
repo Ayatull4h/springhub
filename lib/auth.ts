@@ -5,8 +5,6 @@ import { cookies } from "next/headers";
 import { getJwtSecret, verifyJwtWithRotation } from "./jwt";
 import { prisma } from "./prisma";
 
-const SECRET = getJwtSecret();
-
 const SESSION_COOKIE = "session";
 const SESSION_DURATION_SEC = 60 * 60 * 24 * 7; // 7 days
 
@@ -47,10 +45,11 @@ export async function createSession(payload: SessionPayload, isSecure?: boolean)
     username: payload.username,
     phone: payload.phone || "",
   };
+  const secret = getJwtSecret();
   const token = await new SignJWT(jwtPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime(`${SESSION_DURATION_SEC}s`)
-    .sign(SECRET);
+    .sign(secret);
 
   // Session ledger: row must exist and be unexpired for the JWT to be accepted.
   // Store only the SHA-256 hash of the token in the database.
