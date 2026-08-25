@@ -6,10 +6,10 @@
 
 ---
 
-## Bagian 1 — Hardening, Staging & Modul Belajar (1–14 Agustus)
+## Bagian 1 — Hardening & Staging (1–14 Agustus)
 
 ### Ringkasan
-Fokus mengunci input, menutup XSS, dan menstabilkan staging agar produksi bisa diuji tanpa takut data hilang. Staging paralel di VPS di-restore dari dump produksi dan diuji 205 test manual. Modul Belajar 461 halaman selesai.
+Fokus mengunci input, menutup XSS, dan menstabilkan staging agar produksi bisa diuji tanpa takut data hilang. Staging paralel di VPS di-restore dari dump produksi dan diuji 205 test manual.
 
 ### Input & XSS
 | Area | Detail |
@@ -23,9 +23,6 @@ Fokus mengunci input, menutup XSS, dan menstabilkan staging agar produksi bisa d
 ### Staging Paralel
 - Stack `docker-compose.staging.yml` (DB `springhub_staging` 5433, Redis 6380, web 31760, nginx 8080 basic auth)
 - Restore `backups/springhub-20260812-0513.dump`, baseline 10 migrasi, `fix-orphan-reports` 0 klaster, health OK
-
-### Modul Belajar
-- **461 halaman, 3.5MB** `MODUL-BELAJAR.pdf` — 12 bab, 363 file ±48.500 baris, generator `scripts/generate-modul-belajar.mjs` (playwright, `waitForTimeout 1500`)
 
 ### Audit Foto & Hardening (14 Agu, via staging)
 | Temuan | Perbaikan |
