@@ -61,7 +61,7 @@ export async function createSession(payload: SessionPayload, isSecure?: boolean)
     },
   });
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: isSecure ?? true,
@@ -74,7 +74,7 @@ export async function createSession(payload: SessionPayload, isSecure?: boolean)
 }
 
 export async function destroySession(isSecure?: boolean): Promise<void> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (token) {
     try {
@@ -154,7 +154,7 @@ export function isAdminIpAllowed(request: Request): boolean {
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) return null;
 

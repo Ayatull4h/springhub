@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -33,7 +33,7 @@ export async function PUT(
     if (sortOrder !== undefined) data.sortOrder = sortOrder;
 
     const rule = await prisma.pointRule.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data,
     });
 
@@ -50,7 +50,7 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = _request.headers.get("x-csrf-token");
@@ -64,7 +64,7 @@ export async function DELETE(
 
   try {
     await prisma.pointRule.delete({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     return NextResponse.json({ success: true });

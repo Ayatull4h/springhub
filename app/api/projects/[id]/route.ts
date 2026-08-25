@@ -4,13 +4,13 @@ import { prisma } from "@/lib/prisma";
 import { buildPhotoUrls } from "@/lib/photo-url";
 export const dynamic = "force-dynamic";
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
     const isAdmin = session?.role === "admin";
 
     const project = await prisma.project.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         user: { select: { username: true } },
         photos: { select: { id: true, storagePath: true }, orderBy: { createdAt: "asc" } },

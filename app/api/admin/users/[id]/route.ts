@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -29,12 +29,12 @@ export async function PUT(
     }
 
     const user = await prisma.profile.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: { role },
       select: { id: true, username: true, role: true },
     });
     // Cabut semua sesi aktif user — role baru berlaku seketika (revocation ledger)
-    await deactivateUserSessions(params.id);
+    await deactivateUserSessions((await params).id);
     auditLog("put user", "put user");
 
 

@@ -6,7 +6,7 @@ import { auditLog } from "@/lib/audit";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -19,17 +19,17 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const report = await prisma.report.findUnique({ where: { id: params.id } });
+    const report = await prisma.report.findUnique({ where: { id: (await params).id } });
     if (!report) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
     const updated = await prisma.report.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: { isActive: !report.isActive },
     });
 
-    auditLog("post toggle report", "post toggle report id=" + params.id);
+    auditLog("post toggle report", "post toggle report id=" + (await params).id);
     return NextResponse.json({ isActive: updated.isActive });
   } catch (error) {
     console.error("Toggle report error:", error instanceof Error ? error.message : error);

@@ -12,15 +12,16 @@ function isAdmin(session: { userId: string; role: string } | null) {
 // GET /api/admin/forms/[id] — detail form dengan fields
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const session = await getSession();
   if (!isAdmin(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     const form = await prisma.form.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: { fields: { orderBy: { sortOrder: "asc" } } },
     });
     if (!form) {
@@ -40,8 +41,9 @@ export async function GET(
 // PUT /api/admin/forms/[id] — update form dan fields-nya
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
   if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
@@ -57,7 +59,7 @@ export async function PUT(
 
       // Ambil form saat ini untuk referensi slug lama
       const currentForm = await prisma.form.findUnique({
-        where: { id: params.id },
+        where: { id: id },
         select: { slug: true },
       });
 
@@ -72,7 +74,7 @@ export async function PUT(
         );
       }
       const existing = await prisma.form.findFirst({
-        where: { slug, NOT: { id: params.id } },
+        where: { slug, NOT: { id: id } },
       });
       if (existing) {
         return NextResponse.json(
@@ -84,7 +86,7 @@ export async function PUT(
 
     // Update form metadata
     await prisma.form.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         ...(slug !== undefined && { slug }),
         ...(title !== undefined && { title }),
@@ -100,7 +102,7 @@ export async function PUT(
     if (fields && Array.isArray(fields)) {
       // Delete existing fields
       await prisma.formField.deleteMany({
-        where: { formId: params.id },
+        where: { formId: id },
       });
 
       // Create new fields
@@ -116,7 +118,7 @@ export async function PUT(
               helpText?: string;
               options?: string[];
             }, i: number) => ({
-              formId: params.id,
+              formId: id,
               fieldId: f.fieldId,
               label: f.label,
               type: f.type || "text",
@@ -133,7 +135,7 @@ export async function PUT(
 
     // Return updated form with fields
     const updated = await prisma.form.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: { fields: { orderBy: { sortOrder: "asc" } } },
     });
 
@@ -150,8 +152,9 @@ export async function PUT(
 // DELETE /api/admin/forms/[id] — soft-delete (deactivate) atau hard-delete jika tidak ada reports
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
   if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
@@ -163,7 +166,7 @@ export async function DELETE(
   }
   try {
     const form = await prisma.form.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       select: { id: true, slug: true, title: true },
     });
 
@@ -179,7 +182,7 @@ export async function DELETE(
     if (reportCount > 0) {
       // Soft-delete: deactivate instead of delete
       await prisma.form.update({
-        where: { id: params.id },
+        where: { id: id },
         data: { isActive: false },
       });
       return NextResponse.json({
@@ -191,7 +194,7 @@ export async function DELETE(
 
     // Hard-delete: no reports referencing this form
     await prisma.form.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
     return NextResponse.json({ success: true, softDelete: false });
   } catch (error) {

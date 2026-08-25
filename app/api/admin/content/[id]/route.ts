@@ -6,7 +6,7 @@ import { auditLog } from "@/lib/audit";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -21,7 +21,7 @@ export async function PUT(
   try {
     const body = await request.json();
     const item = await prisma.contentBlock.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: body,
     });    auditLog("put item", "put item");
 
@@ -36,7 +36,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -49,8 +49,8 @@ export async function DELETE(
   }
 
   try {
-    await prisma.contentBlock.delete({ where: { id: params.id } });
-    auditLog("delete content", "deleted content block " + params.id);
+    await prisma.contentBlock.delete({ where: { id: (await params).id } });
+    auditLog("delete content", "deleted content block " + (await params).id);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

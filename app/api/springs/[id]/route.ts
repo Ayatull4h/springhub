@@ -6,7 +6,7 @@ import { publicLimiter } from "@/lib/rate-limit";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
@@ -15,7 +15,7 @@ export async function GET(
       return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
     }
     const spring = await prisma.spring.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         reports: {
           // C-2: hanya report approved yang tampil publik

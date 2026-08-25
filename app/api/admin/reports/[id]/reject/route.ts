@@ -8,7 +8,7 @@ import { auditLog } from "@/lib/audit";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -24,7 +24,7 @@ export async function POST(
     const body = await request.json().catch(() => ({ note: "" }));
 
     const report = await prisma.report.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!report) {
@@ -36,7 +36,7 @@ export async function POST(
     }
 
     await prisma.report.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         status: "rejected",
         reviewedById: session.userId,
@@ -61,7 +61,7 @@ export async function POST(
         await prisma.pointsLog.create({
           data: {
             userId: report.userId,
-            reportId: params.id,
+            reportId: (await params).id,
             amount: 0,
             reason: `Laporan ${report.formSlug} ditolak`,
             metadata: JSON.stringify({ status: "rejected" }),

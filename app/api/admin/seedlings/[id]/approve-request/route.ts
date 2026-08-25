@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // CSRF
@@ -44,7 +44,7 @@ export async function POST(
     }
 
     // Pastikan request milik seedling yang dimaksud
-    if (seedReq.seedlingId !== params.id) {
+    if (seedReq.seedlingId !== (await params).id) {
       return NextResponse.json({ error: "Permintaan tidak cocok dengan bibit" }, { status: 400 });
     }
 

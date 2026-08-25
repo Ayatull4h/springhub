@@ -5,7 +5,7 @@ import { getSession } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";
 import { apiLimiter } from "@/lib/rate-limit";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // CSRF
     const csrfToken = req.headers.get("x-csrf-token");
@@ -27,7 +27,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const userId = session.userId;
 
     const project = await prisma.project.findUnique({ where: { id } });
@@ -67,10 +67,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 }
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
-    const { id } = params;
+    const { id } = await params;
 
     // Total likes from denormalized Project.likes (includes seed data + new toggles)
     const project = await prisma.project.findUnique({

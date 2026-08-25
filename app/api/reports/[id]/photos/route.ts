@@ -21,7 +21,7 @@ import { verifyCsrfToken } from "@/lib/csrf";
  */
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // CSRF
@@ -31,14 +31,14 @@ export async function POST(
     }
 
     const session = await getSession();
-    const guestId = getGuestId();
+    const guestId = await getGuestId();
 
     if (!session?.userId && !guestId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const report = await prisma.report.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!report) {
@@ -74,11 +74,11 @@ export async function POST(
       );
     }
 
-    const result = await uploadPhoto(file, `reports/${params.id}`);
+    const result = await uploadPhoto(file, `reports/${(await params).id}`);
 
     const photo = await prisma.reportPhoto.create({
       data: {
-        reportId: params.id,
+        reportId: (await params).id,
         fieldId,
         storagePath: result.path,
         mimeType: "image/jpeg",
@@ -95,12 +95,12 @@ export async function POST(
     console.error("Photo upload error:", {
       message: error instanceof Error ? error.message : error,
       stack: error instanceof Error ? error.stack : undefined,
-      reportId: params.id,
+      reportId: (await params).id,
     });
     return NextResponse.json(
       {
         error: getErrorMessage(error, "Terjadi kesalahan."),
-        reportId: params.id,
+        reportId: (await params).id,
       },
       { status: isDatabaseError(error) ? 503 : 500 }
     );
@@ -114,14 +114,14 @@ export async function POST(
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
-    const guestId = getGuestId();
+    const guestId = await getGuestId();
 
     const report = await prisma.report.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       select: { userId: true, guestId: true, status: true },
     });
 
@@ -140,7 +140,7 @@ export async function GET(
     }
 
     const photos = await prisma.reportPhoto.findMany({
-      where: { reportId: params.id },
+      where: { reportId: (await params).id },
       orderBy: { createdAt: "asc" },
       select: {
         id: true,

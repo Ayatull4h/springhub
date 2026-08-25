@@ -11,7 +11,7 @@ function isAdmin(session: { userId: string; role: string } | null) {
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -24,7 +24,7 @@ export async function POST(
   }
   try {
     const form = await prisma.form.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: { fields: { orderBy: { sortOrder: "desc" }, take: 1 } },
     });
     if (!form) {
@@ -42,7 +42,7 @@ export async function POST(
     }
 
     const existing = await prisma.formField.findUnique({
-      where: { formId_fieldId: { formId: params.id, fieldId } },
+      where: { formId_fieldId: { formId: (await params).id, fieldId } },
     });
     if (existing) {
       return NextResponse.json(
@@ -55,7 +55,7 @@ export async function POST(
 
     const field = await prisma.formField.create({
       data: {
-        formId: params.id,
+        formId: (await params).id,
         fieldId,
         label,
         type: type || "text",
@@ -67,7 +67,7 @@ export async function POST(
       },
     });
 
-    auditLog("post create field", "post create field id=" + params.id);
+    auditLog("post create field", "post create field id=" + (await params).id);
     return NextResponse.json({ field }, { status: 201 });
   } catch (error) {
     console.error("Create field error::", error instanceof Error ? error.message : error);

@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -17,7 +17,7 @@ export async function GET(
     // Requester bisa lihat WA kapan aja setelah minta
     const request = await prisma.seedlingRequest.findFirst({
       where: {
-        seedlingId: params.id,
+        seedlingId: (await params).id,
         requesterId: session.userId,
         status: { in: ["pending", "completed"] },
       },
@@ -33,7 +33,7 @@ export async function GET(
 
     // Ambil nomor HP pemilik
     const seedling = await prisma.seedling.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       select: {
         userId: true,
         user: { select: { phone: true, username: true } },

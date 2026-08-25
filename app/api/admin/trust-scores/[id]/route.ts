@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -30,7 +30,7 @@ export async function PUT(
   }
 
   const profile = await prisma.profile.findUnique({
-    where: { id: params.id },
+    where: { id: (await params).id },
   });
 
   if (!profile) {
@@ -38,13 +38,13 @@ export async function PUT(
   }
 
   await prisma.profile.update({
-    where: { id: params.id },
+    where: { id: (await params).id },
     data: { trustScore },
   });
 
   await prisma.pointsLog.create({
     data: {
-      userId: params.id,
+      userId: (await params).id,
       amount: 0,
       reason: "Trust score diubah oleh admin",
       metadata: JSON.stringify({

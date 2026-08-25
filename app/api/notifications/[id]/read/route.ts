@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";
 export const dynamic = "force-dynamic";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // CSRF
     const csrfToken = req.headers.get("x-csrf-token");
@@ -16,7 +16,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await prisma.notification.updateMany({
-      where: { id: params.id, userId: session.userId },
+      where: { id: (await params).id, userId: session.userId },
       data: { isRead: true },
     });
 

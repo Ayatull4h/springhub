@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 
 const GUEST_COOKIE = "guest_session_id";
 
-export function getGuestId(): string {
-  const cookieStore = cookies();
+export async function getGuestId(): Promise<string> {
+  const cookieStore = await cookies();
   let guestId = cookieStore.get(GUEST_COOKIE)?.value;
   if (!guestId) {
     guestId = crypto.randomUUID();
@@ -18,7 +18,7 @@ export function getGuestId(): string {
   return guestId;
 }
 
-export function getExistingGuestId(): string | null {
-  const cookieStore = cookies();
+export async function getExistingGuestId(): Promise<string | null> {
+  const cookieStore = await cookies();
   return cookieStore.get(GUEST_COOKIE)?.value ?? null;
 }

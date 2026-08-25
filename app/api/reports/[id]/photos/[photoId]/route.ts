@@ -13,7 +13,7 @@ import { verifyCsrfToken } from "@/lib/csrf";
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string; photoId: string } }
+  { params }: { params: Promise<{ id: string; photoId: string }> }
 ) {
   try {
     // CSRF
@@ -23,14 +23,14 @@ export async function DELETE(
     }
 
     const session = await getSession();
-    const guestId = getGuestId();
+    const guestId = await getGuestId();
 
     if (!session?.userId && !guestId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const photo = await prisma.reportPhoto.findUnique({
-      where: { id: params.photoId },
+      where: { id: (await params).photoId },
       include: { report: { select: { userId: true, guestId: true, status: true } } },
     });
 
@@ -64,7 +64,7 @@ export async function DELETE(
     }
 
     // Delete from DB
-    await prisma.reportPhoto.delete({ where: { id: params.photoId } });
+    await prisma.reportPhoto.delete({ where: { id: (await params).photoId } });
 
     return NextResponse.json({ success: true });
   } catch (error) {

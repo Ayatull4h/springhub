@@ -5,14 +5,14 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
     const isAdmin = session?.role === "admin";
 
     const seedling = await prisma.seedling.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         // C-1: phone tidak pernah diekspos publik — kontak lewat route /contact yang punya ownership check
         user: { select: { id: true, username: true, points: true, ...(isAdmin ? { phone: true } : {}) } },

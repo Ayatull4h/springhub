@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const csrfToken = request.headers.get("x-csrf-token");
@@ -21,7 +21,7 @@ export async function POST(
 
     // Ambil bibit
     const seedling = await prisma.seedling.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!seedling) {

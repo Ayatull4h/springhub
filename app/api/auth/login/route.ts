@@ -85,7 +85,7 @@ export async function POST(request: Request) {
       phone: profile.phone,
     }, proto === "https");
 
-    const guestId = getExistingGuestId();
+    const guestId = await getExistingGuestId();
     if (guestId) {
       await prisma.report.updateMany({
         where: { guestId },

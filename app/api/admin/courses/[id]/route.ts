@@ -12,15 +12,16 @@ function isAdmin(session: { userId: string; role: string } | null) {
 // GET /api/admin/courses/[id] — detail course untuk edit
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const session = await getSession();
   if (!isAdmin(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   try {
     const course = await prisma.course.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: { modules: { orderBy: { sortOrder: "asc" } } },
     });
     if (!course) {
@@ -40,8 +41,9 @@ export async function GET(
 // PUT /api/admin/courses/[id] — update course + modules
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
   if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
@@ -58,7 +60,7 @@ export async function PUT(
     // Check slug uniqueness if changed
     if (slug) {
       const existing = await prisma.course.findFirst({
-        where: { slug, NOT: { id: params.id } },
+        where: { slug, NOT: { id: id } },
       });
       if (existing) {
         return NextResponse.json(
@@ -70,7 +72,7 @@ export async function PUT(
 
     // Update course
     const course = await prisma.course.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         ...(slug !== undefined && { slug }),
         ...(title !== undefined && { title }),
@@ -87,7 +89,7 @@ export async function PUT(
     if (modules && Array.isArray(modules)) {
       // Delete existing modules
       await prisma.courseModule.deleteMany({
-        where: { courseId: params.id },
+        where: { courseId: id },
       });
 
       // Create new modules
@@ -95,7 +97,7 @@ export async function PUT(
         await prisma.courseModule.createMany({
           data: modules.map(
             (m: { title: string; content?: string }, i: number) => ({
-              courseId: params.id,
+              courseId: id,
               title: m.title,
               content: m.content || "",
               sortOrder: i,
@@ -107,7 +109,7 @@ export async function PUT(
 
     // Return updated course with modules
     const updated = await prisma.course.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: { modules: { orderBy: { sortOrder: "asc" } } },
     });
 
@@ -124,8 +126,9 @@ export async function PUT(
 // DELETE /api/admin/courses/[id] — hapus course
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
   if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
@@ -137,7 +140,7 @@ export async function DELETE(
   }
   try {
     await prisma.course.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
     return NextResponse.json({ success: true });
   } catch (error) {

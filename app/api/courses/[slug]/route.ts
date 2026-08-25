@@ -7,11 +7,11 @@ export const dynamic = "force-dynamic";
 // Konten modul di-sanitize di server (DOMPurify) sebelum dikirim ke client.
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const course = await prisma.course.findUnique({
-      where: { slug: params.slug, isActive: true },
+      where: { slug: (await params).slug, isActive: true },
       include: { modules: { orderBy: { sortOrder: "asc" } } },
     });
     if (!course) {

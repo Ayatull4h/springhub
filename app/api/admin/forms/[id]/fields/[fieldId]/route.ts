@@ -11,7 +11,7 @@ function isAdmin(session: { userId: string; role: string } | null) {
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string; fieldId: string } }
+  { params }: { params: Promise<{ id: string; fieldId: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -27,7 +27,7 @@ export async function PUT(
     const { fieldId, label, labelEn, type, required, placeholder, helpText, options, optionsEn, sortOrder } = body;
 
     const existing = await prisma.formField.findUnique({
-      where: { formId_fieldId: { formId: params.id, fieldId: params.fieldId } },
+      where: { formId_fieldId: { formId: (await params).id, fieldId: (await params).fieldId } },
     });
     if (!existing) {
       return NextResponse.json({ error: "Field not found" }, { status: 404 });
@@ -62,7 +62,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string; fieldId: string } }
+  { params }: { params: Promise<{ id: string; fieldId: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -75,7 +75,7 @@ export async function DELETE(
   }
   try {
     const existing = await prisma.formField.findUnique({
-      where: { formId_fieldId: { formId: params.id, fieldId: params.fieldId } },
+      where: { formId_fieldId: { formId: (await params).id, fieldId: (await params).fieldId } },
     });
     if (!existing) {
       return NextResponse.json({ error: "Field not found" }, { status: 404 });

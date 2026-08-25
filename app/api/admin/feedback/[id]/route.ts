@@ -7,7 +7,7 @@ import { auditLog } from "@/lib/audit";
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -28,7 +28,7 @@ export async function PATCH(
     }
 
     await prisma.feedback.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: { status },
     });
     auditLog("patch feedback", "patch feedback");

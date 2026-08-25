@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     }
 
     const session = await getSession();
-    const guestId = getGuestId();
+    const guestId = await getGuestId();
     const rateKey = session?.userId ?? guestId;
 
     const limiter = await feedbackLimiter.check(rateKey);

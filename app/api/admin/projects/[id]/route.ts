@@ -16,7 +16,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // CSRF protection
   const csrfToken = request.headers.get("x-csrf-token");
@@ -44,7 +44,7 @@ export async function PATCH(
     if (featuredPhotoId) updateData.featuredPhotoId = featuredPhotoId;
 
     const project = await prisma.project.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: updateData,
       include: { user: { select: { email: true, username: true } } },
     });

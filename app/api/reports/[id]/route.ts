@@ -14,7 +14,7 @@ import { verifyCsrfToken } from "@/lib/csrf";
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // CSRF
@@ -24,14 +24,14 @@ export async function DELETE(
     }
 
     const session = await getSession();
-    const guestId = getGuestId();
+    const guestId = await getGuestId();
 
     if (!session?.userId && !guestId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const report = await prisma.report.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: { photos: true },
     });
 
@@ -66,12 +66,12 @@ export async function DELETE(
     ).length;
     if (storageErrors > 0) {
       console.warn(
-        `[DELETE report] ${storageErrors}/${photoPaths.length} storage deletions failed for report ${params.id}`
+        `[DELETE report] ${storageErrors}/${photoPaths.length} storage deletions failed for report ${(await params).id}`
       );
     }
 
     // Delete the report — ReportPhoto records cascade-delete automatically
-    await prisma.report.delete({ where: { id: params.id } });
+    await prisma.report.delete({ where: { id: (await params).id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -5,11 +5,11 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   _request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const form = await prisma.form.findUnique({
-      where: { slug: params.slug },
+      where: { slug: (await params).slug },
       include: {
         fields: {
           orderBy: { sortOrder: "asc" },

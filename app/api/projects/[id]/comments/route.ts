@@ -6,10 +6,10 @@ import { apiLimiter } from "@/lib/rate-limit";
 export const dynamic = "force-dynamic";
 
 // GET /api/projects/[id]/comments — list comments by project
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const comments = await prisma.comment.findMany({
-      where: { projectId: params.id },
+      where: { projectId: (await params).id },
       orderBy: { createdAt: "desc" },
       take: 50,
       include: {
@@ -24,7 +24,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 // POST /api/projects/[id]/comments — add comment
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // CSRF
     const csrfToken = req.headers.get("x-csrf-token");
@@ -56,13 +56,13 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: "Komentar maksimal 500 karakter." }, { status: 400 });
     }
     // Verify project exists
-    const project = await prisma.project.findUnique({ where: { id: params.id } });
+    const project = await prisma.project.findUnique({ where: { id: (await params).id } });
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
     const comment = await prisma.comment.create({
       data: {
-        projectId: params.id,
+        projectId: (await params).id,
         userId: session.userId,
         text: trimmed,
       },
@@ -72,7 +72,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     });
     // Also increment project comments count
     await prisma.project.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: { comments: { increment: 1 } },
     });
     return NextResponse.json({ comment }, { status: 201 });

@@ -9,7 +9,7 @@ import { computeSpringHealth } from "@/lib/health-score";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // CSRF protection
@@ -24,7 +24,7 @@ export async function POST(
     }
 
     const report = await prisma.report.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!report) {
@@ -47,7 +47,7 @@ export async function POST(
     // Validate featuredPhotoId belongs to this report
     if (featuredPhotoId) {
       const photo = await prisma.reportPhoto.findFirst({
-        where: { id: featuredPhotoId, reportId: params.id },
+        where: { id: featuredPhotoId, reportId: (await params).id },
       });
       if (!photo) {
         return NextResponse.json(
@@ -67,7 +67,7 @@ export async function POST(
     }
 
     await prisma.report.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         status: "approved",
         reviewedById: session.userId,

@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const guestId = getExistingGuestId();
+    const guestId = await getExistingGuestId();
     if (!guestId) {
       return NextResponse.json({ claimed: 0 });
     }
