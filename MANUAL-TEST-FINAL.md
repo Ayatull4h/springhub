@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
-**Tanggal**: 19 Agustus 2026 (Update Sesi 18: hardening keamanan + hapus tier donasi "tree seedling")
-**Domain**: https://www.springhub.id
-**Total Test**: ~188 test case — 23 kategori
+**Tanggal**: 25 Agustus 2026 (Update Sesi 19-20: P0-P2 security hardening + Next 15.5.23 + aktivasi data staging 269/prod 81 springs + fix form 503)
+**Domain**: https://www.springhub.id (produksi) + http://76.13.198.18:8080 (staging, basic auth 181ff4f6c436d9a69f9dd12e / 1a20e619d2d431d66ac60b17)
+**Total Test**: ~205 test case — 24 kategori ( +17 baru untuk flow data lengkap)
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -398,4 +398,30 @@ Gunakan terminal untuk test ini.
 | Test 21 — Springs (6) | 6 | 0 | |
 | Test 22 — Pagination & Versioning (4) | 4 | 0 | |
 | Test 23 — Backup (3) | 3 | 0 | |
-| **TOTAL** | **/** | **/** | **188 test** |
+| **TOTAL** | **/** | **/** | **205 test** |
+
+---
+
+## Test 24 — Full Data Flow: Submit → Approve → View → Download (17 test) — BARU sesi 20
+
+Gunakan 2 browser (atau incognito) — 1 sebagai **volunteer**, 1 sebagai **admin**. Tujuannya memastikan data masuk dari form sampai bisa di-download publik tanpa bocor PII.
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 24.1 | Submit monitoring sebagai volunteer | Login `ucup@springhub.id` / `ucup12345` → buka `/report/spring-monitoring` → isi `B1_nama="Uji Flow 25Agu-` + jam", `A3_wa`, `B6_aliran`, `C1_warna`, `C6_ancaman`, `location_lat/lng` -7.5/110.3, upload **3 foto** (JPG) → Kirim → harus `200 {success:true, status:"pending"}` | |
+| 24.2 | Report pending tidak muncul publik | `curl $API/api/reports?limit=5` → laporan baru **tidak** ada (hanya approved) | |
+| 24.3 | Spring pending tidak muncul publik | `curl $API/api/springs` → spring baru **belum** ada (hanya active 81 prod / 269 staging) | |
+| 24.4 | Admin lihat pending | Login admin → `GET /api/admin/reports?status=pending` → harus ada laporan "Uji Flow" dengan 3 foto | |
+| 24.5 | Admin approve (min 3 foto) | `POST /api/admin/reports/:id/approve` dengan CSRF → harus `200` + `status:"approved"`, poin +100 (cek `/api/admin/users` poin ucup naik) | |
+| 24.6 | Aktivasi spring (jika baru) | `GET /api/admin/springs?status=pending` → cari spring "Uji Flow" → `POST /api/admin/springs/:id/approve` → `200` | |
+| 24.7 | Publik muncul setelah approve | `curl $API/api/reports?limit=5` → laporan baru **muncul** dengan `snappedLat/Lng` (bukan precise), tanpa `email`/`phone` | |
+| 24.8 | Publik springs muncul | `curl $API/api/springs` → total `81+1` prod / `269+1` staging, spring baru ada di list | |
+| 24.9 | Detail spring publik | `curl $API/api/springs/:id` → harus `200` dengan `reports[]` (hanya approved + isActive), `photos[].url` = `/uploads/reports/...` | |
+| 24.10 | Foto bisa di-download | `curl -I $API/uploads/reports/.../xxx.jpg` via nginx → `200 image/jpeg` (di prod via `https://www.springhub.id`, di staging via `http://76.13.198.18:8080` + basic auth) | |
+| 24.11 | Gallery muncul | `curl $API/api/gallery?limit=10` → harus ada entry laporan baru dengan `photo.url` | |
+| 24.12 | PII aman | `curl $API/api/springs/:id` & `/api/projects/:id` & `/api/seedlings/:id` → response **tidak** ada `email` (hanya `username`, `region`) | |
+| 24.13 | Rate-limit publik | `for i in {1..35}; do curl -s $API/api/dashboard > /dev/null; done` → setelah ~30 req/10s harus `429 Terlalu banyak permintaan` | |
+| 24.14 | CSRF tanpa token ditolak | `curl -X POST $API/api/reports` tanpa `x-csrf-token` → `403 Invalid CSRF token` | |
+| 24.15 | Export CSV admin | `curl -b $COOKIE "$API/api/admin/export?entity=reports"` → CSV terdownload dengan kolom `PhotoURLs` berisi `/uploads/...` | |
+| 24.16 | Download foto via export | Ambil 1 URL dari CSV → `curl -I` → `200` | |
+| 24.17 | Offline queue → online | Buka `/offline` → isi form offline (3 foto) → matikan internet → Simpan → nyalakan → cek `/api/admin/reports?status=pending` → harus ada | |
