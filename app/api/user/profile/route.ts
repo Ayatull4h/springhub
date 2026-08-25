@@ -3,6 +3,7 @@ import { getSession, hashPassword, verifyPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logError } from "@/lib/error-logger";
 import { verifyCsrfToken } from "@/lib/csrf";
+import { apiLimiter } from "@/lib/rate-limit";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -74,7 +75,6 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
-    // CSRF — penting: route ini bisa mengubah password (akun takeover via CSRF)
     const csrfToken = request.headers.get("x-csrf-token");
     if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
       return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
@@ -84,6 +84,9 @@ export async function PUT(request: Request) {
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const lim = await apiLimiter.check(`profile-put:${session.userId}`);
+    if (!lim.allowed) return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
 
     const body = await request.json();
     const parsed = updateSchema.safeParse(body);

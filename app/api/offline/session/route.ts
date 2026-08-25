@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 import { verifyCsrfToken } from "@/lib/csrf";
+import { apiLimiter } from "@/lib/rate-limit";
 
 /**
  * POST /api/offline/session
@@ -9,7 +10,6 @@ import { verifyCsrfToken } from "@/lib/csrf";
  */
 export async function POST(request: Request) {
   try {
-    // CSRF
     const csrfToken = request.headers.get("x-csrf-token");
     if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
       return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
@@ -19,6 +19,9 @@ export async function POST(request: Request) {
     if (!session?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const lim = await apiLimiter.check(`offline-session-post:${session.userId}`);
+    if (!lim.allowed) return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
 
     const body = await request.json();
     const selectedForms = body.selectedForms || [];
@@ -60,6 +63,9 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const lim = await apiLimiter.check(`offline-session-get:${session.userId}`);
+    if (!lim.allowed) return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
+
     const activeSession = await prisma.offlineSession.findFirst({
       where: { userId: session.userId, isActive: true },
       include: { trackingPoints: { take: 1, orderBy: { recordedAt: "desc" } } },
@@ -81,7 +87,6 @@ export async function GET() {
  */
 export async function DELETE(request: Request) {
   try {
-    // CSRF
     const csrfToken = request.headers.get("x-csrf-token");
     if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
       return NextResponse.json({ error: "Invalid CSRF" }, { status: 403 });
@@ -91,6 +96,9 @@ export async function DELETE(request: Request) {
     if (!session?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const lim = await apiLimiter.check(`offline-session-delete:${session.userId}`);
+    if (!lim.allowed) return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
 
     await prisma.offlineSession.updateMany({
       where: { userId: session.userId, isActive: true },
