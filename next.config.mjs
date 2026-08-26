@@ -33,6 +33,10 @@ const nextConfig = {
   experimental: {
     clientRouterFilter: true,
     clientRouterFilterRedirects: true,
+    serverActions: {
+      bodySizeLimit: "50mb",
+    },
+    proxyClientMaxBodySize: "50mb",
   },
   async headers() {
     return [
