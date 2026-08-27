@@ -12,6 +12,8 @@ import {
   Sprout,
   Droplets,
   Loader2,
+  Search,
+  X,
 } from "lucide-react";
 import { PROTECTION_RADIUS_KM } from "@/lib/geo";
 import { FORMS, getForm } from "@/lib/forms";
@@ -109,6 +111,7 @@ export function SpringMap() {
   const { t } = useI18n();
   const [selectedType, setSelectedType] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
@@ -374,6 +377,17 @@ const formTitleI18nKey = (slug: string): string => {
     return lookup;
   }, [allForms, mapTypesWithCats]);
 
+  const filteredMapPoints = useMemo(() => {
+    if (!searchQuery.trim()) return mapPoints;
+    const q = searchQuery.toLowerCase();
+    return mapPoints.filter(
+      (p: any) =>
+        p.name?.toLowerCase().includes(q) ||
+        p.province?.toLowerCase().includes(q) ||
+        p.regency?.toLowerCase().includes(q)
+    );
+  }, [mapPoints, searchQuery]);
+
   // Filter springs: hanya yang punya healthScore (sudah disurvei), muncul jika filter = Semua atau Survei Mata Air
   const visibleSprings = useMemo(() => {
     if (selectedType && selectedType !== "spring-monitoring") return [];
@@ -386,15 +400,26 @@ const formTitleI18nKey = (slug: string): string => {
         result = result.filter((s: any) => s.healthStatus === healthKey);
       }
     }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (s: any) =>
+          s.name?.toLowerCase().includes(q) ||
+          s.province?.toLowerCase().includes(q) ||
+          s.regency?.toLowerCase().includes(q) ||
+          s.village?.toLowerCase().includes(q) ||
+          s.subdistrict?.toLowerCase().includes(q)
+      );
+    }
     return result;
-  }, [springs, selectedType, selectedCategory]);
+  }, [springs, selectedType, selectedCategory, searchQuery]);
 
   // Filter reports: muncul jika filter = Semua atau form non-spring
   const visible = useMemo(
     () => {
       if (selectedCategory?.startsWith("health:")) return [];
       if (selectedType === "spring-monitoring") return [];
-      return reports.filter(r => {
+      let result = reports.filter(r => {
         if (!selectedType) return true;
         if (r.formSlug !== selectedType) return false;
         if (selectedCategory) {
@@ -407,8 +432,18 @@ const formTitleI18nKey = (slug: string): string => {
         }
         return true;
       });
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        result = result.filter(
+          (r) =>
+            r.formSlug.toLowerCase().includes(q) ||
+            r.user?.username?.toLowerCase().includes(q) ||
+            r.user?.region?.toLowerCase().includes(q)
+        );
+      }
+      return result;
     },
-    [reports, selectedType, selectedCategory, formCategories, t]
+    [reports, selectedType, selectedCategory, formCategories, t, searchQuery]
   );
 
   const itemsPerPage = 6;
@@ -450,8 +485,32 @@ const formTitleI18nKey = (slug: string): string => {
               onCategoryChange={setSelectedCategory}
               formOptions={formFilterOptions}
             />
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-subtle" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari mata air, desa, provinsi..."
+                className="h-9 w-[200px] rounded-lg border border-ink-line bg-white pl-8 pr-8 text-sm placeholder:text-ink-subtle focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-ink-subtle hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700"
+                  aria-label="Hapus pencarian"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3">
+            {searchQuery && (
+              <span className="text-xs text-ink-muted">
+                {visibleSprings.length + visible.length + filteredMapPoints.length} hasil untuk “{searchQuery}”
+              </span>
+            )}
             <StatusInfo />
             <span className="text-[10px] uppercase tracking-wider text-ink-subtle">OpenStreetMap</span>
           </div>
@@ -462,7 +521,7 @@ const formTitleI18nKey = (slug: string): string => {
             springs={visibleSprings as any[]}
             formColors={formColors}
             formLookup={formLookup}
-            mapPoints={mapPoints}
+            mapPoints={filteredMapPoints}
           />
         </div>
         {hasMoreReports && (
