@@ -1,6 +1,6 @@
 # Jadwal & Data Collection September — SpringHub
 
-**Fokus:** Boyolali – Semarang (30 mata air baru) + Fix Pasar Bibit Flow + Treatment Data  
+**Fokus:** Boyolali – Salatiga (30 mata air baru) + Fix Pasar Bibit Flow + Treatment Data  
 **Periode:** 1 – 30 September 2026  
 **Aturan baru:** **Data collection hanya Sabtu–Minggu**, **Senin–Jumat untuk web + treatment**  
 **Tim:** Koordinator (kamu) + 2 Surveyor + Driver  
@@ -8,9 +8,9 @@
 
 ---
 
-## Ringkasan — Kenapa Boyolali–Semarang & Kenapa Pasar Bibit Sekarang
+## Ringkasan — Kenapa Boyolali–Salatiga & Kenapa Pasar Bibit Sekarang
 
-Peta sekarang: **81 titik aktif** di produksi (269 di staging). Klaster Boyolali–Semarang masih bolong — padahal lereng Merapi-Merbabu dan hutan Ungaran adalah resapan utama. Kalau September kita isi **30 titik baru** (hanya **Sabtu–Minggu**), peta akan rapat dan donatur bisa lihat progres “Baru bulan ini”.
+Peta sekarang: **81 titik aktif** di produksi (269 di staging). Klaster Boyolali–Salatiga masih bolong — padahal lereng Merapi-Merbabu dan hutan Salatiga adalah resapan utama. Kalau September kita isi **30 titik baru** (hanya **Sabtu–Minggu**), peta akan rapat dan donatur bisa lihat progres “Baru bulan ini”.
 
 **Foto belum muncul di springs?** Bukan hilang. **Epicollect 199 laporan + 551 foto** ada di staging (23×1 + 176×3) tapi 8 mata air baru (`Sumber Telaga` dkk) baru aktif kemarin — foto Epicollect yang kamu lihat di staging belum di-push ke produksi, dan foto lapangan baru masih `pending` (belum treatment). Treatment tiap **Senin** (hari web pertama setelah lapangan) akan bikin foto muncul.
 
@@ -53,19 +53,19 @@ Pasar Bibit: alur **Lapor → Minta → Setujui → Selesai** sudah jalan, tapi 
 | **Rab 17 Sep** | WEB | Perbaiki `GET /api/seedlings` publik **tidak** ada `phone`, WA hanya via notifikasi + uji foto download `200` | `curl` tidak bocor |
 | **Kam 18 Sep** | WEB | Verifikasi 10 mata air lama foto `0` (Sumber Maron, Brantas) — siapkan tambah foto | List siap |
 | **Jum 19 Sep** | WEB | Admin Download: test download Epicollect per springs → pilih `Sumber Telaga` → `Download ZIP` → 8 foto | ZIP berisi 8 foto |
-| **Sab 20 Sep** | **LAPANGAN** | **Semarang Sumowono** — 5 titik: Sumowono, Trayu, Kemitir, Duren, Jubelan | Sumber hutan |
-| **Min 21 Sep** | **LAPANGAN** | **Semarang Getasan–Kopeng** — 5 titik: Kopeng, Getasan, Tajuk, Batur, Ngrawan | Jalur resapan |
+| **Sab 20 Sep** | **LAPANGAN** | **Salatiga Tengaran** — 5 titik: Tengaran, Karang Duren, Nyamat, Bener, Tegalrejo | Sumber hutan |
+| **Min 21 Sep** | **LAPANGAN** | **Salatiga Getasan–Tengaran** — 5 titik: Getasan, Kopeng, Tajuk, Batur, Ngrawan | Jalur resapan |
 
 ### Minggu 4 — 22–30 Sep
 | Hari & Tanggal | Jenis | Kegiatan | Output |
 |---|---|---|---|
-| **Sen 22 Sep** | **WEB + TREATMENT** | **Treatment 10 titik Semarang** (Sab 20–Min 21) → approve/activate → cek Epicollect + verifikasi foto `0` Maron/Brantas | 10 approved |
+| **Sen 22 Sep** | **WEB + TREATMENT** | **Treatment 10 titik Salatiga** (Sab 20–Min 21) → approve/activate → cek Epicollect + verifikasi foto `0` Maron/Brantas | 10 approved |
 | **Sel 23 Sep** | WEB | Sinkron final 10 titik → cek `staging: 269→299` springs | 30 laporan approved |
 | **Rab 24 Sep** | WEB | **Fix Pasar Bibit P3:** Uji full flow **Lapor → Minta → Approve → WA → Selesai 2 langkah → stok -1** | Flow mulus |
-| **Kam 25 Sep** | WEB | Tulis laporan 2 halaman + peta before/after Boyolali–Semarang untuk donatur | PDF 2 hal |
+| **Kam 25 Sep** | WEB | Tulis laporan 2 halaman + peta before/after Boyolali–Salatiga untuk donatur | PDF 2 hal |
 | **Jum 26 Sep** | WEB | Bersihkan data test: `24 dummy` (`Monggo`/`Tester`) `DELETE` preview `--dry-run` dulu + test **Admin Download** semua 30 titik baru | Preview siap |
-| **Sab 27 Sep** | **LAPANGAN** | **Cadangan** — 4 titik: Selo cadangan, Musuk cadangan, Ungaran cadangan, Sumowono cadangan | Total 30+4 titik |
-| **Min 28 Sep** | **LAPANGAN** | **Cadangan** — 2 titik: Ungaran, Sumowono cadangan + foto Epicollect cek ulang | Selesai lapangan |
+| **Sab 27 Sep** | **LAPANGAN** | **Cadangan** — 4 titik: Selo cadangan, Musuk cadangan, Salatiga cadangan, Tengaran cadangan | Total 30+4 titik |
+| **Min 28 Sep** | **LAPANGAN** | **Cadangan** — 2 titik: Salatiga, Tengaran cadangan + foto Epicollect cek ulang | Selesai lapangan |
 | **Sen 29 Sep** | **WEB + TREATMENT** | **Treatment final 6 cadangan** → approve/activate → verifikasi `Foto Epicollect` 551 + foto baru 120 | Semua foto muncul |
 | **Sel 30 Sep** | WEB | Uji manual **205 test** `MANUAL-TEST-FINAL.md` di staging, kalau PASS push ke produksi | Siap rilis Oktober |
 
@@ -78,7 +78,7 @@ Pasar Bibit: alur **Lapor → Minta → Setujui → Selesai** sudah jalan, tapi 
 ## Checklist Lapangan (Cetak 30 lembar, 1 lembar = 1 mata air) — dibawa Sabtu–Minggu saja
 
 ```
-Nama lokal mata air: __________  Desa/Kec: __________  Kab: Boyolali / Semarang
+Nama lokal mata air: __________  Desa/Kec: __________  Kab: Boyolali / Salatiga
 Koordinat (lat/lng): __________  Akurasi GPS: ___ m (wajib <10m)
 Foto (wajib 3, maks 5): [ ] sudut 1 dekat sumber  [ ] sudut 2 lebar  [ ] sudut 3 aktivitas  [ ] cadangan
 Warna air: [ ] Bening [ ] Agak Keruh [ ] Kekuningan
@@ -114,10 +114,10 @@ Bawa Sabtu–Minggu: HP Android 2 (1 offline mode, 1 cadangan), powerbank, pH/TD
 
 | Jam | Langkah Treatment | Cara Cek | Output |
 |---|---|---|---|
-| 09:00 | **Verifikasi foto di staging** — buka `http://76.13.198.18:8080/admin/reports?status=pending` | Harus ada N laporan baru Boyolali/Semarang (+ Epicollect 199), tiap laporan badge `3/4/5 foto` (bukan `⚠️ 0 foto`) | List pending |
+| 09:00 | **Verifikasi foto di staging** — buka `http://76.13.198.18:8080/admin/reports?status=pending` | Harus ada N laporan baru Boyolali/Salatiga (+ Epicollect 199), tiap laporan badge `3/4/5 foto` (bukan `⚠️ 0 foto`) | List pending |
 | 09:30 | **Cek foto rusak** — klik laporan → lihat thumbnail. Kalau `HEIC`/`ftyp` akan ada pesan “Foto HEIC, konversi dulu”. Kalau foto `placehold.co` (27 placeholder) → hapus, minta surveyor kirim ulang. **Untuk Epicollect:** cek `Sumber Telaga`/`Belik Soka` detail → foto `3` harus `200` | Thumbnail `200` | Foto valid |
 | 10:00 | **Approve report** — klik `Approve` (min 3 foto) → `POST /api/admin/reports/:id/approve` → `healthScore` terhitung, `points +100` | `status:"approved"` | Report approved |
-| 10:30 | **Aktifkan spring** — `GET /api/admin/springs?status=pending` → cari `Sumber ...` Boyolali/Semarang → `POST /api/admin/springs/:id/approve` → `active` | `GET /api/springs` nambah 1 (staging 269→270, prod 81→82) | Spring aktif |
+| 10:30 | **Aktifkan spring** — `GET /api/admin/springs?status=pending` → cari `Sumber ...` Boyolali/Salatiga → `POST /api/admin/springs/:id/approve` → `active` | `GET /api/springs` nambah 1 (staging 269→270, prod 81→82) | Spring aktif |
 | 11:00 | **Verifikasi publik + Admin Download** — `curl -s http://127.0.0.1:31760/api/springs/:id | grep photos` → harus `3`, `curl -I /uploads/reports/.../xxx.jpg` → `200`, **Buka `/admin` → tab baru “Download” → pilih spring → `Download ZIP` → harus berisi N foto (Epicollect 3 foto, lapangan 3 foto)** | Foto muncul di springs + ZIP bisa di-download |
 
 **Kalau masih 0 foto di springs detail (contoh `Sumber Maron`/`Sumber Brantas` kemarin + Epicollect yang belum di-push):** cek `report.photos.length` di **staging** — kalau `0` berarti foto gagal ke-upload (batas `50mb` `next.config.mjs:33` atau `magic bytes` tidak lolos) → suruh surveyor kirim ulang via `POST /api/reports/:id/photos` dengan `x-csrf-token` + `x-queue-worker` retry. Kalau di **produksi** `0` tapi di staging `3`, berarti belum di-push — tunggu ACC Senin.
@@ -154,7 +154,7 @@ Bawa Sabtu–Minggu: HP Android 2 (1 offline mode, 1 cadangan), powerbank, pH/TD
 
 ## Output Akhir September
 
-- **Peta:** staging **269→299** springs (8 hari lapangan × ~4 titik = 30 baru), produksi **81→~110** springs — Boyolali–Semarang rapat, filter “Baru bulan ini” bisa dilihat donatur (dikerjakan Jumat 11 Sep, hari web).
+- **Peta:** staging **269→299** springs (8 hari lapangan × ~4 titik = 30 baru), produksi **81→~110** springs — Boyolali–Salatiga rapat, filter “Baru bulan ini” bisa dilihat donatur (dikerjakan Jumat 11 Sep, hari web).
 - **Laporan:** 2 halaman PDF peta before/after + cerita warga (pakai template laporan Agustus versi awam, **tanpa Modul Belajar**) — dikerjakan Kam 24 Sep (hari web).
 - **Pasar Bibit:** flow **Lapor → Minta → Approve → WA → Selesai 2 langkah** mulus (dikerjakan Sel–Jum, 18 hari web), `205` test manual PASS (Sel 29 Sep, hari web).
 - **Data bersih:** 24 dummy dihapus setelah kamu ACC (Jum 25 Sep preview, hari web).
