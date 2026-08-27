@@ -97,6 +97,31 @@ Bawa Sabtu–Senin: HP Android 2 (1 offline mode, 1 cadangan), powerbank, pH/TDS
 
 ---
 
+## Treatment Data — Kenapa Foto Belum Muncul di Springs (Dikerjakan Tiap Selasa, Hari Web)
+
+**Masalah sekarang:** Foto sudah di-upload dari lapangan, tapi di `www.springhub.id/#map` belum muncul. Bukan hilang — tapi **belum di-treatment**.
+
+**Alur sampai foto muncul di springs (3 kunci):**
+1. **Report harus `approved`** — laporan masuk sebagai `pending` dulu (biar admin cek). Kalau masih pending, foto tidak akan tampil di peta publik (`app/api/springs/route.ts:15` cuma `status:"active"` + `reports: approved`).
+2. **Spring harus `active`** — laporan baru bikin spring `pending` dulu. Admin harus `POST /api/admin/springs/:id/approve` biar jadi `active` baru muncul di `GET /api/springs`.
+3. **Foto harus 3–5, lolos saringan** — `lib/upload-photo.ts` cek magic bytes (bukan cuma ekstensi), EXIF dibuang, kompres 720p, `sharp` — kalau foto <3 atau `HEIC` tanpa konversi, akan `PHOTOS_PENDING` dan nunggu retry 30 detik (`components/queue-worker.tsx:7`).
+
+**Treatment tiap Selasa (hari web, 09:00–11:00, setelah sinkron Senin):**
+
+| Jam | Langkah Treatment | Cara Cek | Output |
+|---|---|---|---|
+| 09:00 | **Verifikasi foto di staging** — buka `http://76.13.198.18:8080/admin/reports?status=pending` | Harus ada N laporan baru Boyolali/Semarang, tiap laporan badge `3/4/5 foto` (bukan `⚠️ 0 foto`) | List pending |
+| 09:30 | **Cek foto rusak** — klik laporan → lihat thumbnail. Kalau `HEIC`/`ftyp` akan ada pesan ramah “Foto HEIC, konversi dulu”. Kalau foto `placehold.co` (27 placeholder) → hapus, minta surveyor kirim ulang | Thumbnail muncul 200 | Foto valid |
+| 10:00 | **Approve report** — klik `Approve` (min 3 foto) → `POST /api/admin/reports/:id/approve` → `healthScore` terhitung, `points +100` | `status:"approved"` | Report approved |
+| 10:30 | **Aktifkan spring** — `GET /api/admin/springs?status=pending` → cari `Sumber ...` Boyolali/Semarang → `POST /api/admin/springs/:id/approve` → `active` | `GET /api/springs` nambah 1 | Spring aktif |
+| 11:00 | **Verifikasi publik** — `curl -s http://127.0.0.1:31760/api/springs/:id | grep photos` → harus `3`, `curl -I /uploads/reports/.../xxx.jpg` → `200 image/jpeg` via nginx `staging-nginx:139` | Foto muncul di springs |
+
+**Kalau masih 0 foto di springs detail (contoh `Sumber Maron`/`Sumber Brantas` kemarin):** cek `report.photos.length` di `staging` — kalau `0` berarti foto gagal ke-upload (batas `50mb` `next.config.mjs:33` atau `magic bytes` tidak lolos) → suruh surveyor kirim ulang via `POST /api/reports/:id/photos` dengan `x-csrf-token` + `x-queue-worker` retry.
+
+**Khusus September:** 30 titik baru + 10 verifikasi foto `0` (Sumber Maron, Brantas dll) — semua treatment dilakukan **Selasa** (hari web), jadi **Sabtu–Senin lapangan tidak perlu tunggu foto muncul** — cukup kumpulkan, Selasa kita treatment bareng.
+
+---
+
 ## Fix Pasar Bibit — Dikerjakan di Hari Web (Selasa–Jumat)
 
 **Masalah sekarang (dari audit 14 Agu):**
