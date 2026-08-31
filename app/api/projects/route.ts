@@ -1,67 +1,20 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage } from "@/lib/prisma";
-import { logError } from "@/lib/error-logger";
-import { uploadPhoto } from "@/lib/upload-photo";
-import { buildPhotoUrls } from "@/lib/photo-url";
 import { verifyCsrfToken } from "@/lib/csrf";
 import { apiLimiter } from "@/lib/rate-limit";
+import { uploadPhoto } from "@/lib/upload-photo";
+import { list } from "@/controllers/projectController";
+import { guard } from "@/middlewares/guard";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    const url = new URL(request.url);
-    const limitParam = url.searchParams.get("limit") || url.searchParams.get("per_page") || "50";
-    const pageParam = url.searchParams.get("page") || "1";
-    const limit = Math.min(Math.max(parseInt(limitParam, 10) || 50, 1), 200);
-    const page = Math.max(parseInt(pageParam, 10) || 1, 1);
-    const skip = (page - 1) * limit;
-
-    const where = { status: "approved" as const };
-
-    const [projects, total] = await Promise.all([
-      prisma.project.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        take: limit,
-        skip,
-        select: {
-          id: true,
-          title: true,
-          summary: true,
-          region: true,
-          status: true,
-          goalAmount: true,
-          raisedAmount: true,
-          typeId: true,
-          likes: true,
-          comments: true,
-          createdAt: true,
-          featuredPhotoId: true,
-          user: { select: { username: true } },
-          photos: { select: { id: true, storagePath: true }, take: 5 },
-          _count: { select: { donations: true, commentList: true, photos: true } },
-        },
-      }),
-      prisma.project.count({ where }),
-    ]);
-
-    const normalized = projects.map((p) => {
-      const photosWithUrls = buildPhotoUrls(p.photos);
-      return {
-        ...p,
-        _count: { donations: p._count.donations, comments: p._count.commentList },
-        featuredPhoto: p.featuredPhotoId
-          ? photosWithUrls.find(ph => ph.id === p.featuredPhotoId) || photosWithUrls[0] || null
-          : photosWithUrls[0] || null,
-        photos: photosWithUrls,
-      };
-    });
-    return NextResponse.json({ projects: normalized, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
-  } catch (err) {
-    console.error("[Projects GET]", err);
-    await logError({ message: "Projects GET error", level: "error", source: "api", stack: err instanceof Error ? err.stack : "" }).catch(() => {});
-    return NextResponse.json({ projects: [] }, { status: 200 });
+    try { await guard(request, { rate: "public", csrf: false }); } catch (e) { if (e instanceof Response) return e; throw e; }
+    return list(request);
+  } catch (e) {
+    if (e instanceof Response) return e;
+    throw e;
   }
 }
 
