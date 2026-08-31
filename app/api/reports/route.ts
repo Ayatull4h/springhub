@@ -9,31 +9,22 @@ import {
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { snapToProtectionGrid } from "@/lib/geo";
-import { verifyCsrfToken } from "@/lib/csrf";
+import { guard } from "@/middlewares/guard";
 
-import { apiLimiter } from "@/lib/rate-limit";
 const GUEST_DAILY_LIMIT = 5; // guest only — volunteer & admin unlimited
 
 export async function POST(request: Request) {
   try {
-    // CSRF check — berlaku untuk semua client tanpa terkecuali
-    const csrfToken = request.headers.get("x-csrf-token");
-    if (!csrfToken || !(await verifyCsrfToken(csrfToken))) {
-      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    // Staging rewrite: 1 baris guard gantikan 15 baris CSRF+session+rateLimit (config terpusat)
+    let session: Awaited<ReturnType<typeof getSession>>;
+    try {
+      const g = await guard(request, { csrf: true, rate: "api" });
+      session = g.session;
+    } catch (e) {
+      if (e instanceof Response) return e;
+      throw e;
     }
-
-    const session = await getSession();
     const guestId = await getGuestId();
-    const rateKey = session?.userId ?? guestId;
-
-    // Rate limit check
-    const limitResult = await apiLimiter.check(`report:${rateKey}`);
-    if (!limitResult.allowed) {
-      return NextResponse.json(
-        { error: "Terlalu banyak permintaan. Silakan coba lagi nanti." },
-        { status: 429 }
-      );
-    }
 
     const formData = await request.formData();
     const formSlug = formData.get("form_slug") as string;
