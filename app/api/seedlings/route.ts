@@ -2,59 +2,19 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma, getErrorMessage } from "@/lib/prisma";
 import { verifyCsrfToken } from "@/lib/csrf";
-import { publicLimiter, apiLimiter } from "@/lib/rate-limit";
+import { apiLimiter, publicLimiter } from "@/lib/rate-limit";
+import { guard } from "@/middlewares/guard";
+import { list } from "@/controllers/seedlingController";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
-    const limit = await publicLimiter.check(`seedlings:${ip}`);
-    if (!limit.allowed) {
-      return NextResponse.json({ error: "Terlalu banyak permintaan." }, { status: 429 });
-    }
-
-    const { searchParams } = new URL(request.url);
-    const mine = searchParams.get("mine");
-    const species = searchParams.get("species");
-    const province = searchParams.get("province");
-
+    try { await guard(request, { rate: "public", csrf: false }); } catch (e) { if (e instanceof Response) return e; throw e; }
     const session = await getSession();
-
-    const where: Record<string, unknown> = { status: "active" };
-
-    if (mine === "1" && session?.userId) {
-      where.userId = session.userId;
-      delete where.status;
-    }
-
-    if (species) where.species = { contains: species, mode: "insensitive" };
-    if (province) where.province = province;
-
-    const includeBase: Record<string, unknown> = {
-      user: { select: { id: true, username: true, points: true, region: true } },
-      photos: { select: { id: true, storagePath: true }, orderBy: { createdAt: "asc" } },
-      report: { include: { photos: { select: { id: true, storagePath: true }, orderBy: { createdAt: "asc" }, take: 5 } } },
-      _count: { select: { requests: true } },
-    };
-    if (mine === "1") {
-      includeBase.requests = {
-        include: { requester: { select: { id: true, username: true, phone: true } } },
-        orderBy: { createdAt: "desc" },
-      };
-    }
-
-    const seedlings = await prisma.seedling.findMany({
-      where,
-      include: includeBase as any,
-      orderBy: { createdAt: "desc" },
-    });
-
-    return NextResponse.json({ seedlings });
-  } catch (error) {
-    return NextResponse.json(
-      { error: getErrorMessage(error, "Gagal mengambil data bibit") },
-      { status: 500 }
-    );
+    return list(request, session);
+  } catch (e) {
+    if (e instanceof Response) return e;
+    throw e;
   }
 }
 
