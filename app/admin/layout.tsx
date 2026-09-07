@@ -24,6 +24,8 @@ import {
   X,
   Sprout,
   Link2,
+  Download,
+  CalendarDays,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
@@ -44,6 +46,8 @@ const sidebar = [
   { label: "admin.sidebar.reviewQueue", href: "/admin/review", icon: ShieldCheck },
   { label: "admin.sidebar.projects", href: "/admin/projects", icon: FolderKanban },
   { label: "admin.sidebar.content", href: "/admin/content", icon: Image },
+  { label: "admin.sidebar.download", href: "/admin/download", icon: Download },
+  { label: "admin.sidebar.events", href: "/admin/events", icon: CalendarDays },
   // { label: "admin.sidebar.map", href: "/admin/map", icon: MapPin },
 ];
 

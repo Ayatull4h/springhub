@@ -974,5 +974,7 @@
   "admin.orphans.createSuccess": "Spring created",
   "admin.orphans.createFailed": "Failed to create spring",
   "map.loadMore": "Load more reports",
-  "map.loadingMore": "Loading more..."
+  "map.loadingMore": "Loading more...",
+  "admin.sidebar.download": "Photo Download",
+  "admin.sidebar.events": "Event Schedule"
 }

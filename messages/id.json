@@ -974,5 +974,7 @@
   "admin.orphans.createSuccess": "Spring berhasil dibuat",
   "admin.orphans.createFailed": "Gagal membuat spring",
   "map.loadMore": "Muat lebih banyak laporan",
-  "map.loadingMore": "Memuat lebih banyak..."
+  "map.loadingMore": "Memuat lebih banyak...",
+  "admin.sidebar.download": "Unduh Foto",
+  "admin.sidebar.events": "Jadwal Event"
 }
