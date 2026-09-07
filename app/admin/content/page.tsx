@@ -131,6 +131,19 @@ export default function AdminContentPage() {
     video: Video, event: Calendar, publication: FileText, press: FileText, project: ExternalLink, stat: Image,
   };
 
+  function getYoutubeId(url: string): string | null {
+    if (!url) return null;
+    const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([^&\s?/]+)/);
+    return match ? match[1] : null;
+  }
+
+  function autoFillYoutubeThumb() {
+    const id = getYoutubeId(form.linkUrl);
+    if (id && /^[a-zA-Z0-9_-]{11}$/.test(id)) {
+      setForm({ ...form, imageUrl: `/api/ytthumb?videoId=${id}&quality=maxresdefault` });
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -213,8 +226,8 @@ export default function AdminContentPage() {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowForm(false)}>
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4" onClick={() => setShowForm(false)}>
+          <div className="my-8 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-ink">{editing ? t("admin.content.edit") : t("admin.content.addTitle")} {activeSection}</h3>
             <form onSubmit={handleSave} className="mt-4 space-y-3">
               <div>
@@ -239,7 +252,23 @@ export default function AdminContentPage() {
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">{t("admin.content.imageUrl")}</label>
-                <input value={form.imageUrl} onChange={e => setForm({...form, imageUrl: e.target.value})} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" placeholder={t("admin.content.imageUrl")} />
+                <div className="mt-1 flex gap-2">
+                  <input value={form.imageUrl} onChange={e => setForm({...form, imageUrl: e.target.value})} className="w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" placeholder={t("admin.content.imageUrl")} />
+                  {getYoutubeId(form.linkUrl) && (
+                    <button type="button" onClick={autoFillYoutubeThumb} className="flex-none rounded-md border border-brand-300 bg-brand-50 px-3 py-2 text-xs font-medium text-brand-700 hover:bg-brand-100 dark:bg-brand-900/30 dark:text-brand-300">
+                      Ambil dari YouTube
+                    </button>
+                  )}
+                </div>
+                {form.imageUrl && (
+                  <div className="mt-2 overflow-hidden rounded-md border border-ink-line">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={form.imageUrl} alt="Preview thumbnail" className="h-32 w-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                  </div>
+                )}
+                {!form.imageUrl && getYoutubeId(form.linkUrl) && (
+                  <p className="mt-1 text-xs text-ink-subtle">Link YouTube terdeteksi — klik “Ambil dari YouTube” untuk isi thumbnail otomatis (atau kosongkan, thumbnail tampil otomatis di halaman depan).</p>
+                )}
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">Link URL (YouTube or article)</label>

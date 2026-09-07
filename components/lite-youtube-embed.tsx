@@ -10,6 +10,7 @@ type LiteYouTubeEmbedProps = {
 
 export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
   const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   if (loaded) {
@@ -28,6 +29,8 @@ export function LiteYouTubeEmbed({ videoId, title }: LiteYouTubeEmbedProps) {
   const thumbSrc = `/api/ytthumb?videoId=${videoId}&quality=maxresdefault`;
 
   function handleImgError(e: React.SyntheticEvent<HTMLImageElement>) {
+    if (failed) return;
+    setFailed(true);
     (e.target as HTMLImageElement).src = `/api/ytthumb?videoId=${videoId}&quality=hqdefault`;
   }
 

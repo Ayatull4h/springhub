@@ -42,7 +42,7 @@ const mediaStyles: Record<string, { gradient: string; icon: React.ReactNode; lab
 
 function getYoutubeId(url: string): string | null {
   if (!url) return null;
-  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([^&\s?/]+)/);
   return match ? match[1] : null;
 }
 
