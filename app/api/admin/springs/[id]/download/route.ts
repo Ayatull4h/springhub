@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession, isAdmin as checkAdmin } from "@/lib/auth";
 import { prisma, getErrorMessage } from "@/lib/prisma";
 import { auditLog } from "@/lib/audit";
-import * as archiver from "archiver";
+import { ZipArchive } from "archiver";
 import fs from "fs";
 import path from "path";
 export const dynamic = "force-dynamic";
@@ -52,7 +52,7 @@ export async function GET(
       (p) => !p.storagePath.startsWith("http://") && !p.storagePath.startsWith("https://")
     );
 
-    const archive = archiver("zip", { zlib: { level: 6 } });
+    const archive = new ZipArchive({ zlib: { level: 6 } });
     const chunks: Buffer[] = [];
     const done = new Promise<void>((resolve, reject) => {
       archive.on("data", (c: Buffer) => chunks.push(c));
