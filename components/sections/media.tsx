@@ -166,7 +166,7 @@ export function MediaSection() {
   // Geometri bianglala: kartu menempel di busur (samping naik),
   // tapi tetap tegak seperti kabin — tidak dimiringkan
   const geom = (o: number) => {
-    const gap = isSm ? 168 : 150;
+    const gap = isSm ? 185 : 165;
     const abs = Math.abs(o);
     return {
       x: o * gap,
@@ -256,8 +256,6 @@ export function MediaSection() {
               else lastInteractRef.current = Date.now();
             }}
           >
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-8 bg-gradient-to-r from-white to-transparent dark:from-slate-900" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-900" />
             {items.map((item, i) => {
               const o = offsetOf(i);
               const g = geom(o);
@@ -284,7 +282,7 @@ export function MediaSection() {
                       if (item.linkUrl) window.open(item.linkUrl, item.linkUrl.startsWith("http") ? "_blank" : "_self", "noreferrer");
                     }}
                     onKeyDown={(e) => { if (o !== 0 && (e.key === "Enter" || e.key === " ")) goTo(i); }}
-                    className={`card group block w-[220px] ${o !== 0 ? "cursor-pointer" : ""} sm:w-[240px]`}
+                    className={`card group block w-[242px] ${o !== 0 ? "cursor-pointer" : ""} sm:w-[264px]`}
                   >
                     <div className="-mx-4 -mt-4 mb-3 h-28 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
                       <MediaThumb item={item} />
