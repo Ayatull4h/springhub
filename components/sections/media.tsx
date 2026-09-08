@@ -100,6 +100,8 @@ export function MediaSection() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
+  const hoveringRef = useRef(false);
+  const lastInteractRef = useRef(0);
 
   useEffect(() => {
     fetch("/api/content?section=media")
@@ -129,16 +131,31 @@ export function MediaSection() {
 
   const maxPage = Math.max(0, items.length - 1);
 
+  const markInteract = () => { lastInteractRef.current = Date.now(); };
+
   const goPrev = () => {
+    markInteract();
     const p = page <= 0 ? maxPage : page - 1;
     setPage(p);
     scrollToPage(p);
   };
-  const goNext = () => {
+  const goNext = useCallback(() => {
     const p = page >= maxPage ? 0 : page + 1;
     setPage(p);
     scrollToPage(p);
-  };
+  }, [page, maxPage, scrollToPage]);
+
+  // Auto-putar pelan tiap 5 detik (roda berjalan sendiri), berhenti saat
+  // disentuh/hover, jalan lagi 10 detik setelah interaksi terakhir
+  useEffect(() => {
+    if (items.length < 2) return;
+    const id = setInterval(() => {
+      if (document.hidden || hoveringRef.current) return;
+      if (Date.now() - lastInteractRef.current < 10000) return;
+      goNext();
+    }, 5000);
+    return () => clearInterval(id);
+  }, [items.length, goNext]);
 
   const typeColors: Record<string, string> = {
     video: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
@@ -211,8 +228,12 @@ export function MediaSection() {
             <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-900" />
             <div
               ref={trackRef}
-              onScroll={handleScroll}
-              className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              onScroll={() => { markInteract(); handleScroll(); }}
+              onMouseEnter={() => { hoveringRef.current = true; }}
+              onMouseLeave={() => { hoveringRef.current = false; markInteract(); }}
+              onTouchStart={() => { hoveringRef.current = true; }}
+              onTouchEnd={() => { hoveringRef.current = false; markInteract(); }}
+              className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-[calc(50%-130px)] pb-2 [scrollbar-width:none] sm:px-[calc(50%-150px)] [&::-webkit-scrollbar]:hidden"
             >
               {items.map((item) => {
             const external = item.linkUrl && item.linkUrl.startsWith("http");
@@ -223,7 +244,7 @@ export function MediaSection() {
                 href={item.linkUrl || "#"}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noreferrer" : undefined}
-                className="card group w-[260px] flex-none snap-start transition hover:-translate-y-1 sm:w-[300px]"
+                className="card group w-[260px] flex-none snap-center transition hover:-translate-y-1 sm:w-[300px]"
               >
                 <div className="-mx-4 -mt-4 mb-3 h-36 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
                   <MediaThumb item={item} />
