@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession, isAdmin as checkAdmin } from "@/lib/auth";
 import { prisma, getErrorMessage } from "@/lib/prisma";
 import { auditLog } from "@/lib/audit";
-import archiver from "archiver";
+import * as archiver from "archiver";
 import fs from "fs";
 import path from "path";
 export const dynamic = "force-dynamic";
