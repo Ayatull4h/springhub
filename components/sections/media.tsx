@@ -56,31 +56,46 @@ function getYoutubeFallback(url: string): string | null {
   return id ? `/api/ytthumb?videoId=${id}&quality=hqdefault` : null;
 }
 
+const PROXY_HOSTS = [
+  "greennetwork.id",
+  "blogger.googleusercontent.com",
+  "images.unsplash.com",
+  "upload.wikimedia.org",
+];
+
+// Lewatkan thumbnail eksternal via /api/imgthumb supaya tidak kena
+// hotlink-protection / CDN yang kadang 404 di browser
+function proxiedThumb(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    const u = new URL(url, "http://localhost");
+    if (!u.hostname || u.hostname === "localhost") return null;
+    const ok = PROXY_HOSTS.some((h) => u.hostname === h || u.hostname.endsWith(`.${h}`));
+    return ok ? `/api/imgthumb?url=${encodeURIComponent(url)}` : null;
+  } catch {
+    return null;
+  }
+}
+
 function MediaThumb({ item }: { item: MediaItem }) {
-  const imgSrc = item.imageUrl || getYoutubeThumb(item.linkUrl);
-  const [useFallback, setUseFallback] = useState(false);
-  const [currentSrc, setCurrentSrc] = useState(imgSrc);
+  const direct = item.imageUrl || getYoutubeThumb(item.linkUrl);
+  const viaProxy = proxiedThumb(direct);
+  const fallback = getYoutubeFallback(item.linkUrl);
+  const stages = [...new Set([viaProxy, direct, fallback].filter((s): s is string => !!s))];
+  const [stage, setStage] = useState(0);
   const style = mediaStyles[item.type] || mediaStyles.video;
 
   useEffect(() => {
-    setUseFallback(false);
-    setCurrentSrc(imgSrc);
-  }, [imgSrc]);
+    setStage(0);
+  }, [item.id]);
 
-  if (currentSrc && !useFallback) {
+  if (stage < stages.length) {
     return <img
-      src={currentSrc}
+      src={stages[stage]}
       alt={item.title}
       className="h-full w-full object-cover transition group-hover:scale-105"
       loading="lazy"
-      onError={() => {
-        const fallback = getYoutubeFallback(item.linkUrl);
-        if (fallback && currentSrc !== fallback) {
-          setCurrentSrc(fallback);
-        } else {
-          setUseFallback(true);
-        }
-      }}
+      onError={() => setStage((s) => s + 1)}
     />;
   }
 
