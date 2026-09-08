@@ -45,7 +45,31 @@ export async function GET(
       return NextResponse.json({ error: "Spring tidak ditemukan" }, { status: 404 });
     }
 
-    const photos = spring.reports.flatMap((r) =>
+    // Sama seperti halaman publik: gabung laporan langsung + laporan di radius ~2km
+    const nearby =
+      spring.snappedLat !== null && spring.snappedLng !== null
+        ? await prisma.report.findMany({
+            where: {
+              id: { notIn: spring.reports.map((r) => r.id) },
+              isActive: true,
+              status: "approved",
+              snappedLat: { gte: spring.snappedLat - 0.02, lte: spring.snappedLat + 0.02 },
+              snappedLng: { gte: spring.snappedLng - 0.02, lte: spring.snappedLng + 0.02 },
+            },
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              formSlug: true,
+              status: true,
+              createdAt: true,
+              fieldData: true,
+              photos: { orderBy: { createdAt: "asc" } },
+            },
+          })
+        : [];
+    const allReports = [...spring.reports, ...nearby];
+
+    const photos = allReports.flatMap((r) =>
       r.photos.map((p) => ({ ...p, reportId: r.id, formSlug: r.formSlug }))
     );
     const localPhotos = photos.filter(
@@ -72,7 +96,7 @@ export async function GET(
     const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
     const csv = [
       "report_id,form_slug,status,created_at,photo_id,filename",
-      ...spring.reports.flatMap((r) =>
+      ...allReports.flatMap((r) =>
         r.photos.length
           ? r.photos.map((p) => [r.id, r.formSlug, r.status, r.createdAt.toISOString(), p.id, path.basename(p.storagePath)].map(esc).join(","))
           : [[r.id, r.formSlug, r.status, r.createdAt.toISOString(), "", ""].map(esc).join(",")]
@@ -80,7 +104,7 @@ export async function GET(
     ].join("\n");
     archive.append(csv, { name: "data.csv" });
     archive.append(
-      JSON.stringify({ spring: spring.name, province: spring.province, regency: spring.regency, reports: spring.reports.length, photos: photos.length, attached, exportedAt: new Date().toISOString() }, null, 2),
+      JSON.stringify({ spring: spring.name, province: spring.province, regency: spring.regency, reports: allReports.length, photos: photos.length, attached, exportedAt: new Date().toISOString() }, null, 2),
       { name: "info.json" }
     );
 
@@ -93,7 +117,7 @@ export async function GET(
       status: 200,
       headers: {
         "Content-Type": "application/zip",
-        "Content-Disposition": `attachment; filename="${slugify(spring.name)}_${spring.reports.length}laporan_${attached}foto.zip"`,
+        "Content-Disposition": `attachment; filename="${slugify(spring.name)}_${allReports.length}laporan_${attached}foto.zip"`,
       },
     });
   } catch (error) {
