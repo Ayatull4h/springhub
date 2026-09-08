@@ -99,9 +99,18 @@ export function MediaSection() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const trackRef = useRef<HTMLDivElement>(null);
   const hoveringRef = useRef(false);
   const lastInteractRef = useRef(0);
+  const touchRef = useRef<number | null>(null);
+  const [isSm, setIsSm] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 640px)");
+    const upd = () => setIsSm(mq.matches);
+    upd();
+    mq.addEventListener("change", upd);
+    return () => mq.removeEventListener("change", upd);
+  }, []);
 
   useEffect(() => {
     fetch("/api/content?section=media")
@@ -111,51 +120,48 @@ export function MediaSection() {
       .finally(() => setLoading(false));
   }, []);
 
-  const scrollToPage = useCallback((p: number) => {
-    const el = trackRef.current;
-    if (!el) return;
-    const card = el.querySelector<HTMLElement>("[data-media-card]");
-    const gap = 16;
-    const step = (card?.offsetWidth || 280) + gap;
-    el.scrollTo({ left: p * step, behavior: "smooth" });
-  }, []);
-
-  const handleScroll = useCallback(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    const card = el.querySelector<HTMLElement>("[data-media-card]");
-    const gap = 16;
-    const step = (card?.offsetWidth || 280) + gap;
-    setPage(Math.round(el.scrollLeft / step));
-  }, []);
-
-  const maxPage = Math.max(0, items.length - 1);
-
-  const markInteract = () => { lastInteractRef.current = Date.now(); };
-
-  const goPrev = () => {
-    markInteract();
-    const p = page <= 0 ? maxPage : page - 1;
-    setPage(p);
-    scrollToPage(p);
+  // Jarak melingkar terpendek dari kartu aktif, mis. 5 item → {-2..+2}
+  const offsetOf = (i: number) => {
+    const n = items.length;
+    let o = (i - page + n) % n;
+    if (o > Math.floor(n / 2)) o -= n;
+    return o;
   };
-  const goNext = useCallback(() => {
-    const p = page >= maxPage ? 0 : page + 1;
-    setPage(p);
-    scrollToPage(p);
-  }, [page, maxPage, scrollToPage]);
 
-  // Auto-putar pelan tiap 5 detik (roda berjalan sendiri), berhenti saat
-  // disentuh/hover, jalan lagi 10 detik setelah interaksi terakhir
+  const goTo = useCallback((p: number) => {
+    if (items.length === 0) return;
+    lastInteractRef.current = Date.now();
+    setPage(((p % items.length) + items.length) % items.length);
+  }, [items.length]);
+
+  const goPrev = () => goTo(page - 1);
+  const goNext = useCallback(() => goTo(page + 1), [page, goTo]);
+
+  // Roda jalan sendiri tiap 5 detik, berhenti saat disentuh/hover
   useEffect(() => {
     if (items.length < 2) return;
     const id = setInterval(() => {
       if (document.hidden || hoveringRef.current) return;
       if (Date.now() - lastInteractRef.current < 10000) return;
-      goNext();
+      setPage((p) => (p + 1) % items.length);
     }, 5000);
     return () => clearInterval(id);
-  }, [items.length, goNext]);
+  }, [items.length]);
+
+  // Geometri bianglala: kartu menempel di busur (samping naik),
+  // tapi tetap tegak seperti kabin — tidak dimiringkan
+  const geom = (o: number) => {
+    const gap = isSm ? 168 : 150;
+    const abs = Math.abs(o);
+    return {
+      x: o * gap,
+      y: o * o * 12,
+      scale: 1 - abs * 0.1,
+      z: 10 - abs,
+      opacity: 1 - abs * 0.12,
+      bright: 1 - abs * 0.1,
+    };
+  };
 
   const typeColors: Record<string, string> = {
     video: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
@@ -223,55 +229,74 @@ export function MediaSection() {
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
-          <div className="relative mt-4">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-white to-transparent dark:from-slate-900" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-900" />
-            <div
-              ref={trackRef}
-              onScroll={() => { markInteract(); handleScroll(); }}
-              onMouseEnter={() => { hoveringRef.current = true; }}
-              onMouseLeave={() => { hoveringRef.current = false; markInteract(); }}
-              onTouchStart={() => { hoveringRef.current = true; }}
-              onTouchEnd={() => { hoveringRef.current = false; markInteract(); }}
-              className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-[calc(50%-130px)] pb-2 [scrollbar-width:none] sm:px-[calc(50%-150px)] [&::-webkit-scrollbar]:hidden"
-            >
-              {items.map((item) => {
-            const external = item.linkUrl && item.linkUrl.startsWith("http");
-            return (
-              <Link
-                key={item.id}
-                data-media-card
-                href={item.linkUrl || "#"}
-                target={external ? "_blank" : undefined}
-                rel={external ? "noreferrer" : undefined}
-                className="card group w-[260px] flex-none snap-center transition hover:-translate-y-1 sm:w-[300px]"
-              >
-                <div className="-mx-4 -mt-4 mb-3 h-36 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
-                  <MediaThumb item={item} />
+          <div
+            className="relative mt-4 h-[360px] overflow-hidden [perspective:1200px] sm:h-[380px]"
+            onMouseEnter={() => { hoveringRef.current = true; }}
+            onMouseLeave={() => { hoveringRef.current = false; lastInteractRef.current = Date.now(); }}
+            onTouchStart={(e) => { touchRef.current = e.touches[0].clientX; hoveringRef.current = true; }}
+            onTouchEnd={(e) => {
+              hoveringRef.current = false;
+              const dx = e.changedTouches[0].clientX - (touchRef.current ?? 0);
+              if (Math.abs(dx) > 40) goTo(page + (dx < 0 ? 1 : -1));
+              else lastInteractRef.current = Date.now();
+            }}
+          >
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-8 bg-gradient-to-r from-white to-transparent dark:from-slate-900" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-900" />
+            {items.map((item, i) => {
+              const o = offsetOf(i);
+              const g = geom(o);
+              const external = item.linkUrl && item.linkUrl.startsWith("http");
+              return (
+                <div
+                  key={item.id}
+                  data-media-card
+                  className="absolute left-1/2 top-2"
+                  style={{
+                    zIndex: g.z,
+                    opacity: g.opacity,
+                    filter: `brightness(${g.bright})`,
+                    transform: `translate(-50%, 0) translate(${g.x}px, ${g.y}px) scale(${g.scale})`,
+                    transition: "transform .6s cubic-bezier(.25,.8,.25,1), opacity .6s, filter .6s",
+                  }}
+                >
+                  <div
+                    role="button"
+                    tabIndex={o === 0 ? 0 : -1}
+                    aria-label={item.title}
+                    onClick={() => {
+                      if (o !== 0) { goTo(i); return; }
+                      if (item.linkUrl) window.open(item.linkUrl, item.linkUrl.startsWith("http") ? "_blank" : "_self", "noreferrer");
+                    }}
+                    onKeyDown={(e) => { if (o !== 0 && (e.key === "Enter" || e.key === " ")) goTo(i); }}
+                    className={`card group block w-[220px] ${o !== 0 ? "cursor-pointer" : ""} sm:w-[240px]`}
+                  >
+                    <div className="-mx-4 -mt-4 mb-3 h-28 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
+                      <MediaThumb item={item} />
+                    </div>
+                    <span className={`chip text-xs ${typeColors[item.type] || "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"}`}>
+                      {item.type}
+                    </span>
+                    <h3 className="mt-2 text-sm font-semibold text-ink">{item.title}</h3>
+                    {item.subtitle && (
+                      <p className="mt-0.5 text-xs text-ink-muted">{item.subtitle}</p>
+                    )}
+                    <p className="mt-1 line-clamp-2 text-xs text-ink-subtle">{item.description}</p>
+                    {item.linkLabel && (
+                      <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-brand-600">
+                        {item.linkLabel} <ArrowRight className="h-3 w-3" />
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <span className={`chip text-xs ${typeColors[item.type] || "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"}`}>
-                  {item.type}
-                </span>
-                <h3 className="mt-2 text-sm font-semibold text-ink">{item.title}</h3>
-                {item.subtitle && (
-                  <p className="mt-0.5 text-xs text-ink-muted">{item.subtitle}</p>
-                )}
-                <p className="mt-1 line-clamp-2 text-xs text-ink-subtle">{item.description}</p>
-                {item.linkLabel && (
-                  <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-brand-600">
-                    {item.linkLabel} <ArrowRight className="h-3 w-3" />
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-            </div>
+              );
+            })}
           </div>
           <div className="mt-4 flex items-center justify-center gap-1.5">
             {items.map((_, i) => (
               <button
                 key={i}
-                onClick={() => { setPage(i); scrollToPage(i); }}
+                onClick={() => { goTo(i); }}
                 className={`h-2 rounded-full transition-all ${i === page ? "w-6 bg-brand-600" : "w-2 bg-slate-300 hover:bg-slate-400 dark:bg-slate-600"}`}
                 aria-label={`Ke slide ${i + 1}`}
               />
