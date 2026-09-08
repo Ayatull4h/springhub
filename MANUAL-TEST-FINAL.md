@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
-**Tanggal**: 25 Agustus 2026 (Update Sesi 19-20: P0-P2 security hardening + Next 15.5.23 + aktivasi data staging 269/prod 81 springs + fix form 503)
+**Tanggal**: 8 September 2026 (Update: download ZIP per springs + jadwal event + 3 kartu media + popup scroll + thumbnail YT otomatis, hapus 29 dummy, prod 268 springs)
 **Domain**: https://www.springhub.id (produksi) + http://76.13.198.18:8080 (staging, basic auth 181ff4f6c436d9a69f9dd12e / 1a20e619d2d431d66ac60b17)
-**Total Test**: ~205 test case — 24 kategori ( +17 baru untuk flow data lengkap)
+**Total Test**: ~217 test case — 25 kategori ( +12 baru: download, event, media)
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -398,7 +398,9 @@ Gunakan terminal untuk test ini.
 | Test 21 — Springs (6) | 6 | 0 | |
 | Test 22 — Pagination & Versioning (4) | 4 | 0 | |
 | Test 23 — Backup (3) | 3 | 0 | |
-| **TOTAL** | **/** | **/** | **205 test** |
+| Test 24 — Full Data Flow (17) | 0 | 0 | Belum diuji |
+| Test 25 — Download, Event & Media (12) | 0 | 0 | Belum diuji (fitur 8 Sep 2026) |
+| **TOTAL** | **/** | **/** | **217 test** |
 
 ---
 
@@ -410,12 +412,12 @@ Gunakan 2 browser (atau incognito) — 1 sebagai **volunteer**, 1 sebagai **admi
 |---|---|---|---|
 | 24.1 | Submit monitoring sebagai volunteer | Login `ucup@springhub.id` / `ucup12345` → buka `/report/spring-monitoring` → isi `B1_nama="Uji Flow 25Agu-` + jam", `A3_wa`, `B6_aliran`, `C1_warna`, `C6_ancaman`, `location_lat/lng` -7.5/110.3, upload **3 foto** (JPG) → Kirim → harus `200 {success:true, status:"pending"}` | |
 | 24.2 | Report pending tidak muncul publik | `curl $API/api/reports?limit=5` → laporan baru **tidak** ada (hanya approved) | |
-| 24.3 | Spring pending tidak muncul publik | `curl $API/api/springs` → spring baru **belum** ada (hanya active 81 prod / 269 staging) | |
+| 24.3 | Spring pending tidak muncul publik | `curl $API/api/springs` → spring baru **belum** ada (hanya active 268 prod / 269 staging) | |
 | 24.4 | Admin lihat pending | Login admin → `GET /api/admin/reports?status=pending` → harus ada laporan "Uji Flow" dengan 3 foto | |
 | 24.5 | Admin approve (min 3 foto) | `POST /api/admin/reports/:id/approve` dengan CSRF → harus `200` + `status:"approved"`, poin +100 (cek `/api/admin/users` poin ucup naik) | |
 | 24.6 | Aktivasi spring (jika baru) | `GET /api/admin/springs?status=pending` → cari spring "Uji Flow" → `POST /api/admin/springs/:id/approve` → `200` | |
 | 24.7 | Publik muncul setelah approve | `curl $API/api/reports?limit=5` → laporan baru **muncul** dengan `snappedLat/Lng` (bukan precise), tanpa `email`/`phone` | |
-| 24.8 | Publik springs muncul | `curl $API/api/springs` → total `81+1` prod / `269+1` staging, spring baru ada di list | |
+| 24.8 | Publik springs muncul | `curl $API/api/springs` → total `268+1` prod / `269+1` staging, spring baru ada di list | |
 | 24.9 | Detail spring publik | `curl $API/api/springs/:id` → harus `200` dengan `reports[]` (hanya approved + isActive), `photos[].url` = `/uploads/reports/...` | |
 | 24.10 | Foto bisa di-download | `curl -I $API/uploads/reports/.../xxx.jpg` via nginx → `200 image/jpeg` (di prod via `https://www.springhub.id`, di staging via `http://76.13.198.18:8080` + basic auth) | |
 | 24.11 | Gallery muncul | `curl $API/api/gallery?limit=10` → harus ada entry laporan baru dengan `photo.url` | |
@@ -425,3 +427,24 @@ Gunakan 2 browser (atau incognito) — 1 sebagai **volunteer**, 1 sebagai **admi
 | 24.15 | Export CSV admin | `curl -b $COOKIE "$API/api/admin/export?entity=reports"` → CSV terdownload dengan kolom `PhotoURLs` berisi `/uploads/...` | |
 | 24.16 | Download foto via export | Ambil 1 URL dari CSV → `curl -I` → `200` | |
 | 24.17 | Offline queue → online | Buka `/offline` → isi form offline (3 foto) → matikan internet → Simpan → nyalakan → cek `/api/admin/reports?status=pending` → harus ada | |
+
+---
+
+## Test 25 — Download per Springs, Jadwal Event & Kartu Media (12 test) — BARU 8 Sep 2026
+
+Login admin dulu (`admin@springhub.id` / `demo12345`), buka `www.springhub.id/admin`.
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 25.1 | Menu baru muncul | Sidebar admin harus ada **Unduh Foto** (`/admin/download`) dan **Jadwal Event** (`/admin/events`) | |
+| 25.2 | Cari mata air di Unduh Foto | Buka `/admin/download` → ketik "Besuki" → harus muncul kartu Umbul Besuki + tombol Download ZIP | |
+| 25.3 | Download ZIP berisi foto | Klik Download ZIP Umbul Besuki → file terdownload → buka ZIP → harus ada `data.csv` + `info.json` + folder `foto/` berisi 29 foto | |
+| 25.4 | Download tanpa login ditolak | Incognito (tanpa login) buka `$API/api/admin/springs/8be95ac2-2f96-4197-886c-407192a11310/download` → harus `403 Unauthorized` | |
+| 25.5 | Tambah jadwal event | Buka `/admin/events` → Tambah Jadwal → isi judul "Data Collection Boyolali", tanggal, lokasi, tempel link Google Form → Simpan → harus muncul di daftar | |
+| 25.6 | Edit + nonaktifkan jadwal | Klik Edit → ubah judul → Simpan → berubah. Hapus centang "Tampilkan di halaman depan" → Simpan → jadwal hilang dari halaman depan tapi tetap di admin | |
+| 25.7 | Tombol Daftar buka Google Form | Di halaman depan section event → klik Daftar → harus buka link Google Form di tab baru (tidak isi form 2 kali) | |
+| 25.8 | Kartu press Green Network | Buka `/` scroll ke Media → harus ada kartu press judul krisis air Jawa + thumbnail foto gotong royong (bukan gradien polos) | |
+| 25.9 | Kartu video YT otomatis | Kartu video `f2R32EFNHxo` → thumbnail harus foto YouTube (via `/api/ytthumb`), klik → buka YouTube | |
+| 25.10 | Kartu publikasi Witaksara | Kartu publikasi judul "Menyembuhkan Mata Air..." → thumbnail foto Blogger harus tampil (tidak broken) | |
+| 25.11 | Popup konten bisa scroll | Buka `/admin/content` → Tambah → kecilkan tinggi browser (±600px) → semua field (judul s/d tombol Simpan) harus bisa di-scroll, tidak kepotong | |
+| 25.12 | Thumbnail YT otomatis di admin | Di popup Tambah konten → pilih type video → tempel link `https://www.youtube.com/watch?v=f2R32EFNHxo` → harus muncul tombol "Ambil dari YouTube" → klik → kolom thumbnail terisi + preview muncul | |
