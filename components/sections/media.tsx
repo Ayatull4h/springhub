@@ -1,9 +1,9 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper } from "lucide-react";
+import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper, ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 type MediaItem = {
@@ -98,6 +98,8 @@ export function MediaSection() {
   const { t } = useI18n();
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/content?section=media")
@@ -106,6 +108,37 @@ export function MediaSection() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  const scrollToPage = useCallback((p: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>("[data-media-card]");
+    const gap = 16;
+    const step = (card?.offsetWidth || 280) + gap;
+    el.scrollTo({ left: p * step, behavior: "smooth" });
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>("[data-media-card]");
+    const gap = 16;
+    const step = (card?.offsetWidth || 280) + gap;
+    setPage(Math.round(el.scrollLeft / step));
+  }, []);
+
+  const maxPage = Math.max(0, items.length - 1);
+
+  const goPrev = () => {
+    const p = page <= 0 ? maxPage : page - 1;
+    setPage(p);
+    scrollToPage(p);
+  };
+  const goNext = () => {
+    const p = page >= maxPage ? 0 : page + 1;
+    setPage(p);
+    scrollToPage(p);
+  };
 
   const typeColors: Record<string, string> = {
     video: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
@@ -153,16 +186,44 @@ export function MediaSection() {
           <p>{t("media.empty", "No media content yet. Check back soon!")}</p>
         </div>
       ) : (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((item) => {
+        <>
+          <div className="mt-6 flex items-center justify-end gap-2">
+            <span className="mr-auto text-xs text-ink-subtle">
+              {page + 1} / {items.length}
+            </span>
+            <button
+              onClick={goPrev}
+              className="rounded-full border border-ink-line p-2 text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white"
+              aria-label="Sebelumnya"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={goNext}
+              className="rounded-full border border-ink-line p-2 text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white"
+              aria-label="Berikutnya"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="relative mt-4">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-white to-transparent dark:from-slate-900" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-900" />
+            <div
+              ref={trackRef}
+              onScroll={handleScroll}
+              className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {items.map((item) => {
             const external = item.linkUrl && item.linkUrl.startsWith("http");
             return (
               <Link
                 key={item.id}
+                data-media-card
                 href={item.linkUrl || "#"}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noreferrer" : undefined}
-                className="card group transition hover:-translate-y-1"
+                className="card group w-[260px] flex-none snap-start transition hover:-translate-y-1 sm:w-[300px]"
               >
                 <div className="-mx-4 -mt-4 mb-3 h-36 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
                   <MediaThumb item={item} />
@@ -183,7 +244,19 @@ export function MediaSection() {
               </Link>
             );
           })}
-        </div>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center justify-center gap-1.5">
+            {items.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => { setPage(i); scrollToPage(i); }}
+                className={`h-2 rounded-full transition-all ${i === page ? "w-6 bg-brand-600" : "w-2 bg-slate-300 hover:bg-slate-400 dark:bg-slate-600"}`}
+                aria-label={`Ke slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        </>
       )}
 
     </section>
