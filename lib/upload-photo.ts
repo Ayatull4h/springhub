@@ -57,7 +57,7 @@ export async function uploadPhoto(
   if (!allowedTypes.includes(detectedMime)) {
     if (detectedMime === "image/heic") {
       throw new Error(
-        "Format HEIC/HEIF (iPhone) belum didukung. Ubah ke JPG dulu di Pengaturan Kamera (Format → Paling Kompatibel), lalu coba lagi."
+        "Format HEIC/HEIF (iPhone) belum didukung server. Ubah ke JPG dulu di Pengaturan Kamera (Format → Paling Kompatibel), lalu coba lagi."
       );
     }
     throw new Error(
