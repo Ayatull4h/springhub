@@ -147,10 +147,25 @@ export default function AdminEventsPage() {
     }
   }
 
-  async function openGallery() {
-    setGallery(null);
-    const d = await fetch("/api/admin/events/upload").then((r) => r.json());
-    setGallery(d.photos || []);
+  const [galleryQuery, setGalleryQuery] = useState("");
+  const [galleryPage, setGalleryPage] = useState(1);
+  const [galleryTotal, setGalleryTotal] = useState(0);
+  const [galleryLoadingMore, setGalleryLoadingMore] = useState(false);
+
+  async function openGallery(reset = true) {
+    const page = reset ? 1 : galleryPage + 1;
+    if (reset) {
+      setGallery(null);
+      setGalleryPage(1);
+    } else {
+      setGalleryLoadingMore(true);
+    }
+    const d = await fetch(`/api/admin/events/upload?q=${encodeURIComponent(galleryQuery)}&page=${page}&limit=24`).then((r) => r.json());
+    const items = d.photos || [];
+    setGallery((prev) => (reset || !prev ? items : [...prev, ...items]));
+    setGalleryPage(page);
+    setGalleryTotal(d.pagination?.total || 0);
+    setGalleryLoadingMore(false);
   }
 
   async function handleUploadFile(file: File) {
@@ -331,18 +346,40 @@ export default function AdminEventsPage() {
                     <img src={form.imageUrl} alt="Preview" className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                   </div>
                 )}
-                <button type="button" onClick={openGallery} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:underline">
+                <button type="button" onClick={() => openGallery(true)} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:underline">
                   <ImageIcon className="h-3 w-3" /> Pilih dari foto SpringHub
                 </button>
                 {gallery && (
-                  <div className="mt-2 grid max-h-40 grid-cols-4 gap-1 overflow-y-auto rounded-md border border-ink-line p-1">
-                    {gallery.length === 0 && <p className="col-span-4 p-2 text-center text-xs text-ink-muted">Tidak ada foto.</p>}
-                    {gallery.map((g) => (
-                      <button type="button" key={g.id} onClick={() => { setForm((f) => ({ ...f, imageUrl: g.url })); setGallery(null); }} className="h-14 overflow-hidden rounded">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={g.url} alt="" className="h-full w-full object-cover hover:opacity-80" loading="lazy" />
+                  <div className="mt-2 rounded-md border border-ink-line p-1">
+                    <div className="flex gap-1 p-1">
+                      <input
+                        value={galleryQuery}
+                        onChange={(e) => setGalleryQuery(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); openGallery(true); } }}
+                        placeholder="Cari nama file... (Enter)"
+                        className="w-full rounded border border-ink-line px-2 py-1 text-xs dark:bg-slate-800 dark:text-white"
+                      />
+                      <button type="button" onClick={() => openGallery(true)} className="rounded bg-slate-100 px-2 py-1 text-xs dark:bg-slate-700">
+                        Cari
                       </button>
-                    ))}
+                    </div>
+                    <div className="grid max-h-40 grid-cols-4 gap-1 overflow-y-auto p-1">
+                      {gallery.length === 0 && <p className="col-span-4 p-2 text-center text-xs text-ink-muted">Tidak ada foto.</p>}
+                      {gallery.map((g) => (
+                        <button type="button" key={g.id} onClick={() => { setForm((f) => ({ ...f, imageUrl: g.url })); setGallery(null); }} className="h-14 overflow-hidden rounded">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={g.url} alt="" className="h-full w-full object-cover hover:opacity-80" loading="lazy" />
+                        </button>
+                      ))}
+                    </div>
+                    <p className="px-1 py-1 text-[10px] text-ink-subtle">
+                      {gallery.length} dari {galleryTotal} foto
+                      {gallery.length < galleryTotal && (
+                        <button type="button" onClick={() => openGallery(false)} disabled={galleryLoadingMore} className="ml-2 font-medium text-brand-600 hover:underline disabled:opacity-50">
+                          {galleryLoadingMore ? "Memuat..." : "Muat lagi ↓"}
+                        </button>
+                      )}
+                    </p>
                   </div>
                 )}
               </div>

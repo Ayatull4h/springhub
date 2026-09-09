@@ -38,19 +38,32 @@ export async function POST(request: Request) {
   }
 }
 
-// GET /api/admin/events/upload?limit=60 — galeri foto SpringHub untuk dipilih (admin)
-export async function GET() {
+// GET /api/admin/events/upload?q=&page=1&limit=24 — galeri foto SpringHub untuk dipilih (admin)
+export async function GET(request: Request) {
   try {
     const session = await getSession();
     if (!session || !(await checkAdmin())) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
-    const photos = await prisma.reportPhoto.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 60,
-      select: { id: true, storagePath: true, createdAt: true },
+    const url = new URL(request.url);
+    const q = (url.searchParams.get("q") || "").trim().slice(0, 100);
+    const limit = Math.min(Math.max(parseInt(url.searchParams.get("limit") || "24", 10) || 24, 1), 100);
+    const page = Math.max(parseInt(url.searchParams.get("page") || "1", 10) || 1, 1);
+    const where = q ? { storagePath: { contains: q, mode: "insensitive" as const } } : {};
+    const [photos, total] = await Promise.all([
+      prisma.reportPhoto.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip: (page - 1) * limit,
+        select: { id: true, storagePath: true, createdAt: true },
+      }),
+      prisma.reportPhoto.count({ where }),
+    ]);
+    return NextResponse.json({
+      photos: photos.map((p) => ({ ...p, url: buildPhotoUrl(p.storagePath) })),
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
-    return NextResponse.json({ photos: photos.map((p) => ({ ...p, url: buildPhotoUrl(p.storagePath) })) });
   } catch (error) {
     return NextResponse.json(
       { error: getErrorMessage(error, "Gagal memuat galeri.") },

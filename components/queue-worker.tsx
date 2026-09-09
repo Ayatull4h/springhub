@@ -67,16 +67,53 @@ export function QueueWorker() {
     return "";
   }
 
-  /** Helper: upload semua foto item ke reportId — return sisa foto yang gagal */
+  /** Kompres foto di HP sebelum upload: max 1280px JPEG 0.8.
+      Tanpa ini foto kamera 5-12MB sering kena timeout 30 detik / tolak 10MB server. */
+  async function compressImage(blob: Blob): Promise<Blob> {
+    try {
+      if (typeof createImageBitmap === "undefined") return blob;
+      if (blob.size <= 2 * 1024 * 1024 && ["image/jpeg", "image/png", "image/webp"].includes(blob.type)) {
+        return blob;
+      }
+      const bitmap = await createImageBitmap(blob);
+      try {
+        const maxDim = 1280;
+        const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+        canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return blob;
+        ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        const out = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/jpeg", 0.8));
+        return out || blob;
+      } finally {
+        bitmap.close();
+      }
+    } catch {
+      return blob;
+    }
+  }
+
+  type PhotoUploadResult = {
+    /** Gagal jaringan/timeout/5xx — layak retry */
+    remaining: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>;
+    /** Gagal permanen (HTTP 4xx: validasi, max foto, HEIC) — jangan retry selamanya */
+    fatal: string[];
+  };
+
+  /** Helper: upload semua foto item ke reportId */
   async function uploadItemPhotos(
     item: QueuedSubmission,
     reportId: string
-  ): Promise<Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>> {
+  ): Promise<PhotoUploadResult> {
     const remaining: typeof item.photoBlobs = [];
+    const fatal: string[] = [];
     for (const pb of item.photoBlobs) {
       try {
         const photoCsrf = await getCsrfToken();
-        const blob = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
+        const raw = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
+        const blob = await compressImage(raw);
         const photoPayload = new FormData();
         photoPayload.append("photo", blob, pb.fileName || `photo-${Date.now()}.jpg`);
         photoPayload.append("field_id", pb.fieldId);
@@ -90,7 +127,19 @@ export function QueueWorker() {
             body: photoPayload,
             signal: controller.signal,
           });
-          if (!photoRes.ok) remaining.push(pb);
+          if (!photoRes.ok) {
+            let msg = `HTTP ${photoRes.status}`;
+            try {
+              const e = await photoRes.json();
+              msg = e.error || msg;
+            } catch { /* pakai HTTP status */ }
+            if (photoRes.status >= 400 && photoRes.status < 500) {
+              // Validasi server (max 5 foto, HEIC, dsb) — retry tidak akan membantu
+              fatal.push(`${pb.fileName || "foto"}: ${msg}`);
+            } else {
+              remaining.push(pb);
+            }
+          }
         } catch {
           remaining.push(pb);
         } finally {
@@ -100,25 +149,41 @@ export function QueueWorker() {
         remaining.push(pb);
       }
     }
-    return remaining;
+    return { remaining, fatal };
   }
 
-  /** Helper: submit satu item dari queue ke server — return { ok, error? } */
-  async function submitQueueItem(item: QueuedSubmission): Promise<{ ok: boolean; error?: string }> {
+  /** Helper: submit satu item dari queue ke server — return { ok, error?, warning? } */
+  async function submitQueueItem(item: QueuedSubmission): Promise<{ ok: boolean; error?: string; warning?: string }> {
     // Ambil CSRF token just-in-time (cookie + header harus cocok — lihat lib/csrf.ts)
     const csrfToken = await getCsrfToken();
+
+    // Selesaikan item: foto fatal dilaporkan sebagai warning, antrean dibersihkan
+    const finishWithFatal = async (fatal: string[], reportId?: string) => {
+      const warning = `${fatal.length} foto gagal permanen: ${fatal.slice(0, 2).join("; ")}${fatal.length > 2 ? ` (+${fatal.length - 2} lagi)` : ""}`;
+      if (reportId) {
+        await offlineDB.updateQueued(item.id, { photoBlobs: [], serverReportId: reportId });
+      }
+      await offlineDB.deleteQueued(item.id);
+      try { await offlineDB.deleteReport(item.id); } catch {}
+      try { await offlineDB.deleteDraft(item.id); } catch {}
+      return { ok: true, warning };
+    };
 
     try {
       // ── Laporan sudah tersimpan di server? Upload foto saja ─────────
       if (item.serverReportId) {
-        const remaining = await uploadItemPhotos(item, item.serverReportId);
+        const { remaining, fatal } = await uploadItemPhotos(item, item.serverReportId);
+        if (fatal.length > 0 && remaining.length === 0) {
+          return finishWithFatal(fatal, item.serverReportId);
+        }
         if (remaining.length > 0) {
           // Simpan sisa foto untuk retry siklus berikutnya (tidak di-drop)
           await offlineDB.updateQueued(item.id, {
             photoBlobs: remaining,
             serverReportId: item.serverReportId,
           });
-          return { ok: false, error: "PHOTOS_PENDING" };
+          const msg = fatal.length > 0 ? `PHOTOS_PENDING (${fatal.length} foto ditolak permanen: ${fatal[0]})` : "PHOTOS_PENDING";
+          return { ok: false, error: msg };
         }
         return { ok: true };
       }
@@ -170,13 +235,17 @@ export function QueueWorker() {
 
       // ── Upload foto: gagal → simpan serverReportId + retry siklus berikutnya ──
       if (reportId && item.photoBlobs?.length > 0) {
-        const remaining = await uploadItemPhotos(item, reportId);
+        const { remaining, fatal } = await uploadItemPhotos(item, reportId);
+        if (fatal.length > 0 && remaining.length === 0) {
+          return finishWithFatal(fatal, reportId);
+        }
         if (remaining.length > 0) {
           await offlineDB.updateQueued(item.id, {
             photoBlobs: remaining,
             serverReportId: reportId,
           });
-          return { ok: false, error: "PHOTOS_PENDING" };
+          const msg = fatal.length > 0 ? `PHOTOS_PENDING (${fatal.length} foto ditolak permanen: ${fatal[0]})` : "PHOTOS_PENDING";
+          return { ok: false, error: msg };
         }
       } else if (reportId) {
         // Report tanpa foto (atau foto sudah tidak ada) — tandai tersimpan
@@ -204,7 +273,10 @@ export function QueueWorker() {
         try { await offlineDB.deleteReport(item.id); } catch {}
         try { await offlineDB.deleteDraft(item.id); } catch {}
         successCount++;
-      } else if (result.error === "PHOTOS_PENDING") {
+        if (result.warning) {
+          toast(`Laporan terkirim, tapi ${result.warning}`, "error");
+        }
+      } else if (result.error === "PHOTOS_PENDING" || result.error?.startsWith("PHOTOS_PENDING")) {
         // Foto belum semua terkirim — retry cepat (30 detik), jangan hitung sebagai kegagalan
         await offlineDB.updateQueued(item.id, { nextRetryAt: Date.now() + 30_000 });
       } else {
