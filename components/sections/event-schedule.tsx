@@ -198,7 +198,20 @@ export function EventSchedule() {
     };
   };
 
-  if (loading || items.length === 0) return null;
+  if (loading) return null;
+
+  if (items.length === 0) {
+    return (
+      <section id="jadwal" className="container-page py-16">
+        <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
+          {t("event.title", "Jadwal")} <span className="text-brand-600">{t("event.titleAccent", "Mendatang")}</span>
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+          {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section id="jadwal" className="container-page py-16">

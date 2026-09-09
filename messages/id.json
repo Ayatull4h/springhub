@@ -982,5 +982,6 @@
   "action.description": "Melindungi mata air berharga Indonesia berarti menjaga ekosistem penopangnya—pohon yang mengikat air dan tanah yang menyimpannya. Melalui SpringHub, Anda tidak hanya menyumbang, tetapi memantau dan mendanai langsung proyek restorasi berbasis komunitas secara transparan.",
   "event.title": "Jadwal",
   "event.titleAccent": "Mendatang",
-  "event.description": "Ikut restorasi mata air dan tanam pohon bulan depan. Daftar langsung, tanpa kuota."
+  "event.description": "Ikut restorasi mata air dan tanam pohon bulan depan. Daftar langsung, tanpa kuota.",
+  "event.empty": "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan."
 }
