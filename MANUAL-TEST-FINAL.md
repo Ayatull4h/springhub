@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
 **Tanggal**: 8 September 2026 (Update: download ZIP per springs + jadwal event + 3 kartu media + popup scroll + thumbnail YT otomatis, hapus 29 dummy, prod 268 springs)
 **Domain**: https://www.springhub.id (produksi) + http://76.13.198.18:8080 (staging, basic auth 181ff4f6c436d9a69f9dd12e / 1a20e619d2d431d66ac60b17)
-**Total Test**: ~217 test case — 25 kategori ( +12 baru: download, event, media)
+**Total Test**: ~225 test case — 26 kategori ( +12 download/event/media, +8 event mendatang)
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -400,7 +400,8 @@ Gunakan terminal untuk test ini.
 | Test 23 — Backup (3) | 3 | 0 | |
 | Test 24 — Full Data Flow (17) | 0 | 0 | Belum diuji |
 | Test 25 — Download, Event & Media (12) | 0 | 0 | Belum diuji (fitur 8 Sep 2026) |
-| **TOTAL** | **/** | **/** | **217 test** |
+| Test 26 — Jadwal Mendatang (8) | 0 | 0 | Belum diuji (fitur 9 Sep 2026) |
+| **TOTAL** | **/** | **/** | **225 test** |
 
 ---
 
@@ -448,3 +449,18 @@ Login admin dulu (`admin@springhub.id` / `demo12345`), buka `www.springhub.id/ad
 | 25.10 | Kartu publikasi Witaksara | Kartu publikasi judul "Menyembuhkan Mata Air..." → thumbnail foto Blogger harus tampil (tidak broken) | |
 | 25.11 | Popup konten bisa scroll | Buka `/admin/content` → Tambah → kecilkan tinggi browser (±600px) → semua field (judul s/d tombol Simpan) harus bisa di-scroll, tidak kepotong | |
 | 25.12 | Thumbnail YT otomatis di admin | Di popup Tambah konten → pilih type video → tempel link `https://www.youtube.com/watch?v=f2R32EFNHxo` → harus muncul tombol "Ambil dari YouTube" → klik → kolom thumbnail terisi + preview muncul | |
+
+---
+
+## Test 26 — Jadwal Mendatang + Pendaftaran + Reminder H-1 (8 test) — BARU 9 Sep 2026
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 26.1 | Section muncul | Buka `/` scroll di bawah Volunteer Activities → harus ada "Jadwal Mendatang" (kaca carousel). Kalau belum ada event aktif, section tidak muncul (normal) | |
+| 26.2 | Daftar tanpa kuota | Klik Daftar → isi nama, domisili, ikut 2 hari, WA `0812...`, email → Kirim → harus "Pendaftaran terkirim!" | |
+| 26.3 | Duplikat ditolak halus | Daftar lagi dengan WA/email sama → harus sukses tanpa dobel (tidak error) | |
+| 26.4 | Validasi | WA `123` → harus 400 "Nomor WA tidak valid"; tanpa CSRF → 403 | |
+| 26.5 | Event lewat terkunci | Event yang endDate sudah lewat → tombol jadi "Selesai", tidak bisa diklik | |
+| 26.6 | Admin lihat pendaftar | Buka `/admin/events` → Pendaftar → harus ada tabel nama/domisi/hari/WA/email + Export CSV terdownload | |
+| 26.7 | Jadikan rekap | Klik Rekap → cek Latest Media → harus ada kartu "Rekap: ..." | |
+| 26.8 | Reminder H-1 | Tunggu cron per jam → pendaftar event besok terima email "Pengingat: ..." (cek `/var/log/springhub-event-reminder.log`) | |
