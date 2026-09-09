@@ -25,11 +25,20 @@ export function useAutoSave(
       if (current === prevRef.current) return; // no change
       prevRef.current = current;
 
+      // Draft TIDAK menyimpan byte foto — cuma metadata (nama/tipe).
+      // Byte foto sudah ada di submission-queue; duplikasi bikin
+      // IndexedDB cepat penuh (fatal di mode Incognito iPhone).
+      // Banner draft cuma butuh fieldData + jumlah file, jadi aman.
       const draft: DraftReport = {
         id: draftIdRef.current,
         formSlug,
         fieldData: fd,
-        photoBlobs: pb,
+        photoBlobs: pb.map((p) => ({
+          fieldId: p.fieldId,
+          blob: new Blob([], { type: p.mimeType || "image/jpeg" }),
+          fileName: p.fileName,
+          mimeType: p.mimeType,
+        })),
         savedAt: Date.now(),
       };
       await offlineDB.saveDraft(draft);
