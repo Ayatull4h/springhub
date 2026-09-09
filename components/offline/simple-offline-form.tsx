@@ -282,6 +282,9 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       setSubmitted(true);
     } catch (err) {
       console.error("Offline save failed:", err);
+      // Suffix teknis [NamaError] — biar admin bisa bedakan quota vs error lain
+      // dari screenshot user (bisa dihapus kalau sudah stabil)
+      const tech = err instanceof Error && err.name ? ` [${err.name}]` : "";
       if (isQuotaError(err)) {
         // Tampilkan angka nyata biar jelas: ini kuota browser (Incognito),
         // bukan memori HP yang penuh
@@ -295,10 +298,10 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         setSubmitError(
           "Penyimpanan browser penuh" + usageNote + ". Kamu memakai mode Incognito — iPhone membatasi penyimpanan di mode ini. " +
           "Buka SpringHub di tab biasa (atau Add to Home Screen), lalu coba lagi. " +
-          "Kalau tetap gagal, kurangi jumlah foto."
+          "Kalau tetap gagal, kurangi jumlah foto." + tech
         );
       } else {
-        setSubmitError("Gagal menyimpan. Pastikan penyimpanan perangkat tidak penuh, lalu coba lagi.");
+        setSubmitError("Gagal menyimpan. Pastikan penyimpanan perangkat tidak penuh, lalu coba lagi." + tech);
       }
     } finally {
       setSubmitting(false);
