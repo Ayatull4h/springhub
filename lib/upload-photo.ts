@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import convert from "heic-convert";
 import fs from "fs/promises";
 import path from "path";
 import { addWatermark } from "./watermark";
@@ -53,20 +54,29 @@ export async function uploadPhoto(
 
   // Detect MIME from file bytes (more reliable than file.type on Chrome Android)
   const detectedMime = detectMimeFromBuffer(initialBuffer);
-  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/heic"];
   if (!allowedTypes.includes(detectedMime)) {
-    if (detectedMime === "image/heic") {
-      throw new Error(
-        "Format HEIC/HEIF (iPhone) belum didukung server. Ubah ke JPG dulu di Pengaturan Kamera (Format → Paling Kompatibel), lalu coba lagi."
-      );
-    }
     throw new Error(
-      `Format foto harus JPG, PNG, atau WebP (terdeteksi: ${detectedMime})`
+      `Format foto harus JPG, PNG, WebP, atau HEIC (terdeteksi: ${detectedMime})`
     );
   }
 
+  // HEIC (iPhone): konversi dulu ke JPEG via libheif murni-JS (tanpa native dep),
+  // karena sharp di server tidak punya decoder HEIC. Output selalu JPEG ke bawah.
+  let inputBuffer = initialBuffer;
+  if (detectedMime === "image/heic") {
+    try {
+      const out = await convert({ buffer: initialBuffer, format: "JPEG", quality: 0.9 });
+      inputBuffer = Buffer.from(out as unknown as ArrayBuffer);
+    } catch {
+      throw new Error(
+        "Foto HEIC tidak bisa dibaca. Ubah ke JPG dulu di Pengaturan Kamera (Format → Paling Kompatibel), lalu coba lagi."
+      );
+    }
+  }
+
   // Step 1: resize & compress
-  const compressed = await sharp(initialBuffer)
+  const compressed = await sharp(inputBuffer)
     .resize(1280, 720, { fit: "inside", withoutEnlargement: true })
     .jpeg({ quality: 80, mozjpeg: true })
     .withMetadata({ exif: undefined })
