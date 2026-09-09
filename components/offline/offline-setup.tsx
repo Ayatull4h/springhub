@@ -193,6 +193,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
   // Download progress
   const [downloadProgress, setDownloadProgress] = useState({ current: 0, total: 0 });
   const [downloadError, setDownloadError] = useState("");
+  const [tileWarning, setTileWarning] = useState("");
   const [hasSetupBefore, setHasSetupBefore] = useState(false);
 
   // Accordion state
@@ -313,6 +314,8 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
   const cacheFormsAndFinish = useCallback(async () => {
     setStep("downloading");
     setDownloadProgress({ current: 0, total: 1 });
+    setDownloadError("");
+    setTileWarning("");
 
     try {
       // Cache selected form definitions to IndexedDB
@@ -345,9 +348,26 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
 
       await offlineDB.saveForms(formDefs);
 
-      // In full mode, also pre-cache map tiles
+      // In full mode, also pre-cache map tiles — tapi JANGAN gagalkan setup.
+      // Tile bisa puluhan MB; di mode Incognito (kuota kecil) pasti gagal.
+      // Kalau gagal / kuota kecil dari awal, lewati dengan peringatan:
+      // peta offline tidak tersedia, tapi form tetap bisa dipakai.
       if (mode === "full" && selectedArea) {
-        await downloadTilesForArea(selectedArea);
+        const SKIP_TILE_QUOTA = 150 * 1024 * 1024; // 150MB
+        try {
+          const { quota } = await offlineDB.estimateUsage();
+          if (quota !== null && quota < SKIP_TILE_QUOTA) {
+            setTileWarning(
+              "Penyimpanan browser kecil (kemungkinan mode Incognito) — peta offline dilewati. Form tetap bisa dipakai tanpa peta."
+            );
+          } else {
+            await downloadTilesForArea(selectedArea);
+          }
+        } catch {
+          setTileWarning(
+            "Peta offline gagal disimpan (penyimpanan penuh?) — dilewati. Form tetap bisa dipakai tanpa peta."
+          );
+        }
       }
 
       setDownloadProgress({ current: 1, total: 1 });
@@ -522,6 +542,12 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             {downloadError}
           </div>
         )}
+        {tileWarning && !downloadError && (
+          <div className="mt-4 flex max-w-xs items-start gap-2 text-xs text-amber-700 dark:text-amber-300">
+            <AlertCircle className="mt-0.5 h-4 w-4 flex-none" />
+            <span>{tileWarning}</span>
+          </div>
+        )}
       </div>
     );
   }
@@ -538,6 +564,11 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             ? t("offline.readyFull") || "Map, GPS tracking, dan form sudah siap. Kamu bisa survey tanpa sinyal."
             : t("offline.readySave") || "Form sudah siap. Laporan akan tersimpan lokal dan dikirim saat online."}
         </p>
+        {tileWarning && (
+          <p className="mt-2 max-w-sm text-center text-xs text-amber-700 dark:text-amber-300">
+            Catatan: {tileWarning}
+          </p>
+        )}
 
         <div className="mt-6 flex items-center gap-3 text-xs text-ink-muted">
           <span className="inline-flex items-center gap-1">

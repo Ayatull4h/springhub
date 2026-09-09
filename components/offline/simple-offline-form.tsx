@@ -283,8 +283,17 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
     } catch (err) {
       console.error("Offline save failed:", err);
       if (isQuotaError(err)) {
+        // Tampilkan angka nyata biar jelas: ini kuota browser (Incognito),
+        // bukan memori HP yang penuh
+        let usageNote = "";
+        try {
+          const { used, quota } = await offlineDB.estimateUsage();
+          if (quota) {
+            usageNote = ` (Terpakai ${(used / 1048576).toFixed(1)} MB dari ${(quota / 1048576).toFixed(0)} MB kuota browser)`;
+          }
+        } catch { /* abaikan */ }
         setSubmitError(
-          "Penyimpanan HP penuh. Kamu memakai mode Incognito — iPhone membatasi penyimpanan di mode ini. " +
+          "Penyimpanan browser penuh" + usageNote + ". Kamu memakai mode Incognito — iPhone membatasi penyimpanan di mode ini. " +
           "Buka SpringHub di tab biasa (atau Add to Home Screen), lalu coba lagi. " +
           "Kalau tetap gagal, kurangi jumlah foto."
         );
