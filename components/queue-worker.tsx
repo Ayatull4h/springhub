@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { offlineDB, type QueuedSubmission, MAX_FAILED_ATTEMPTS } from "@/lib/offline-db";
+import { compressImageBlob } from "@/lib/compress-image";
 import { useToast } from "@/components/toast";
 
 const SW_VERSION = "2026-07-29-v7"; // Bump this when SW changes — user perlu reopen PWA
@@ -67,32 +68,10 @@ export function QueueWorker() {
     return "";
   }
 
-  /** Kompres foto di HP sebelum upload: max 1280px JPEG 0.8.
-      Tanpa ini foto kamera 5-12MB sering kena timeout 30 detik / tolak 10MB server. */
+  /** Kompres foto di HP sebelum upload — logika terpusat di lib/compress-image
+      (dipakai juga saat pilih foto, biar hemat penyimpanan IndexedDB). */
   async function compressImage(blob: Blob): Promise<Blob> {
-    try {
-      if (typeof createImageBitmap === "undefined") return blob;
-      if (blob.size <= 2 * 1024 * 1024 && ["image/jpeg", "image/png", "image/webp"].includes(blob.type)) {
-        return blob;
-      }
-      const bitmap = await createImageBitmap(blob);
-      try {
-        const maxDim = 1280;
-        const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
-        const canvas = document.createElement("canvas");
-        canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-        canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return blob;
-        ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-        const out = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/jpeg", 0.8));
-        return out || blob;
-      } finally {
-        bitmap.close();
-      }
-    } catch {
-      return blob;
-    }
+    return compressImageBlob(blob);
   }
 
   type PhotoUploadResult = {

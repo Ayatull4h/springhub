@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { ArrowLeft, Loader2, CheckCircle2, WifiOff, Camera, MapPin, Send, RefreshCw, AlertCircle, XCircle } from "lucide-react";
 import { offlineDB, type QueuedSubmission } from "@/lib/offline-db";
+import { compressImageFile } from "@/lib/compress-image";
 import { getForm, getFormTitle, getFormI18nKey, type FormField, type FormSchema } from "@/lib/forms";
 import { useI18n } from "@/lib/i18n";
 import { INDONESIAN_PROVINCES } from "@/lib/provinces";
@@ -11,6 +12,15 @@ function BlobPreview({ file, alt }: { file: File; alt: string }) {
   const url = useMemo(() => URL.createObjectURL(file), [file]);
   useEffect(() => () => URL.revokeObjectURL(url), [url]);
   return <img src={url} alt={alt} className="h-full w-full object-cover" />;
+}
+
+/** Deteksi error kuota IndexedDB (sering di mode Incognito iOS). */
+function isQuotaError(err: unknown): boolean {
+  if (err instanceof DOMException) {
+    if (err.name === "QuotaExceededError" || err.code === 22) return true;
+  }
+  const msg = err instanceof Error ? err.message : String(err ?? "");
+  return /quota|QuotaExceeded/i.test(msg);
 }
 
 /**
@@ -31,6 +41,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [syncStatus, setSyncStatus] = useState<{ ok: boolean; message: string; time: number } | null>(null);
   const [queueCount, setQueueCount] = useState(0);
+  const [compressing, setCompressing] = useState(false);
 
   const handleExit = onExit || (() => { if (typeof window !== "undefined") window.location.href = "/"; });
 
@@ -245,7 +256,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         }
       }
 
-      await offlineDB.queueSubmission({
+      const submission = {
         id: `offline-${selectedForm.slug}-${Date.now()}`,
         formSlug: selectedForm.slug,
         fieldData: collected,
@@ -255,12 +266,31 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         retryCount: 0,
         // Idempotency key — UUID TETAP, dipakai server untuk dedupe retry
         clientCorrelationId: offlineDB.generateCorrelationId(),
-      });
+      };
+
+      try {
+        await offlineDB.queueSubmission(submission);
+      } catch (err) {
+        // Kuota penuh (umum di mode Incognito iPhone): buang cache peta yang
+        // bisa di-download ulang, lalu coba simpan sekali lagi (id SAMA — tidak dobel)
+        if (!isQuotaError(err)) throw err;
+        await offlineDB.clearTileBlobs();
+        await offlineDB.clearTileManifest();
+        await offlineDB.queueSubmission(submission);
+      }
 
       setSubmitted(true);
     } catch (err) {
       console.error("Offline save failed:", err);
-      setSubmitError("Gagal menyimpan. Pastikan penyimpanan perangkat tidak penuh, lalu coba lagi.");
+      if (isQuotaError(err)) {
+        setSubmitError(
+          "Penyimpanan HP penuh. Kamu memakai mode Incognito — iPhone membatasi penyimpanan di mode ini. " +
+          "Buka SpringHub di tab biasa (atau Add to Home Screen), lalu coba lagi. " +
+          "Kalau tetap gagal, kurangi jumlah foto."
+        );
+      } else {
+        setSubmitError("Gagal menyimpan. Pastikan penyimpanan perangkat tidak penuh, lalu coba lagi.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -574,6 +604,9 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 <div className="flex items-center gap-2 text-xs text-ink-muted">
                   <Camera className="h-3.5 w-3.5" />
                   <span>{(photoFiles[field.id] || []).length} / 5 foto</span>
+                  {compressing && (
+                    <span className="font-semibold text-brand-600">(mengompres foto...)</span>
+                  )}
                   {(photoFiles[field.id] || []).length < 3 && (
                     <span className="font-semibold text-amber-600">(minimal 3 foto)</span>
                   )}
@@ -585,15 +618,34 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                     accept="image/*"
                     capture="environment"
                     multiple
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const files = e.target.files;
                       if (files && files.length > 0) {
-                        setPhotoFiles(prev => {
-                          const current = prev[field.id] || [];
+                        // Kompres dulu di HP (max 1280px) biar hemat penyimpanan
+                        // IndexedDB — penting di mode Incognito yang kuotanya kecil
+                        setCompressing(true);
+                        try {
+                          const current = photoFiles[field.id] || [];
                           const remaining = 5 - current.length;
-                          const toAdd = Array.from(files).slice(0, remaining);
-                          return { ...prev, [field.id]: [...current, ...toAdd] };
-                        });
+                          const toAdd: File[] = [];
+                          for (const f of Array.from(files).slice(0, remaining)) {
+                            try {
+                              toAdd.push(await compressImageFile(f));
+                            } catch {
+                              toAdd.push(f);
+                            }
+                          }
+                          if (toAdd.length > 0) {
+                            setPhotoFiles(prev => ({
+                              ...prev,
+                              [field.id]: [...(prev[field.id] || []), ...toAdd],
+                            }));
+                          }
+                        } finally {
+                          setCompressing(false);
+                          // Reset input biar file yang sama bisa dipilih ulang
+                          e.target.value = "";
+                        }
                       }
                     }}
                     className="mt-1 block w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700"
