@@ -2,6 +2,7 @@ import { Hero } from "@/components/sections/hero";
 import { ImpactDashboard } from "@/components/sections/impact-dashboard";
 import { SpringMap } from "@/components/sections/spring-map";
 import { VolunteerActivities } from "@/components/sections/volunteer";
+import { EventSchedule } from "@/components/sections/event-schedule";
 import { FeaturedProjects } from "@/components/sections/featured-projects";
 import { PartnerSection } from "@/_senior/components/PartnerSection";
 import { LearningHub } from "@/components/sections/learning-hub";
@@ -15,6 +16,7 @@ export default function HomePage() {
       <ImpactDashboard />
       <SpringMap />
       <VolunteerActivities />
+      <EventSchedule />
 
       <section className="container-page py-16">
         <RealActionHeader />

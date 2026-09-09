@@ -979,5 +979,8 @@
   "admin.sidebar.events": "Event Schedule",
   "action.title": "Real",
   "action.titleAccent": "Action",
-  "action.description": "Protecting Indonesia’s precious springs means safeguarding their supporting ecosystems—the trees that bind water and the soil that stores it. Through SpringHub, you don’t just donate, but directly monitor and fund community-based restoration projects transparently."
+  "action.description": "Protecting Indonesia’s precious springs means safeguarding their supporting ecosystems—the trees that bind water and the soil that stores it. Through SpringHub, you don’t just donate, but directly monitor and fund community-based restoration projects transparently.",
+  "event.title": "Upcoming",
+  "event.titleAccent": "Schedule",
+  "event.description": "Join next month’s spring restoration and tree planting. Register directly, no quota."
 }

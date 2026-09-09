@@ -607,6 +607,38 @@ model ContentBlock {
   updatedAt   DateTime @updatedAt
 }
 
+model Event {
+  id            String   @id @default(uuid())
+  title         String
+  description   String   @default("")
+  location      String   @default("")
+  startDate     DateTime
+  endDate       DateTime
+  googleFormUrl String   @default("")
+  imageUrl      String   @default("")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  registrations EventRegistration[]
+
+  @@index([isActive, startDate])
+}
+
+model EventRegistration {
+  id        String   @id @default(uuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  nama      String
+  domisili  String   @default("")
+  hari      Int      @default(1)
+  wa        String   @default("")
+  email     String
+  remindedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([eventId, createdAt])
+}
+
 model AppError {
   id        String   @id @default(uuid())
   level     String   @default("error") // "info", "warning", "error", "critical"
