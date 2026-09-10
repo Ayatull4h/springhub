@@ -20,6 +20,19 @@ export async function compressImageBlob(
     return blob;
   }
 
+  // HEIC (iPhone) tidak bisa di-decode browser Chrome — konversi dulu
+  // pakai decoder yang di-load malas (tidak memberatkan bundle awal).
+  // Tanpa ini, HEIC 1–3MB tersimpan mentah dan menghabiskan kuota,
+  // apalagi di mode Incognito yang kuotanya kecil.
+  if (await looksLikeHeic(blob)) {
+    const converted = await tryConvertHeic(blob, quality);
+    if (converted) {
+      // Kompres hasil konversi seperti JPEG biasa (rekursi 1 level)
+      return compressImageBlob(converted, maxDimension, quality);
+    }
+    return blob;
+  }
+
   try {
     if (typeof createImageBitmap !== "undefined") {
       try {
@@ -57,6 +70,41 @@ export async function compressImageBlob(
     // abaikan — fallback di bawah
   }
   return blob;
+}
+
+/** Cek magic bytes ftyp — murah (12 byte), tanpa decode. */
+async function looksLikeHeic(blob: Blob): Promise<boolean> {
+  try {
+    if (/heic|heif/i.test(blob.type)) return true;
+    const head = new Uint8Array(await blob.slice(0, 12).arrayBuffer());
+    if (head.length < 12) return false;
+    const isFtyp =
+      head[4] === 0x66 && head[5] === 0x74 && head[6] === 0x79 && head[7] === 0x70;
+    if (!isFtyp) return false;
+    const brand = String.fromCharCode(head[8], head[9], head[10], head[11]);
+    return /heic|heix|hevc|hevx|mif1|msf1/i.test(brand);
+  } catch {
+    return false;
+  }
+}
+
+/** Konversi HEIC → JPEG via decoder malas (dynamic import, tidak membebani bundle awal). */
+async function tryConvertHeic(blob: Blob, quality: number): Promise<Blob | null> {
+  try {
+    const mod = await import("heic2any");
+    const heic2any = (mod as unknown as { default?: unknown }) as unknown as (
+      opts: Record<string, unknown>
+    ) => Promise<Blob | Blob[]>;
+    const fn = typeof heic2any === "function" ? heic2any : (mod as unknown as { default: typeof heic2any }).default;
+    if (typeof fn !== "function") return null;
+    const out = await fn({ blob, toType: "image/jpeg", quality });
+    const arr = Array.isArray(out) ? out : [out];
+    const first = arr[0];
+    if (first instanceof Blob && first.size > 0) return first;
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 function compressViaImageElement(

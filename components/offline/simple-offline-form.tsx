@@ -42,6 +42,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
   const [syncStatus, setSyncStatus] = useState<{ ok: boolean; message: string; time: number } | null>(null);
   const [queueCount, setQueueCount] = useState(0);
   const [compressing, setCompressing] = useState(false);
+  const [quotaInfo, setQuotaInfo] = useState<{ usedMB: string; quotaMB: string; small: boolean } | null>(null);
 
   const handleExit = onExit || (() => { if (typeof window !== "undefined") window.location.href = "/"; });
 
@@ -65,6 +66,16 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       if (session?.phone) {
         setDefaultValues({ A3_wa: session.phone, A_wa: session.phone });
       }
+    }).catch(() => {});
+    // Cek kuota penyimpanan sekali saat form dibuka — kalau kecil
+    // (khas mode Incognito), beri tahu di awal sebelum user isi form
+    offlineDB.estimateUsage().then(({ used, quota }) => {
+      if (quota === null) return;
+      setQuotaInfo({
+        usedMB: (used / 1048576).toFixed(1),
+        quotaMB: (quota / 1048576).toFixed(0),
+        small: quota < 150 * 1024 * 1024,
+      });
     }).catch(() => {});
   }, []);
 
@@ -486,6 +497,14 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       </button>
 
       <h1 className="text-2xl font-extrabold text-ink">{getFormTitle(selectedForm.slug, formDef?.title || selectedForm.title, t)}</h1>
+
+      {/* Peringatan kuota kecil (khas Incognito) — tampil di awal biar tidak kaget saat submit */}
+      {quotaInfo?.small && (
+        <div className="mt-3 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+          Mode Incognito terdeteksi (kuota {quotaInfo.quotaMB} MB, terpakai {quotaInfo.usedMB} MB).
+          Foto HEIC otomatis dikecilkan, tapi kalau gagal simpan, buka di tab biasa.
+        </div>
+      )}
 
       {/* GPS status */}
       <div className={`mt-3 flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
