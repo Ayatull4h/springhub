@@ -239,6 +239,31 @@ export function generateCorrelationId(): string {
   return `corr-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
+/**
+ * Ubah File kamera menjadi Blob biasa sebelum disimpan ke IndexedDB.
+ * Bug WebKit iOS (Safari/Chrome iPhone): objek File hasil <input type=file>
+ * GAGAL di-structured-clone saat put() → "UnknownError: Error preparing
+ * Blob/File data to be stored in object store", padahal kuota masih lega.
+ * Nama file tetap aman karena disimpan terpisah di fileName.
+ */
+export async function toStorableBlob(blob: Blob): Promise<Blob> {
+  if (!(blob instanceof File)) return blob;
+  try {
+    const buf = await blob.arrayBuffer();
+    return new Blob([buf], { type: blob.type || "image/jpeg" });
+  } catch {
+    return blob;
+  }
+}
+
+async function stripFileRefs(
+  list: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>
+): Promise<Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>> {
+  return Promise.all(
+    list.map(async (p) => ({ ...p, blob: await toStorableBlob(p.blob) }))
+  );
+}
+
 // ─── Connection management (single persistent connection) ────────────────────
 
 let dbPromise: Promise<IDBDatabase> | null = null;
@@ -608,12 +633,13 @@ export const offlineDB = {
     const reportWithCorr: PendingReport = report.clientCorrelationId
       ? report
       : { ...report, clientCorrelationId: generateCorrelationId() };
+    const safeBlobs = await stripFileRefs(photoBlobs);
     await addItem("pending-reports", reportWithCorr);
     await addItem("submission-queue", {
       id: reportWithCorr.id,
       formSlug: reportWithCorr.formSlug,
       fieldData: reportWithCorr.fieldData,
-      photoBlobs,
+      photoBlobs: safeBlobs,
       csrfToken: reportWithCorr.csrfToken,
       createdAt: reportWithCorr.createdAt,
       retryCount: 0,
@@ -643,8 +669,11 @@ export const offlineDB = {
   },
 
   // ── Photo Blobs ────────────────────────────────────────────────────────
-  savePhoto(photo: PhotoBlob) {
-    return addItem("photo-blobs", photo);
+  async savePhoto(photo: PhotoBlob) {
+    return addItem("photo-blobs", {
+      ...photo,
+      blob: await toStorableBlob(photo.blob),
+    });
   },
 
   getAllPhotos(): Promise<PhotoBlob[]> {
@@ -759,9 +788,12 @@ export const offlineDB = {
    * Antrekan laporan offline. clientCorrelationId diisi otomatis (UUID tetap,
    * sama antar retry) kalau belum ada — idempotency key untuk server dedupe.
    */
-  queueSubmission(sub: QueuedSubmission) {
+  async queueSubmission(sub: QueuedSubmission) {
     return addItem("submission-queue", {
       ...sub,
+      photoBlobs: await stripFileRefs(
+        (sub.photoBlobs || []) as Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>
+      ),
       clientCorrelationId: sub.clientCorrelationId || generateCorrelationId(),
     });
   },
