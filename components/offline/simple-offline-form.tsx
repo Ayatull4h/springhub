@@ -293,6 +293,28 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       setSubmitted(true);
     } catch (err) {
       console.error("Offline save failed:", err);
+      // Kirim detail error ke server biar bisa dibaca dari database
+      // (user tidak perlu screenshot console). Fire-and-forget.
+      try {
+        const { logError } = await import("@/lib/error-logger");
+        let usage: unknown = null;
+        try {
+          usage = await offlineDB.estimateUsage();
+        } catch {}
+        const photoInfo = Object.entries(photoFiles).map(([fid, files]) => ({
+          fid,
+          n: files.length,
+          bytes: files.map((f) => `${f.name}:${f.size}:${f.type || "?"}`),
+        }));
+        logError({
+          message: `Offline submit gagal: ${err instanceof Error ? err.name + ": " + err.message : String(err)}`,
+          level: "error",
+          source: "frontend",
+          stack: err instanceof Error ? err.stack || "" : "",
+          url: typeof window !== "undefined" ? window.location.pathname : "",
+          metadata: { usage, photoInfo, formSlug: selectedForm.slug } as Record<string, unknown>,
+        }).catch(() => {});
+      } catch {}
       // Suffix teknis [NamaError] — biar admin bisa bedakan quota vs error lain
       // dari screenshot user (bisa dihapus kalau sudah stabil)
       const tech = err instanceof Error && err.name ? ` [${err.name}]` : "";
