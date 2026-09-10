@@ -365,7 +365,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
   const startSync = useCallback(async () => {
     // Check network first
     if (!navigator.onLine) {
-      setErrorMessage("Kamu sedang offline. Data akan tersimpan dan bisa diupload nanti saat online kembali.");
+      setErrorMessage(t("offline.exitOfflineSave"));
       setPhase("error");
       return;
     }
@@ -422,7 +422,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
             setReportStatuses((prev) =>
               prev.map((r) =>
                 r.id === report.id
-                  ? { ...r, status: "failed", error: errData.error || "Gagal kirim" }
+                  ? { ...r, status: "failed", error: errData.error || t("offline.sendFail") }
                   : r
               )
             );
@@ -466,7 +466,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
                   p.id === photo.id ? { ...p, status: "failed", error: "Blob tidak terbaca" } : p
                 )
               );
-              setErrorMessage(`Foto ${photo.fileName} rusak dan tidak bisa diupload.`);
+              setErrorMessage(t("offline.exitPhotoCorrupt", { name: photo.fileName }));
               setPhase("error");
               return;
             }
@@ -493,11 +493,11 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
             setPhotoStatuses((prev) =>
               prev.map((p) =>
                 p.id === photo.id
-                  ? { ...p, status: "failed", error: errBody.error || "Upload gagal" }
+                  ? { ...p, status: "failed", error: errBody.error || t("offline.uploadFail") }
                   : p
               )
             );
-            setErrorMessage(`Gagal upload foto ${photo.fileName}. Periksa koneksi dan coba lagi.`);
+            setErrorMessage(t("offline.exitPhotoFail", { name: photo.fileName }));
             setPhase("error");
             return; // STOP — foto gagal = tidak bisa keluar
           }
@@ -507,7 +507,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
               p.id === photo.id ? { ...p, status: "failed", error: "Network error" } : p
             )
           );
-          setErrorMessage(`Gagal upload foto ${photo.fileName}. Koneksi tidak stabil.`);
+          setErrorMessage(t("offline.exitPhotoUnstable", { name: photo.fileName }));
           setPhase("error");
           return; // STOP
         }
@@ -559,7 +559,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     } catch {}
     setProgress({ current: 3, total: 3 });
 
-    toast("Semua laporan offline berhasil dikirim!", "success");
+    toast(t("offline.allSent"), "success");
     setPhase("done");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -848,7 +848,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
             {/* Online status indicator */}
             {!navigator.onLine && (
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-center text-xs text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
-                📡 Kamu sedang offline. Data tetap aman di perangkat.
+                📡 {t("offline.exitOfflineSafe")}
                 Akan terkirim otomatis saat online.
               </div>
             )}
@@ -859,7 +859,7 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
               <button
                 onClick={() => {
                   if (!navigator.onLine) {
-                    alert("Kamu masih offline. Sambungkan ke internet lalu coba lagi.");
+                    alert(t("offline.stillOffline"));
                     return;
                   }
                   setErrorMessage("");

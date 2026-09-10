@@ -8,6 +8,7 @@ import PwaInstallGuide from "@/components/pwa-install-guide";
 import { offlineDB } from "@/lib/offline-db";
 import { fetchAndCacheSession } from "@/lib/session-cache";
 import { APP_BUILD_TAG } from "@/lib/app-version";
+import { useI18n } from "@/lib/i18n";
 
 /**
  * OfflinePage — Simplified PWA offline mode.
@@ -36,6 +37,7 @@ type DiagInfo = {
 };
 
 function DiagBox() {
+  const { t } = useI18n();
   const [info, setInfo] = useState<DiagInfo | null>(null);
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -65,9 +67,9 @@ function DiagBox() {
     try {
       if ("serviceWorker" in navigator) {
         const reg = await navigator.serviceWorker.getRegistration();
-        result.swState = reg ? (reg.active ? "aktif" : "pasang") : "tidak ada";
+        result.swState = reg ? (reg.active ? t("offline.diagActive") : t("offline.diagSet")) : t("offline.diagNone");
       } else {
-        result.swState = "tidak didukung";
+        result.swState = t("offline.diagUnsupported");
       }
     } catch {
       result.swState = "?";
@@ -106,23 +108,23 @@ function DiagBox() {
         }}
         className="font-semibold text-ink-muted hover:text-ink"
       >
-        {open ? "▾" : "▸"} Diagnostik HP (klik kalau ada error, lalu kirim ke admin)
+        {open ? "▾" : "▸"} {t("offline.diagTitle")}
       </button>
       {open && (
         <div className="mt-2 space-y-1 text-ink-muted">
-          <p>Versi aplikasi: <b>{APP_BUILD_TAG}</b></p>
+          <p>{t("offline.diagVersion")} <b>{APP_BUILD_TAG}</b></p>
           {info ? (
             <>
-              <p>IndexedDB: <b>{info.idbOk ? "OK" : "GAGAL"}</b></p>
-              <p>Terpakai: <b>{info.usedMB} MB</b> / kuota: <b>{info.quotaMB} MB</b></p>
-              <p>Antrean offline: <b>{info.queueCount ?? "?"}</b></p>
+              <p>{t("offline.diagIndexedDb")} <b>{info.idbOk ? t("offline.diagOk") : t("offline.diagFail")}</b></p>
+              <p>{t("offline.diagUsed")} <b>{info.usedMB} MB</b> / kuota: <b>{info.quotaMB} MB</b></p>
+              <p>{t("offline.diagQueue")} <b>{info.queueCount ?? "?"}</b></p>
               <p>Service worker: <b>{info.swState}</b> · {info.incognitoHint}</p>
               <button onClick={copy} className="btn-primary mt-2 !px-3 !py-1.5 !text-xs">
-                {copied ? "Tersalin!" : "Salin & kirim ke admin"}
+                {copied ? t("offline.diagCopied") : t("offline.diagCopy")}
               </button>
             </>
           ) : (
-            <p>Memuat...</p>
+            <p>{t("offline.diagLoading")}</p>
           )}
         </div>
       )}
@@ -131,6 +133,7 @@ function DiagBox() {
 }
 
 function OfflinePageContent() {
+  const { t } = useI18n();
   const router = useRouter();
   const [phase, setPhase] = useState<OfflinePhase>("checking");
   const [errorMsg, setErrorMsg] = useState("");
@@ -146,26 +149,11 @@ function OfflinePageContent() {
         const isAndroid = /Android/i.test(ua);
         const isSafari = /^((?!chrome|android).)*safari/i.test(ua) || /iPad|iPhone|iPod/i.test(ua);
         if (isAndroid && isChrome) {
-          setErrorMsg(
-            "Penyimpanan lokal (IndexedDB) tidak tersedia.\n\n" +
-            "Android Chrome di mode Incognito tidak mendukung IndexedDB.\n" +
-            "Solusi:\n" +
-            "1. Buka Chrome tab biasa (bukan Incognito)\n" +
-            "2. Pastikan storage HP tidak penuh\n" +
-            "3. Chrome Settings > Site Settings > Storage > Hapus data"
-          );
+          setErrorMsg(t("offline.errIdbAndroid"));
         } else if (isSafari) {
-          setErrorMsg(
-            "Penyimpanan lokal (IndexedDB) tidak tersedia.\n\n" +
-            "Safari di mode Private/Incognito mungkin membatasi IndexedDB.\n" +
-            "Solusi:\n" +
-            "1. Buka Safari tab biasa (bukan Private)\n" +
-            "2. Pastikan storage perangkat tidak penuh\n" +
-            "3. Pengaturan > Safari > Hapus Data Website\n" +
-            "4. iOS 17+ seharusnya support IndexedDB di Private mode"
-          );
+          setErrorMsg(t("offline.errIdbSafari"));
         } else {
-          setErrorMsg("Penyimpanan lokal tidak tersedia. Gunakan non-private browsing.");
+          setErrorMsg(t("offline.errIdbOther"));
         }
         return;
       }
@@ -197,7 +185,7 @@ function OfflinePageContent() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-600" />
-          <p className="mt-4 text-sm text-ink-muted">Mode Offline...</p>
+          <p className="mt-4 text-sm text-ink-muted">{t("offline.modeOffline")}</p>
         </div>
       </div>
     );
@@ -210,11 +198,11 @@ function OfflinePageContent() {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
             <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
           </div>
-          <h1 className="mt-4 text-xl font-bold text-ink">Mode Offline Tidak Tersedia</h1>
+          <h1 className="mt-4 text-xl font-bold text-ink">{t("offline.unavailableTitle")}</h1>
           <p className="mt-2 whitespace-pre-line text-left text-sm text-ink-muted">{errorMsg}</p>
           <div className="mt-6">
             <button onClick={() => router.push("/")} className="btn-primary">
-              Kembali ke Beranda
+              {t("offline.backHome")}
             </button>
           </div>
         </div>

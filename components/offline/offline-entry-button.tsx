@@ -15,7 +15,7 @@ export function OfflineEntryButton() {
     >
       <WifiOff className="h-4 w-4" />
       <span>Offline</span>
-      <span className="font-normal text-[10px] opacity-70">Survey tanpa internet</span>
+      <span className="font-normal text-[10px] opacity-70">{t("offline.entrySurvey")}</span>
     </button>
   );
 }

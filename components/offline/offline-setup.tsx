@@ -99,56 +99,16 @@ type PlatformGuide = {
   steps: string[];
 };
 
-const platformGuides: PlatformGuide[] = [
-  {
-    id: "android",
-    label: "Android (Chrome)",
-    icon: <Smartphone className="h-4 w-4" />,
-    steps: [
-      'Buka website SpringHub di Chrome.',
-      'Tap ikon ⋮ (tiga titik) di pojok kanan atas.',
-      'Pilih "Add to Home screen" atau "Install app".',
-      'Tap "Install" — ikon SpringHub akan muncul di layar utama HP.',
-      "Buka dari ikon tersebut untuk mode layar penuh & offline.",
-    ],
-  },
-  {
-    id: "ios",
-    label: "iOS (Safari)",
-    icon: <Apple className="h-4 w-4" />,
-    steps: [
-      'Buka website SpringHub di Safari.',
-      'Tap ikon 📤 (Share) di bagian bawah layar.',
-      'Scroll ke bawah, pilih "Add to Home Screen".',
-      'Tap "Add" di pojok kanan atas.',
-      "Ikon SpringHub muncul di home screen, buka dari sana.",
-    ],
-  },
-  {
-    id: "windows",
-    label: "Windows (Edge/Chrome)",
-    icon: <Monitor className="h-4 w-4" />,
-    steps: [
-      'Buka website SpringHub di Edge atau Chrome.',
-      "Cari ikon install (🧩 atau monitor dengan panah) di address bar.",
-      'Klik "Install" atau pilih "Apps" > "Install this site as an app".',
-      'Klik "Install" — aplikasi terbuka di jendela terpisah.',
-      "Bisa diakses dari Start Menu atau taskbar.",
-    ],
-  },
-  {
-    id: "macos",
-    label: "macOS (Safari/Chrome)",
-    icon: <Apple className="h-4 w-4" />,
-    steps: [
-      'Buka website SpringHub di Safari atau Chrome.',
-      'Safari: klik "File" > "Add to Dock". Chrome: klik ikon install di address bar.',
-      'Beri nama "SpringHub" lalu klik "Add".',
-      'Ikon muncul di Dock — klik untuk buka sebagai app mandiri.',
-      "Mode offline otomatis aktif saat tidak ada koneksi.",
-    ],
-  },
-];
+function getPlatformGuides(t: (key: string) => string): PlatformGuide[] {
+  const steps = (id: string) =>
+    [0, 1, 2, 3, 4].map((i) => t(`offline.installGuides.${id}.${i}`));
+  return [
+    { id: "android", label: "Android (Chrome)", icon: <Smartphone className="h-4 w-4" />, steps: steps("android") },
+    { id: "ios", label: "iOS (Safari)", icon: <Apple className="h-4 w-4" />, steps: steps("ios") },
+    { id: "windows", label: "Windows (Edge/Chrome)", icon: <Monitor className="h-4 w-4" />, steps: steps("windows") },
+    { id: "macos", label: "macOS (Safari/Chrome)", icon: <Apple className="h-4 w-4" />, steps: steps("macos") },
+  ];
+}
 
 // ─── Estimated tile sizes ────────────────────────────────────────────────────
 
@@ -357,25 +317,21 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
         try {
           const { quota } = await offlineDB.estimateUsage();
           if (quota !== null && quota < SKIP_TILE_QUOTA) {
-            setTileWarning(
-              "Penyimpanan browser kecil (kemungkinan mode Incognito) — peta offline dilewati. Form tetap bisa dipakai tanpa peta."
-            );
+            setTileWarning(t("offline.tilesSkippedSmall"));
           } else {
             await downloadTilesForArea(selectedArea);
           }
         } catch {
-          setTileWarning(
-            "Peta offline gagal disimpan (penyimpanan penuh?) — dilewati. Form tetap bisa dipakai tanpa peta."
-          );
+          setTileWarning(t("offline.tilesSkippedFail"));
         }
       }
 
       setDownloadProgress({ current: 1, total: 1 });
       setTimeout(() => setStep("ready"), 500);
     } catch (err) {
-      setDownloadError("Gagal menyimpan data. Coba lagi.");
+      setDownloadError(t("offline.saveDataFail"));
     }
-  }, [forms, selectedForms, mode, selectedArea]);
+  }, [forms, selectedForms, mode, selectedArea, t]);
 
   // ── Download tiles (IndexedDB — tanpa Service Worker) ─────────────────
   const downloadTilesForArea = async (bounds: {
@@ -646,7 +602,7 @@ export function OfflineSetup({ onComplete, mode }: OfflineSetupProps) {
             {t("offline.installPwa")}
           </h3>
           <div className="space-y-1.5">
-            {platformGuides.map((guide) => (
+            {getPlatformGuides(t).map((guide) => (
               <div key={guide.id} className="overflow-hidden rounded-lg border border-ink-line">
                 <button
                   onClick={() =>

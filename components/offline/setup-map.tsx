@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { MapContainer, useMap, useMapEvents, Circle, CircleMarker, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { MapPin, Crosshair } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 import L from "leaflet";
 import { OfflineTileLayer } from "@/components/map/offline-tile-layer";
 import { ErrorBoundary } from "./error-boundary";
@@ -97,6 +98,7 @@ function MapCircleController({
 }
 
 export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: SetupMapProps) {
+  const { t } = useI18n();
   const [center, setCenter] = useState<{ lat: number; lng: number }>(
     selectedCenter ?? { lat: -7.5, lng: 110 }
   );
@@ -202,7 +204,7 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
           onClick={handleLocate}
           disabled={geoLoading}
           className="absolute right-3 top-3 z-[1000] rounded-md bg-white px-2.5 py-2 text-xs font-medium text-ink-muted shadow-lg transition hover:bg-slate-50 hover:text-ink dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
-          title="Gunakan lokasi saya"
+          title={t("offline.useMyLocation")}
         >
           <Crosshair className={`h-4 w-4 ${geoLoading ? "animate-spin" : ""}`} />
         </button>
@@ -212,7 +214,7 @@ export function SetupMap({ onAreaSelected, selectedCenter, selectedRadius }: Set
           <div className="rounded-lg bg-white/90 px-3 py-2 text-xs text-ink-muted shadow-lg backdrop-blur dark:bg-slate-900/90 dark:text-slate-400">
             <div className="flex items-center gap-1">
               <MapPin className="h-3 w-3 text-brand-600 dark:text-brand-400" />
-              <span>Seret marker ● untuk pindah posisi</span>
+              <span>{t("offline.dragMarker")}</span>
             </div>
             <div className="mt-1 font-mono text-[10px] text-ink-subtle dark:text-slate-500">
               {center.lat.toFixed(4)}, {center.lng.toFixed(4)} — Radius: {selectedRadius} km

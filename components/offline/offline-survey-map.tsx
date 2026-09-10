@@ -31,15 +31,16 @@ import { getForm, getFormTitle } from "@/lib/forms";
 import { INDONESIAN_PROVINCES } from "@/lib/provinces";
 
 // ─── Fallback map — saat Leaflet gagal load ──────────────────────────────────
-function MapFallback({ message = "Map tidak tersedia di perangkat ini" }: { message?: string }) {
+function MapFallback({ message }: { message?: string }) {
+  const { t } = useI18n();
   return (
     <div className="flex h-full min-h-[200px] items-center justify-center rounded-xl bg-amber-50 p-6 text-center dark:bg-amber-900/20">
       <div>
         <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
-          {message}
+          {message || t("offline.mapUnavailable")}
         </p>
         <p className="mt-1 text-xs text-amber-600/70 dark:text-amber-400/70">
-          Fitur peta tidak didukung oleh browser ini. Silakan gunakan Chrome atau Edge terbaru.
+          {t("offline.mapUnsupported")}
         </p>
       </div>
     </div>
@@ -60,7 +61,7 @@ const SurveyLeafletMap = dynamic(
       .catch(() => {
         // Return component with any-props agar kompatibel dengan tipe dynamic()
         const Fallback: React.FC<any> = () => (
-          <MapFallback message="Map tidak tersedia di perangkat ini" />
+          <MapFallback />
         );
         return Fallback;
       }),
@@ -80,7 +81,7 @@ const PickerMap = dynamic(
       .then((m) => m.PickerMap)
       .catch(() => {
         const Fallback: React.FC<any> = () => (
-          <MapFallback message="Map tidak tersedia di perangkat ini" />
+          <MapFallback />
         );
         return Fallback;
       }),
@@ -431,7 +432,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
   // ── Marker — instant save at GPS position (RAW, tanpa snap) ────────────
   const saveMarkerInstant = useCallback(async (type: MarkerType) => {
     if (!currentPos) {
-      alert("Posisi GPS belum tersedia. Tunggu hingga GPS aktif.");
+      alert(t("offline.gpsNotReady"));
       return;
     }
 
@@ -548,7 +549,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
       setView("map");
     } catch (err) {
       console.error("[Form] Save error:", err);
-      alert("Gagal menyimpan form. Coba lagi.");
+      alert(t("offline.formSaveFail"));
     }
   };
 
@@ -569,7 +570,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             </button>
           </div>
           {cachedForms.length === 0 ? (
-            <p className="text-sm text-ink-muted">Tidak ada form tersedia. Lakukan setup ulang.</p>
+            <p className="text-sm text-ink-muted">{t("offline.noFormAvailable")}</p>
           ) : (
             <div className="space-y-3">
               {cachedForms.map((form) => (
@@ -631,7 +632,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                               handleFormFieldChange("location_lat", String(currentPos.lat.toFixed(6)));
                               handleFormFieldChange("location_lng", String(currentPos.lng.toFixed(6)));
                             } else {
-                              alert("Posisi GPS belum tersedia.");
+                              alert(t("offline.gpsNotReadyShort"));
                             }
                           }}
                           className="inline-flex items-center gap-1.5 rounded-md border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700 hover:bg-brand-100"
@@ -680,7 +681,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                           className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-600 hover:text-brand-700"
                         >
                           <MapIcon className="h-3.5 w-3.5" />
-                          {showMapPicker ? "Sembunyikan peta" : "Pilih di peta"}
+                          {showMapPicker ? t("offline.hideMap") : t("offline.pickOnMap")}
                         </button>
                       </div>
 
@@ -787,11 +788,11 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                           e.target.value = "";
                         }}
                         className="block w-full text-xs text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30 dark:file:text-brand-300"
-                        title="Ambil foto dari kamera"
+                        title={t("offline.takePhoto")}
                       />
                       )}
                       {(formPhotos[field.id] || []).length >= 5 && (
-                        <p className="text-xs text-amber-600">Maksimal 5 foto.</p>
+                        <p className="text-xs text-amber-600">{t("offline.max5photos")}</p>
                       )}
                       {formPhotos[field.id] && formPhotos[field.id].length > 0 && (
                         <div className="mt-1 flex flex-wrap gap-1">
@@ -845,19 +846,19 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             <Footprints className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
             {(totalDistance / 1000).toFixed(2)} km
           </span>
-          <span className="inline-flex items-center gap-1" title="Mata Air">
+          <span className="inline-flex items-center gap-1" title={t("offline.markerSpring")}>
             <Flag className="h-3.5 w-3.5 text-blue-500" />
             {springCount}
           </span>
-          <span className="inline-flex items-center gap-1" title="Tanam Pohon">
+          <span className="inline-flex items-center gap-1" title={t("offline.markerTree")}>
             <Leaf className="h-3.5 w-3.5 text-green-500" />
             {treeCount}
           </span>
-          <span className="inline-flex items-center gap-1" title="Rorak">
+          <span className="inline-flex items-center gap-1" title={t("offline.markerTrench")}>
             <Mountain className="h-3.5 w-3.5 text-amber-700" />
             {trenchCount}
           </span>
-          <span className="inline-flex items-center gap-1" title="Seedling">
+          <span className="inline-flex items-center gap-1" title={t("offline.markerSeedling")}>
             <Leaf className="h-3.5 w-3.5 text-emerald-800" />
             {seedlingCount}
           </span>
@@ -917,7 +918,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
                 </div>
                 <span
                   className={`inline-block h-2 w-2 rounded-full ${isTracking ? "bg-green-500 animate-pulse" : "bg-slate-300"}`}
-                  title={isTracking ? "Tracking aktif" : "Tracking tidak aktif"}
+                  title={isTracking ? t("offline.trackingOn") : t("offline.trackingOff")}
                 />
               </div>
               <div className="mt-1 flex gap-2 text-[10px] text-ink-subtle">
@@ -933,7 +934,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
               <div className="absolute bottom-20 left-4 right-4 z-30 rounded-xl bg-amber-50 px-5 py-4 text-center shadow-lg dark:bg-amber-900/30">
                 <div className="text-lg">📍</div>
                 <p className="mt-1 text-sm font-semibold text-amber-700 dark:text-amber-300">
-                  {"Atur posisi kamu dengan mengetuk peta"}
+                  {t("offline.tapToSetPos")}
                 </p>
                 <p className="mt-0.5 text-[11px] text-amber-600/70 dark:text-amber-400/70">
                   Atau gunakan tombol kompas <span className="inline-block align-middle">🧭</span> di kiri atas peta untuk GPS otomatis
@@ -954,7 +955,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             <button
               onClick={() => handleMarkerButton("spring")}
               className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-blue-500 py-2 text-white shadow-lg hover:bg-blue-600"
-              title="Mata Air"
+              title={t("offline.markerSpring")}
             >
               <Flag className="h-5 w-5" />
               <span className="text-[10px] font-semibold">{t("offline.springs")}</span>
@@ -962,7 +963,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             <button
               onClick={() => handleMarkerButton("tree")}
               className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-green-500 py-2 text-white shadow-lg hover:bg-green-600"
-              title="Tanam Pohon"
+              title={t("offline.markerTree")}
             >
               <Leaf className="h-5 w-5" />
               <span className="text-[10px] font-semibold">{t("offline.trees")}</span>
@@ -970,7 +971,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             <button
               onClick={() => handleMarkerButton("trench")}
               className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-amber-700 py-2 text-white shadow-lg hover:bg-amber-800"
-              title="Rorak"
+              title={t("offline.markerTrench")}
             >
               <Mountain className="h-5 w-5" />
               <span className="text-[10px] font-semibold">{t("offline.trenches")}</span>
@@ -978,7 +979,7 @@ export function OfflineSurveyMap({ selectedForms, onExit }: OfflineSurveyMapProp
             <button
               onClick={() => handleMarkerButton("seedling")}
               className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-emerald-800 py-2 text-white shadow-lg hover:bg-emerald-900"
-              title="Seedling"
+              title={t("offline.markerSeedling")}
             >
               <Leaf className="h-5 w-5" />
               <span className="text-[10px] font-semibold">{t("offline.seedlings")}</span>

@@ -212,7 +212,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       );
       const count = Math.max(stateCount, fdFiles.length);
       if (count < minPerField) {
-        setSubmitError(`Minimal ${minPerField} foto untuk "${field.label || field.id}". Saat ini: ${count} foto.`);
+        setSubmitError(t("offline.minPhotosField", { min: String(minPerField), label: field.label || field.id, count: String(count) }));
         return;
       }
     }
@@ -230,7 +230,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       // GPS coords dari hidden input (location_lat / location_lng) sudah otomatis
       // dari FormData — tambah anti-spam fields + timestamp
       collected._submit_time = String(Date.now());
-      collected._website = "";
+      collected._website = ""; // honeypot anti-bot
       collected._captured_at = capturedAt;
 
       // Pastikan field date selalu ada (hidden input mungkin gak terkirim)
@@ -325,16 +325,14 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         try {
           const { used, quota } = await offlineDB.estimateUsage();
           if (quota) {
-            usageNote = ` (Terpakai ${(used / 1048576).toFixed(1)} MB dari ${(quota / 1048576).toFixed(0)} MB kuota browser)`;
+            usageNote = t("offline.usedOf", { used: (used / 1048576).toFixed(1), quota: (quota / 1048576).toFixed(0) });
           }
         } catch { /* abaikan */ }
         setSubmitError(
-          "Penyimpanan browser penuh" + usageNote + ". Kamu memakai mode Incognito — iPhone membatasi penyimpanan di mode ini. " +
-          "Buka SpringHub di tab biasa (atau Add to Home Screen), lalu coba lagi. " +
-          "Kalau tetap gagal, kurangi jumlah foto." + tech
+          t("offline.quotaFull", { usage: usageNote, tech })
         );
       } else {
-        setSubmitError("Gagal menyimpan. Pastikan penyimpanan perangkat tidak penuh, lalu coba lagi." + tech);
+        setSubmitError(t("offline.saveFailGeneric", { tech }));
       }
     } finally {
       setSubmitting(false);
@@ -383,11 +381,11 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
     return (
       <div className="container-page max-w-2xl py-8">
         <button onClick={handleExit} className="mb-4 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
-          <ArrowLeft className="h-4 w-4" /> Beranda
+          <ArrowLeft className="h-4 w-4" /> {t("offline.home")}
         </button>
 
-        <h1 className="text-2xl font-extrabold text-ink">Mode Offline</h1>
-        <p className="mt-1 text-sm text-ink-muted">Pilih form yang ingin diisi:</p>
+        <h1 className="text-2xl font-extrabold text-ink">{t("offline.offlineMode")}</h1>
+        <p className="mt-1 text-sm text-ink-muted">{t("offline.chooseForm")}</p>
 
         {/* ── Sync Status — kelihatan langsung di HP ────────────── */}
         {queueCount > 0 && (
@@ -405,10 +403,10 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 )}
                 <div>
                   <p className="text-sm font-semibold text-ink">
-                    {syncStatus?.ok === false ? "Sync Gagal" : "Menunggu Sync"}
+                    {syncStatus?.ok === false ? t("offline.syncFailed") : t("offline.waitingSync")}
                   </p>
                   <p className="mt-0.5 text-xs text-ink-muted">
-                    {queueCount} laporan antrean
+                    {queueCount} {t("offline.queuedSuffix")}
                     {syncStatus?.ok === false && ` — ${syncStatus.message}`}
                   </p>
                 </div>
@@ -440,10 +438,10 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
               <AlertCircle className="mt-0.5 h-5 w-5 flex-none text-red-500" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-ink">
-                  {failedQueue.length} laporan perlu perbaikan
+                  {t("offline.needFix", { count: String(failedQueue.length) })}
                 </p>
                 <p className="mt-0.5 text-xs text-ink-muted">
-                  Laporan ini gagal diproses server dan tidak akan dicoba otomatis lagi.
+                  {t("offline.fixDesc")}
                   {failedQueue[0]?.lastError && ` — ${failedQueue[0].lastError}`}
                 </p>
                 <div className="mt-2 space-y-1.5">
@@ -460,7 +458,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                         }}
                         className="flex-none rounded-md px-2 py-1 font-semibold text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/40"
                       >
-                        Hapus
+                        {t("offline.delete")}
                       </button>
                     </div>
                   ))}
@@ -472,7 +470,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
 
         {forms.length === 0 ? (
           <div className="card mt-6 py-8 text-center">
-            <p className="text-sm text-ink-muted">Belum ada form tersimpan. Coba online dulu untuk memuat form.</p>
+            <p className="text-sm text-ink-muted">{t("offline.noForms")}</p>
           </div>
         ) : (
           <div className="mt-4 grid gap-2">
@@ -535,15 +533,15 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
         "bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
       }`}>
         <MapPin className="h-4 w-4" />
-        {gpsStatus === "idle" && "Menunggu GPS..."}
-        {gpsStatus === "getting" && "Mendapatkan lokasi..."}
+        {gpsStatus === "idle" && t("offline.gpsWaiting")}
+        {gpsStatus === "getting" && t("offline.gpsGetting")}
         {gpsStatus === "got" && `Lokasi: ${gpsCoords!.lat.toFixed(5)}, ${gpsCoords!.lng.toFixed(5)}`}
-        {gpsStatus === "error" && "Lokasi tidak tersedia. Isi manual jika perlu."}
+        {gpsStatus === "error" && t("offline.gpsError")}
       </div>
 
       {/* Timestamp */}
       <div className="mt-3 rounded-md bg-brand-50 px-4 py-3 dark:bg-brand-900/20">
-        <p className="text-xs text-ink-subtle">Waktu laporan</p>
+        <p className="text-xs text-ink-subtle">{t("offline.reportTime")}</p>
         <p className="text-sm font-semibold text-brand-700 dark:text-brand-300">
           {capturedAtDisplay} WIB
         </p>
@@ -607,7 +605,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 required={field.required}
                 className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white"
               >
-                <option value="">Pilih...</option>
+                <option value="">{t("offline.chooseEllipsis")}</option>
                 {(locale === "en" && field.optionsEn?.length ? field.optionsEn : field.options)?.map((opt: string, i: number) => (
                   <option key={opt} value={field.options?.[i] || opt}>{opt}</option>
                 ))}
@@ -622,10 +620,10 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                   </p>
                 ) : gpsStatus === "error" ? (
                   <p className="text-sm text-amber-600 dark:text-amber-400">
-                    Lokasi tidak tersedia. Klik dapatkan lokasi di atas.
+                    {t("offline.noLocationAbove")}
                   </p>
                 ) : (
-                  <p className="text-sm text-ink-muted">Mendapatkan lokasi GPS...</p>
+                  <p className="text-sm text-ink-muted">{t("offline.gettingGps")}</p>
                 )}
               </div>
             ) : field.type === "province" ? (
@@ -634,7 +632,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                 required={field.required}
                 className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white"
               >
-                <option value="">Pilih</option>
+                <option value="">{t("offline.choose")}</option>
                 {INDONESIAN_PROVINCES.map((p) => (
                   <option key={p} value={p}>{p}</option>
                 ))}
@@ -656,12 +654,12 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
               <div className="mt-1">
                 <div className="flex items-center gap-2 text-xs text-ink-muted">
                   <Camera className="h-3.5 w-3.5" />
-                  <span>{(photoFiles[field.id] || []).length} / 5 foto</span>
+                  <span>{(photoFiles[field.id] || []).length} / 5 {t("offline.photosUnit")}</span>
                   {compressing && (
-                    <span className="font-semibold text-brand-600">(mengompres foto...)</span>
+                    <span className="font-semibold text-brand-600">{t("offline.compressing")}</span>
                   )}
                   {(photoFiles[field.id] || []).length < 3 && (
-                    <span className="font-semibold text-amber-600">(minimal 3 foto)</span>
+                    <span className="font-semibold text-amber-600">{t("offline.minPhotos")}</span>
                   )}
                 </div>
                 {(photoFiles[field.id] || []).length < 5 && (
@@ -709,12 +707,12 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                   <div className="mt-2 flex flex-wrap gap-2">
                     {(photoFiles[field.id] || []).map((file, idx) => (
                       <div key={idx} className="relative h-16 w-16 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-700">
-                        <BlobPreview file={file} alt={`Foto ${idx + 1}`} />
+                        <BlobPreview file={file} alt={t("offline.photoAlt", { idx: String(idx + 1) })} />
                         <button
                           type="button"
                           onClick={() => removePhoto(field.id, idx)}
                           className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-sm text-white shadow-sm"
-                          aria-label="Hapus foto"
+                          aria-label={t("offline.removePhoto")}
                         >
                           ×
                         </button>
@@ -723,7 +721,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                   </div>
                 )}
                 {(photoFiles[field.id] || []).length >= 5 && (
-                  <p className="mt-1 text-xs text-amber-600">Maksimal 5 foto. Hapus yang ada untuk mengganti.</p>
+                  <p className="mt-1 text-xs text-amber-600">{t("offline.maxPhotosNote")}</p>
                 )}
               </div>
             ) : null}
@@ -738,14 +736,14 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
 
         <div className="flex items-center justify-end gap-2 border-t border-ink-line pt-4">
           <button type="button" onClick={() => setSelectedForm(null)} className="btn-secondary" disabled={submitting}>
-            Batal
+            {t("offline.cancel")}
           </button>
           <button type="submit" disabled={submitting || gpsStatus === "getting"} className="btn-primary inline-flex items-center gap-2">
             {submitting ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> Menyimpan...</>
+              <><Loader2 className="h-4 w-4 animate-spin" /> {t("offline.saving")}</>
             ) : gpsStatus === "getting" ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> Tunggu GPS...</>
-            ) : "Simpan"}
+              <><Loader2 className="h-4 w-4 animate-spin" /> {t("offline.waitGps")}</>
+            ) : t("offline.save")}
           </button>
         </div>
       </form>
