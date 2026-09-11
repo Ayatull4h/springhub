@@ -54,13 +54,14 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://*.openstreetmap.org https://*.basemaps.cartocdn.com https://static.cloudflareinsights.com",
-              // worker-src blob: hanya untuk Web Worker yang dibuat kode sendiri
-              // (decoder HEIC heic2any) — blob: tidak bisa dimint attacker tanpa eksekusi script.
+              // worker-src dipertahankan untuk kebutuhan masa depan (saat ini
+              // tidak ada Web Worker aktif — decoder HEIC JS dihapus karena
+              // butuh unsafe-eval yang dilarang kebijakan keamanan).
               "worker-src 'self' blob:",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://*.r2.dev https://images.unsplash.com https://greennetwork.id https://*.greennetwork.id https://upload.wikimedia.org https://img.youtube.com https://i.ytimg.com https://*.googleusercontent.com https://www.springhub.id https://static.cloudflareinsights.com https://placehold.co",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.xendit.co https://*.r2.dev https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://static.cloudflareinsights.com",
+              "connect-src 'self' blob: https://api.xendit.co https://*.r2.dev https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://static.cloudflareinsights.com",
               "media-src 'self' https://*.r2.dev",
               "frame-src https://www.youtube.com",
               "frame-ancestors 'none'",

@@ -14,27 +14,24 @@ export async function compressImageBlob(
   maxDimension = 1280,
   quality = 0.8
 ): Promise<Blob> {
-  // HEIC (iPhone) tidak bisa di-decode browser Chrome — konversi dulu
-  // pakai decoder yang di-load malas (tidak memberatkan bundle awal).
-  // Cek magic bytes DULU (bukan blob.type) — tipe bisa dipalsukan/kosong
-  // (temuan auditor: HEIC ≤2MB bertipe image/jpeg lolos mentah).
-  // Tanpa ini, HEIC 1–3MB tersimpan mentah dan menghabiskan kuota,
-  // apalagi di mode Incognito yang kuotanya kecil.
-  if (await looksLikeHeic(blob)) {
-    const converted = await tryConvertHeic(blob, quality);
-    if (converted) {
-      // Kompres hasil konversi seperti JPEG biasa (rekursi 1 level)
-      return compressImageBlob(converted, maxDimension, quality);
+  // HEIC (iPhone): JANGAN pakai decoder JS (heic2any pakai `new Function`
+  // di dalam Worker = diblokir CSP tanpa unsafe-eval, terbukti di E2E).
+  // Sebagai gantinya coba decode native OS: di iPhone (Safari/WKWebView,
+  // termasuk Chrome iOS) <img>/createImageBitmap BISA decode HEIC via
+  // decoder sistem. Di Chrome desktop/Android yang gagal, file mentah
+  // dikembalikan dan SERVER yang konversi saat sync (heic-convert,
+  // terverifikasi). Jadi tidak ada jalan buntu.
+  // Cek magic bytes DULU (bukan blob.type) agar HEIC bertipe palsu/kosong
+  // tidak lolos mentah ke early-return di bawah.
+  const isHeic = await looksLikeHeic(blob);
+  if (!isHeic) {
+    // Lewati file yang sudah kecil & format standar — hemat CPU/baterai
+    if (
+      blob.size <= 2 * 1024 * 1024 &&
+      ["image/jpeg", "image/png", "image/webp"].includes(blob.type)
+    ) {
+      return blob;
     }
-    return blob;
-  }
-
-  // Lewati file yang sudah kecil & format standar — hemat CPU/baterai
-  if (
-    blob.size <= 2 * 1024 * 1024 &&
-    ["image/jpeg", "image/png", "image/webp"].includes(blob.type)
-  ) {
-    return blob;
   }
 
   try {
@@ -89,40 +86,6 @@ async function looksLikeHeic(blob: Blob): Promise<boolean> {
     return isHeicBrand(brand);
   } catch {
     return false;
-  }
-}
-
-/** Konversi HEIC → JPEG via decoder malas (dynamic import, tidak membebani bundle awal). */
-async function tryConvertHeic(blob: Blob, quality: number): Promise<Blob | null> {
-  try {
-    const mod = await import("heic2any");
-    const heic2any = (mod as unknown as { default?: unknown }) as unknown as (
-      opts: Record<string, unknown>
-    ) => Promise<Blob | Blob[]>;
-    const fn = typeof heic2any === "function" ? heic2any : (mod as unknown as { default: typeof heic2any }).default;
-    if (typeof fn !== "function") return null;
-    // Timeout 25 dtk — decode HEIC 12MP di HP kentang bisa lama;
-    // jangan gantung UI, biarkan fallback (server konversi saat sync).
-    // clearTimeout di kedua cabang agar tidak menahan event loop (temuan auditor).
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    try {
-      const out = await Promise.race([
-        fn({ blob, toType: "image/jpeg", quality }),
-        new Promise<never>((_, reject) => {
-          timer = setTimeout(() => reject(new Error("heic-timeout")), 25000);
-        }),
-      ]);
-      const arr = Array.isArray(out) ? out : [out];
-      const first = arr[0];
-      if (first instanceof Blob && first.size > 0) return first;
-      return null;
-    } catch {
-      return null;
-    } finally {
-      if (timer) clearTimeout(timer);
-    }
-  } catch {
-    return null;
   }
 }
 

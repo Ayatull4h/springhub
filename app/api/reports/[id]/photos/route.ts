@@ -97,12 +97,18 @@ export async function POST(
       stack: error instanceof Error ? error.stack : undefined,
       reportId: (await params).id,
     });
+    // Gagal validasi/konversi (format ditolak, HEIC korup, file rusak) = 400
+    // agar QueueWorker mengklasifikasikan fatal + tampilkan pesan actionable
+    // ke user, bukan retry 30-detik selamanya (temuan auditor).
+    const msg = error instanceof Error ? error.message : "";
+    const isClientError =
+      /format foto|tidak bisa dibaca|kosong atau rusak|maksimal 10MB/i.test(msg);
     return NextResponse.json(
       {
         error: getErrorMessage(error, "Terjadi kesalahan."),
         reportId: (await params).id,
       },
-      { status: isDatabaseError(error) ? 503 : 500 }
+      { status: isClientError ? 400 : isDatabaseError(error) ? 503 : 500 }
     );
   }
 }
