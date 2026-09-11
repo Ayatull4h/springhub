@@ -97,7 +97,14 @@ async function tryConvertHeic(blob: Blob, quality: number): Promise<Blob | null>
     ) => Promise<Blob | Blob[]>;
     const fn = typeof heic2any === "function" ? heic2any : (mod as unknown as { default: typeof heic2any }).default;
     if (typeof fn !== "function") return null;
-    const out = await fn({ blob, toType: "image/jpeg", quality });
+    // Timeout 25 dtk — decode HEIC 12MP di HP kentang bisa lama;
+    // jangan gantung UI, biarkan fallback (server konversi saat sync).
+    const out = await Promise.race([
+      fn({ blob, toType: "image/jpeg", quality }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("heic-timeout")), 25000)
+      ),
+    ]);
     const arr = Array.isArray(out) ? out : [out];
     const first = arr[0];
     if (first instanceof Blob && first.size > 0) return first;
@@ -139,9 +146,6 @@ function compressViaImageElement(
         if (!ctx) return done(null);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         canvas.toBlob((b) => done(b || null), "image/jpeg", quality);
-        setTimeout(() => {
-          canvas.toBlob((b2) => done(b2 || null), "image/jpeg", quality);
-        }, 3000);
       } catch {
         done(null);
       }

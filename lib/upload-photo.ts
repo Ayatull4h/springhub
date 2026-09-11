@@ -18,7 +18,7 @@ const UPLOAD_PREFIX = process.env.UPLOAD_URL_PREFIX || "/uploads";
  * Detect image MIME type from file bytes (magic bytes signature).
  * Fallback jika file.type kosong atau tidak dikenali.
  */
-function detectMimeFromBuffer(buffer: Buffer): string {
+export function detectMimeFromBuffer(buffer: Buffer): string {
   // JPEG: FF D8 FF
   if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return "image/jpeg";
   // PNG: 89 50 4E 47
@@ -33,7 +33,7 @@ function detectMimeFromBuffer(buffer: Buffer): string {
   if (
     buffer.length >= 12 &&
     buffer[4] === 0x66 && buffer[5] === 0x74 && buffer[6] === 0x79 && buffer[7] === 0x70 &&
-    /^heic|^heix|^hevc|^mif1|^msf1|^avif/.test(buffer.subarray(8, 12).toString("latin1"))
+    /^heic|^heix|^hevc|^hevx|^mif1|^msf1|^avif/.test(buffer.subarray(8, 12).toString("latin1"))
   ) {
     return "image/heic";
   }

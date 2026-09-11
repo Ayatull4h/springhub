@@ -53,7 +53,10 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://*.openstreetmap.org https://*.basemaps.cartocdn.com https://static.cloudflareinsights.com",
+              "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://*.openstreetmap.org https://*.basemaps.cartocdn.com https://static.cloudflareinsights.com",
+              // worker-src blob: hanya untuk Web Worker yang dibuat kode sendiri
+              // (decoder HEIC heic2any) — blob: tidak bisa dimint attacker tanpa eksekusi script.
+              "worker-src 'self' blob:",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://*.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://*.r2.dev https://images.unsplash.com https://greennetwork.id https://*.greennetwork.id https://upload.wikimedia.org https://img.youtube.com https://i.ytimg.com https://*.googleusercontent.com https://www.springhub.id https://static.cloudflareinsights.com https://placehold.co",
               "font-src 'self' data:",
