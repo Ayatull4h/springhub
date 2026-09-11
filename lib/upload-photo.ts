@@ -3,6 +3,7 @@ import convert from "heic-convert";
 import fs from "fs/promises";
 import path from "path";
 import { addWatermark } from "./watermark";
+import { isHeicBrand } from "./heic";
 
 export type UploadResult = {
   url: string;
@@ -19,23 +20,29 @@ const UPLOAD_PREFIX = process.env.UPLOAD_URL_PREFIX || "/uploads";
  * Fallback jika file.type kosong atau tidak dikenali.
  */
 export function detectMimeFromBuffer(buffer: Buffer): string {
+  if (!buffer || buffer.length < 4) throw new Error("File foto kosong atau rusak");
   // JPEG: FF D8 FF
   if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return "image/jpeg";
   // PNG: 89 50 4E 47
   if (buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47) return "image/png";
-  // WebP: 52 49 46 46 ... 57 45 42 50
-  if (buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46) return "image/webp";
+  // WebP: RIFF....WEBP (cek juga 4 byte WEBP — RIFF saja bisa jadi WAV/AVI)
+  if (
+    buffer.length >= 12 &&
+    buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46 &&
+    buffer.subarray(8, 12).toString("latin1") === "WEBP"
+  ) return "image/webp";
   // GIF: 47 49 46 38
   if (buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x38) return "image/gif";
   // BMP: 42 4D
   if (buffer[0] === 0x42 && buffer[1] === 0x4d) return "image/bmp";
-  // HEIC/HEIF: ISO BMFF box (ftyp) — bytes 4-7 = "ftyp", major brand di bytes 8-11
-  if (
-    buffer.length >= 12 &&
-    buffer[4] === 0x66 && buffer[5] === 0x74 && buffer[6] === 0x79 && buffer[7] === 0x70 &&
-    /^heic|^heix|^hevc|^hevx|^mif1|^msf1|^avif/.test(buffer.subarray(8, 12).toString("latin1"))
+  // HEIC/HEIF: ISO BMFF box (ftyp) — bytes 4-7 = "ftyp", major brand di bytes 8-11.
+  // AVIF dipetakan sendiri (bukan heic) karena sharp decode AVIF native.
+  if (buffer.length >= 12 &&
+    buffer[4] === 0x66 && buffer[5] === 0x74 && buffer[6] === 0x79 && buffer[7] === 0x70
   ) {
-    return "image/heic";
+    const brand = buffer.subarray(8, 12).toString("latin1");
+    if (brand === "avif") return "image/avif";
+    if (isHeicBrand(brand)) return "image/heic";
   }
   // Default
   return "image/jpeg";
@@ -54,10 +61,11 @@ export async function uploadPhoto(
 
   // Detect MIME from file bytes (more reliable than file.type on Chrome Android)
   const detectedMime = detectMimeFromBuffer(initialBuffer);
-  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/heic"];
+  // AVIF langsung ke sharp (decode native, terverifikasi). HEIC via heic-convert.
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/avif"];
   if (!allowedTypes.includes(detectedMime)) {
     throw new Error(
-      `Format foto harus JPG, PNG, WebP, atau HEIC (terdeteksi: ${detectedMime})`
+      `Format foto harus JPG, PNG, WebP, HEIC, atau AVIF (terdeteksi: ${detectedMime})`
     );
   }
 

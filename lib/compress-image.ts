@@ -7,21 +7,17 @@
  * Pola yang sama dipakai offline-survey-map (terbukti di iOS) dan queue-worker.
  */
 
+import { isHeicBrand } from "./heic";
+
 export async function compressImageBlob(
   blob: Blob,
   maxDimension = 1280,
   quality = 0.8
 ): Promise<Blob> {
-  // Lewati file yang sudah kecil & format standar — hemat CPU/baterai
-  if (
-    blob.size <= 2 * 1024 * 1024 &&
-    ["image/jpeg", "image/png", "image/webp"].includes(blob.type)
-  ) {
-    return blob;
-  }
-
   // HEIC (iPhone) tidak bisa di-decode browser Chrome — konversi dulu
   // pakai decoder yang di-load malas (tidak memberatkan bundle awal).
+  // Cek magic bytes DULU (bukan blob.type) — tipe bisa dipalsukan/kosong
+  // (temuan auditor: HEIC ≤2MB bertipe image/jpeg lolos mentah).
   // Tanpa ini, HEIC 1–3MB tersimpan mentah dan menghabiskan kuota,
   // apalagi di mode Incognito yang kuotanya kecil.
   if (await looksLikeHeic(blob)) {
@@ -30,6 +26,14 @@ export async function compressImageBlob(
       // Kompres hasil konversi seperti JPEG biasa (rekursi 1 level)
       return compressImageBlob(converted, maxDimension, quality);
     }
+    return blob;
+  }
+
+  // Lewati file yang sudah kecil & format standar — hemat CPU/baterai
+  if (
+    blob.size <= 2 * 1024 * 1024 &&
+    ["image/jpeg", "image/png", "image/webp"].includes(blob.type)
+  ) {
     return blob;
   }
 
@@ -82,7 +86,7 @@ async function looksLikeHeic(blob: Blob): Promise<boolean> {
       head[4] === 0x66 && head[5] === 0x74 && head[6] === 0x79 && head[7] === 0x70;
     if (!isFtyp) return false;
     const brand = String.fromCharCode(head[8], head[9], head[10], head[11]);
-    return /heic|heix|hevc|hevx|mif1|msf1/i.test(brand);
+    return isHeicBrand(brand);
   } catch {
     return false;
   }
@@ -99,16 +103,24 @@ async function tryConvertHeic(blob: Blob, quality: number): Promise<Blob | null>
     if (typeof fn !== "function") return null;
     // Timeout 25 dtk — decode HEIC 12MP di HP kentang bisa lama;
     // jangan gantung UI, biarkan fallback (server konversi saat sync).
-    const out = await Promise.race([
-      fn({ blob, toType: "image/jpeg", quality }),
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("heic-timeout")), 25000)
-      ),
-    ]);
-    const arr = Array.isArray(out) ? out : [out];
-    const first = arr[0];
-    if (first instanceof Blob && first.size > 0) return first;
-    return null;
+    // clearTimeout di kedua cabang agar tidak menahan event loop (temuan auditor).
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const out = await Promise.race([
+        fn({ blob, toType: "image/jpeg", quality }),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => reject(new Error("heic-timeout")), 25000);
+        }),
+      ]);
+      const arr = Array.isArray(out) ? out : [out];
+      const first = arr[0];
+      if (first instanceof Blob && first.size > 0) return first;
+      return null;
+    } catch {
+      return null;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
   } catch {
     return null;
   }
@@ -162,6 +174,10 @@ function compressViaImageElement(
 export async function compressImageFile(file: File): Promise<File> {
   const blob = await compressImageBlob(file);
   if (blob === file) return file;
+  // Hanya labeli .jpg bila hasilnya benar JPEG (temuan auditor: HEIC mentah
+  // yang gagal dikonversi jangan dilabeli image/jpeg — server selamat via
+  // magic bytes, tapi antrean/preview jadi bohong).
+  if (blob.type && !blob.type.startsWith("image/jpeg")) return new File([blob], file.name, { type: blob.type });
   const name = file.name.replace(/\.[a-z0-9]+$/i, "") + ".jpg";
   try {
     return new File([blob], name, { type: "image/jpeg" });

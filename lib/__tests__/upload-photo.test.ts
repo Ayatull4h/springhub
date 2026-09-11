@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { detectMimeFromBuffer } from "../upload-photo";
+import { HEIC_BRANDS, isHeicBrand } from "../heic";
 
 function buf(bytes: number[]): Buffer {
   return Buffer.from(bytes);
@@ -44,5 +45,33 @@ describe("detectMimeFromBuffer", () => {
     b.write("ftyp", 4);
     b.write("mp42", 8); // video MP4 — bukan HEIC
     expect(detectMimeFromBuffer(b)).not.toBe("image/heic");
+  });
+  it("mendeteksi AVIF terpisah dari HEIC (sharp decode native)", () => {
+    const b = Buffer.alloc(12);
+    b.write("ftyp", 4);
+    b.write("avif", 8);
+    expect(detectMimeFromBuffer(b)).toBe("image/avif");
+  });
+  it("menolak RIFF yang bukan WebP (mis. WAV audio)", () => {
+    const b = Buffer.alloc(12);
+    b.write("RIFF", 0);
+    b.write("WAVE", 8);
+    expect(detectMimeFromBuffer(b)).not.toBe("image/webp");
+  });
+  it("menolak buffer kosong/rusak dengan pesan jelas", () => {
+    expect(() => detectMimeFromBuffer(Buffer.alloc(0))).toThrow("kosong atau rusak");
+    expect(() => detectMimeFromBuffer(buf([0xff, 0xd8]))).toThrow("kosong atau rusak");
+  });
+  it("daftar brand client & server satu sumber (tidak drift lagi)", () => {
+    // hevx pernah hanya ada di satu sisi -> sharp 500. Kunci di sini:
+    for (const brand of ["heic", "heix", "hevc", "hevx", "mif1", "msf1"]) {
+      expect(isHeicBrand(brand)).toBe(true);
+      const b = Buffer.alloc(12);
+      b.write("ftyp", 4);
+      b.write(brand, 8);
+      expect(detectMimeFromBuffer(b)).toBe("image/heic");
+    }
+    expect(HEIC_BRANDS).not.toContain("avif");
+    expect(isHeicBrand("mp42")).toBe(false);
   });
 });
