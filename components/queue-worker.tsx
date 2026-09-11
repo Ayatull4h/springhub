@@ -30,12 +30,6 @@ export function QueueWorker() {
         if (p.createdAt < cutoff) await offlineDB.deleteReport(p.id);
       }
 
-      // Bersihin tracking-points lama (GPS trails)
-      const tracks = await offlineDB.getAllTrackingPoints();
-      for (const t of tracks) {
-        if (t.recordedAt < cutoff) await offlineDB.deleteTrackingPoint(t.id);
-      }
-
       // Bersihin submission-queue yang stuck >7 hari
       const queue = await offlineDB.getAllQueued();
       for (const q of queue) {
@@ -277,47 +271,31 @@ export function QueueWorker() {
       }
     }
 
-    // Juga proses pending-reports (dari OfflineSurveyMap) — item queue sudah
-      // diproses di atas; loop ini hanya membersihkan sisa pending yang sukses
-      // dan memigrasikan yang gagal ke submission-queue (retry gating).
+    // pending-reports: hanya sisa legacy — submission-queue adalah sumber utama.
+    // (Migrasi dari OfflineSurveyMap yang sudah dihapus: tidak ada penulis baru.)
     const pending = await offlineDB.getAllReports();
     for (const report of pending) {
       const existingInQueue = await offlineDB.getQueued(report.id);
+      if (existingInQueue) continue;
       const queueItem: QueuedSubmission = {
         id: report.id,
         formSlug: report.formSlug,
         fieldData: report.fieldData as Record<string, unknown>,
-        photoBlobs: existingInQueue?.photoBlobs || [],
+        photoBlobs: [],
         csrfToken: "",
         createdAt: report.createdAt,
         retryCount: 0,
         clientCorrelationId: report.clientCorrelationId || generateCorrelationIdSafe(),
       };
 
-      // Ambil foto dari photo-blobs yang related (kalau belum ada di queue)
-      if (queueItem.photoBlobs.length === 0) {
-        try {
-          const photos = await offlineDB.getPhotosByReport(report.id);
-          for (const p of photos) {
-            try {
-              queueItem.photoBlobs.push(await toStoredPhoto(p));
-            } catch {
-              // Baris foto korup — lewati, jangan gagalkan laporan
-            }
-          }
-        } catch {}
-      }
+      try { await offlineDB.queueSubmission(queueItem); } catch { /* tetap di pending */ }
 
-      if (!existingInQueue) {
-        try { await offlineDB.queueSubmission(queueItem); } catch { /* tetap di pending */ }
-      }
-
-      const result = existingInQueue ? { ok: false as const, error: "in-queue" } : await submitQueueItem(queueItem);
+      const result = await submitQueueItem(queueItem);
       if (result.ok) {
         await offlineDB.deleteReport(report.id);
         await offlineDB.deleteQueued(report.id).catch(() => {});
         successCount++;
-      } else if (!existingInQueue) {
+      } else {
         const isPermanent = result.error?.startsWith("HTTP 4") || /Invalid CSRF|Validasi gagal|Form tidak dikenal/.test(result.error || "");
         await offlineDB.markQueuedAttempted(report.id, { error: result.error, permanent: isPermanent });
       }
@@ -356,15 +334,6 @@ export function QueueWorker() {
         const failedCount = remainingQueued.length;
 
         if (successCount > 0 && failedCount === 0) {
-          try {
-            const tracks = await offlineDB.getAllTrackingPoints();
-            if (tracks.length > 0) {
-              const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
-              for (const t of tracks) {
-                if (t.recordedAt < dayAgo) await offlineDB.deleteTrackingPoint(t.id);
-              }
-            }
-          } catch {}
           toast(`${successCount} laporan offline berhasil dikirim!`, "success");
         } else if (successCount > 0 && failedCount > 0) {
           toast(`${successCount} terkirim, ${failedCount} gagal (akan dicoba lagi)`, "info");

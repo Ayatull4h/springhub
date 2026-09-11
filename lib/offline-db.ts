@@ -24,30 +24,7 @@
  */
 
 const DB_NAME = "springhub-offline";
-const DB_VERSION = 5;
-
-export type MarkerType = "spring" | "tree" | "trench" | "seedling";
-
-export type OfflineTrackingPoint = {
-  id: string;
-  lat: number;
-  lng: number;
-  accuracy: number | null;
-  markerType: MarkerType | null; // null = regular GPS tracking point
-  name: string | null; // optional name (for markers)
-  recordedAt: number; // Date.now()
-};
-
-export type OfflineConfig = {
-  id: "session-config";
-  selectedForms: string[];
-  radiusKm: number;
-  qualityLevel: "ringan" | "sedang" | "lengkap";
-  totalDistance: number; // meters
-  startedAt: number;
-  centerLat?: number; // center point from setup map
-  centerLng?: number; // center point from setup map
-};
+const DB_VERSION = 6;
 
 export type DraftReport = {
   id: string;
@@ -70,16 +47,6 @@ export type PendingReport = {
    * "clientCorrelationId" di formData; server dedupe berdasarkan key ini.
    */
   clientCorrelationId?: string;
-};
-
-export type PhotoBlob = {
-  id: string;
-  reportId: string;
-  fieldId: string;
-  /** Byte murni — JANGAN Blob/File (WebKit iOS gagal clone saat put()). */
-  data: ArrayBuffer;
-  fileName: string;
-  mimeType: string;
 };
 
 /**
@@ -192,16 +159,6 @@ type DBSchema = {
     value: PendingReport;
     indexes: { "by-created": number };
   };
-  "tracking-points": {
-    key: string;
-    value: OfflineTrackingPoint;
-    indexes: { "by-recorded": number; "by-marker-type": string };
-  };
-  "photo-blobs": {
-    key: string;
-    value: PhotoBlob;
-    indexes: { "by-report": string };
-  };
   "form-definitions": {
     key: string;
     value: FormDefinition;
@@ -216,11 +173,6 @@ type DBSchema = {
     key: string;
     value: TileBlob;
     indexes: { "by-url": string };
-  };
-  "offline-config": {
-    key: string;
-    value: OfflineConfig;
-    indexes: {};
   };
   "draft-reports": {
     key: string;
@@ -398,6 +350,17 @@ function openDB(): Promise<IDBDatabase> {
         // tile-manifest
         if (!db.objectStoreNames.contains("tile-manifest")) {
           db.createObjectStore("tile-manifest", { keyPath: "url" });
+        }
+      }
+
+      // ── Version 6 — hapus store subsistem peta yang dihapus ──
+      // (tracking-points, photo-blobs, offline-config). submission-queue,
+      // pending-reports, drafts, forms, tiles tetap (form + quota-retry butuh).
+      if (oldVersion < 6) {
+        for (const dead of ["tracking-points", "photo-blobs", "offline-config"]) {
+          if (db.objectStoreNames.contains(dead)) {
+            db.deleteObjectStore(dead);
+          }
         }
       }
 
@@ -629,12 +592,9 @@ async function countItems(storeName: StoreNames): Promise<number> {
  */
 const STORES_META: Record<StoreNames, number> = {
   "pending-reports": 1,
-  "tracking-points": 2, // index by-marker-type sejak DB v2
-  "photo-blobs": 1,
   "form-definitions": 1,
   "tile-manifest": 1,
   "tile-blobs": 1,
-  "offline-config": 1,
   "draft-reports": 1,
   "submission-queue": 1,
   "session-cache": 1,
@@ -644,7 +604,6 @@ const STORES_META: Record<StoreNames, number> = {
 const NEVER_CLEAR_ON_MIGRATE: readonly StoreNames[] = [
   "submission-queue",
   "pending-reports",
-  "photo-blobs",
   "draft-reports",
 ];
 
@@ -714,87 +673,6 @@ export const offlineDB = {
     return countItems("pending-reports");
   },
 
-  /**
-   * Simpan report ke pending-reports + submission-queue sekaligus.
-   * QueueWorker auto-sync dari submission-queue.
-   * clientCorrelationId dibuat SEKALI di sini dan dipakai terus antar retry.
-   */
-  async saveReportAndQueue(
-    report: PendingReport,
-    photoBlobs: Array<StoredPhoto | LegacyPhoto>
-  ): Promise<void> {
-    const reportWithCorr: PendingReport = report.clientCorrelationId
-      ? report
-      : { ...report, clientCorrelationId: generateCorrelationId() };
-    // Byte murni — Blob/File bisa gagal clone di WebKit iOS
-    const stored = await Promise.all(photoBlobs.map(toStoredPhoto));
-    await addItem("pending-reports", reportWithCorr);
-    await addItem("submission-queue", {
-      id: reportWithCorr.id,
-      formSlug: reportWithCorr.formSlug,
-      fieldData: reportWithCorr.fieldData,
-      photoBlobs: stored,
-      csrfToken: reportWithCorr.csrfToken,
-      createdAt: reportWithCorr.createdAt,
-      retryCount: 0,
-      clientCorrelationId: reportWithCorr.clientCorrelationId,
-    });
-  },
-
-  // ── Tracking Points ────────────────────────────────────────────────────
-  saveTrackingPoint(point: OfflineTrackingPoint) {
-    return addItem("tracking-points", point);
-  },
-
-  saveTrackingPoints(points: OfflineTrackingPoint[]) {
-    return Promise.all(points.map((p) => addItem("tracking-points", p)));
-  },
-
-  getAllTrackingPoints(): Promise<OfflineTrackingPoint[]> {
-    return getAllItems("tracking-points");
-  },
-
-  deleteTrackingPoint(id: string) {
-    return deleteItem("tracking-points", id);
-  },
-
-  trackingPointCount(): Promise<number> {
-    return countItems("tracking-points");
-  },
-
-  // ── Photo Blobs ────────────────────────────────────────────────────────
-  /** Terima File/Blob/ArrayBuffer, simpan selalu sebagai byte murni. */
-  async savePhoto(photo: Omit<PhotoBlob, "data"> & { blob: Blob | ArrayBuffer }) {
-    const stored = await toStoredPhoto({
-      fieldId: photo.fieldId,
-      blob: photo.blob,
-      fileName: photo.fileName,
-      mimeType: photo.mimeType,
-    });
-    const { blob: _dropBlob, ...rest } = photo;
-    void _dropBlob;
-    return addItem("photo-blobs", { ...rest, data: stored.data });
-  },
-
-  /** Baris lama (blob Blob) tetap terbaca — pembaca wajib via toStoredPhoto. */
-  getAllPhotos(): Promise<Array<PhotoBlob & { blob?: Blob | ArrayBuffer }>> {
-    return getAllItems("photo-blobs");
-  },
-
-  getPhotosByReport(reportId: string): Promise<Array<PhotoBlob & { blob?: Blob | ArrayBuffer }>> {
-    return getAllItems("photo-blobs").then((photos) =>
-      photos.filter((p) => p.reportId === reportId)
-    );
-  },
-
-  deletePhoto(id: string) {
-    return deleteItem("photo-blobs", id);
-  },
-
-  photoCount(): Promise<number> {
-    return countItems("photo-blobs");
-  },
-
   // ── Form Definitions ───────────────────────────────────────────────────
   saveForm(form: FormDefinition) {
     return addItem("form-definitions", form);
@@ -816,51 +694,14 @@ export const offlineDB = {
     return clearStore("form-definitions");
   },
 
-  // ── Tile Manifest ──────────────────────────────────────────────────────
-  saveTileRecord(tile: TileRecord) {
-    return addItem("tile-manifest", tile);
-  },
-
-  saveTileRecords(tiles: TileRecord[]) {
-    return Promise.all(tiles.map((t) => addItem("tile-manifest", t)));
-  },
-
-  getAllTileRecords(): Promise<TileRecord[]> {
-    return getAllItems("tile-manifest");
-  },
-
+  // ── Tile Manifest (cache peta — hanya clear, sisa subsistem peta dihapus) ──
   clearTileManifest() {
     return clearStore("tile-manifest");
   },
 
-  // ── Tile Blobs (tanpa Service Worker) ────────────────────────────────────
-  saveTileBlob(tile: TileBlob) {
-    return addItem("tile-blobs", tile);
-  },
-
-  saveTileBlobs(tiles: TileBlob[]) {
-    return Promise.all(tiles.map((t) => addItem("tile-blobs", t)));
-  },
-
-  getTileBlob(url: string): Promise<TileBlob | undefined> {
-    return getItem("tile-blobs", url);
-  },
-
+  // ── Tile Blobs (cache peta — hanya clear untuk retry kuota form) ──────────
   clearTileBlobs() {
     return clearStore("tile-blobs");
-  },
-
-  // ── Offline Config ──────────────────────────────────────────────────────
-  saveConfig(config: OfflineConfig) {
-    return addItem("offline-config", config);
-  },
-
-  getConfig(): Promise<OfflineConfig | undefined> {
-    return getItem("offline-config", "session-config");
-  },
-
-  clearConfig() {
-    return deleteItem("offline-config", "session-config");
   },
 
   // ── Draft Reports ──────────────────────────────────────────────────────
@@ -1011,52 +852,22 @@ export const offlineDB = {
   },
 
   // ── Bulk Clear ─────────────────────────────────────────────────────────
-  async clearAll() {
-    await clearStore("pending-reports");
-    await clearStore("tracking-points");
-    await clearStore("photo-blobs");
-    await clearStore("form-definitions");
-    await clearStore("tile-manifest");
-    await clearStore("tile-blobs");
-    await clearStore("draft-reports");
-    await clearStore("submission-queue");
-    await deleteItem("offline-config", "session-config");
-    await deleteItem("session-cache", "user-session");
-  },
-
   /**
    * LOGOUT: bersihkan semua data USER dari perangkat — session cache,
-   * antrean pengiriman, foto, draft, tracking, config survey.
-   * Cache GLOBAL (non-user) DIKEEP: form-definitions, tile-manifest, tile-blobs.
+   * antrean pengiriman, draft. Cache GLOBAL (non-user) DIKEEP:
+   * form-definitions, tile-manifest, tile-blobs.
    * Idempotent — aman dipanggil berkali-kali.
    */
   async clearAllForUser() {
     await clearStore("session-cache");
     await clearStore("pending-reports");
-    await clearStore("photo-blobs");
     await clearStore("submission-queue");
     await clearStore("draft-reports");
-    await clearStore("tracking-points");
-    await deleteItem("offline-config", "session-config");
     try {
       localStorage.removeItem("springhub_sync_status");
     } catch {
       // ignore
     }
-  },
-
-  /**
-   * Hapus data sesi survey setelah exit-sync.
-   * pending-reports & photo-blobs DIKEEP — kalau ada yang gagal terkirim,
-   * QueueWorker yang mencoba lagi (jangan buang data user).
-   * submission-queue, draft-reports, form-definitions juga tidak dihapus.
-   */
-  async clearSessionData() {
-    await clearStore("tracking-points");
-    await clearStore("tile-manifest");
-    await clearStore("tile-blobs");
-    await deleteItem("offline-config", "session-config");
-    await deleteItem("session-cache", "user-session");
   },
 
   /**
@@ -1077,29 +888,19 @@ export const offlineDB = {
 
   async getStats() {
     const [
-      reports,       // pending-reports
-      tracks,        // tracking-points
-      photos,        // photo-blobs
-      forms,         // form-definitions
-      tileManifest,  // tile-manifest
-      tileBlobs,     // tile-blobs
-      configCount,   // offline-config
-      drafts,        // draft-reports
-      queue,         // submission-queue
-      sessions,      // session-cache
+      reports,  // pending-reports
+      forms,    // form-definitions
+      drafts,   // draft-reports
+      queue,    // submission-queue
+      sessions, // session-cache
     ] = await Promise.all([
       countItems("pending-reports"),
-      countItems("tracking-points"),
-      countItems("photo-blobs"),
       countItems("form-definitions"),
-      countItems("tile-manifest"),
-      countItems("tile-blobs"),
-      countItems("offline-config"),
       countItems("draft-reports"),
       countItems("submission-queue"),
       countItems("session-cache"),
     ]);
-    return { reports, tracks, photos, forms, tiles: tileManifest, tileBlobs, configs: configCount, drafts, queue, sessions };
+    return { reports, forms, drafts, queue, sessions };
   },
 
   // ── Storage check ───────────────────────────────────────────────────────
