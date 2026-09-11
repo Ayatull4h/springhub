@@ -297,6 +297,7 @@
   "report.submitting": "Submitting...",
   "report.submitReport": "Submit Report",
   "report.error": "Submission failed. Please try again.",
+  "report.queueFail": "Connection failed and offline save failed{tech}. Do not close this page — retry when your connection is stable.",
   "report.errorNetwork": "Network error. Please try again.",
   "footer.tagline": "Empowering communities across Indonesia to protect and restore our precious water sources through collaborative conservation efforts.",
   "footer.stayUpdated": "Stay Updated",

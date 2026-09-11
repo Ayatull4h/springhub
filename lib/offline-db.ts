@@ -300,6 +300,24 @@ export function storedPhotoToFile(p: StoredPhoto): File {
   }
 }
 
+/** Normalisasi massal untuk re-put: baris valid → byte murni, baris yang
+ *  tak terbaca (korup) dibuang — tak pernah bisa diunggah, dan menahannya
+ *  membuat seluruh put() gagal di WebKit. Dipakai updateQueued,
+ *  markQueuedAttempted, backfillCorrelationIds. */
+export async function normalizeStoredPhotos(
+  list: Array<StoredPhoto | LegacyPhoto>
+): Promise<StoredPhoto[]> {
+  const out: StoredPhoto[] = [];
+  for (const p of list || []) {
+    try {
+      out.push(await toStoredPhoto(p));
+    } catch {
+      console.warn("[OfflineDB] Buang foto korup yang tak terbaca:", (p as { fileName?: string }).fileName || "?");
+    }
+  }
+  return out;
+}
+
 /** @deprecated Diganti toStoredPhoto (byte murni) — jangan dipakai di kode baru. */
 export async function toStorableBlob(blob: Blob): Promise<Blob> {
   if (!(blob instanceof File)) return blob;
@@ -910,7 +928,17 @@ export const offlineDB = {
   async updateQueued(id: string, patch: Partial<QueuedSubmission>): Promise<void> {
     const item = await getItem("submission-queue", id);
     if (!item) return;
-    await addItem("submission-queue", { ...item, ...patch, id: item.id });
+    await addItem("submission-queue", {
+      ...item,
+      ...patch,
+      id: item.id,
+      // Re-put bisa membawa baris lama ber-Blob → normalisasi ke byte murni
+      // (syarat auditor). Baris korup yang tak terbaca dibuang (tak pernah
+      // bisa diunggah); sisanya aman clone di WebKit.
+      photoBlobs: await normalizeStoredPhotos(
+        (patch.photoBlobs ?? item.photoBlobs ?? []) as Array<StoredPhoto | LegacyPhoto>
+      ),
+    });
   },
 
   /**
@@ -938,6 +966,10 @@ export const offlineDB = {
         opts.permanent || failureCount >= MAX_FAILED_ATTEMPTS ? "failed" : ("queued" as const),
     };
     if (opts.permanent || item.permanentError) next.permanentError = true;
+    // Sama seperti updateQueued: jangan put ulang Blob lama (syarat auditor)
+    next.photoBlobs = await normalizeStoredPhotos(
+      (next.photoBlobs ?? []) as Array<StoredPhoto | LegacyPhoto>
+    );
     await addItem("submission-queue", next);
   },
 
@@ -950,6 +982,9 @@ export const offlineDB = {
         await addItem("submission-queue", {
           ...item,
           clientCorrelationId: generateCorrelationId(),
+          photoBlobs: await normalizeStoredPhotos(
+            (item.photoBlobs ?? []) as Array<StoredPhoto | LegacyPhoto>
+          ),
         });
         fixed++;
       }

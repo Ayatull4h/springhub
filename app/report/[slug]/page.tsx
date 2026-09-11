@@ -411,7 +411,6 @@ export default function ReportFormPage() {
       // ── Offline fallback: queue submission ────────────────────────
       setQueuedOffline(true);
       if (isTurboForm) setPrevFieldData({ ...fieldData });
-      setSuccess(true);
       const formBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }> = [];
       const photoFieldIds = activeForm.fields.filter((f: FormField) => f.type === "photo").map((f: FormField) => f.id);
       for (const fieldId of photoFieldIds) {
@@ -423,15 +422,23 @@ export default function ReportFormPage() {
         }
       }
       const fallbackToken = await fetch("/api/csrf").then(r => r.json()).then(d => d.token || "").catch(() => "");
-      await offlineDB.queueSubmission({
-        id: `queue-${activeForm.slug}-${Date.now()}`,
-        formSlug: activeForm.slug,
-        fieldData: { ...fieldData, _captured_at: capturedAt },
-        photoBlobs: formBlobs.length > 0 ? formBlobs : photoBlobs,
-        csrfToken: fallbackToken,
-        createdAt: Date.now(),
-        retryCount: 0,
-      });
+      try {
+        await offlineDB.queueSubmission({
+          id: `queue-${activeForm.slug}-${Date.now()}`,
+          formSlug: activeForm.slug,
+          fieldData: { ...fieldData, _captured_at: capturedAt },
+          photoBlobs: formBlobs.length > 0 ? formBlobs : photoBlobs,
+          csrfToken: fallbackToken,
+          createdAt: Date.now(),
+          retryCount: 0,
+        });
+        setSuccess(true);
+      } catch (queueErr) {
+        // Antrean pun gagal (mis. penyimpanan penuh) — JANGAN klaim sukses.
+        setQueuedOffline(false);
+        const tech = queueErr instanceof Error && queueErr.name ? ` [${queueErr.name}]` : "";
+        setError(t("report.queueFail", { tech }));
+      }
     } finally {
       setLoading(false);
     }

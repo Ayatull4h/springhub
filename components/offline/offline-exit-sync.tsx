@@ -439,6 +439,10 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
     }
 
     // ── Phase 2: Upload photos (WAJIB) — dengan server reportId ──────────
+    // Satu foto korup/gagal TIDAK boleh memblokir foto lain (syarat auditor):
+    // tandai gagal, lanjutkan semua, baru putuskan di akhir. Foto gagal tetap
+    // di photo-blobs (hanya yang sukses di-delete) → bisa coba exit lagi.
+    const failedPhotoNames: string[] = [];
     if (photos.length > 0) {
       setPhase("uploading-photos");
       setProgress({ current: 0, total: photos.length });
@@ -459,15 +463,14 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
             const sp = await toStoredPhoto(photo as unknown as Parameters<typeof toStoredPhoto>[0]);
             photoBytes = sp.data;
           } catch {
-            // Baris foto korup — tandai gagal, jangan matikan seluruh sync
+            // Baris foto korup — tandai gagal, LANJUT ke foto berikut
             setPhotoStatuses((prev) =>
               prev.map((p) =>
                 p.id === photo.id ? { ...p, status: "failed", error: "Blob tidak terbaca" } : p
               )
             );
-            setErrorMessage(t("offline.exitPhotoCorrupt", { name: photo.fileName }));
-            setPhase("error");
-            return;
+            failedPhotoNames.push(photo.fileName);
+            continue;
           }
           const photoBlob = new Blob([photoBytes], { type: photo.mimeType || "image/jpeg" });
 
@@ -496,9 +499,8 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
                   : p
               )
             );
-            setErrorMessage(t("offline.exitPhotoFail", { name: photo.fileName }));
-            setPhase("error");
-            return; // STOP — foto gagal = tidak bisa keluar
+            failedPhotoNames.push(photo.fileName);
+            continue;
           }
         } catch (err) {
           setPhotoStatuses((prev) =>
@@ -506,10 +508,17 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
               p.id === photo.id ? { ...p, status: "failed", error: "Network error" } : p
             )
           );
-          setErrorMessage(t("offline.exitPhotoUnstable", { name: photo.fileName }));
-          setPhase("error");
-          return; // STOP
+          failedPhotoNames.push(photo.fileName);
+          continue;
         }
+      }
+
+      // Ada foto gagal → STOP di sini (fail-closed: jangan keluar dengan foto
+      // hilang), tapi SETELAH semua foto dicoba. Foto gagal tetap tersimpan.
+      if (failedPhotoNames.length > 0) {
+        setErrorMessage(t("offline.exitPhotoFail", { name: failedPhotoNames.slice(0, 3).join(", ") + (failedPhotoNames.length > 3 ? ` (+${failedPhotoNames.length - 3})` : "") }));
+        setPhase("error");
+        return;
       }
     }
 

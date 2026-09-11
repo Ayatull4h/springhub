@@ -297,6 +297,7 @@
   "report.submitting": "Mengirim...",
   "report.submitReport": "Kirim Laporan",
   "report.error": "Gagal mengirim. Silakan coba lagi.",
+  "report.queueFail": "Gagal tersambung dan gagal disimpan offline{tech}. Jangan tutup halaman ini — coba kirim ulang saat internet stabil.",
   "report.errorNetwork": "Kesalahan jaringan. Silakan coba lagi.",
   "footer.tagline": "Memberdayakan komunitas di seluruh Indonesia untuk melindungi dan merestorasi sumber air kita yang berharga melalui upaya konservasi kolaboratif.",
   "footer.stayUpdated": "Tetap Terupdate",
