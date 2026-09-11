@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { offlineDB, type QueuedSubmission, MAX_FAILED_ATTEMPTS } from "@/lib/offline-db";
+import { offlineDB, toStoredPhoto, storedPhotoToFile, type QueuedSubmission, type StoredPhoto, MAX_FAILED_ATTEMPTS } from "@/lib/offline-db";
 import { compressImageBlob } from "@/lib/compress-image";
 import { useToast } from "@/components/toast";
 
@@ -76,7 +76,7 @@ export function QueueWorker() {
 
   type PhotoUploadResult = {
     /** Gagal jaringan/timeout/5xx — layak retry */
-    remaining: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>;
+    remaining: StoredPhoto[];
     /** Gagal permanen (HTTP 4xx: validasi, max foto, HEIC) — jangan retry selamanya */
     fatal: string[];
   };
@@ -86,16 +86,25 @@ export function QueueWorker() {
     item: QueuedSubmission,
     reportId: string
   ): Promise<PhotoUploadResult> {
-    const remaining: typeof item.photoBlobs = [];
+    const remaining: StoredPhoto[] = [];
     const fatal: string[] = [];
     for (const pb of item.photoBlobs) {
+      // Normalisasi: baris lama (blob Blob) → byte murni. Hasil normalisasi
+      // yang disimpan ulang, jadi write-back tidak pernah tulis Blob ke IDB.
+      let sp: StoredPhoto;
+      try {
+        sp = await toStoredPhoto(pb as StoredPhoto);
+      } catch {
+        fatal.push(`${(pb as { fileName?: string }).fileName || "foto"}: data foto rusak`);
+        continue;
+      }
       try {
         const photoCsrf = await getCsrfToken();
-        const raw = pb.blob instanceof Blob ? pb.blob : new Blob([pb.blob], { type: pb.mimeType || "image/jpeg" });
+        const raw = storedPhotoToFile(sp);
         const blob = await compressImage(raw);
         const photoPayload = new FormData();
-        photoPayload.append("photo", blob, pb.fileName || `photo-${Date.now()}.jpg`);
-        photoPayload.append("field_id", pb.fieldId);
+        photoPayload.append("photo", blob, sp.fileName || `photo-${Date.now()}.jpg`);
+        photoPayload.append("field_id", sp.fieldId);
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -114,18 +123,18 @@ export function QueueWorker() {
             } catch { /* pakai HTTP status */ }
             if (photoRes.status >= 400 && photoRes.status < 500) {
               // Validasi server (max 5 foto, HEIC, dsb) — retry tidak akan membantu
-              fatal.push(`${pb.fileName || "foto"}: ${msg}`);
+              fatal.push(`${sp.fileName || "foto"}: ${msg}`);
             } else {
-              remaining.push(pb);
+              remaining.push(sp);
             }
           }
         } catch {
-          remaining.push(pb);
+          remaining.push(sp);
         } finally {
           clearTimeout(timeoutId);
         }
       } catch {
-        remaining.push(pb);
+        remaining.push(sp);
       }
     }
     return { remaining, fatal };
@@ -290,12 +299,11 @@ export function QueueWorker() {
         try {
           const photos = await offlineDB.getPhotosByReport(report.id);
           for (const p of photos) {
-            queueItem.photoBlobs.push({
-              fieldId: p.fieldId,
-              blob: p.blob,
-              fileName: p.fileName,
-              mimeType: p.mimeType,
-            });
+            try {
+              queueItem.photoBlobs.push(await toStoredPhoto(p));
+            } catch {
+              // Baris foto korup — lewati, jangan gagalkan laporan
+            }
           }
         } catch {}
       }

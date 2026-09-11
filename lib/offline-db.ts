@@ -76,7 +76,29 @@ export type PhotoBlob = {
   id: string;
   reportId: string;
   fieldId: string;
-  blob: Blob;
+  /** Byte murni — JANGAN Blob/File (WebKit iOS gagal clone saat put()). */
+  data: ArrayBuffer;
+  fileName: string;
+  mimeType: string;
+};
+
+/**
+ * Bentuk kanonik foto di antrean: byte murni, bukan Blob/File.
+ * WebKit iOS (Safari/Chrome iPhone) GAGAL structured-clone Blob/File saat
+ * put() → "UnknownError: Error preparing Blob/File data to be stored in
+ * object store" — padahal kuota lega. ArrayBuffer selalu lolos clone.
+ */
+export type StoredPhoto = {
+  fieldId: string;
+  data: ArrayBuffer;
+  fileName: string;
+  mimeType: string;
+};
+
+/** Bentuk lama (masih ada di perangkat yang sudah antre): blob Blob/File. */
+export type LegacyPhoto = {
+  fieldId: string;
+  blob: Blob | ArrayBuffer;
   fileName: string;
   mimeType: string;
 };
@@ -131,7 +153,7 @@ export type QueuedSubmission = {
   id: string;
   formSlug: string;
   fieldData: Record<string, unknown>;
-  photoBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>;
+  photoBlobs: StoredPhoto[];
   csrfToken: string;
   createdAt: number;
   retryCount: number;
@@ -240,12 +262,45 @@ export function generateCorrelationId(): string {
 }
 
 /**
- * Ubah File kamera menjadi Blob biasa sebelum disimpan ke IndexedDB.
- * Bug WebKit iOS (Safari/Chrome iPhone): objek File hasil <input type=file>
- * GAGAL di-structured-clone saat put() → "UnknownError: Error preparing
- * Blob/File data to be stored in object store", padahal kuota masih lega.
- * Nama file tetap aman karena disimpan terpisah di fileName.
+ * Ubah foto bentuk apa pun (File/Blob/ArrayBuffer, baru/lama) menjadi byte
+ * murni yang aman disimpan ke IndexedDB. Dipakai SEMUA jalur tulis foto.
  */
+export async function toStoredPhoto(
+  p: StoredPhoto | LegacyPhoto | { fieldId: string; blob: Blob | ArrayBuffer | unknown; fileName: string; mimeType: string }
+): Promise<StoredPhoto> {
+  const anyP = p as { data?: unknown; blob?: unknown; fieldId: string; fileName: string; mimeType: string };
+  if (anyP.data instanceof ArrayBuffer) {
+    return { fieldId: anyP.fieldId, data: anyP.data, fileName: anyP.fileName, mimeType: anyP.mimeType };
+  }
+  const src = anyP.blob;
+  if (src instanceof ArrayBuffer) {
+    return { fieldId: anyP.fieldId, data: src, fileName: anyP.fileName, mimeType: anyP.mimeType };
+  }
+  if (src instanceof Blob) {
+    return {
+      fieldId: anyP.fieldId,
+      data: await src.arrayBuffer(),
+      fileName: anyP.fileName,
+      mimeType: anyP.mimeType || src.type || "image/jpeg",
+    };
+  }
+  throw new Error("Data foto rusak (bukan biner)");
+}
+
+/** Rekonstruksi File siap-upload dari byte simpanan (tidak pernah disimpan). */
+export function storedPhotoToFile(p: StoredPhoto): File {
+  try {
+    return new File([p.data], p.fileName || `photo-${Date.now()}.jpg`, {
+      type: p.mimeType || "image/jpeg",
+    });
+  } catch {
+    // Fallback browser sangat lawas tanpa konstruktor File
+    const b = new Blob([p.data], { type: p.mimeType || "image/jpeg" });
+    return b as unknown as File;
+  }
+}
+
+/** @deprecated Diganti toStoredPhoto (byte murni) — jangan dipakai di kode baru. */
 export async function toStorableBlob(blob: Blob): Promise<Blob> {
   if (!(blob instanceof File)) return blob;
   try {
@@ -257,11 +312,11 @@ export async function toStorableBlob(blob: Blob): Promise<Blob> {
 }
 
 async function stripFileRefs(
-  list: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>
-): Promise<Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>> {
-  return Promise.all(
-    list.map(async (p) => ({ ...p, blob: await toStorableBlob(p.blob) }))
-  );
+  _list: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>
+): Promise<StoredPhoto[]> {
+  // Ditinggalkan — diganti toStoredPhoto (byte murni). Dipertahankan agar
+  // import lama tidak rusak; jangan dipakai di kode baru.
+  return Promise.all(_list.map(toStoredPhoto));
 }
 
 // ─── Connection management (single persistent connection) ────────────────────
@@ -643,18 +698,19 @@ export const offlineDB = {
    */
   async saveReportAndQueue(
     report: PendingReport,
-    photoBlobs: Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>
+    photoBlobs: Array<StoredPhoto | LegacyPhoto>
   ): Promise<void> {
     const reportWithCorr: PendingReport = report.clientCorrelationId
       ? report
       : { ...report, clientCorrelationId: generateCorrelationId() };
-    const safeBlobs = await stripFileRefs(photoBlobs);
+    // Byte murni — Blob/File bisa gagal clone di WebKit iOS
+    const stored = await Promise.all(photoBlobs.map(toStoredPhoto));
     await addItem("pending-reports", reportWithCorr);
     await addItem("submission-queue", {
       id: reportWithCorr.id,
       formSlug: reportWithCorr.formSlug,
       fieldData: reportWithCorr.fieldData,
-      photoBlobs: safeBlobs,
+      photoBlobs: stored,
       csrfToken: reportWithCorr.csrfToken,
       createdAt: reportWithCorr.createdAt,
       retryCount: 0,
@@ -684,18 +740,25 @@ export const offlineDB = {
   },
 
   // ── Photo Blobs ────────────────────────────────────────────────────────
-  async savePhoto(photo: PhotoBlob) {
-    return addItem("photo-blobs", {
-      ...photo,
-      blob: await toStorableBlob(photo.blob),
+  /** Terima File/Blob/ArrayBuffer, simpan selalu sebagai byte murni. */
+  async savePhoto(photo: Omit<PhotoBlob, "data"> & { blob: Blob | ArrayBuffer }) {
+    const stored = await toStoredPhoto({
+      fieldId: photo.fieldId,
+      blob: photo.blob,
+      fileName: photo.fileName,
+      mimeType: photo.mimeType,
     });
+    const { blob: _dropBlob, ...rest } = photo;
+    void _dropBlob;
+    return addItem("photo-blobs", { ...rest, data: stored.data });
   },
 
-  getAllPhotos(): Promise<PhotoBlob[]> {
+  /** Baris lama (blob Blob) tetap terbaca — pembaca wajib via toStoredPhoto. */
+  getAllPhotos(): Promise<Array<PhotoBlob & { blob?: Blob | ArrayBuffer }>> {
     return getAllItems("photo-blobs");
   },
 
-  getPhotosByReport(reportId: string): Promise<PhotoBlob[]> {
+  getPhotosByReport(reportId: string): Promise<Array<PhotoBlob & { blob?: Blob | ArrayBuffer }>> {
     return getAllItems("photo-blobs").then((photos) =>
       photos.filter((p) => p.reportId === reportId)
     );
@@ -803,12 +866,11 @@ export const offlineDB = {
    * Antrekan laporan offline. clientCorrelationId diisi otomatis (UUID tetap,
    * sama antar retry) kalau belum ada — idempotency key untuk server dedupe.
    */
-  async queueSubmission(sub: QueuedSubmission) {
+  async queueSubmission(sub: Omit<QueuedSubmission, "photoBlobs"> & { photoBlobs: Array<StoredPhoto | LegacyPhoto> }) {
     return addItem("submission-queue", {
       ...sub,
-      photoBlobs: await stripFileRefs(
-        (sub.photoBlobs || []) as Array<{ fieldId: string; blob: Blob; fileName: string; mimeType: string }>
-      ),
+      // Byte murni — Blob/File bisa gagal clone di WebKit iOS
+      photoBlobs: await Promise.all((sub.photoBlobs || []).map(toStoredPhoto)),
       clientCorrelationId: sub.clientCorrelationId || generateCorrelationId(),
     });
   },

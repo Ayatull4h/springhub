@@ -18,7 +18,7 @@ import {
   Leaf,
   Mountain,
 } from "lucide-react";
-import { offlineDB, type OfflineTrackingPoint } from "@/lib/offline-db";
+import { offlineDB, toStoredPhoto, type OfflineTrackingPoint } from "@/lib/offline-db";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { useToast } from "@/components/toast";
@@ -452,25 +452,24 @@ export function OfflineExitSync({ onComplete, onCancel }: OfflineExitSyncProps) 
         const serverReportId = reportIdMap.get(photo.reportId) || photo.reportId;
 
         try {
-          // Re-create blob from ArrayBuffer to prevent Chrome Android IndexedDB blob detachment
-          let photoBlob = photo.blob;
-          // Jika blob type kosong, baca sebagai ArrayBuffer dan buat baru
-          if (!photoBlob.type || photoBlob.type === "" || photoBlob.size === 0) {
-            try {
-              const buf = await photoBlob.arrayBuffer();
-              photoBlob = new Blob([buf], { type: "image/jpeg" });
-            } catch {
-              // Jika blob benar-benar detached, skip foto ini
-              setPhotoStatuses((prev) =>
-                prev.map((p) =>
-                  p.id === photo.id ? { ...p, status: "failed", error: "Blob tidak terbaca" } : p
-                )
-              );
-              setErrorMessage(t("offline.exitPhotoCorrupt", { name: photo.fileName }));
-              setPhase("error");
-              return;
-            }
+          // Byte murni dari IDB (bentuk baru) atau blob lama — bangun ulang
+          // di memori (tidak pernah disimpan sebagai Blob: WebKit iOS gagal clone).
+          let photoBytes: ArrayBuffer;
+          try {
+            const sp = await toStoredPhoto(photo as unknown as Parameters<typeof toStoredPhoto>[0]);
+            photoBytes = sp.data;
+          } catch {
+            // Baris foto korup — tandai gagal, jangan matikan seluruh sync
+            setPhotoStatuses((prev) =>
+              prev.map((p) =>
+                p.id === photo.id ? { ...p, status: "failed", error: "Blob tidak terbaca" } : p
+              )
+            );
+            setErrorMessage(t("offline.exitPhotoCorrupt", { name: photo.fileName }));
+            setPhase("error");
+            return;
           }
+          const photoBlob = new Blob([photoBytes], { type: photo.mimeType || "image/jpeg" });
 
           const formData = new FormData();
           formData.append("photo", photoBlob, photo.fileName);
