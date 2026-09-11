@@ -142,6 +142,11 @@ export type TileRecord = {
 
 export type TileBlob = {
   url: string;
+  /**
+   * SENGAJA tetap Blob (bukan ArrayBuffer): tile peta adalah cache yang bisa
+   * di-download ulang & otomatis dibuang saat kuota sesak (clearTileBlobs).
+   * Bukan di jalur submit — keputusan eksplisit, bukan kelalaian.
+   */
   blob: Blob;
   z: number;
   x: number;
