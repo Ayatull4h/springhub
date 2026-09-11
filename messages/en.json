@@ -1014,6 +1014,7 @@
   "offline.quotaBanner": "Incognito mode detected (quota {quota} MB, used {used} MB). HEIC photos are auto-shrunk, but if saving fails, open in a regular tab.",
   "offline.usedOf": " (Used {used} of {quota} MB)",
   "offline.quotaFull": "Browser storage is full{usage}. You are using Incognito mode — iPhones limit storage in this mode. Open SpringHub in a regular tab (or Add to Home Screen), then try again. If it still fails, use fewer photos.{tech}",
+  "offline.quotaFullMaybe": "Browser storage is tight{usage} (save failed{tech}). Try: close other tabs, switch to a regular tab (not Incognito), use fewer photos, then try again.",
   "offline.saveFailGeneric": "Failed to save. Make sure device storage is not full, then try again.{tech}",
   "offline.noLocationAbove": "Location unavailable. Tap get location above.",
   "offline.gettingGps": "Getting GPS location...",

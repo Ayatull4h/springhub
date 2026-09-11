@@ -443,7 +443,22 @@ async function runInStore<Store extends StoreNames, R>(
         const fail = (err: unknown) => {
           if (settled) return;
           settled = true;
-          reject(err instanceof Error ? err : new Error(String(err)));
+          // IndexedDB memberi DOMException (BUKAN Error) — normalisasi agar
+          // name (QuotaExceededError/UnknownError) + message tidak hilang
+          // menjadi "Error: [object DOMException]" (syarat auditor).
+          if (err instanceof Error) {
+            reject(err);
+            return;
+          }
+          let name = "Error";
+          let message = String(err ?? "");
+          if (typeof DOMException !== "undefined" && err instanceof DOMException) {
+            name = err.name || "UnknownError";
+            message = err.message || `${name} (IndexedDB)`;
+          }
+          const e = new Error(message);
+          e.name = name;
+          reject(e);
         };
 
         req.onerror = () => fail(req.error);

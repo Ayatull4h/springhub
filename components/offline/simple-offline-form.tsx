@@ -14,13 +14,46 @@ function BlobPreview({ file, alt }: { file: File; alt: string }) {
   return <img src={url} alt={alt} className="h-full w-full object-cover" />;
 }
 
-/** Deteksi error kuota IndexedDB (sering di mode Incognito iOS). */
+/** Deteksi error kuota IndexedDB (sering di mode Incognito iOS).
+ *  Cek name + message (tanpa instanceof DOMException — error IDB tiba
+ *  sebagai Error biasa yang dinormalisasi di runInStore). */
 function isQuotaError(err: unknown): boolean {
-  if (err instanceof DOMException) {
-    if (err.name === "QuotaExceededError" || err.code === 22) return true;
-  }
+  const errName = err instanceof Error ? err.name : "";
+  if (errName === "QuotaExceededError") return true;
   const msg = err instanceof Error ? err.message : String(err ?? "");
   return /quota|QuotaExceeded/i.test(msg);
+}
+
+/** Klasifikasi akhir: quota-tegas ATAU UnknownError + penyimpanan sesak.
+ *  estimateUsage dipanggil MAKS 1x per error — hasilnya dipakai ulang untuk
+ *  keputusan retry + teks pesan. Tanpa instanceof DOMException: error IDB
+ *  tiba sebagai Error biasa (dinormalisasi di runInStore), cek name/message. */
+type QuotaVerdict = { quota: boolean; incognitoLikely: boolean; usedMB: string; quotaMB: string };
+async function classifyQuotaError(err: unknown): Promise<QuotaVerdict> {
+  const none: QuotaVerdict = { quota: false, incognitoLikely: false, usedMB: "", quotaMB: "" };
+  const base = isQuotaError(err);
+  const errName = err instanceof Error ? err.name : "";
+  const errMsg = err instanceof Error ? err.message : String(err ?? "");
+  const unknown = errName === "UnknownError" || /unknownerror/i.test(errMsg);
+  if (!base && !unknown) return none;
+  try {
+    const { used, quota } = await offlineDB.estimateUsage();
+    if (quota) {
+      const tight = quota < 150 * 1024 * 1024;
+      if (base || tight || used / quota > 0.8) {
+        return {
+          quota: true,
+          incognitoLikely: tight,
+          usedMB: (used / 1048576).toFixed(1),
+          quotaMB: (quota / 1048576).toFixed(0),
+        };
+      }
+      return none;
+    }
+  } catch {
+    // estimate gagal (browser tak dukung) — pakai hasil sync saja
+  }
+  return base ? { quota: true, incognitoLikely: false, usedMB: "", quotaMB: "" } : none;
 }
 
 /**
@@ -218,6 +251,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
     }
 
     setSubmitting(true);
+    let verdict: QuotaVerdict | null = null;
 
     try {
       const collected: Record<string, unknown> = {};
@@ -284,10 +318,19 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       } catch (err) {
         // Kuota penuh (umum di mode Incognito iPhone): buang cache peta yang
         // bisa di-download ulang, lalu coba simpan sekali lagi (id SAMA — tidak dobel)
-        if (!isQuotaError(err)) throw err;
-        await offlineDB.clearTileBlobs();
-        await offlineDB.clearTileManifest();
-        await offlineDB.queueSubmission(submission);
+        verdict = await classifyQuotaError(err);
+        if (verdict.quota) {
+          await offlineDB.clearTileBlobs();
+          await offlineDB.clearTileManifest();
+          try {
+            await offlineDB.queueSubmission(submission);
+          } catch (err2) {
+            verdict = await classifyQuotaError(err2);
+            throw err2;
+          }
+        } else {
+          throw err;
+        }
       }
 
       setSubmitted(true);
@@ -318,18 +361,14 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
       // Suffix teknis [NamaError] — biar admin bisa bedakan quota vs error lain
       // dari screenshot user (bisa dihapus kalau sudah stabil)
       const tech = err instanceof Error && err.name ? ` [${err.name}]` : "";
-      if (isQuotaError(err)) {
+      const v: QuotaVerdict = verdict ?? { quota: false, incognitoLikely: false, usedMB: "", quotaMB: "" };
+      if (v.quota) {
         // Tampilkan angka nyata biar jelas: ini kuota browser (Incognito),
-        // bukan memori HP yang penuh
-        let usageNote = "";
-        try {
-          const { used, quota } = await offlineDB.estimateUsage();
-          if (quota) {
-            usageNote = t("offline.usedOf", { used: (used / 1048576).toFixed(1), quota: (quota / 1048576).toFixed(0) });
-          }
-        } catch { /* abaikan */ }
+        // bukan memori HP yang penuh. Tuduhan "Incognito" hanya bila kuota
+        // memang kecil khas incognito.
+        const usageNote = v.usedMB ? t("offline.usedOf", { used: v.usedMB, quota: v.quotaMB }) : "";
         setSubmitError(
-          t("offline.quotaFull", { usage: usageNote, tech })
+          t(v.incognitoLikely ? "offline.quotaFull" : "offline.quotaFullMaybe", { usage: usageNote, tech })
         );
       } else {
         setSubmitError(t("offline.saveFailGeneric", { tech }));
@@ -682,8 +721,23 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
                           for (const f of Array.from(files).slice(0, remaining)) {
                             try {
                               toAdd.push(await compressImageFile(f));
-                            } catch {
+                            } catch (pickErr) {
+                              // Kompres gagal: simpan mentah, server konversi
+                              // saat sync. Kirim telemetri biar admin tahu
+                              // format/ukuran apa yang lolos mentah + sebabnya.
                               toAdd.push(f);
+                              try {
+                                const { logError } = await import("@/lib/error-logger");
+                                const why = pickErr instanceof Error ? `${pickErr.name}: ${pickErr.message}` : String(pickErr ?? "");
+                                logError({
+                                  message: `Kompres foto gagal, simpan mentah: ${f.name} ${(f.size / 1024).toFixed(0)}KB ${f.type || "tipe-kosong"} (${why})`.slice(0, 500),
+                                  level: "warning",
+                                  source: "frontend",
+                                  stack: pickErr instanceof Error ? pickErr.stack || "" : "",
+                                  url: typeof window !== "undefined" ? window.location.pathname : "",
+                                  metadata: { formSlug: selectedForm.slug } as Record<string, unknown>,
+                                }).catch(() => {});
+                              } catch { /* telemetri jangan ganggu user */ }
                             }
                           }
                           if (toAdd.length > 0) {

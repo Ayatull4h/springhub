@@ -70,6 +70,24 @@ export async function compressImageBlob(
   } catch {
     // abaikan — fallback di bawah
   }
+  if (isHeic) {
+    // HEIC lolos mentah (decode native gagal di browser ini) — server yang
+    // akan konversi saat sync. Telemetri 1x biar admin tahu (syarat auditor:
+    // jangan dead-code, jangan banjiri log — hanya untuk kasus HEIC mentah).
+    try {
+      const { logError } = await import("./error-logger");
+      logError({
+        message: `HEIC lolos mentah ke antrean: ${(blob.size / 1024).toFixed(0)}KB ${blob.type || "tipe-kosong"} (decode native gagal, server konversi saat sync)`,
+        level: "warning",
+        source: "frontend",
+        stack: "",
+        url: typeof window !== "undefined" ? window.location.pathname : "",
+        metadata: {},
+      }).catch(() => {});
+    } catch {
+      // telemetri jangan ganggu user
+    }
+  }
   return blob;
 }
 

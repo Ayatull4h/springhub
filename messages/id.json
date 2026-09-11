@@ -1014,6 +1014,7 @@
   "offline.quotaBanner": "Mode Incognito terdeteksi (kuota {quota} MB, terpakai {used} MB). Foto HEIC otomatis dikecilkan, tapi kalau gagal simpan, buka di tab biasa.",
   "offline.usedOf": " (Terpakai {used} dari {quota} MB)",
   "offline.quotaFull": "Penyimpanan browser penuh{usage}. Kamu memakai mode Incognito — iPhone membatasi penyimpanan di mode ini. Buka SpringHub di tab biasa (atau Add to Home Screen), lalu coba lagi. Kalau tetap gagal, kurangi jumlah foto.{tech}",
+  "offline.quotaFullMaybe": "Penyimpanan browser sesak{usage} (gagal simpan{tech}). Coba: tutup tab lain, pindah ke tab biasa (bukan Incognito), kurangi jumlah foto, lalu coba lagi.",
   "offline.saveFailGeneric": "Gagal menyimpan. Pastikan penyimpanan perangkat tidak penuh, lalu coba lagi.{tech}",
   "offline.noLocationAbove": "Lokasi tidak tersedia. Klik dapatkan lokasi di atas.",
   "offline.gettingGps": "Mendapatkan lokasi GPS...",
