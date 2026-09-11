@@ -272,7 +272,6 @@ export function QueueWorker() {
     }
 
     // pending-reports: hanya sisa legacy — submission-queue adalah sumber utama.
-    // (Migrasi dari OfflineSurveyMap yang sudah dihapus: tidak ada penulis baru.)
     const pending = await offlineDB.getAllReports();
     for (const report of pending) {
       const existingInQueue = await offlineDB.getQueued(report.id);

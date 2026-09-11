@@ -1,17 +1,17 @@
 /**
- * IndexedDB wrapper untuk Offline Survey Mode.
+ * IndexedDB wrapper untuk Offline Survey Mode (form sederhana).
  *
- * Stores (10):
- * - pending-reports   → form submissions saved while offline
- * - tracking-points   → GPS trail points (saved every ~5m)
- * - photo-blobs       → captured photos (blobs, uploaded on exit)
+ * Stores (7):
+ * - pending-reports   → legacy offline submissions (dimigrasi ke queue)
  * - form-definitions  → cached form schema from admin panel
- * - tile-manifest     → record of which OSM tiles are cached
- * - tile-blobs        → OSM tile image blobs (tanpa Service Worker)
- * - offline-config    → offline session configuration
+ * - tile-manifest     → record of which OSM tiles are cached (hanya clear)
+ * - tile-blobs        → OSM tile image blobs (hanya clear untuk retry kuota)
  * - draft-reports     → auto-saved form drafts (tiap 30 detik)
  * - submission-queue  → pending submissions dengan retry + backoff
  * - session-cache     → PWA offline auth session cache
+ *
+ * Dihapus di DB v6 (subsistem peta survey dimatikan): tracking-points,
+ * photo-blobs, offline-config.
  *
  * Koneksi: single persistent connection (singleton promise).
  * JANGAN panggil db.close() dari jalur transaksi — hanya `offlineDB.teardown()`
@@ -353,9 +353,36 @@ function openDB(): Promise<IDBDatabase> {
         }
       }
 
+      // ── Version 2 migration ──
+      if (oldVersion < 2) {
+        // offline-config store
+        if (!db.objectStoreNames.contains("offline-config")) {
+          db.createObjectStore("offline-config", { keyPath: "id" });
+        }
+
+        // Migrate tracking-points indexes: replace "by-marker" (isSpringMarker)
+        // with "by-marker-type" (markerType)
+        if (db.objectStoreNames.contains("tracking-points")) {
+          const tx = (event.target as IDBOpenDBRequest).transaction!;
+          const store = tx.objectStore("tracking-points");
+          if (store.indexNames.contains("by-marker")) {
+            store.deleteIndex("by-marker");
+          }
+          if (!store.indexNames.contains("by-marker-type")) {
+            store.createIndex("by-marker-type", "markerType", { unique: false });
+          }
+        }
+      }
+
       // ── Version 6 — hapus store subsistem peta yang dihapus ──
       // (tracking-points, photo-blobs, offline-config). submission-queue,
       // pending-reports, drafts, forms, tiles tetap (form + quota-retry butuh).
+      // PENTING: blok ini HARUS setelah blok v1/v2 di atas (mereka me-recreate
+      // store lama untuk user fresh/v1; kalau delete duluan, store yatim).
+      // Nasib data lama: teks pending-reports tetap dimigrasi queue-worker;
+      // foto yang HANYA ada di photo-blobs (aliran survey-map, SUDAH tidak
+      // ter-mount di UI sehingga tidak pernah bisa diunggah) tidak dibawa —
+      // upload ulang manual bila perlu.
       if (oldVersion < 6) {
         for (const dead of ["tracking-points", "photo-blobs", "offline-config"]) {
           if (db.objectStoreNames.contains(dead)) {
@@ -363,8 +390,6 @@ function openDB(): Promise<IDBDatabase> {
           }
         }
       }
-
-      // ── Version 5 — session-cache store ──
       if (oldVersion < 5) {
         if (!db.objectStoreNames.contains("session-cache")) {
           db.createObjectStore("session-cache", { keyPath: "id" });
@@ -387,27 +412,6 @@ function openDB(): Promise<IDBDatabase> {
         if (!db.objectStoreNames.contains("submission-queue")) {
           const store = db.createObjectStore("submission-queue", { keyPath: "id" });
           store.createIndex("by-created", "createdAt", { unique: false });
-        }
-      }
-
-      // ── Version 2 migration ──
-      if (oldVersion < 2) {
-        // offline-config store
-        if (!db.objectStoreNames.contains("offline-config")) {
-          db.createObjectStore("offline-config", { keyPath: "id" });
-        }
-
-        // Migrate tracking-points indexes: replace "by-marker" (isSpringMarker)
-        // with "by-marker-type" (markerType)
-        if (db.objectStoreNames.contains("tracking-points")) {
-          const tx = (event.target as IDBOpenDBRequest).transaction!;
-          const store = tx.objectStore("tracking-points");
-          if (store.indexNames.contains("by-marker")) {
-            store.deleteIndex("by-marker");
-          }
-          if (!store.indexNames.contains("by-marker-type")) {
-            store.createIndex("by-marker-type", "markerType", { unique: false });
-          }
         }
       }
     };

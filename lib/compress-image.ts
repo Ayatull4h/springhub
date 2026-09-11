@@ -4,7 +4,7 @@
  * Kompres foto di HP SEBELUM disimpan ke IndexedDB / dikirim.
  * Tanpa ini, foto kamera 5–12MB (apalagi HEIC iPhone) cepat menghabiskan
  * kuota IndexedDB — apalagi di mode Incognito iOS yang kuotanya kecil.
- * Pola yang sama dipakai offline-survey-map (terbukti di iOS) dan queue-worker.
+ * Dipakai form offline saat pilih foto dan queue-worker sebelum upload.
  */
 
 import { isHeicBrand } from "./heic";
