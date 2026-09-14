@@ -81,8 +81,9 @@ export async function GET(request: Request) {
       },
       {
         label: "Restored Springs",
-        value: approvedReports,
-        display: approvedReports >= 30 ? `${approvedReports}+` : String(approvedReports),
+        // Angka kurasi pemilik produk (bukan hitung laporan) — permintaan langsung.
+        value: 30,
+        display: "30+",
         delta: `+${approvedThisMonth} this month`,
         icon: "sparkles" as const,
         color: "text-emerald-600",
