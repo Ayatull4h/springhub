@@ -53,7 +53,7 @@ export function BkkWeave({ className = "" }: { className?: string }) {
     <svg
       aria-hidden="true"
       viewBox="0 0 220 220"
-      className={`pointer-events-none absolute h-44 w-44 md:h-56 md:w-56 ${className}`}
+      className={`pointer-events-none absolute h-36 w-36 opacity-90 md:h-48 md:w-48 ${className}`}
     >
       <defs>
         <pattern id={pid} width="24" height="24" patternUnits="userSpaceOnUse">
