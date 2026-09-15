@@ -5,10 +5,15 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
+import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge } from "./bkk-decor";
 
-const STAT_COLORS = ["text-bkk-700", "text-tang-600", "text-lagoon-600", "text-leaf-600"];
-const STICKER_BGS = ["bg-bkksun", "bg-tang-500", "bg-lagoon-500", "bg-leaf-500"];
+/* Tiap kartu bentuk + warna beda total — solid 4 warna palet ColorHunt */
+const STAT_CARDS = [
+  "bg-tang-500 rounded-[58%_42%_55%_45%/9%_13%_10%_14%] md:-rotate-2",
+  "bg-cream rounded-[42%_58%_45%_55%/13%_9%_14%_10%] md:rotate-1 md:translate-y-5",
+  "bg-lagoon-500 rounded-t-[3.5rem] rounded-b-[1.8rem] md:-rotate-1",
+  "bg-leaf-500 rounded-[62%_38%_40%_60%/10%_14%_9%_13%] md:rotate-2 md:translate-y-5",
+];
 
 
 const iconMap: Record<string, typeof Droplets> = {
@@ -128,24 +133,24 @@ export function ImpactDashboard() {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
-                <div className={`bg-white p-5 shadow-elevated transition-transform hover:rotate-0 dark:bg-slate-900 ${BKK_CARD_RADII[si % BKK_CARD_RADII.length]} ${BKK_CARD_TILTS[si % BKK_CARD_TILTS.length]} ${si % 2 ? "md:translate-y-5" : ""}`}>
+                <div className={`p-5 shadow-elevated transition-transform hover:rotate-0 md:pb-7 ${STAT_CARDS[si % STAT_CARDS.length]}`}>
                   <div className="flex items-center justify-between">
-                    <span className="grid h-10 w-10 place-items-center rounded-2xl bg-bkk-100 text-bkk-700 dark:bg-bkk-900/40 dark:text-bkk-200">
+                    <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white/40 text-bkk-900">
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </span>
                     <BkkSticker
                       tilt={si % 2 ? "rotate-2" : "-rotate-3"}
-                      bg={STICKER_BGS[si % STICKER_BGS.length]}
+                      bg="bg-white"
                       className="!border-2 px-2.5 py-0.5 text-xs"
                     >
                       <TrendingUp className="h-3 w-3" aria-hidden="true" />
                       {(s.delta?.match(/^[+-]?\d+/) ?? ["0"])[0]}
                     </BkkSticker>
                   </div>
-                  <div className={`mt-4 font-display text-3xl font-bold tracking-tight md:text-4xl dark:text-white ${STAT_COLORS[si % STAT_COLORS.length]}`}>
+                  <div className="mt-4 font-display text-3xl font-bold tracking-tight text-bkk-900 md:text-4xl">
                     {s.display ?? formatNumber(s.value)}
                   </div>
-                  <div className="mt-1 text-sm font-medium text-ink-muted">
+                  <div className="mt-1 text-sm font-bold text-bkk-900/70">
                     {t(IconToStatKey[s.icon])}
                   </div>
                 </div>
