@@ -187,7 +187,7 @@ export function MediaSection() {
   };
 
   return (
-    <section id="media" className="relative overflow-hidden bg-bkkblue-500 py-16 md:py-20 dark:bg-bkkblue-600">
+    <section id="media" className="relative overflow-hidden bg-bkkblue-500 pt-16 md:pt-20 dark:bg-bkkblue-600">
       <div className="container-page relative">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>

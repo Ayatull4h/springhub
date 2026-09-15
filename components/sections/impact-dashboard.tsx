@@ -99,7 +99,7 @@ export function ImpactDashboard() {
   ];
 
   return (
-    <section id="dashboard" className="bg-bkk-700 py-16 md:py-20 dark:bg-bkk-900">
+    <section id="dashboard" className="bg-bkk-700 pt-16 md:pt-20 dark:bg-bkk-900">
       <div className="container-page">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-white md:text-5xl">
         {t("dashboard.title")}{" "}

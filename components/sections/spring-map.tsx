@@ -454,7 +454,7 @@ const formTitleI18nKey = (slug: string): string => {
   const visibleList = visible.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <section id="map" className="relative overflow-hidden bg-white py-16 md:py-20 dark:bg-slate-900">
+    <section id="map" className="relative overflow-hidden bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <BkkWeave className="-right-10 -top-10 rotate-12 opacity-80" />
       <div className="container-page relative">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">

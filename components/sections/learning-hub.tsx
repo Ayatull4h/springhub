@@ -63,7 +63,7 @@ export function LearningHub() {
   }
 
   return (
-    <section id="learn" className="bg-white py-16 md:py-20 dark:bg-slate-900">
+    <section id="learn" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         {t("learn.title")}{" "}

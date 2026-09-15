@@ -126,7 +126,7 @@ export function VolunteerActivities() {
   );
 
   return (
-    <section id="community" className="relative overflow-hidden bg-[#f6f1fb] py-16 md:py-20 dark:bg-slate-900/60">
+    <section id="community" className="relative overflow-hidden bg-[#f6f1fb] pt-16 md:pt-20 dark:bg-slate-900/60">
       <BkkWeave className="-left-12 top-16 -rotate-12 opacity-70" />
       <div className="container-page relative">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
