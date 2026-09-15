@@ -192,7 +192,7 @@ export function MediaSection() {
         <div>
           <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
             {t("media.title")}{" "}
-            <span className="text-brand-600">{t("media.titleAccent")}</span>
+            <span className="text-bkk-500">{t("media.titleAccent")}</span>
           </h2>
           <p className="mt-2 max-w-2xl text-ink-muted">
             {t("media.description")}
