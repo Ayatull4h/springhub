@@ -66,7 +66,7 @@ export function SiteHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-ink-line bg-white/85 backdrop-blur dark:border-slate-700 dark:bg-slate-900/85">
+    <header className="sticky top-0 z-40 border-b border-bkk-100 bg-white/95 shadow-[0_2px_16px_rgba(103,39,159,0.08)] backdrop-blur dark:border-slate-700 dark:bg-slate-900/90">
       <div className="container-page flex h-16 items-center justify-between">
         <Link href="/" aria-label="SpringHub home">
           <Logo />
@@ -85,7 +85,7 @@ export function SiteHeader() {
             <Link
               key={item.label}
               href={item.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+              className="rounded-full px-4 py-2 font-display text-sm font-semibold text-bkk-700 transition hover:bg-bkk-50 dark:text-bkk-200 dark:hover:bg-slate-800"
             >
               {item.label}
             </Link>
@@ -160,11 +160,15 @@ export function SiteHeader() {
               <Link
                 href="/sign-in"
                 prefetch={false}
-                className="hidden text-sm font-medium text-ink-muted hover:text-ink dark:text-slate-400 dark:hover:text-white sm:inline"
+                className="hidden text-sm font-semibold text-bkk-700 hover:text-bkk-800 dark:text-bkk-200 sm:inline"
               >
                 {t("nav.signIn")}
               </Link>
-              <Link href="/join" prefetch={false} className="btn-primary">
+              <Link
+                href="/join"
+                prefetch={false}
+                className="rounded-full bg-bkk-700 px-5 py-2.5 font-display text-sm font-bold text-white shadow-[0_4px_14px_rgba(103,39,159,0.35)] transition hover:bg-bkk-800"
+              >
                 {t("nav.join")}
               </Link>
             </>
@@ -173,14 +177,14 @@ export function SiteHeader() {
       </div>
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="border-t border-ink-line bg-white dark:border-slate-700 dark:bg-slate-900 md:hidden">
+        <div className="border-t border-bkk-100 bg-white dark:border-slate-700 dark:bg-slate-900 md:hidden">
           <nav className="container-page flex flex-col gap-1 py-4" aria-label="Mobile">
             {nav.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="rounded-md px-3 py-2.5 text-sm font-medium text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+                className="rounded-xl px-3 py-2.5 font-display text-sm font-semibold text-bkk-700 transition hover:bg-bkk-50 dark:text-bkk-200 dark:hover:bg-slate-800"
               >
                 {item.label}
               </Link>

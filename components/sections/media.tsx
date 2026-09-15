@@ -186,10 +186,11 @@ export function MediaSection() {
   };
 
   return (
-    <section id="media" className="container-page py-16">
+    <section id="media" className="bg-[#f6f1fb] py-16 md:py-20 dark:bg-slate-900/60">
+      <div className="container-page">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
             {t("media.title")}{" "}
             <span className="text-brand-600">{t("media.titleAccent")}</span>
           </h2>
@@ -317,7 +318,7 @@ export function MediaSection() {
           </div>
         </>
       )}
-
+      </div>
     </section>
   );
 }

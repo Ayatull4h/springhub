@@ -48,7 +48,7 @@ export function DonateSection() {
   };
 
   if (done) return (
-    <div id="donate" className="card p-8">
+    <div id="donate" className="rounded-3xl bg-white p-8 shadow-elevated ring-2 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
       <CheckCircle2 className="h-12 w-12 text-emerald-500" />
       <h3 className="mt-4 text-xl font-bold">Permintaan Donasi Terkirim</h3>
       <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Xendit yang terbuka.</p>
@@ -56,7 +56,7 @@ export function DonateSection() {
   );
 
   return (
-    <div id="donate" className="card">
+    <div id="donate" className="rounded-3xl bg-white shadow-elevated ring-2 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
       <div className="px-5 pb-5 pt-5">
         <div className="mb-4 flex items-center gap-5 text-sm">
           <div>
@@ -75,8 +75,8 @@ export function DonateSection() {
           </div>
         </div>
 
-        <h3 className="text-lg font-bold text-ink">
-          {t("donate.title")} <span className="text-brand-600">{t("donate.titleAccent")}</span>
+        <h3 className="font-display text-lg font-bold text-bkk-700 dark:text-white">
+          {t("donate.title")} <span className="text-bkk-500">{t("donate.titleAccent")}</span>
         </h3>
         <p className="mt-1 text-sm text-ink-muted">{t("donate.description")}</p>
 
@@ -95,7 +95,7 @@ export function DonateSection() {
           </select>
 
           {tier && (
-            <div className="rounded-lg bg-brand-50 px-3 py-2 text-sm text-brand-800 dark:bg-brand-900/30 dark:text-brand-300">
+            <div className="rounded-xl bg-bkk-50 px-3 py-2 text-sm font-medium text-bkk-800 dark:bg-bkk-900/30 dark:text-bkk-200">
               {tierIcons[tier.id]} <strong>{tier.impact}</strong> — {tier.label}
             </div>
           )}
@@ -138,7 +138,7 @@ export function DonateSection() {
           <button
             type="submit"
             disabled={loading || !name || (tierId !== "custom" && !tier) || (tierId === "custom" && !customAmount)}
-            className="btn-primary w-full justify-center gap-2 py-2.5 text-sm"
+            className="w-full justify-center gap-2 rounded-full bg-bkk-700 py-3 font-display text-sm font-bold text-white shadow-[0_4px_14px_rgba(103,39,159,0.35)] transition hover:bg-bkk-800"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
               <><Heart className="h-4 w-4" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>

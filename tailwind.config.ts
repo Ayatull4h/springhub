@@ -21,6 +21,24 @@ const config: Config = {
           800: "#075985",
           900: "#0c4a6e",
         },
+        /* Palet gaya BKKCAW untuk landing (staging): ungu tua + biru cerah */
+        bkk: {
+          50: "#faf5ff",
+          100: "#f3e8ff",
+          200: "#e2ccf9",
+          500: "#8b46c7",
+          600: "#7a2fb8",
+          700: "#67279f",
+          800: "#521f7d",
+          900: "#3d1660",
+        },
+        bkkblue: {
+          100: "#d9ecfd",
+          200: "#b3d9fb",
+          500: "#1e9bf0",
+          600: "#1583cf",
+        },
+        bkksun: "#ffc53d",
         ink: {
           DEFAULT: "#0b0f15",
           muted: "#475569",
@@ -52,6 +70,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        display: ["var(--font-lexend)", "var(--font-inter)", "system-ui", "sans-serif"],
       },
       boxShadow: {
         card: "0 1px 2px rgba(11, 15, 21, 0.04), 0 4px 16px rgba(11, 15, 21, 0.04)",

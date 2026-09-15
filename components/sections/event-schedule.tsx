@@ -202,21 +202,24 @@ export function EventSchedule() {
 
   if (items.length === 0) {
     return (
-      <section id="jadwal" className="container-page py-16">
-        <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
-          {t("event.title", "Jadwal")} <span className="text-brand-600">{t("event.titleAccent", "Mendatang")}</span>
+      <section id="jadwal" className="bg-white py-16 md:py-20 dark:bg-slate-900">
+      <div className="container-page">
+        <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+          {t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span>
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
           {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
         </p>
+      </div>
       </section>
     );
   }
 
   return (
-    <section id="jadwal" className="container-page py-16">
-      <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
-        {t("event.title", "Jadwal")} <span className="text-brand-600">{t("event.titleAccent", "Mendatang")}</span>
+    <section id="jadwal" className="bg-white py-16 md:py-20 dark:bg-slate-900">
+      <div className="container-page">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+        {t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("event.description", "Ikut restorasi mata air dan tanam pohon bulan depan. Daftar langsung, tanpa kuota.")}
@@ -314,6 +317,7 @@ export function EventSchedule() {
       </div>
 
       {popup && <RegisterPopup event={popup} onClose={() => setPopup(null)} />}
+      </div>
     </section>
   );
 }

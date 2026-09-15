@@ -125,10 +125,11 @@ export function VolunteerActivities() {
   );
 
   return (
-    <section id="community" className="container-page py-16">
-      <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
+    <section id="community" className="bg-[#f6f1fb] py-16 md:py-20 dark:bg-slate-900/60">
+      <div className="container-page">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         {t("volunteer.title")}{" "}
-        <span className="text-brand-600">{t("volunteer.titleAccent")}</span>
+        <span className="text-bkk-500">{t("volunteer.titleAccent")}</span>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("volunteer.description", {
@@ -141,7 +142,7 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <div className="mt-3 flex-1 card p-4">
+          <div className="mt-3 flex-1 rounded-3xl bg-white p-4 shadow-elevated dark:bg-slate-900">
             <ul className="grid gap-3 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
@@ -152,7 +153,7 @@ export function VolunteerActivities() {
                       <div className="text-sm font-semibold text-ink">{a.user}</div>
                       <div className="text-xs text-ink-muted">{a.action}</div>
                     </div>
-                    <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+                    <span className="chip bg-bkk-100 font-bold text-bkk-800 dark:bg-bkk-900/40 dark:text-bkk-200">
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>
@@ -307,6 +308,7 @@ export function VolunteerActivities() {
       </div>
 
       <PointsGuideModal open={showPoints} onClose={() => setShowPoints(false)} />
+      </div>
     </section>
   );
 }
