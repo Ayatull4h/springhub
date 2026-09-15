@@ -41,7 +41,7 @@ export function Hero() {
           </Link>
           <Link
             href="https://jagasemesta.org/"
-            className="rounded-full bg-white/95 px-8 py-3.5 font-display text-base font-bold text-bkk-800 shadow-[5px_5px_0_rgba(61,22,96,0.9)] ring-2 ring-bkk-700/30 transition hover:rotate-0 hover:scale-[1.03] rotate-1"
+            className="rounded-full bg-cream px-8 py-3.5 font-display text-base font-bold text-bkk-800 shadow-[5px_5px_0_rgba(61,22,96,0.9)] ring-2 ring-white/60 transition hover:rotate-0 hover:scale-[1.03] rotate-1"
           >
             {t("hero.cta.back")}
             <ArrowRight className="ml-2 inline h-4 w-4" />

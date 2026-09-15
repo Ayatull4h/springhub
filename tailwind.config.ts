@@ -46,6 +46,31 @@ const config: Config = {
           600: "#d63a86",
           700: "#b42a6c",
         },
+        /* Palet ceria tambahan: oranye, krem, cyan, hijau */
+        tang: {
+          100: "#ffe3cb",
+          200: "#ffcf9f",
+          500: "#ff9d50",
+          600: "#f08733",
+          700: "#c96a1f",
+        },
+        cream: {
+          DEFAULT: "#fff9d8",
+          dark: "#f3e8bd",
+        },
+        lagoon: {
+          100: "#d3f6f8",
+          200: "#a4ecf0",
+          500: "#1dced8",
+          600: "#12a9b3",
+          700: "#0e858c",
+        },
+        leaf: {
+          100: "#ddf8e4",
+          500: "#55e07e",
+          600: "#38c763",
+          700: "#27a24e",
+        },
         ink: {
           DEFAULT: "#0b0f15",
           muted: "#475569",

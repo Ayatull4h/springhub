@@ -458,7 +458,7 @@ const formTitleI18nKey = (slug: string): string => {
       <BkkWeave className="-right-14 -top-14 rotate-12 opacity-60" />
       <div className="container-page relative z-10">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("map.title")}{" "}
+        <BkkTitleCloud cloudClass="text-cream dark:text-slate-800">{t("map.title")}{" "}
         <span className="text-bkk-500">{t("map.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
@@ -477,7 +477,7 @@ const formTitleI18nKey = (slug: string): string => {
       </div>
 
       {/* Full-width map */}
-      <div className="relative mt-8 overflow-hidden rounded-[3rem_4rem_3rem_4rem] bg-white shadow-elevated ring-4 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
+      <div className="relative mt-8 overflow-hidden rounded-[3rem_4.5rem_2.5rem_4rem] bg-white shadow-elevated ring-4 ring-tang-200 dark:bg-slate-900 dark:ring-slate-700">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-ink">{t("map.show")}</span>

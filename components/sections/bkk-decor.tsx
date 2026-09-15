@@ -117,19 +117,21 @@ export function BkkWeave({ className = "" }: { className?: string }) {
     </svg>
   );
 }
-
 /** Stiker pil miring tepi putih ala stiker festival. */
-export function BkkSticker({  children,
+export function BkkSticker({
+  children,
   className = "",
   tilt = "-rotate-3",
+  bg = "bg-bkksun",
 }: {
   children: ReactNode;
   className?: string;
   tilt?: string;
+  bg?: string;
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border-4 border-white bg-bkksun px-4 py-1.5 font-display text-sm font-bold text-bkk-900 shadow-[0_6px_16px_rgba(11,15,21,0.28)] ${tilt} ${className}`}
+      className={`inline-flex items-center gap-1 rounded-full border-4 border-white px-4 py-1.5 font-display text-sm font-bold text-bkk-900 shadow-[0_6px_16px_rgba(11,15,21,0.28)] ${bg} ${tilt} ${className}`}
     >
       {children}
     </span>

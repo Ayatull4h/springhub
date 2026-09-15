@@ -63,7 +63,7 @@ export function LearningHub() {
   }
 
   return (
-    <section id="learn" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
+    <section id="learn" className="bg-cream pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("learn.title")}{" "}
@@ -89,10 +89,10 @@ export function LearningHub() {
             const prog = getProgress(c.slug);
             return (
               <article key={c.id} className={`card flex flex-col transition-transform hover:rotate-0 ${BKK_CARD_RADII[ci % BKK_CARD_RADII.length]} ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]}`}>
-                <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-xl bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/30 dark:to-indigo-900/50">
+                <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-[2rem] bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
-                <span className="chip mt-4 self-start bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+                <span className="chip mt-4 -rotate-2 self-start bg-tang-100 font-bold text-tang-700 dark:bg-bkk-900/30 dark:text-bkk-200">
                   {c.level}
                 </span>
                 <h3 className="mt-2 text-base font-semibold text-ink">
@@ -152,7 +152,7 @@ export function LearningHub() {
         </div>
       )}
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-bkkblue-500 dark:text-bkkblue-600" accent="text-bkksun" />
+      <BkkCurve top="bg-transparent" bottom="text-lagoon-500 dark:text-lagoon-600" accent="text-tang-500" />
     </section>
   );
 }

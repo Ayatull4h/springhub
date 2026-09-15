@@ -84,7 +84,7 @@ export function DonateSection() {
           <select
             value={tierId}
             onChange={e => { setTierId(e.target.value); setError(""); }}
-            className="w-full rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
+            className="w-full rounded-2xl border-2 border-tang-100 bg-white px-3 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
             required
           >
             <option value="">{t("donate.chooseImpact")}</option>
@@ -95,7 +95,7 @@ export function DonateSection() {
           </select>
 
           {tier && (
-            <div className="rounded-xl bg-bkk-50 px-3 py-2 text-sm font-medium text-bkk-800 dark:bg-bkk-900/30 dark:text-bkk-200">
+            <div className="rounded-2xl bg-cream px-3 py-2 text-sm font-medium text-tang-700 dark:bg-bkk-900/30 dark:text-bkk-200">
               {tierIcons[tier.id]} <strong>{tier.impact}</strong> — {tier.label}
             </div>
           )}
@@ -105,7 +105,7 @@ export function DonateSection() {
               type="number"
               value={customAmount}
               onChange={e => setCustomAmount(e.target.value)}
-              className="w-full rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
+              className="w-full rounded-2xl border-2 border-tang-100 bg-white px-3 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
               placeholder="Jumlah donasi (Rp)"
               min={1000}
               required
@@ -117,14 +117,14 @@ export function DonateSection() {
               required
               value={name}
               onChange={e => setName(e.target.value)}
-              className="flex-1 min-w-0 rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
+              className="flex-1 min-w-0 rounded-2xl border-2 border-tang-100 bg-white px-3 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
               placeholder="Nama Anda"
             />
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="flex-1 min-w-0 rounded-lg border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
+              className="flex-1 min-w-0 rounded-2xl border-2 border-tang-100 bg-white px-3 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
               placeholder="Email"
             />
           </div>
@@ -138,7 +138,7 @@ export function DonateSection() {
           <button
             type="submit"
             disabled={loading || !name || (tierId !== "custom" && !tier) || (tierId === "custom" && !customAmount)}
-            className="w-full justify-center gap-2 rounded-full bg-bkk-700 py-3 font-display text-sm font-bold text-white shadow-[4px_4px_0_rgba(61,22,96,0.9)] transition hover:rotate-0 hover:bg-bkk-800 -rotate-1"
+            className="w-full justify-center gap-2 rounded-full bg-tang-500 py-3 font-display text-sm font-bold text-white shadow-[4px_4px_0_rgba(120,53,15,0.9)] ring-2 ring-white/60 transition hover:rotate-0 hover:bg-tang-600 -rotate-1"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
               <><Heart className="h-4 w-4" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>

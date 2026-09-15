@@ -155,7 +155,7 @@ export function VolunteerActivities() {
                       <div className="text-sm font-semibold text-ink">{a.user}</div>
                       <div className="text-xs text-ink-muted">{a.action}</div>
                     </div>
-                    <span className="chip bg-bkk-100 font-bold text-bkk-800 dark:bg-bkk-900/40 dark:text-bkk-200">
+                    <span className="chip bg-tang-100 font-bold text-tang-700 dark:bg-bkk-900/40 dark:text-bkk-200">
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>

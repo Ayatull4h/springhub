@@ -7,7 +7,8 @@ import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
 import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
 
-const STAT_COLORS = ["text-bkk-700", "text-bkkpink-600", "text-bkkblue-600", "text-emerald-600"];
+const STAT_COLORS = ["text-bkk-700", "text-tang-600", "text-lagoon-600", "text-leaf-600"];
+const STICKER_BGS = ["bg-bkksun", "bg-tang-500", "bg-lagoon-500", "bg-leaf-500"];
 
 
 const iconMap: Record<string, typeof Droplets> = {
@@ -134,6 +135,7 @@ export function ImpactDashboard() {
                     </span>
                     <BkkSticker
                       tilt={si % 2 ? "rotate-2" : "-rotate-3"}
+                      bg={STICKER_BGS[si % STICKER_BGS.length]}
                       className="!border-2 px-2.5 py-0.5 text-xs"
                     >
                       <TrendingUp className="h-3 w-3" aria-hidden="true" />

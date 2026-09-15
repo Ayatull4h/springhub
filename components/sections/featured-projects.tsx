@@ -83,6 +83,13 @@ export function FeaturedProjects() {
           {visible.map((p, pi) => {
             const info = TYPE_INFO[p.typeId] || { icon: TreePine, label: p.typeId };
             const Icon = info.icon;
+            const badgeColor = /restoration|monitoring/.test(p.typeId)
+              ? "bg-lagoon-100 text-lagoon-700 dark:bg-lagoon-700/30 dark:text-lagoon-100"
+              : /tree|seedling/.test(p.typeId)
+                ? "bg-leaf-100 text-leaf-700 dark:bg-leaf-700/30 dark:text-leaf-100"
+                : /trench/.test(p.typeId)
+                  ? "bg-tang-100 text-tang-700 dark:bg-tang-700/30 dark:text-tang-100"
+                  : "bg-bkkpink-100 text-bkkpink-700 dark:bg-bkkpink-700/30 dark:text-bkkpink-100";
             const progress = p.goalAmount > 0 ? Math.round((p.raisedAmount / p.goalAmount) * 100) : 0;
             return (
               <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className={`group block transition-transform hover:rotate-0 ${BKK_CARD_TILTS[pi % BKK_CARD_TILTS.length]}`}>
@@ -95,7 +102,7 @@ export function FeaturedProjects() {
                     )}
                   </div>
                   <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-                    <span className="mb-2 inline-flex w-fit rounded-full bg-bkk-100 px-2.5 py-0.5 text-xs font-bold text-bkk-800 dark:bg-bkk-900/40 dark:text-bkk-200">
+                    <span className={`mb-2 inline-flex w-fit -rotate-2 rounded-full px-2.5 py-0.5 text-xs font-bold ${badgeColor}`}>
                       {info.label}
                     </span>
                     <h3 className="text-base font-semibold text-ink group-hover:text-sky-600 transition-colors">

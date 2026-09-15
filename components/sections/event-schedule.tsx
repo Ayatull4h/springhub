@@ -33,7 +33,7 @@ function fmtDate(iso: string, locale: string): string {
 function EventThumb({ item }: { item: EventItem }) {
   if (!item.imageUrl) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-teal-600/90 to-emerald-800/90">
+      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-tang-500/90 to-bkkpink-600/90">
         <CalendarDays className="h-10 w-10 text-white/80" />
       </div>
     );

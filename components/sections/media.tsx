@@ -187,7 +187,7 @@ export function MediaSection() {
   };
 
   return (
-    <section id="media" className="relative overflow-hidden bg-bkkblue-500 pt-16 md:pt-20 dark:bg-bkkblue-600">
+    <section id="media" className="relative overflow-hidden bg-lagoon-500 pt-16 md:pt-20 dark:bg-lagoon-600">
       <div className="container-page relative">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
@@ -320,7 +320,7 @@ export function MediaSection() {
         </>
       )}
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-bkk-700 dark:text-bkk-900" accent="text-bkksun" />
+      <BkkCurve top="bg-transparent" bottom="text-bkk-700 dark:text-bkk-900" accent="text-tang-500" />
     </section>
   );
 }
