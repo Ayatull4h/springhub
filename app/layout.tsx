@@ -99,6 +99,33 @@ export default function RootLayout({
           }}
         />
         <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              /* Pulih otomatis bila tab lama memuat chunk yang sudah dihapus
+                 deploy baru (ChunkLoadError -> form mati). Reload 1x per tab. */
+              (function(){
+                var K = "sh-chunk-reload";
+                function boom(msg){
+                  if (!/ChunkLoadError|Loading chunk|Loading CSS chunk/i.test(msg || "")) return;
+                  try {
+                    if (sessionStorage.getItem(K)) return;
+                    sessionStorage.setItem(K, "1");
+                  } catch (_) {}
+                  location.reload();
+                }
+                window.addEventListener("error", function(e){ boom(e && e.message); }, true);
+                window.addEventListener("unhandledrejection", function(e){
+                  var r = e && e.reason;
+                  boom(typeof r === "string" ? r : (r && (r.message || r.name)));
+                });
+                window.addEventListener("load", function(){
+                  try { sessionStorage.removeItem(K); } catch (_) {}
+                });
+              })();
+            `,
+          }}
+        />
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
