@@ -161,7 +161,7 @@ export function ImpactDashboard() {
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <div className="relative overflow-hidden rounded-[2.5rem_2rem_2rem_3rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
+            <div className="relative overflow-hidden rounded-[3.5rem_2rem_4rem_2rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
               <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
@@ -213,7 +213,7 @@ export function ImpactDashboard() {
               )}
             </div>
 
-            <div className="relative overflow-hidden rounded-[2rem_3rem_2.5rem_2rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-translate-y-3 md:rotate-1 dark:bg-slate-900">
+            <div className="relative overflow-hidden rounded-[2rem_4rem_2rem_3.5rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-translate-y-3 md:rotate-1 dark:bg-slate-900">
               <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
@@ -234,7 +234,7 @@ export function ImpactDashboard() {
               </ol>
             </div>
 
-            <div className="relative overflow-hidden rounded-[3rem_2rem_2rem_2.5rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
+            <div className="relative overflow-hidden rounded-[4rem_2rem_3rem_2rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
               <BkkInnerWave className="absolute bottom-0 left-0 text-leaf-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">

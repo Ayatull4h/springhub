@@ -229,7 +229,8 @@ export function VolunteerActivities() {
         </div>
         </div>
 
-        <div className="flex flex-col rounded-[3.5rem_2rem_2.5rem_3rem] bg-gradient-to-br from-tang-100 to-cream p-5 shadow-elevated transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full dark:from-slate-800 dark:to-slate-900">
+        <div className="relative flex flex-col rounded-[4rem_2rem_4.5rem_2rem] bg-gradient-to-br from-tang-100 to-cream p-5 shadow-elevated transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full dark:from-slate-800 dark:to-slate-900">
+            <div aria-hidden="true" className="absolute -inset-2 -z-10 rotate-2 rounded-[4.5rem_2.5rem_5rem_2.5rem] bg-lagoon-200/70 dark:bg-slate-800" />
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-ink">
               {t("volunteer.submitProject")}

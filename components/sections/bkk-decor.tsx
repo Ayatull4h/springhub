@@ -157,10 +157,10 @@ export function BkkSticker({
 
 /** Radius organik puffy + kemiringan selang-seling untuk kartu. */
 export const BKK_CARD_RADII = [
-  "rounded-[46%_54%_52%_48%/12%_14%_12%_14%]",
-  "rounded-[54%_46%_48%_52%/14%_12%_14%_12%]",
-  "rounded-[48%_52%_46%_54%/13%_15%_11%_13%]",
-  "rounded-[52%_48%_54%_46%/11%_13%_15%_11%]",
+  "rounded-[46%_54%_52%_48%/22%_30%_24%_32%]",
+  "rounded-[54%_46%_48%_52%/30%_22%_32%_24%]",
+  "rounded-[48%_52%_46%_54%/26%_32%_20%_28%]",
+  "rounded-[52%_48%_54%_46%/20%_26%_30%_22%]",
 ];
 
 export const BKK_CARD_TILTS = [
