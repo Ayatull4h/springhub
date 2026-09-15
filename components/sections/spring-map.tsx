@@ -20,7 +20,7 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BkkCurve, BkkWeave, BkkTitleCloud } from "./bkk-decor";
+import { BkkCurve, BkkWeave, BkkTitleCloud, BkkInnerWave } from "./bkk-decor";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -519,6 +519,9 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         </div>
         <div className="aspect-[4/3] w-full md:aspect-[21/8] min-h-[360px]">
+          <div className="bg-white leading-[0] text-tang-200 dark:bg-slate-900">
+            <BkkInnerWave />
+          </div>
           <LeafletMap
             reports={visible}
             springs={visibleSprings as any[]}

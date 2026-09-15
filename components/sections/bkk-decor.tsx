@@ -97,6 +97,23 @@ export function BkkTitleCloud({
     </span>
   );
 }
+/** Ombak kecil untuk DI DALAM kontainer/kartu ( dekorasi isi, bukan pembatas). */
+export function BkkInnerWave({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 1440 60"
+      preserveAspectRatio="none"
+      className={`pointer-events-none block h-6 w-full md:h-8 ${className}`}
+    >
+      <path
+        fill="currentColor"
+        d="M0,34 C180,58 360,6 540,24 C720,42 860,56 1040,34 C1220,12 1340,44 1440,28 L1440,60 L0,60 Z"
+      />
+    </svg>
+  );
+}
+
 /** Anyaman rotan kuning (motif khas BKK) untuk sudut section. */
 export function BkkWeave({ className = "" }: { className?: string }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");

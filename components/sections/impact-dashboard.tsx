@@ -5,7 +5,7 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge } from "./bkk-decor";
+import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BkkInnerWave } from "./bkk-decor";
 
 /* Tiap kartu bentuk + warna beda total — solid 4 warna palet ColorHunt */
 const STAT_CARDS = [
@@ -133,7 +133,8 @@ export function ImpactDashboard() {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
-                <div className={`p-5 shadow-elevated transition-transform hover:rotate-0 md:pb-7 ${STAT_CARDS[si % STAT_CARDS.length]}`}>
+                <div className={`relative overflow-hidden p-5 pb-10 shadow-elevated transition-transform hover:rotate-0 md:pb-12 ${STAT_CARDS[si % STAT_CARDS.length]}`}>
+                  <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
                   <div className="flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white/40 text-bkk-900">
                       <Icon className="h-5 w-5" aria-hidden="true" />
@@ -160,8 +161,9 @@ export function ImpactDashboard() {
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <div className="rounded-[2.5rem_2rem_2rem_3rem] bg-white p-6 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
-              <h3 className="flex items-center gap-2 font-display text-sm font-bold text-ink">
+            <div className="relative overflow-hidden rounded-[2.5rem_2rem_2rem_3rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
+              <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
+              <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
                 {t("dashboard.monthly")}
               </h3>
@@ -211,8 +213,9 @@ export function ImpactDashboard() {
               )}
             </div>
 
-            <div className="rounded-[2rem_3rem_2.5rem_2rem] bg-white p-6 shadow-elevated transition-transform hover:rotate-0 md:-translate-y-3 md:rotate-1 dark:bg-slate-900">
-              <h3 className="font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
+            <div className="relative overflow-hidden rounded-[2rem_3rem_2.5rem_2rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-translate-y-3 md:rotate-1 dark:bg-slate-900">
+              <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
+              <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topRegions.map((r) => (
                   <li
@@ -231,8 +234,9 @@ export function ImpactDashboard() {
               </ol>
             </div>
 
-            <div className="rounded-[3rem_2rem_2rem_2.5rem] bg-white p-6 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
-              <h3 className="font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
+            <div className="relative overflow-hidden rounded-[3rem_2rem_2rem_2.5rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
+              <BkkInnerWave className="absolute bottom-0 left-0 text-leaf-100 dark:text-slate-800" />
+              <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topVolunteers.map((v) => (
                   <li
