@@ -1046,6 +1046,8 @@
   "offline.modeOffline": "Mode Offline...",
   "offline.unavailableTitle": "Mode Offline Tidak Tersedia",
   "offline.backHome": "Kembali ke Beranda",
+  "offline.retry": "Coba Lagi",
+  "offline.closeOtherTabs": "Masih gagal? Tutup SEMUA tab SpringHub lain (upgrade database tertahan tab lama), lalu tekan Coba Lagi.",
   "offline.diagTitle": "Diagnostik HP (klik kalau ada error, lalu kirim ke admin)",
   "offline.diagVersion": "Versi aplikasi:",
   "offline.diagIndexedDb": "IndexedDB:",

@@ -137,9 +137,11 @@ function OfflinePageContent() {
   const router = useRouter();
   const [phase, setPhase] = useState<OfflinePhase>("checking");
   const [errorMsg, setErrorMsg] = useState("");
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     async function init() {
+      setPhase("checking");
       // 1. Cek IndexedDB
       const dbOk = await offlineDB.isAvailable().catch(() => false);
       if (!dbOk) {
@@ -178,7 +180,7 @@ function OfflinePageContent() {
     }
 
     init();
-  }, []);
+  }, [retryKey]);
 
   if (phase === "checking") {
     return (
@@ -200,8 +202,12 @@ function OfflinePageContent() {
           </div>
           <h1 className="mt-4 text-xl font-bold text-ink">{t("offline.unavailableTitle")}</h1>
           <p className="mt-2 whitespace-pre-line text-left text-sm text-ink-muted">{errorMsg}</p>
-          <div className="mt-6">
-            <button onClick={() => router.push("/")} className="btn-primary">
+          <p className="mt-2 text-left text-sm text-ink-muted">{t("offline.closeOtherTabs")}</p>
+          <div className="mt-6 flex justify-center gap-3">
+            <button onClick={() => setRetryKey((k) => k + 1)} className="btn-primary">
+              {t("offline.retry")}
+            </button>
+            <button onClick={() => router.push("/")} className="btn-secondary">
               {t("offline.backHome")}
             </button>
           </div>

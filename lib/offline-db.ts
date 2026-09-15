@@ -911,7 +911,14 @@ export const offlineDB = {
   async isAvailable(): Promise<boolean> {
     if (typeof indexedDB === "undefined" || typeof window === "undefined") return false;
     try {
-      const db = await openDB();
+      // Batas 10 detik: upgrade DB bisa tertahan TAB LAIN yang masih buka
+      // (onblocked) → tanpa timeout halaman stuck spinner selamanya.
+      const db = await Promise.race([
+        openDB(),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("IDB blocked/timeout")), 10000)
+        ),
+      ]);
       // Test bahwa transaksi benar-benar bisa jalan (bukan cuma open)
       try {
         const tx = db.transaction("pending-reports", "readonly");

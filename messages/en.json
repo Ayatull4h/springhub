@@ -1046,6 +1046,8 @@
   "offline.modeOffline": "Offline mode...",
   "offline.unavailableTitle": "Offline Mode Unavailable",
   "offline.backHome": "Back to Home",
+  "offline.retry": "Try Again",
+  "offline.closeOtherTabs": "Still failing? Close ALL other SpringHub tabs (database upgrade is held by the old tab), then press Try Again.",
   "offline.diagTitle": "Phone diagnostics (tap on error, then send to admin)",
   "offline.diagVersion": "App version:",
   "offline.diagIndexedDb": "IndexedDB:",
