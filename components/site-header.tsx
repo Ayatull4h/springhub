@@ -167,7 +167,7 @@ export function SiteHeader() {
               <Link
                 href="/join"
                 prefetch={false}
-                className="rounded-full bg-bkk-700 px-5 py-2.5 font-display text-sm font-bold text-white shadow-[0_4px_14px_rgba(103,39,159,0.35)] transition hover:bg-bkk-800"
+                className="rounded-full bg-bkk-700 px-5 py-2.5 font-display text-sm font-bold text-white shadow-[3px_3px_0_rgba(61,22,96,0.9)] transition hover:rotate-0 hover:bg-bkk-800 -rotate-1"
               >
                 {t("nav.join")}
               </Link>

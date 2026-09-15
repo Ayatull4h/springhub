@@ -34,14 +34,14 @@ export function Hero() {
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="#map"
-            className="rounded-full bg-bkk-700 px-8 py-3.5 font-display text-base font-bold text-white shadow-[0_8px_24px_rgba(103,39,159,0.5)] transition hover:bg-bkk-800"
+            className="rounded-full bg-bkk-700 px-8 py-3.5 font-display text-base font-bold text-white shadow-[5px_5px_0_rgba(61,22,96,0.9)] ring-2 ring-white/50 transition hover:rotate-0 hover:scale-[1.03] -rotate-1"
           >
             {t("hero.cta.start")}
             <ArrowRight className="ml-2 inline h-4 w-4" />
           </Link>
           <Link
             href="https://jagasemesta.org/"
-            className="rounded-full bg-white/95 px-8 py-3.5 font-display text-base font-bold text-bkk-800 shadow-lg transition hover:bg-white"
+            className="rounded-full bg-white/95 px-8 py-3.5 font-display text-base font-bold text-bkk-800 shadow-[5px_5px_0_rgba(61,22,96,0.9)] ring-2 ring-bkk-700/30 transition hover:rotate-0 hover:scale-[1.03] rotate-1"
           >
             {t("hero.cta.back")}
             <ArrowRight className="ml-2 inline h-4 w-4" />

@@ -477,7 +477,7 @@ const formTitleI18nKey = (slug: string): string => {
       </div>
 
       {/* Full-width map */}
-      <div className="relative mt-8 overflow-hidden rounded-3xl bg-white shadow-elevated ring-2 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
+      <div className="relative mt-8 overflow-hidden rounded-[2.5rem_2rem_2.5rem_2rem] bg-white shadow-elevated ring-4 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-ink">{t("map.show")}</span>

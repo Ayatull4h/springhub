@@ -121,7 +121,7 @@ export function SiteFooter() {
                 placeholder={t("footer.newsletterPlaceholder")}
                 className="flex-1 rounded-md border border-white/25 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/50 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30"
               />
-              <button type="submit" className="rounded-full bg-white px-4 py-2 font-display text-sm font-bold text-bkk-800 transition hover:bg-bkk-50">
+              <button type="submit" className="rounded-full bg-white px-4 py-2 font-display text-sm font-bold text-bkk-800 shadow-[3px_3px_0_rgba(0,0,0,0.35)] transition hover:rotate-0 rotate-1">
                 {t("footer.subscribe")}
               </button>
             </form>

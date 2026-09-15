@@ -7,6 +7,7 @@ import {
   MapPin, TreePine, Droplets, Users, FolderOpen,
 } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
+import { BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
 
 type ProjectItem = {
   id?: string;
@@ -79,13 +80,13 @@ export function FeaturedProjects() {
               </Link>
             </div>
           )}
-          {visible.map((p) => {
+          {visible.map((p, pi) => {
             const info = TYPE_INFO[p.typeId] || { icon: TreePine, label: p.typeId };
             const Icon = info.icon;
             const progress = p.goalAmount > 0 ? Math.round((p.raisedAmount / p.goalAmount) * 100) : 0;
             return (
-              <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
-                <article className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-card transition-all hover:-translate-y-1 hover:shadow-elevated dark:bg-slate-900">
+              <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className={`group block transition-transform hover:rotate-0 ${BKK_CARD_TILTS[pi % BKK_CARD_TILTS.length]}`}>
+                <article className={`flex flex-col overflow-hidden bg-white shadow-card transition-all hover:shadow-elevated dark:bg-slate-900 ${BKK_CARD_RADII[pi % BKK_CARD_RADII.length]}`}>
                   <div className="flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
                     {p.featuredPhoto?.url ? (
                       <img src={p.featuredPhoto.url} alt={p.title} className="h-full w-full object-cover" />

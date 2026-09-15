@@ -138,7 +138,7 @@ export function DonateSection() {
           <button
             type="submit"
             disabled={loading || !name || (tierId !== "custom" && !tier) || (tierId === "custom" && !customAmount)}
-            className="w-full justify-center gap-2 rounded-full bg-bkk-700 py-3 font-display text-sm font-bold text-white shadow-[0_4px_14px_rgba(103,39,159,0.35)] transition hover:bg-bkk-800"
+            className="w-full justify-center gap-2 rounded-full bg-bkk-700 py-3 font-display text-sm font-bold text-white shadow-[4px_4px_0_rgba(61,22,96,0.9)] transition hover:rotate-0 hover:bg-bkk-800 -rotate-1"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
               <><Heart className="h-4 w-4" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>

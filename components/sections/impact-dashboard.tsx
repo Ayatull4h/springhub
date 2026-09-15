@@ -5,7 +5,7 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { BkkReveal, BkkCurve, BkkSticker } from "./bkk-decor";
+import { BkkReveal, BkkCurve, BkkSticker, BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
 
 const STAT_COLORS = ["text-bkk-700", "text-bkkpink-600", "text-bkkblue-600", "text-emerald-600"];
 
@@ -127,7 +127,7 @@ export function ImpactDashboard() {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
-                <div className="rounded-3xl bg-white p-5 shadow-elevated dark:bg-slate-900">
+                <div className={`bg-white p-5 shadow-elevated transition-transform hover:rotate-0 dark:bg-slate-900 ${BKK_CARD_RADII[si % BKK_CARD_RADII.length]} ${BKK_CARD_TILTS[si % BKK_CARD_TILTS.length]} ${si % 2 ? "md:translate-y-5" : ""}`}>
                   <div className="flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-2xl bg-bkk-100 text-bkk-700 dark:bg-bkk-900/40 dark:text-bkk-200">
                       <Icon className="h-5 w-5" aria-hidden="true" />
@@ -153,7 +153,7 @@ export function ImpactDashboard() {
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <div className="rounded-3xl bg-white p-6 shadow-elevated dark:bg-slate-900">
+            <div className="rounded-[2.5rem_2rem_2rem_3rem] bg-white p-6 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
               <h3 className="flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
                 {t("dashboard.monthly")}
@@ -204,7 +204,7 @@ export function ImpactDashboard() {
               )}
             </div>
 
-            <div className="rounded-3xl bg-white p-6 shadow-elevated dark:bg-slate-900">
+            <div className="rounded-[2rem_3rem_2.5rem_2rem] bg-white p-6 shadow-elevated transition-transform hover:rotate-0 md:-translate-y-3 md:rotate-1 dark:bg-slate-900">
               <h3 className="font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topRegions.map((r) => (
@@ -224,7 +224,7 @@ export function ImpactDashboard() {
               </ol>
             </div>
 
-            <div className="rounded-3xl bg-white p-6 shadow-elevated dark:bg-slate-900">
+            <div className="rounded-[3rem_2rem_2rem_2.5rem] bg-white p-6 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
               <h3 className="font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topVolunteers.map((v) => (

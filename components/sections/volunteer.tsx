@@ -23,6 +23,7 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
+import { BKK_CARD_RADII } from "./bkk-decor";
 import { BkkCurve, BkkWeave } from "./bkk-decor";
 
 function timeAgo(dateStr: string): string {
@@ -149,7 +150,7 @@ export function VolunteerActivities() {
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
               return (
-                <li key={i} className={`rounded-2xl border border-ink-line/60 bg-white p-3 shadow-card transition-transform hover:rotate-0 hover:shadow-elevated dark:border-slate-700 dark:bg-slate-800 ${i % 2 ? "md:rotate-1" : "md:-rotate-1"}`}>
+                <li key={i} className={`border border-ink-line/60 bg-white p-3 shadow-card transition-transform hover:rotate-0 hover:shadow-elevated dark:border-slate-700 dark:bg-slate-800 ${BKK_CARD_RADII[i % BKK_CARD_RADII.length]} ${i % 2 ? "md:rotate-1" : "md:-rotate-1"}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="text-sm font-semibold text-ink">{a.user}</div>
@@ -288,7 +289,7 @@ export function VolunteerActivities() {
 
           <div className="mt-5">
             {eligible ? (
-              <Link href="/projects/new" className="btn-primary w-full">
+              <Link href="/projects/new" className="btn-primary w-full -rotate-1 shadow-[4px_4px_0_rgba(11,15,21,0.85)] transition hover:rotate-0">
                 {t("volunteer.registerProject")}
                 <ArrowRight className="h-4 w-4" />
               </Link>

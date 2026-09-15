@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve } from "./bkk-decor";
+import { BkkCurve, BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
 
 type CourseItem = {
   id: string;
@@ -85,10 +85,10 @@ export function LearningHub() {
         </div>
       ) : (
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {courses.map((c) => {
+          {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (
-              <article key={c.id} className="card flex flex-col">
+              <article key={c.id} className={`card flex flex-col transition-transform hover:rotate-0 ${BKK_CARD_RADII[ci % BKK_CARD_RADII.length]} ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]}`}>
                 <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-xl bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
