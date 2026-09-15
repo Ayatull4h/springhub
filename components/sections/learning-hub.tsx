@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { BkkCurve, BKK_CARD_RADII, BKK_CARD_TILTS, BkkTitleCloud } from "./bkk-decor";
 
 type CourseItem = {
   id: string;
@@ -62,10 +63,11 @@ export function LearningHub() {
   }
 
   return (
-    <section id="learn" className="container-page py-16">
-      <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
-        {t("learn.title")}{" "}
-        <span className="text-brand-600">{t("learn.titleAccent")}</span>
+    <section id="learn" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
+      <div className="container-page">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("learn.title")}{" "}
+        <span className="text-brand-600">{t("learn.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("learn.description")}
@@ -83,10 +85,10 @@ export function LearningHub() {
         </div>
       ) : (
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {courses.map((c) => {
+          {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (
-              <article key={c.id} className="card flex flex-col">
+              <article key={c.id} className={`card flex flex-col transition-transform hover:rotate-0 ${BKK_CARD_RADII[ci % BKK_CARD_RADII.length]} ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]}`}>
                 <div className="-mx-4 -mt-4 mb-3 flex h-32 items-center justify-center rounded-t-xl bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
@@ -149,6 +151,8 @@ export function LearningHub() {
           })}
         </div>
       )}
+      </div>
+      <BkkCurve top="bg-transparent" bottom="text-bkkblue-500 dark:text-bkkblue-600" accent="text-bkksun" />
     </section>
   );
 }

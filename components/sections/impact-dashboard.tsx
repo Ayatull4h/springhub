@@ -5,6 +5,9 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
+import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
+
+const STAT_COLORS = ["text-bkk-700", "text-bkkpink-600", "text-bkkblue-600", "text-emerald-600"];
 
 
 const iconMap: Record<string, typeof Droplets> = {
@@ -96,10 +99,11 @@ export function ImpactDashboard() {
   ];
 
   return (
-    <section id="dashboard" className="container-page py-16">
-      <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
+    <section id="dashboard" className="bg-bkk-700 pt-16 md:pt-20 dark:bg-bkk-900">
+      <div className="container-page">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-white md:text-5xl">
         {t("dashboard.title")}{" "}
-        <span className="text-brand-600">{t("dashboard.titleAccent")}</span>
+        <span className="text-bkksun">{t("dashboard.titleAccent")}</span>
       </h2>
 
       {/* Draft banner */}
@@ -109,44 +113,49 @@ export function ImpactDashboard() {
 
       {loading ? (
         <div className="mt-10 flex flex-col items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-brand-600" />
-          <p className="mt-3 text-sm text-ink-muted">{t("common.loading")}</p>
+          <Loader2 className="h-8 w-8 animate-spin text-white" />
+          <p className="mt-3 text-sm text-white/80">{t("common.loading")}</p>
         </div>
       ) : !data ? (
-        <div className="mt-10 text-center text-ink-muted">
+        <div className="mt-10 text-center text-white/80">
           <p>{t("dashboard.noData")}</p>
         </div>
       ) : (
         <>
           <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {data.impactStats.map((s) => {
+            {data.impactStats.map((s, si) => {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
-                <div key={s.label} className="card">
+                <BkkReveal key={s.label} delay={(si % 4) * 90}>
+                <div className={`bg-white p-5 shadow-elevated transition-transform hover:rotate-0 dark:bg-slate-900 ${BKK_CARD_RADII[si % BKK_CARD_RADII.length]} ${BKK_CARD_TILTS[si % BKK_CARD_TILTS.length]} ${si % 2 ? "md:translate-y-5" : ""}`}>
                   <div className="flex items-center justify-between">
-                    <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-300">
-                      <Icon className={`h-5 w-5 ${s.color || "text-brand-600"}`} aria-hidden="true" />
+                    <span className="grid h-10 w-10 place-items-center rounded-2xl bg-bkk-100 text-bkk-700 dark:bg-bkk-900/40 dark:text-bkk-200">
+                      <Icon className="h-5 w-5" aria-hidden="true" />
                     </span>
-                    <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+                    <BkkSticker
+                      tilt={si % 2 ? "rotate-2" : "-rotate-3"}
+                      className="!border-2 px-2.5 py-0.5 text-xs"
+                    >
                       <TrendingUp className="h-3 w-3" aria-hidden="true" />
                       {(s.delta?.match(/^[+-]?\d+/) ?? ["0"])[0]}
-                    </span>
+                    </BkkSticker>
                   </div>
-                  <div className="mt-4 text-3xl font-bold tracking-tight">
+                  <div className={`mt-4 font-display text-3xl font-bold tracking-tight md:text-4xl dark:text-white ${STAT_COLORS[si % STAT_COLORS.length]}`}>
                     {s.display ?? formatNumber(s.value)}
                   </div>
-                  <div className="mt-1 text-sm text-ink-muted">
+                  <div className="mt-1 text-sm font-medium text-ink-muted">
                     {t(IconToStatKey[s.icon])}
                   </div>
                 </div>
+                </BkkReveal>
               );
             })}
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <div className="card">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
-                <TrendingUp className="h-4 w-4 text-brand-600" aria-hidden="true" />
+            <div className="rounded-[2.5rem_2rem_2rem_3rem] bg-white p-6 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
+              <h3 className="flex items-center gap-2 font-display text-sm font-bold text-ink">
+                <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
                 {t("dashboard.monthly")}
               </h3>
               <ul className="mt-4 space-y-4">
@@ -162,9 +171,9 @@ export function ImpactDashboard() {
                           {formatNumber(p.value)} {suffix}
                         </span>
                       </div>
-                      <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-bkk-100 dark:bg-slate-700">
                         <div
-                          className="h-full rounded-full bg-brand-500"
+                          className="h-full rounded-full bg-bkk-500"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -195,15 +204,15 @@ export function ImpactDashboard() {
               )}
             </div>
 
-            <div className="card">
-              <h3 className="text-sm font-semibold text-ink">{t("dashboard.regions")}</h3>
+            <div className="rounded-[2rem_3rem_2.5rem_2rem] bg-white p-6 shadow-elevated transition-transform hover:rotate-0 md:-translate-y-3 md:rotate-1 dark:bg-slate-900">
+              <h3 className="font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topRegions.map((r) => (
                   <li
                     key={r.rank}
-                    className="flex items-start gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5 dark:border-slate-700"
+                    className="flex items-start gap-3 rounded-2xl border border-bkk-100 px-3 py-2.5 dark:border-slate-700"
                   >
-                    <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+                    <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-bkk-700 text-xs font-bold text-white">
                       {r.rank}
                     </span>
                     <div className="min-w-0 flex-1">
@@ -215,22 +224,22 @@ export function ImpactDashboard() {
               </ol>
             </div>
 
-            <div className="card">
-              <h3 className="text-sm font-semibold text-ink">{t("dashboard.volunteers")}</h3>
+            <div className="rounded-[3rem_2rem_2rem_2.5rem] bg-white p-6 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
+              <h3 className="font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topVolunteers.map((v) => (
                   <li
                     key={v.rank}
-                    className="flex items-center gap-3 rounded-lg border border-ink-line/60 px-3 py-2.5 dark:border-slate-700"
+                    className="flex items-center gap-3 rounded-2xl border border-bkk-100 px-3 py-2.5 dark:border-slate-700"
                   >
-                    <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+                    <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-bkk-700 text-xs font-bold text-white">
                       {v.rank}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-semibold text-ink">{v.name}</div>
                       <div className="text-xs text-ink-muted">{v.region}</div>
                     </div>
-                    <div className="text-sm font-bold text-brand-700">
+                    <div className="font-display text-sm font-bold text-bkk-700 dark:text-bkk-200">
                       {formatNumber(v.points)}
                       <span className="ml-1 text-[10px] font-medium text-ink-subtle">
                         {t("dashboard.volunteers.pts")}
@@ -243,11 +252,8 @@ export function ImpactDashboard() {
           </div>
         </>
       )}
-
-      {/* Action Buttons */}
-      <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
-
       </div>
+      <BkkCloudEdge top="bg-transparent" bottom="text-white dark:text-slate-900" />
     </section>
   );
 }

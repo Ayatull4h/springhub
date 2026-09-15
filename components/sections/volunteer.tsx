@@ -23,6 +23,7 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
+import { BKK_CARD_RADII, BkkCurve, BkkWeave, BkkTitleCloud, BkkCloudEdge } from "./bkk-decor";
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -125,10 +126,12 @@ export function VolunteerActivities() {
   );
 
   return (
-    <section id="community" className="container-page py-16">
-      <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
-        {t("volunteer.title")}{" "}
-        <span className="text-brand-600">{t("volunteer.titleAccent")}</span>
+    <section id="community" className="relative overflow-hidden bg-[#f6f1fb] pt-16 md:pt-20 dark:bg-slate-900/60">
+      <BkkWeave className="-left-16 top-24 -rotate-12 opacity-50" />
+      <div className="container-page relative z-10">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+        <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("volunteer.title")}{" "}
+        <span className="text-bkk-500">{t("volunteer.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("volunteer.description", {
@@ -141,18 +144,18 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <div className="mt-3 flex-1 card p-4">
+          <div className="mt-3 flex-1 rounded-3xl bg-white p-4 shadow-elevated dark:bg-slate-900">
             <ul className="grid gap-3 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
               return (
-                <li key={i} className="border rounded-lg border-ink-line/60 bg-white p-3 dark:border-slate-700 dark:bg-slate-800">
+                <li key={i} className={`border border-ink-line/60 bg-white p-3 shadow-card transition-transform hover:rotate-0 hover:shadow-elevated dark:border-slate-700 dark:bg-slate-800 ${BKK_CARD_RADII[i % BKK_CARD_RADII.length]} ${i % 2 ? "md:rotate-1" : "md:-rotate-1"}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="text-sm font-semibold text-ink">{a.user}</div>
                       <div className="text-xs text-ink-muted">{a.action}</div>
                     </div>
-                    <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+                    <span className="chip bg-bkk-100 font-bold text-bkk-800 dark:bg-bkk-900/40 dark:text-bkk-200">
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>
@@ -285,7 +288,7 @@ export function VolunteerActivities() {
 
           <div className="mt-5">
             {eligible ? (
-              <Link href="/projects/new" className="btn-primary w-full">
+              <Link href="/projects/new" className="btn-primary w-full -rotate-1 shadow-[4px_4px_0_rgba(11,15,21,0.85)] transition hover:rotate-0">
                 {t("volunteer.registerProject")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
@@ -307,6 +310,8 @@ export function VolunteerActivities() {
       </div>
 
       <PointsGuideModal open={showPoints} onClose={() => setShowPoints(false)} />
+      </div>
+      <BkkCloudEdge top="bg-transparent" bottom="text-white dark:text-slate-900" />
     </section>
   );
 }

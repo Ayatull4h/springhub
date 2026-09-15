@@ -7,6 +7,7 @@ import {
   MapPin, TreePine, Droplets, Users, FolderOpen,
 } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
+import { BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
 
 type ProjectItem = {
   id?: string;
@@ -62,7 +63,7 @@ export function FeaturedProjects() {
   return (
     <>
       <div>
-        <h3 className="text-lg font-bold tracking-tight text-ink">
+        <h3 className="font-display text-xl font-bold tracking-tight text-bkk-700 dark:text-white">
           Proyek Unggulan
         </h3>
         <p className="mt-1 text-xs text-ink-muted">
@@ -79,13 +80,13 @@ export function FeaturedProjects() {
               </Link>
             </div>
           )}
-          {visible.map((p) => {
+          {visible.map((p, pi) => {
             const info = TYPE_INFO[p.typeId] || { icon: TreePine, label: p.typeId };
             const Icon = info.icon;
             const progress = p.goalAmount > 0 ? Math.round((p.raisedAmount / p.goalAmount) * 100) : 0;
             return (
-              <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
-                <article className="card flex flex-col overflow-hidden transition-all hover:shadow-lg">
+              <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className={`group block transition-transform hover:rotate-0 ${BKK_CARD_TILTS[pi % BKK_CARD_TILTS.length]}`}>
+                <article className={`flex flex-col overflow-hidden bg-white shadow-card transition-all hover:shadow-elevated dark:bg-slate-900 ${BKK_CARD_RADII[pi % BKK_CARD_RADII.length]}`}>
                   <div className="flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
                     {p.featuredPhoto?.url ? (
                       <img src={p.featuredPhoto.url} alt={p.title} className="h-full w-full object-cover" />
@@ -94,7 +95,7 @@ export function FeaturedProjects() {
                     )}
                   </div>
                   <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-                    <span className="mb-2 inline-flex w-fit rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-900/30 dark:text-sky-300">
+                    <span className="mb-2 inline-flex w-fit rounded-full bg-bkk-100 px-2.5 py-0.5 text-xs font-bold text-bkk-800 dark:bg-bkk-900/40 dark:text-bkk-200">
                       {info.label}
                     </span>
                     <h3 className="text-base font-semibold text-ink group-hover:text-sky-600 transition-colors">

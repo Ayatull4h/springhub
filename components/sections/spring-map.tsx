@@ -20,6 +20,7 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
+import { BkkCurve, BkkWeave, BkkTitleCloud } from "./bkk-decor";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -453,10 +454,12 @@ const formTitleI18nKey = (slug: string): string => {
   const visibleList = visible.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <section id="map" className="container-page py-16">
-      <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
-        {t("map.title")}{" "}
-        <span className="text-brand-600">{t("map.titleAccent")}</span>
+    <section id="map" className="relative overflow-hidden bg-white pt-16 md:pt-20 dark:bg-slate-900">
+      <BkkWeave className="-right-14 -top-14 rotate-12 opacity-60" />
+      <div className="container-page relative z-10">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("map.title")}{" "}
+        <span className="text-bkk-500">{t("map.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("map.description")}
@@ -474,7 +477,7 @@ const formTitleI18nKey = (slug: string): string => {
       </div>
 
       {/* Full-width map */}
-      <div className="card mt-6 p-0 relative">
+      <div className="relative mt-8 overflow-hidden rounded-[3rem_4rem_3rem_4rem] bg-white shadow-elevated ring-4 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-ink">{t("map.show")}</span>
@@ -712,6 +715,8 @@ const formTitleI18nKey = (slug: string): string => {
       </div>
       <PointsGuideModal open={showGuide} onClose={() => setShowGuide(false)} />
       <FloatingPointsButton />
+      </div>
+      <BkkCurve top="bg-transparent" bottom="text-[#f6f1fb] dark:text-slate-900" accent="text-bkkblue-200" />
     </section>
   );
 }

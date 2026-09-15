@@ -9,6 +9,7 @@ import { LearningHub } from "@/components/sections/learning-hub";
 import { RealActionHeader } from "@/components/sections/real-action-header";
 import { MediaSection } from "@/components/sections/media";
 import { DonateSection } from "@/components/sections/donate";
+import { BkkCurve } from "@/components/sections/bkk-decor";
 export default function HomePage() {
   return (
     <>
@@ -18,7 +19,8 @@ export default function HomePage() {
       <VolunteerActivities />
       <EventSchedule />
 
-      <section className="container-page py-16">
+      <section className="bg-[#c9f0dd] pt-16 md:pt-20 dark:bg-slate-900">
+        <div className="container-page">
         <RealActionHeader />
 
         <div className="mt-10 lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-12">
@@ -29,6 +31,8 @@ export default function HomePage() {
             <DonateSection />
           </div>
         </div>
+        </div>
+        <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-bkk-200" />
       </section>
 
       <PartnerSection />

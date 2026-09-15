@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Lexend } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
@@ -14,6 +14,7 @@ import { ErrorLoggerInit } from "@/components/error-logger-init";
 
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const lexend = Lexend({ subsets: ["latin"], weight: ["400", "600", "700", "800"], variable: "--font-lexend" });
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -86,7 +87,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${lexend.variable}`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

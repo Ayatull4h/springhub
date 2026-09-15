@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { CalendarDays, MapPin, Users, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { BkkCurve, BkkTitleCloud } from "./bkk-decor";
 
 type EventItem = {
   id: string;
@@ -202,21 +203,25 @@ export function EventSchedule() {
 
   if (items.length === 0) {
     return (
-      <section id="jadwal" className="container-page py-16">
-        <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
-          {t("event.title", "Jadwal")} <span className="text-brand-600">{t("event.titleAccent", "Mendatang")}</span>
+      <section id="jadwal" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
+      <div className="container-page">
+        <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+          <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
           {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
         </p>
+      </div>
+      <BkkCurve top="bg-transparent" bottom="text-[#c9f0dd] dark:text-slate-900" accent="text-bkkpink-500" />
       </section>
     );
   }
 
   return (
-    <section id="jadwal" className="container-page py-16">
-      <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
-        {t("event.title", "Jadwal")} <span className="text-brand-600">{t("event.titleAccent", "Mendatang")}</span>
+    <section id="jadwal" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
+      <div className="container-page">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("event.description", "Ikut restorasi mata air dan tanam pohon bulan depan. Daftar langsung, tanpa kuota.")}
@@ -314,6 +319,8 @@ export function EventSchedule() {
       </div>
 
       {popup && <RegisterPopup event={popup} onClose={() => setPopup(null)} />}
+      </div>
+      <BkkCurve top="bg-transparent" bottom="text-[#c9f0dd] dark:text-slate-900" accent="text-bkkpink-500" />
     </section>
   );
 }
