@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper, ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve } from "./bkk-decor";
+import { BkkCurve, BkkTitleCloud } from "./bkk-decor";
 
 type MediaItem = {
   id: string;
@@ -192,8 +192,8 @@ export function MediaSection() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-display text-3xl font-bold tracking-tight text-white md:text-5xl">
-            {t("media.title")}{" "}
-            <span className="text-bkksun">{t("media.titleAccent")}</span>
+            <BkkTitleCloud cloudClass="text-bkk-700">{t("media.title")}{" "}
+            <span className="text-bkksun">{t("media.titleAccent")}</span></BkkTitleCloud>
           </h2>
           <p className="mt-2 max-w-2xl text-white/85">
             {t("media.description")}

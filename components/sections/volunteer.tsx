@@ -23,7 +23,7 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BKK_CARD_RADII, BkkCurve, BkkWeave } from "./bkk-decor";
+import { BKK_CARD_RADII, BkkCurve, BkkWeave, BkkTitleCloud, BkkCloudEdge } from "./bkk-decor";
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -130,8 +130,8 @@ export function VolunteerActivities() {
       <BkkWeave className="-left-16 top-24 -rotate-12 opacity-50" />
       <div className="container-page relative z-10">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        {t("volunteer.title")}{" "}
-        <span className="text-bkk-500">{t("volunteer.titleAccent")}</span>
+        <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("volunteer.title")}{" "}
+        <span className="text-bkk-500">{t("volunteer.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("volunteer.description", {
@@ -311,7 +311,7 @@ export function VolunteerActivities() {
 
       <PointsGuideModal open={showPoints} onClose={() => setShowPoints(false)} />
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-bkkpink-500" />
+      <BkkCloudEdge top="bg-transparent" bottom="text-white dark:text-slate-900" />
     </section>
   );
 }

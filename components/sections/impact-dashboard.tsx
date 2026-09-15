@@ -5,7 +5,7 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { BkkReveal, BkkCurve, BkkSticker, BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
+import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
 
 const STAT_COLORS = ["text-bkk-700", "text-bkkpink-600", "text-bkkblue-600", "text-emerald-600"];
 
@@ -253,7 +253,7 @@ export function ImpactDashboard() {
         </>
       )}
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-bkkpink-500" />
+      <BkkCloudEdge top="bg-transparent" bottom="text-white dark:text-slate-900" />
     </section>
   );
 }

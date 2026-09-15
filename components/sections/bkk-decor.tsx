@@ -45,6 +45,58 @@ export function BkkCurve({
   );
 }
 
+/** Tepi awan bergerombol antar section (lebih puffy dari kurva). */
+export function BkkCloudEdge({
+  top = "bg-white",
+  bottom = "text-bkk-700",
+}: {
+  top?: string;
+  bottom?: string;
+}) {
+  return (
+    <div aria-hidden="true" className={`pointer-events-none leading-[0] ${top}`}>
+      <svg
+        viewBox="0 0 1440 120"
+        preserveAspectRatio="none"
+        className="h-[70px] w-full md:h-[130px]"
+      >
+        <path
+          className={bottom}
+          fill="currentColor"
+          d="M0,120 L0,80 Q35,50 75,68 Q100,28 155,52 Q195,16 250,52 Q290,20 330,60 Q380,30 430,64 Q470,32 520,62 Q570,30 620,64 Q670,34 720,62 Q770,30 820,62 Q870,32 920,62 Q970,30 1020,64 Q1070,34 1120,62 Q1170,32 1220,64 Q1270,36 1320,62 Q1380,42 1440,68 L1440,120 Z"
+        />
+      </svg>
+    </div>
+  );
+}
+
+/** Lencana awan di belakang judul section. */
+export function BkkTitleCloud({
+  children,
+  cloudClass = "text-white",
+  className = "",
+}: {
+  children: ReactNode;
+  cloudClass?: string;
+  className?: string;
+}) {
+  return (
+    <span className={`relative inline-block px-10 py-3 md:px-14 md:py-4 ${className}`}>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 200 64"
+        preserveAspectRatio="none"
+        className={`absolute inset-0 h-full w-full -rotate-1 ${cloudClass}`}
+      >
+        <path
+          fill="currentColor"
+          d="M38,58 Q12,58 14,38 Q0,34 10,20 Q4,6 24,10 Q32,-2 48,8 Q62,0 70,12 Q88,4 96,16 Q114,8 120,20 Q140,12 146,26 Q166,20 168,34 Q188,32 184,46 Q194,52 178,58 Z"
+        />
+      </svg>
+      <span className="relative">{children}</span>
+    </span>
+  );
+}
 /** Anyaman rotan kuning (motif khas BKK) untuk sudut section. */
 export function BkkWeave({ className = "" }: { className?: string }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
@@ -84,12 +136,12 @@ export function BkkSticker({  children,
   );
 }
 
-/** Radius organik asimetris + kemiringan selang-seling untuk kartu. */
+/** Radius organik puffy + kemiringan selang-seling untuk kartu. */
 export const BKK_CARD_RADII = [
-  "rounded-[2rem_3rem_2rem_3rem]",
-  "rounded-[3rem_2rem_3rem_2rem]",
-  "rounded-[2.5rem_2rem_3rem_2rem]",
-  "rounded-[2rem_2.5rem_2rem_3rem]",
+  "rounded-[46%_54%_52%_48%/12%_14%_12%_14%]",
+  "rounded-[54%_46%_48%_52%/14%_12%_14%_12%]",
+  "rounded-[48%_52%_46%_54%/13%_15%_11%_13%]",
+  "rounded-[52%_48%_54%_46%/11%_13%_15%_11%]",
 ];
 
 export const BKK_CARD_TILTS = [

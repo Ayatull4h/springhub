@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { CalendarDays, MapPin, Users, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve } from "./bkk-decor";
+import { BkkCurve, BkkTitleCloud } from "./bkk-decor";
 
 type EventItem = {
   id: string;
@@ -206,7 +206,7 @@ export function EventSchedule() {
       <section id="jadwal" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
         <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-          {t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span>
+          <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
           {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
@@ -221,7 +221,7 @@ export function EventSchedule() {
     <section id="jadwal" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        {t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span>
+        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("event.description", "Ikut restorasi mata air dan tanam pohon bulan depan. Daftar langsung, tanpa kuota.")}

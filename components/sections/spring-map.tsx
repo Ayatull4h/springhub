@@ -20,7 +20,7 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BkkCurve, BkkWeave } from "./bkk-decor";
+import { BkkCurve, BkkWeave, BkkTitleCloud } from "./bkk-decor";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -458,8 +458,8 @@ const formTitleI18nKey = (slug: string): string => {
       <BkkWeave className="-right-14 -top-14 rotate-12 opacity-60" />
       <div className="container-page relative z-10">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        {t("map.title")}{" "}
-        <span className="text-bkk-500">{t("map.titleAccent")}</span>
+        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("map.title")}{" "}
+        <span className="text-bkk-500">{t("map.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("map.description")}

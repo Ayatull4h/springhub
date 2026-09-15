@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve, BKK_CARD_RADII, BKK_CARD_TILTS } from "./bkk-decor";
+import { BkkCurve, BKK_CARD_RADII, BKK_CARD_TILTS, BkkTitleCloud } from "./bkk-decor";
 
 type CourseItem = {
   id: string;
@@ -66,8 +66,8 @@ export function LearningHub() {
     <section id="learn" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        {t("learn.title")}{" "}
-        <span className="text-brand-600">{t("learn.titleAccent")}</span>
+        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("learn.title")}{" "}
+        <span className="text-brand-600">{t("learn.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
         {t("learn.description")}
