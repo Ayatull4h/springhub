@@ -563,7 +563,7 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         )}
 
-        <div className="card lg:col-span-6">
+        <div className="rounded-[2.5rem_2rem_3rem_2rem] bg-white p-5 shadow-card transition-transform hover:rotate-0 md:-rotate-[0.5deg] dark:bg-slate-900">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
@@ -644,7 +644,7 @@ const formTitleI18nKey = (slug: string): string => {
           )}
         </div>
 
-        <div className="card bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 lg:col-span-6">
+        <div className="rounded-[2rem_3rem_2rem_2.5rem] bg-gradient-to-br from-lagoon-100 to-white p-5 shadow-card transition-transform hover:rotate-0 md:rotate-[0.5deg] dark:from-slate-800 dark:to-slate-900 lg:col-span-6">
           <div className="flex items-center justify-between gap-2">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ClipboardList className="h-4 w-4 text-brand-600" />

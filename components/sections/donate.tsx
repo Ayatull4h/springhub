@@ -56,7 +56,7 @@ export function DonateSection() {
   );
 
   return (
-    <div id="donate" className="rounded-3xl bg-white shadow-elevated ring-2 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
+    <div id="donate" className="rounded-[3rem_2rem_3rem_2rem] bg-white shadow-elevated ring-4 ring-tang-200 transition-transform hover:rotate-0 md:rotate-1 dark:bg-slate-900 dark:ring-slate-700">
       <div className="px-5 pb-5 pt-5">
         <div className="mb-4 flex items-center gap-5 text-sm">
           <div>

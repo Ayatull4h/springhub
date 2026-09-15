@@ -267,7 +267,7 @@ export function EventSchedule() {
               }}
             >
               {/* Kaca glassmorphism */}
-              <div className="w-[266px] overflow-hidden rounded-2xl border border-white/40 bg-white/60 shadow-xl backdrop-blur-md dark:border-slate-600/50 dark:bg-slate-800/60 sm:w-[290px]">
+              <div className="w-[266px] overflow-hidden rounded-[2rem_2.5rem_1.8rem_2.2rem] border border-white/40 bg-white/60 shadow-xl backdrop-blur-md dark:border-slate-600/50 dark:bg-slate-800/60 sm:w-[290px]">
                 <div className="h-28 overflow-hidden">
                   <EventThumb item={item} />
                 </div>

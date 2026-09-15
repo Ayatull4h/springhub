@@ -69,7 +69,7 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer className="bg-bkk-700 text-white dark:bg-bkk-900">
+    <footer className="bg-lagoon-700 text-white">
       <div className="container-page grid gap-10 py-14 md:grid-cols-12">
         <div className="md:col-span-4">
           <Logo tone="dark" />

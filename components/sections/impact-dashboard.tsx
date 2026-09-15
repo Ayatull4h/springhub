@@ -105,11 +105,11 @@ export function ImpactDashboard() {
   ];
 
   return (
-    <section id="dashboard" className="bg-bkk-700 pt-16 md:pt-20 dark:bg-bkk-900">
+    <section id="dashboard" className="bg-cream pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
-      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-white md:text-5xl">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         {t("dashboard.title")}{" "}
-        <span className="text-bkksun">{t("dashboard.titleAccent")}</span>
+        <span className="text-tang-600">{t("dashboard.titleAccent")}</span>
       </h2>
 
       {/* Draft banner */}
@@ -119,11 +119,11 @@ export function ImpactDashboard() {
 
       {loading ? (
         <div className="mt-10 flex flex-col items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-white" />
-          <p className="mt-3 text-sm text-white/80">{t("common.loading")}</p>
+          <Loader2 className="h-8 w-8 animate-spin text-bkk-700 dark:text-white" />
+          <p className="mt-3 text-sm text-bkk-700/70 dark:text-white/80">{t("common.loading")}</p>
         </div>
       ) : !data ? (
-        <div className="mt-10 text-center text-white/80">
+        <div className="mt-10 text-center text-bkk-700/70 dark:text-white/80">
           <p>{t("dashboard.noData")}</p>
         </div>
       ) : (

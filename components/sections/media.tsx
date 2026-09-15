@@ -284,7 +284,7 @@ export function MediaSection() {
                       if (item.linkUrl) window.open(item.linkUrl, item.linkUrl.startsWith("http") ? "_blank" : "_self", "noreferrer");
                     }}
                     onKeyDown={(e) => { if (o !== 0 && (e.key === "Enter" || e.key === " ")) goTo(i); }}
-                    className={`group block w-[266px] rounded-3xl bg-white p-4 shadow-elevated dark:bg-slate-900 ${o !== 0 ? "cursor-pointer" : ""} sm:w-[290px]`}
+                    className={`group block w-[266px] rounded-[2.2rem_2.8rem_2rem_2.6rem] bg-white p-4 shadow-elevated transition-transform hover:rotate-0 dark:bg-slate-900 ${o !== 0 ? "cursor-pointer" : ""} sm:w-[290px] ${o === 0 ? "" : o < 0 ? "md:-rotate-2" : "md:rotate-2"}`}
                   >
                     <div className="-mx-4 -mt-4 mb-3 h-28 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
                       <MediaThumb item={item} />
@@ -320,7 +320,7 @@ export function MediaSection() {
         </>
       )}
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-bkk-700 dark:text-bkk-900" accent="text-tang-500" />
+      <BkkCurve top="bg-transparent" bottom="text-lagoon-700" accent="text-tang-500" />
     </section>
   );
 }

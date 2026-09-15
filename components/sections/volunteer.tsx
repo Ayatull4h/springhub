@@ -144,7 +144,7 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <div className="mt-3 flex-1 rounded-3xl bg-white p-4 shadow-elevated dark:bg-slate-900">
+          <div className="mt-3 flex-1 rounded-[2.5rem_3.5rem_2rem_3rem] bg-white p-4 shadow-elevated transition-transform hover:rotate-0 md:-rotate-[0.5deg] dark:bg-slate-900">
             <ul className="grid gap-3 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
@@ -229,7 +229,7 @@ export function VolunteerActivities() {
         </div>
         </div>
 
-        <div className="card flex flex-col bg-gradient-to-br from-brand-50 to-white dark:from-brand-900/30 dark:to-slate-900 lg:col-span-5 h-full">
+        <div className="flex flex-col rounded-[3.5rem_2rem_2.5rem_3rem] bg-gradient-to-br from-tang-100 to-cream p-5 shadow-elevated transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full dark:from-slate-800 dark:to-slate-900">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-ink">
               {t("volunteer.submitProject")}
