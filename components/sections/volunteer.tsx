@@ -23,6 +23,7 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
+import { BkkCurve, BkkWeave } from "./bkk-decor";
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -125,8 +126,9 @@ export function VolunteerActivities() {
   );
 
   return (
-    <section id="community" className="bg-[#f6f1fb] py-16 md:py-20 dark:bg-slate-900/60">
-      <div className="container-page">
+    <section id="community" className="relative overflow-hidden bg-[#f6f1fb] py-16 md:py-20 dark:bg-slate-900/60">
+      <BkkWeave className="-left-12 top-16 -rotate-12 opacity-70" />
+      <div className="container-page relative">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         {t("volunteer.title")}{" "}
         <span className="text-bkk-500">{t("volunteer.titleAccent")}</span>
@@ -147,7 +149,7 @@ export function VolunteerActivities() {
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
               return (
-                <li key={i} className="border rounded-lg border-ink-line/60 bg-white p-3 dark:border-slate-700 dark:bg-slate-800">
+                <li key={i} className={`rounded-2xl border border-ink-line/60 bg-white p-3 shadow-card transition-transform hover:rotate-0 hover:shadow-elevated dark:border-slate-700 dark:bg-slate-800 ${i % 2 ? "md:rotate-1" : "md:-rotate-1"}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="text-sm font-semibold text-ink">{a.user}</div>
@@ -309,6 +311,7 @@ export function VolunteerActivities() {
 
       <PointsGuideModal open={showPoints} onClose={() => setShowPoints(false)} />
       </div>
+      <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-bkkpink-500" />
     </section>
   );
 }

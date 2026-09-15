@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper, ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { BkkCurve } from "./bkk-decor";
 
 type MediaItem = {
   id: string;
@@ -186,15 +187,15 @@ export function MediaSection() {
   };
 
   return (
-    <section id="media" className="bg-[#f6f1fb] py-16 md:py-20 dark:bg-slate-900/60">
-      <div className="container-page">
+    <section id="media" className="relative overflow-hidden bg-bkkblue-500 py-16 md:py-20 dark:bg-bkkblue-600">
+      <div className="container-page relative">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-white md:text-5xl">
             {t("media.title")}{" "}
-            <span className="text-bkk-500">{t("media.titleAccent")}</span>
+            <span className="text-bkksun">{t("media.titleAccent")}</span>
           </h2>
-          <p className="mt-2 max-w-2xl text-ink-muted">
+          <p className="mt-2 max-w-2xl text-white/85">
             {t("media.description")}
           </p>
         </div>
@@ -202,7 +203,7 @@ export function MediaSection() {
           href="https://youtube.com/@jagasemesta"
           target="_blank"
           rel="noreferrer"
-          className="btn-secondary"
+          className="rounded-full bg-white px-5 py-2.5 font-display text-sm font-bold text-bkk-800 shadow-lg transition hover:bg-bkk-50"
         >
           {t("media.visitYoutube")}
           <ExternalLink className="h-3.5 w-3.5" />
@@ -227,19 +228,19 @@ export function MediaSection() {
       ) : (
         <>
           <div className="mt-6 flex items-center justify-end gap-2">
-            <span className="mr-auto text-xs text-ink-subtle">
+            <span className="mr-auto text-xs text-white/70">
               {page + 1} / {items.length}
             </span>
             <button
               onClick={goPrev}
-              className="rounded-full border border-ink-line p-2 text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white"
+              className="rounded-full border border-white/40 p-2 text-white transition hover:bg-white/15"
               aria-label="Sebelumnya"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               onClick={goNext}
-              className="rounded-full border border-ink-line p-2 text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white"
+              className="rounded-full border border-white/40 p-2 text-white transition hover:bg-white/15"
               aria-label="Berikutnya"
             >
               <ChevronRight className="h-4 w-4" />
@@ -283,7 +284,7 @@ export function MediaSection() {
                       if (item.linkUrl) window.open(item.linkUrl, item.linkUrl.startsWith("http") ? "_blank" : "_self", "noreferrer");
                     }}
                     onKeyDown={(e) => { if (o !== 0 && (e.key === "Enter" || e.key === " ")) goTo(i); }}
-                    className={`card group block w-[266px] ${o !== 0 ? "cursor-pointer" : ""} sm:w-[290px]`}
+                    className={`group block w-[266px] rounded-3xl bg-white p-4 shadow-elevated dark:bg-slate-900 ${o !== 0 ? "cursor-pointer" : ""} sm:w-[290px]`}
                   >
                     <div className="-mx-4 -mt-4 mb-3 h-28 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
                       <MediaThumb item={item} />
@@ -311,7 +312,7 @@ export function MediaSection() {
               <button
                 key={i}
                 onClick={() => { goTo(i); }}
-                className={`h-2 rounded-full transition-all ${i === page ? "w-6 bg-brand-600" : "w-2 bg-slate-300 hover:bg-slate-400 dark:bg-slate-600"}`}
+                className={`h-2 rounded-full transition-all ${i === page ? "w-6 bg-white" : "w-2 bg-white/40 hover:bg-white/70"}`}
                 aria-label={`Ke slide ${i + 1}`}
               />
             ))}
@@ -319,6 +320,7 @@ export function MediaSection() {
         </>
       )}
       </div>
+      <BkkCurve top="bg-transparent" bottom="text-bkk-700 dark:text-bkk-900" accent="text-bkksun" />
     </section>
   );
 }

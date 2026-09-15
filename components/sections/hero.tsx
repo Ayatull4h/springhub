@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkWave } from "./bkk-decor";
+import { BkkCurve } from "./bkk-decor";
 
 const HERO_IMG =
   "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=2000&q=70";
@@ -49,7 +49,7 @@ export function Hero() {
           </Link>
         </div>
       </div>
-      <BkkWave className="relative text-white dark:text-slate-900" />
+      <BkkCurve top="bg-transparent" bottom="text-bkk-700" accent="text-bkk-200" />
     </section>
   );
 }

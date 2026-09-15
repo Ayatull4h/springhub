@@ -3,25 +3,83 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /**
- * Dekor gaya BKKCAW untuk landing (staging): pembatas ombak dan
- * reveal-on-scroll. Satu file, tanpa dependensi baru.
+ * Sistem abstrak gaya BKKCAW untuk landing (staging): pita kurva diagonal
+ * berlapis, anyaman rotan, stiker miring, dan reveal-on-scroll.
+ * Satu file, tanpa dependensi baru, tanpa aset gambar.
  */
 
-/** Pembatas ombak antar section — fill="currentColor", warna via text-*. */
-export function BkkWave({ className = "", flip = false }: { className?: string; flip?: boolean }) {
+/**
+ * Pembatas pita kurva raksasa antar section — meniru pita diagonal BKK
+ * (mis. lavender di atas ungu). `top` = bg section ATAS, `bottom` = warna
+ * section BAWAH, `accent` = pita belakang.
+ */
+export function BkkCurve({
+  top = "bg-white",
+  bottom = "text-bkk-700",
+  accent = "text-bkk-200",
+}: {
+  top?: string;
+  bottom?: string;
+  accent?: string;
+}) {
   return (
-    <div aria-hidden="true" className={`pointer-events-none leading-[0] ${className}`}>
+    <div aria-hidden="true" className={`pointer-events-none leading-[0] ${top}`}>
       <svg
-        viewBox="0 0 1440 90"
+        viewBox="0 0 1440 120"
         preserveAspectRatio="none"
-        className={`h-[46px] w-full md:h-[90px] ${flip ? "rotate-180" : ""}`}
+        className="h-[64px] w-full md:h-[120px]"
       >
         <path
+          className={accent}
           fill="currentColor"
-          d="M0,48 C240,90 420,0 720,32 C1020,64 1200,88 1440,40 L1440,90 L0,90 Z"
+          opacity="0.55"
+          d="M0,58 C300,112 620,8 920,44 C1160,74 1320,96 1440,58 L1440,120 L0,120 Z"
+        />
+        <path
+          className={bottom}
+          fill="currentColor"
+          d="M0,76 C260,122 560,30 880,60 C1150,86 1310,106 1440,74 L1440,120 L0,120 Z"
         />
       </svg>
     </div>
+  );
+}
+
+/** Anyaman rotan kuning (motif khas BKK) untuk sudut section. */
+export function BkkWeave({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 220 220"
+      className={`pointer-events-none absolute h-44 w-44 md:h-56 md:w-56 ${className}`}
+    >
+      <defs>
+        <pattern id="bkk-weave" width="24" height="24" patternUnits="userSpaceOnUse">
+          <path d="M0,8 H24 M0,16 H24" stroke="#FFC53D" strokeWidth="5" />
+          <path d="M8,0 V24 M16,0 V24" stroke="#FFE3A3" strokeWidth="5" />
+        </pattern>
+      </defs>
+      <rect width="220" height="220" fill="url(#bkk-weave)" />
+    </svg>
+  );
+}
+
+/** Stiker pil miring tepi putih ala stiker festival. */
+export function BkkSticker({
+  children,
+  className = "",
+  tilt = "-rotate-3",
+}: {
+  children: ReactNode;
+  className?: string;
+  tilt?: string;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full border-4 border-white bg-bkksun px-4 py-1.5 font-display text-sm font-bold text-bkk-900 shadow-[0_6px_16px_rgba(11,15,21,0.28)] ${tilt} ${className}`}
+    >
+      {children}
+    </span>
   );
 }
 

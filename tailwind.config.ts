@@ -39,6 +39,12 @@ const config: Config = {
           600: "#1583cf",
         },
         bkksun: "#ffc53d",
+        bkkpink: {
+          100: "#fde3ef",
+          500: "#ef4da0",
+          600: "#d63a86",
+          700: "#b42a6c",
+        },
         ink: {
           DEFAULT: "#0b0f15",
           muted: "#475569",

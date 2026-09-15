@@ -20,6 +20,7 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
+import { BkkCurve, BkkWeave } from "./bkk-decor";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -453,8 +454,9 @@ const formTitleI18nKey = (slug: string): string => {
   const visibleList = visible.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <section id="map" className="bg-white py-16 md:py-20 dark:bg-slate-900">
-      <div className="container-page">
+    <section id="map" className="relative overflow-hidden bg-white py-16 md:py-20 dark:bg-slate-900">
+      <BkkWeave className="-right-10 -top-10 rotate-12 opacity-80" />
+      <div className="container-page relative">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         {t("map.title")}{" "}
         <span className="text-bkk-500">{t("map.titleAccent")}</span>
@@ -714,6 +716,7 @@ const formTitleI18nKey = (slug: string): string => {
       <PointsGuideModal open={showGuide} onClose={() => setShowGuide(false)} />
       <FloatingPointsButton />
       </div>
+      <BkkCurve top="bg-transparent" bottom="text-[#f6f1fb] dark:text-slate-900" accent="text-bkkblue-200" />
     </section>
   );
 }

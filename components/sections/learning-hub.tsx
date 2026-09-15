@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { BkkCurve } from "./bkk-decor";
 
 type CourseItem = {
   id: string;
@@ -151,6 +152,7 @@ export function LearningHub() {
         </div>
       )}
       </div>
+      <BkkCurve top="bg-transparent" bottom="text-bkkblue-500 dark:text-bkkblue-600" accent="text-bkksun" />
     </section>
   );
 }

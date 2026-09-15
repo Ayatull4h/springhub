@@ -5,7 +5,9 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { BkkReveal } from "./bkk-decor";
+import { BkkReveal, BkkCurve } from "./bkk-decor";
+
+const STAT_COLORS = ["text-bkk-700", "text-bkkpink-600", "text-bkkblue-600", "text-emerald-600"];
 
 
 const iconMap: Record<string, typeof Droplets> = {
@@ -121,10 +123,10 @@ export function ImpactDashboard() {
       ) : (
         <>
           <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {data.impactStats.map((s) => {
+            {data.impactStats.map((s, si) => {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
-                <BkkReveal key={s.label}>
+                <BkkReveal key={s.label} delay={(si % 4) * 90}>
                 <div className="rounded-3xl bg-white p-5 shadow-elevated dark:bg-slate-900">
                   <div className="flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-2xl bg-bkk-100 text-bkk-700 dark:bg-bkk-900/40 dark:text-bkk-200">
@@ -135,7 +137,7 @@ export function ImpactDashboard() {
                       {(s.delta?.match(/^[+-]?\d+/) ?? ["0"])[0]}
                     </span>
                   </div>
-                  <div className="mt-4 font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-4xl dark:text-white">
+                  <div className={`mt-4 font-display text-3xl font-bold tracking-tight md:text-4xl dark:text-white ${STAT_COLORS[si % STAT_COLORS.length]}`}>
                     {s.display ?? formatNumber(s.value)}
                   </div>
                   <div className="mt-1 text-sm font-medium text-ink-muted">
@@ -248,6 +250,7 @@ export function ImpactDashboard() {
         </>
       )}
       </div>
+      <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-bkkpink-500" />
     </section>
   );
 }

@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { CalendarDays, MapPin, Users, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { BkkCurve } from "./bkk-decor";
 
 type EventItem = {
   id: string;
@@ -211,6 +212,7 @@ export function EventSchedule() {
           {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
         </p>
       </div>
+      <BkkCurve top="bg-transparent" bottom="text-[#c9f0dd] dark:text-slate-900" accent="text-bkkpink-500" />
       </section>
     );
   }
@@ -318,6 +320,7 @@ export function EventSchedule() {
 
       {popup && <RegisterPopup event={popup} onClose={() => setPopup(null)} />}
       </div>
+      <BkkCurve top="bg-transparent" bottom="text-[#c9f0dd] dark:text-slate-900" accent="text-bkkpink-500" />
     </section>
   );
 }
