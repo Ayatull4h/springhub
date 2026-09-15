@@ -5,7 +5,7 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { BkkReveal, BkkCurve } from "./bkk-decor";
+import { BkkReveal, BkkCurve, BkkSticker } from "./bkk-decor";
 
 const STAT_COLORS = ["text-bkk-700", "text-bkkpink-600", "text-bkkblue-600", "text-emerald-600"];
 
@@ -132,10 +132,13 @@ export function ImpactDashboard() {
                     <span className="grid h-10 w-10 place-items-center rounded-2xl bg-bkk-100 text-bkk-700 dark:bg-bkk-900/40 dark:text-bkk-200">
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </span>
-                    <span className="chip bg-bkk-50 text-bkk-700 dark:bg-bkk-900/40 dark:text-bkk-200">
+                    <BkkSticker
+                      tilt={si % 2 ? "rotate-2" : "-rotate-3"}
+                      className="!border-2 px-2.5 py-0.5 text-xs"
+                    >
                       <TrendingUp className="h-3 w-3" aria-hidden="true" />
                       {(s.delta?.match(/^[+-]?\d+/) ?? ["0"])[0]}
-                    </span>
+                    </BkkSticker>
                   </div>
                   <div className={`mt-4 font-display text-3xl font-bold tracking-tight md:text-4xl dark:text-white ${STAT_COLORS[si % STAT_COLORS.length]}`}>
                     {s.display ?? formatNumber(s.value)}

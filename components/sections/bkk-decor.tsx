@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 /**
  * Sistem abstrak gaya BKKCAW untuk landing (staging): pita kurva diagonal
@@ -47,6 +47,8 @@ export function BkkCurve({
 
 /** Anyaman rotan kuning (motif khas BKK) untuk sudut section. */
 export function BkkWeave({ className = "" }: { className?: string }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const pid = `bkk-weave-${uid}`;
   return (
     <svg
       aria-hidden="true"
@@ -54,12 +56,12 @@ export function BkkWeave({ className = "" }: { className?: string }) {
       className={`pointer-events-none absolute h-44 w-44 md:h-56 md:w-56 ${className}`}
     >
       <defs>
-        <pattern id="bkk-weave" width="24" height="24" patternUnits="userSpaceOnUse">
+        <pattern id={pid} width="24" height="24" patternUnits="userSpaceOnUse">
           <path d="M0,8 H24 M0,16 H24" stroke="#FFC53D" strokeWidth="5" />
           <path d="M8,0 V24 M16,0 V24" stroke="#FFE3A3" strokeWidth="5" />
         </pattern>
       </defs>
-      <rect width="220" height="220" fill="url(#bkk-weave)" />
+      <rect width="220" height="220" fill={`url(#${pid})`} />
     </svg>
   );
 }

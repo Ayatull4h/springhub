@@ -1,24 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { BkkCurve } from "./bkk-decor";
-
-const HERO_IMG =
-  "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=2000&q=70";
 
 export function Hero() {
   const { t } = useI18n();
 
   return (
     <section className="relative overflow-hidden bg-bkk-900">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={HERO_IMG}
+      <Image
+        src="/images/hero-spring.jpg"
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover"
+        fill
+        priority
+        className="object-cover"
       />
       <div
         aria-hidden="true"
