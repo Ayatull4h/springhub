@@ -84,25 +84,6 @@ export function BkkSticker({  children,
   );
 }
 
-/** Tombol stiker: pil miring + bayangan keras + ring putih. */
-export function BkkBtn({
-  children,
-  className = "",
-  tilt = "-rotate-1",
-}: {
-  children: ReactNode;
-  className?: string;
-  tilt?: string;
-}) {
-  return (
-    <span
-      className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display text-sm font-bold shadow-[4px_4px_0_rgba(11,15,21,0.9)] ring-2 ring-white/60 transition-transform hover:rotate-0 hover:scale-[1.03] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none ${tilt} ${className}`}
-    >
-      {children}
-    </span>
-  );
-}
-
 /** Radius organik asimetris + kemiringan selang-seling untuk kartu. */
 export const BKK_CARD_RADII = [
   "rounded-[2rem_3rem_2rem_3rem]",

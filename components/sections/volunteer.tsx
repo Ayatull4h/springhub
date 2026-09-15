@@ -23,8 +23,7 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BKK_CARD_RADII } from "./bkk-decor";
-import { BkkCurve, BkkWeave } from "./bkk-decor";
+import { BKK_CARD_RADII, BkkCurve, BkkWeave } from "./bkk-decor";
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
