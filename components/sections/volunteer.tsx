@@ -127,7 +127,7 @@ export function VolunteerActivities() {
 
   return (
     <section id="community" className="relative overflow-hidden bg-[#f6f1fb] pt-16 md:pt-20 dark:bg-slate-900/60">
-      <BkkWeave className="-left-16 top-24 -rotate-12 opacity-50" />
+      <BkkWeave className="-left-16 top-24 hidden -rotate-12 opacity-50 md:block" />
       <div className="container-page relative z-10">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("volunteer.title")}{" "}

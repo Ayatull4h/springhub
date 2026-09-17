@@ -455,7 +455,7 @@ const formTitleI18nKey = (slug: string): string => {
 
   return (
     <section id="map" className="relative overflow-hidden bg-white pt-16 md:pt-20 dark:bg-slate-900">
-      <BkkWeave className="-right-14 -top-14 rotate-12 opacity-60" />
+      <BkkWeave className="-right-14 -top-14 hidden rotate-12 opacity-60 md:block" />
       <div className="container-page relative z-10">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-cream dark:text-slate-800">{t("map.title")}{" "}
