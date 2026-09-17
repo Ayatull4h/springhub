@@ -566,7 +566,7 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         )}
 
-        <div className="rounded-[3.5rem_2rem_1.5rem_1.5rem] bg-white p-5 pb-6 shadow-card transition-transform hover:rotate-0 md:-rotate-[0.5deg] dark:bg-slate-900">
+        <div className="rounded-[3.5rem_2rem_1.5rem_1.5rem] bg-white p-5 pb-6 shadow-card transition-transform hover:rotate-0 md:-rotate-[0.5deg] dark:bg-slate-900 lg:col-span-6">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
