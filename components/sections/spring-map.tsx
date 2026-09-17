@@ -20,7 +20,7 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BkkCurve, BkkWeave, BkkTitleCloud, BkkInnerWave } from "./bkk-decor";
+import { BkkCurve, BkkWeave, BkkTitleCloud, BkkInnerWave, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -583,7 +583,7 @@ const formTitleI18nKey = (slug: string): string => {
             <div className="mt-3 py-8 text-center text-sm text-ink-muted">{t("map.noReports")}</div>
           ) : (
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            {visibleList.map((r) => {
+            {visibleList.map((r, ri) => {
               const cats = formCategories.get(r.formSlug) || [];
               const formTitle = t(formTitleI18nKey(r.formSlug));
               const status = getStatusFromForm(r.formSlug, formTitle);
@@ -593,10 +593,10 @@ const formTitleI18nKey = (slug: string): string => {
               return (
                 <li
                   key={r.id}
-                  className="flex items-start gap-3 rounded-lg border border-ink-line/60 p-3 dark:border-slate-700"
+                  className={`flex items-start gap-3 border border-ink-line/60 p-3 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[ri % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[ri % BKK_ROW_TILTS.length]}`}
                 >
-                  <span className="flex h-10 w-10 flex-none items-center justify-center rounded-md bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
-                    <Droplets className="h-5 w-5 text-brand-500" />
+                  <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-2xl ${/restoration/.test(r.formSlug) ? "bg-tang-100 dark:bg-tang-700/30" : /trench/.test(r.formSlug) ? "bg-bkkpink-100 dark:bg-bkkpink-700/30" : /tree|seedling/.test(r.formSlug) ? "bg-leaf-100 dark:bg-leaf-700/30" : "bg-lagoon-100 dark:bg-lagoon-700/30"}`}>
+                    <Droplets className={`h-5 w-5 ${/restoration/.test(r.formSlug) ? "text-tang-600" : /trench/.test(r.formSlug) ? "text-bkkpink-600" : /tree|seedling/.test(r.formSlug) ? "text-leaf-600" : "text-lagoon-600"}`} />
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
@@ -664,12 +664,12 @@ const formTitleI18nKey = (slug: string): string => {
           <p className="mt-1 text-sm text-ink-muted">
             {t("map.reportDescription")}
           </p>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            {allForms.map((f) => (
+          <div className="mt-3 grid gap-2 sm:grid-cols-2 md:gap-3">
+            {allForms.map((f, fi) => (
               <Link
                 key={f.slug}
                 href={`/report/${f.slug}`}
-                className="flex items-center justify-between gap-3 rounded-lg border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300 cursor-pointer dark:border-slate-700 dark:bg-slate-800"
+                className={`flex items-center justify-between gap-3 border border-ink-line/60 bg-white px-3 py-2.5 text-sm transition hover:border-brand-300 cursor-pointer dark:border-slate-700 dark:bg-slate-800 ${BKK_ROW_RADII[fi % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[fi % BKK_ROW_TILTS.length]}`}
               >
                 <span className="min-w-0">
                   <span className="block truncate font-medium text-ink">
@@ -683,7 +683,7 @@ const formTitleI18nKey = (slug: string): string => {
               </Link>
             ))}
           </div>
-          <div className="mt-3 flex items-start gap-2 rounded-lg border border-ink-line/60 bg-white px-3 py-2 text-xs text-ink-muted dark:border-slate-700 dark:bg-slate-800">
+          <div className="mt-3 flex items-start gap-2 rounded-[1rem_1.8rem_1rem_1.5rem] border border-ink-line/60 bg-white px-3 py-2 text-xs text-ink-muted dark:border-slate-700 dark:bg-slate-800">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-none text-brand-600" />
             <span>
               {t("map.discoveryPrompt").includes("href=") ? (
@@ -702,7 +702,7 @@ const formTitleI18nKey = (slug: string): string => {
           <div className="mt-3 grid grid-cols-2 gap-3">
             <Link
               href="/seedlings"
-              className="group flex flex-col items-center justify-center rounded-xl border border-green-200 bg-gradient-to-br from-green-50 to-white px-3 py-3 text-center text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated hover:border-green-300 cursor-pointer dark:border-slate-700 dark:from-slate-800 dark:to-slate-800"
+              className="group flex flex-col items-center justify-center rounded-[1.5rem_1rem_1.8rem_1rem] border border-green-200 bg-gradient-to-br from-green-50 to-white px-3 py-3 text-center text-sm transition-all duration-200 hover:-translate-y-0.5 hover:rotate-0 hover:shadow-elevated hover:border-green-300 cursor-pointer md:-rotate-1 dark:border-slate-700 dark:from-slate-800 dark:to-slate-800"
             >
               <span className="mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 transition-transform duration-200 group-hover:scale-110 dark:bg-green-900/50">
                 <Sprout className="h-4 w-4 text-green-600 dark:text-green-400" />

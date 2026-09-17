@@ -11,7 +11,7 @@ export function OfflineEntryButton() {
   return (
     <button
       onClick={() => router.push("/offline")}
-      className="flex w-full h-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-brand-200 bg-brand-50 px-3 py-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-300 hover:bg-brand-100 hover:shadow-md dark:border-brand-800 dark:bg-brand-900/20 dark:text-brand-300 dark:hover:border-brand-700 dark:hover:bg-brand-900/40"
+      className="flex w-full h-full flex-col items-center justify-center gap-1 rounded-[1rem_1.5rem_1rem_1.8rem] border-2 border-brand-200 bg-brand-50 px-3 py-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:rotate-0 hover:border-brand-300 hover:bg-brand-100 hover:shadow-md md:rotate-1 dark:border-brand-800 dark:bg-brand-900/20 dark:text-brand-300 dark:hover:border-brand-700 dark:hover:bg-brand-900/40"
     >
       <WifiOff className="h-4 w-4" />
       <span>Offline</span>

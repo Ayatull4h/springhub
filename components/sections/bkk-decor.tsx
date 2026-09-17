@@ -170,6 +170,21 @@ export const BKK_CARD_TILTS = [
   "md:rotate-[1.5deg]",
 ];
 
+/** Radius + miring kecil untuk baris/pil kompak (aman di gap rapat). */
+export const BKK_ROW_RADII = [
+  "rounded-[1.2rem_2rem_1rem_1.8rem]",
+  "rounded-[2rem_1.2rem_1.8rem_1rem]",
+  "rounded-[1rem_1.8rem_1.2rem_2rem]",
+  "rounded-[1.8rem_1rem_2rem_1.2rem]",
+];
+
+export const BKK_ROW_TILTS = [
+  "md:-rotate-1",
+  "md:rotate-1",
+  "md:-rotate-[0.5deg]",
+  "md:rotate-[0.5deg]",
+];
+
 /** Fade-up saat masuk viewport (sekali saja). */
 export function BkkReveal({
   children,
