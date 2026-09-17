@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Logo } from "./logo";
 import { CONTACTS } from "@/lib/contacts";
+import { STAGING_REV } from "@/lib/app-version";
 import { useI18n } from "@/lib/i18n";
 
 // TikTok isn't in lucide — inline SVG.
@@ -240,6 +241,7 @@ export function SiteFooter() {
       <div className="border-t border-white/15">
         <div className="container-page flex flex-col items-start justify-between gap-3 py-5 text-xs text-white/60 sm:flex-row sm:items-center">
           <div>{t("footer.copyright")}</div>
+          <div className="text-white/40">rev {STAGING_REV}</div>
           <div className="flex items-center gap-3">
             <Link
               href={CONTACTS.social.instagram}
