@@ -85,7 +85,7 @@ export function DonateSection() {
           <select
             value={tierId}
             onChange={e => { setTierId(e.target.value); setError(""); }}
-            className="w-full rounded-2xl border-2 border-tang-100 bg-white px-3 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
+            className="w-full rounded-full border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
             required
           >
             <option value="">{t("donate.chooseImpact")}</option>
@@ -106,7 +106,7 @@ export function DonateSection() {
               type="number"
               value={customAmount}
               onChange={e => setCustomAmount(e.target.value)}
-              className="w-full rounded-2xl border-2 border-tang-100 bg-white px-3 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
+              className="w-full rounded-full border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
               placeholder="Jumlah donasi (Rp)"
               min={1000}
               required
@@ -118,14 +118,14 @@ export function DonateSection() {
               required
               value={name}
               onChange={e => setName(e.target.value)}
-              className="flex-1 min-w-0 rounded-2xl border-2 border-tang-100 bg-white px-3 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
+              className="flex-1 min-w-0 rounded-full border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
               placeholder="Nama Anda"
             />
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="flex-1 min-w-0 rounded-2xl border-2 border-tang-100 bg-white px-3 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
+              className="flex-1 min-w-0 rounded-full border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
               placeholder="Email"
             />
           </div>

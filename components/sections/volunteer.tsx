@@ -149,7 +149,7 @@ export function VolunteerActivities() {
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
               return (
-                <li key={i} className={`border border-ink-line/60 bg-white p-3 shadow-card transition-transform hover:rotate-0 hover:shadow-elevated dark:border-slate-700 dark:bg-slate-800 ${BKK_CARD_RADII[i % BKK_CARD_RADII.length]} ${i % 2 ? "md:rotate-1" : "md:-rotate-1"}`}>
+                <li key={i} className={`border border-ink-line/60 bg-white p-3 shadow-card transition-transform hover:rotate-0 hover:shadow-elevated dark:border-slate-700 dark:bg-slate-800 ${BKK_CARD_RADII[i % BKK_CARD_RADII.length]} ${i % 2 ? "md:rotate-2 md:translate-y-3" : "md:-rotate-2"}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="text-sm font-semibold text-ink">{a.user}</div>

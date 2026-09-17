@@ -92,7 +92,7 @@ export function FeaturedProjects() {
                   : "bg-bkkpink-100 text-bkkpink-700 dark:bg-bkkpink-700/30 dark:text-bkkpink-100";
             const progress = p.goalAmount > 0 ? Math.round((p.raisedAmount / p.goalAmount) * 100) : 0;
             return (
-              <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className={`group block transition-transform hover:rotate-0 ${BKK_CARD_TILTS[pi % BKK_CARD_TILTS.length]}`}>
+              <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className={`group block transition-transform hover:rotate-0 ${BKK_CARD_TILTS[pi % BKK_CARD_TILTS.length]} ${pi % 2 ? "md:translate-y-6" : ""}`}>
                 <article className={`flex flex-col overflow-hidden bg-white shadow-card transition-all hover:shadow-elevated dark:bg-slate-900 ${BKK_CARD_RADII[pi % BKK_CARD_RADII.length]}`}>
                   <div className="flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
                     {p.featuredPhoto?.url ? (

@@ -164,10 +164,10 @@ export const BKK_CARD_RADII = [
 ];
 
 export const BKK_CARD_TILTS = [
-  "md:-rotate-1",
-  "md:rotate-1",
-  "md:-rotate-[0.5deg]",
-  "md:rotate-[0.5deg]",
+  "md:-rotate-2",
+  "md:rotate-2",
+  "md:-rotate-[1.5deg]",
+  "md:rotate-[1.5deg]",
 ];
 
 /** Fade-up saat masuk viewport (sekali saja). */
