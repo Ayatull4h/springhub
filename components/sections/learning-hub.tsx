@@ -65,11 +65,11 @@ export function LearningHub() {
   return (
     <section id="learn" className="bg-cream pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
-      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("learn.title")}{" "}
         <span className="text-lagoon-600">{t("learn.titleAccent")}</span></BkkTitleCloud>
       </h2>
-      <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+      <p className="mt-3 max-w-2xl text-ink-muted">
         {t("learn.description")}
       </p>
 
@@ -84,7 +84,7 @@ export function LearningHub() {
           <p className="mt-2 text-sm text-ink-muted">No courses available yet</p>
         </div>
       ) : (
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-5 md:grid-cols-2 md:gap-7 lg:grid-cols-3">
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (

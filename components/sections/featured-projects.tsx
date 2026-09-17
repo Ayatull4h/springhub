@@ -70,7 +70,7 @@ export function FeaturedProjects() {
           Dukung proyek unggulan kami, pantau perkembangannya secara transparan, dan salurkan donasi Anda sekarang.
         </p>
 
-        <div className="mt-6 grid grid-cols-2 gap-4">
+        <div className="mt-6 grid grid-cols-2 gap-5 md:gap-7">
           {allProjects.length === 0 && (
             <div className="col-span-2 card flex flex-col items-center py-10 text-center">
               <FolderOpen className="h-8 w-8 text-sky-400/60" />

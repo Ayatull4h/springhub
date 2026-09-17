@@ -457,11 +457,11 @@ const formTitleI18nKey = (slug: string): string => {
     <section id="map" className="relative overflow-hidden bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <BkkWeave className="-right-14 -top-14 rotate-12 opacity-60" />
       <div className="container-page relative z-10">
-      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-cream dark:text-slate-800">{t("map.title")}{" "}
         <span className="text-bkk-500">{t("map.titleAccent")}</span></BkkTitleCloud>
       </h2>
-      <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+      <p className="mt-3 max-w-2xl text-ink-muted">
         {t("map.description")}
       </p>
 
@@ -552,7 +552,7 @@ const formTitleI18nKey = (slug: string): string => {
       </div>
 
       {/* Below the map: report details (left) + Report Your Contribution (right) */}
-      <div className="mt-4 grid gap-4 lg:grid-cols-12">
+      <div className="mt-6 grid gap-5 lg:grid-cols-12">
 
         {reportsError && (
           <div className="lg:col-span-12 rounded-md bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-300">

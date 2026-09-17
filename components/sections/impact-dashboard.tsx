@@ -10,9 +10,9 @@ import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BkkInnerWave } from "./b
 /* Tiap kartu bentuk + warna beda total — solid 4 warna palet ColorHunt */
 const STAT_CARDS = [
   "bg-tang-500 rounded-[58%_42%_55%_45%/9%_13%_10%_14%] md:-rotate-2",
-  "bg-cream rounded-[42%_58%_45%_55%/13%_9%_14%_10%] md:rotate-1 md:translate-y-5",
+  "bg-cream rounded-[42%_58%_45%_55%/13%_9%_14%_10%] md:rotate-1",
   "bg-lagoon-500 rounded-t-[3.5rem] rounded-b-[1.8rem] md:-rotate-1",
-  "bg-leaf-500 rounded-[62%_38%_40%_60%/10%_14%_9%_13%] md:rotate-2 md:translate-y-5",
+  "bg-leaf-500 rounded-[62%_38%_40%_60%/10%_14%_9%_13%] md:rotate-2",
 ];
 
 
@@ -128,7 +128,7 @@ export function ImpactDashboard() {
         </div>
       ) : (
         <>
-          <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-7">
             {data.impactStats.map((s, si) => {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
@@ -160,7 +160,7 @@ export function ImpactDashboard() {
             })}
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
             <div className="relative overflow-hidden rounded-[3.5rem_2rem_4rem_2rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-rotate-1 dark:bg-slate-900">
               <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
@@ -213,7 +213,7 @@ export function ImpactDashboard() {
               )}
             </div>
 
-            <div className="relative overflow-hidden rounded-[2rem_4rem_2rem_3.5rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:-translate-y-3 md:rotate-1 dark:bg-slate-900">
+            <div className="relative overflow-hidden rounded-[2rem_4rem_2rem_3.5rem] bg-white p-6 pb-12 shadow-elevated transition-transform hover:rotate-0 md:rotate-1 dark:bg-slate-900">
               <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">

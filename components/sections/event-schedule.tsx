@@ -205,10 +205,10 @@ export function EventSchedule() {
     return (
       <section id="jadwal" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
-        <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+        <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
           <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+        <p className="mt-3 max-w-2xl text-ink-muted">
           {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
         </p>
       </div>
@@ -220,10 +220,10 @@ export function EventSchedule() {
   return (
     <section id="jadwal" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
-      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
       </h2>
-      <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+      <p className="mt-3 max-w-2xl text-ink-muted">
         {t("event.description", "Ikut restorasi mata air dan tanam pohon bulan depan. Daftar langsung, tanpa kuota.")}
       </p>
 

@@ -129,11 +129,11 @@ export function VolunteerActivities() {
     <section id="community" className="relative overflow-hidden bg-[#f6f1fb] pt-16 md:pt-20 dark:bg-slate-900/60">
       <BkkWeave className="-left-16 top-24 -rotate-12 opacity-50" />
       <div className="container-page relative z-10">
-      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("volunteer.title")}{" "}
         <span className="text-bkk-500">{t("volunteer.titleAccent")}</span></BkkTitleCloud>
       </h2>
-      <p className="mx-auto mt-3 max-w-2xl text-center text-ink-muted">
+      <p className="mt-3 max-w-2xl text-ink-muted">
         {t("volunteer.description", {
           threshold: formatNumber(PROJECT_PROPOSAL_THRESHOLD),
         })}
@@ -145,7 +145,7 @@ export function VolunteerActivities() {
             {t("volunteer.recentActivities")}
           </h3>
           <div className="mt-3 flex-1 rounded-[2.5rem_3.5rem_2rem_3rem] bg-white p-4 shadow-elevated transition-transform hover:rotate-0 md:-rotate-[0.5deg] dark:bg-slate-900">
-            <ul className="grid gap-3 md:grid-cols-2">
+            <ul className="grid gap-5 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
               return (
