@@ -118,30 +118,38 @@ export function BkkInnerWave({ className = "" }: { className?: string }) {
  * Boks awan: kotaknya SENDIRI berbentuk awan via clip-path (bukan kotak
  * ber-radius). Isi wajib punya padding lega agar tak terpotong punuk.
  * Shadow via drop-shadow filter (box-shadow ikut terpotong clip!).
+ * `tall` = siluet portrait untuk boks tinggi (trio, panel peta, kartu).
  */
 const CLOUD_PATH =
   "M0.055,0.885 C0.02,0.885 0.015,0.83 0.03,0.79 C0.005,0.75 0.01,0.70 0.035,0.66 C0.01,0.615 0.02,0.565 0.05,0.55 C0.055,0.47 0.09,0.435 0.115,0.44 C0.13,0.35 0.175,0.315 0.205,0.34 C0.225,0.24 0.285,0.21 0.315,0.26 C0.345,0.16 0.415,0.15 0.445,0.22 C0.475,0.13 0.545,0.135 0.565,0.21 C0.60,0.14 0.665,0.16 0.675,0.23 C0.72,0.20 0.775,0.24 0.775,0.31 C0.83,0.30 0.875,0.34 0.865,0.42 C0.925,0.43 0.955,0.48 0.94,0.56 C0.99,0.585 1.0,0.64 0.975,0.69 C1.0,0.74 0.985,0.80 0.95,0.815 C0.945,0.875 0.90,0.895 0.86,0.885 C0.83,0.925 0.70,0.93 0.60,0.915 C0.45,0.945 0.25,0.94 0.15,0.915 C0.10,0.925 0.07,0.905 0.055,0.885 Z";
+
+const CLOUD_PATH_TALL =
+  "M0.18,0.01 Q0.10,0.015 0.10,0.07 Q0.02,0.09 0.045,0.15 Q0.005,0.21 0.05,0.25 Q0.01,0.32 0.055,0.36 Q0.015,0.43 0.06,0.47 Q0.02,0.55 0.065,0.59 Q0.03,0.67 0.075,0.71 Q0.04,0.79 0.085,0.82 Q0.07,0.90 0.13,0.905 Q0.15,0.97 0.25,0.955 Q0.35,0.99 0.50,0.96 Q0.65,0.99 0.75,0.955 Q0.85,0.97 0.87,0.90 Q0.95,0.885 0.93,0.815 Q0.98,0.76 0.935,0.70 Q0.98,0.62 0.935,0.56 Q0.98,0.48 0.935,0.42 Q0.975,0.34 0.93,0.28 Q0.96,0.20 0.905,0.16 Q0.92,0.08 0.85,0.075 Q0.83,0.01 0.75,0.025 Q0.68,-0.01 0.60,0.04 Q0.50,-0.005 0.42,0.04 Q0.32,-0.005 0.24,0.035 Q0.20,0.005 0.18,0.01 Z";
 
 export function BkkCloudBox({
   children,
   className = "",
   outerClassName = "",
   flip = false,
+  tall = false,
 }: {
   children: ReactNode;
   /** bg + padding + drop-shadow. TANPA rounded/shadow/ring/overflow. */
   className?: string;
   outerClassName?: string;
   flip?: boolean;
+  /** Siluet portrait untuk boks tinggi. */
+  tall?: boolean;
 }) {
   const rawId = useId().replace(/[^a-zA-Z0-9]/g, "");
   const id = `bkk-cloudbox-${rawId}`;
+  const d = tall ? CLOUD_PATH_TALL : CLOUD_PATH;
   return (
     <div className={outerClassName}>
       <svg aria-hidden="true" style={{ position: "absolute", width: 0, height: 0 }}>
         <defs>
           <clipPath id={id} clipPathUnits="objectBoundingBox">
-            <path d={CLOUD_PATH} transform={flip ? "translate(1,0) scale(-1,1)" : undefined} />
+            <path d={d} transform={flip ? "translate(1,0) scale(-1,1)" : undefined} />
           </clipPath>
         </defs>
       </svg>

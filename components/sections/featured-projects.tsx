@@ -94,7 +94,7 @@ export function FeaturedProjects() {
             return (
               <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
                 <div className="">
-                <BkkCloudBox className="flex flex-col bg-white p-5 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={pi % 2 === 1}>
+                <BkkCloudBox className="flex flex-col bg-white p-5 pb-7 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={pi % 2 === 1} tall>
                   <div className="flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
                     {p.featuredPhoto?.url ? (
                       <img src={p.featuredPhoto.url} alt={p.title} className="h-full w-full object-cover" />
