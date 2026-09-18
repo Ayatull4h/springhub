@@ -566,7 +566,11 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         )}
 
-        <div className="rounded-[3.5rem_2rem_1.5rem_1.5rem] bg-white p-5 pb-6 shadow-card transition-transform hover:rotate-0 md:-rotate-[0.5deg] dark:bg-slate-900 lg:col-span-6">
+        <div className="relative transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6">
+          <div aria-hidden="true" className="pointer-events-none absolute -left-6 -top-10 h-28 w-28 rounded-full bg-lagoon-200/80 dark:bg-slate-800" />
+          <div aria-hidden="true" className="pointer-events-none absolute -top-14 left-28 h-20 w-20 rounded-full bg-tang-200/80 dark:bg-slate-800" />
+          <div aria-hidden="true" className="pointer-events-none absolute -left-3 top-20 h-14 w-14 rounded-full bg-bkk-200/80 dark:bg-slate-800" />
+          <div className="relative rounded-[2.5rem] bg-white p-5 pb-6 shadow-card dark:bg-slate-900">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
@@ -645,9 +649,14 @@ const formTitleI18nKey = (slug: string): string => {
               </button>
             </div>
           )}
+          </div>
         </div>
 
-        <div className="rounded-[2rem_4rem_1.5rem_1.5rem] bg-gradient-to-br from-lagoon-100 to-white p-5 pb-6 shadow-card transition-transform hover:rotate-0 md:rotate-[0.5deg] dark:from-slate-800 dark:to-slate-900 lg:col-span-6">
+        <div className="relative transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6">
+          <div aria-hidden="true" className="pointer-events-none absolute -right-6 -top-10 h-28 w-28 rounded-full bg-tang-200/80 dark:bg-slate-800" />
+          <div aria-hidden="true" className="pointer-events-none absolute -top-14 right-28 h-20 w-20 rounded-full bg-pink-200/80 dark:bg-slate-800" />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-3 top-20 h-14 w-14 rounded-full bg-lagoon-200/80 dark:bg-slate-800" />
+          <div className="relative rounded-[2.5rem] bg-gradient-to-br from-lagoon-100 to-white p-5 pb-6 shadow-card dark:from-slate-800 dark:to-slate-900">
           <div className="flex items-center justify-between gap-2">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ClipboardList className="h-4 w-4 text-brand-600" />
@@ -713,6 +722,7 @@ const formTitleI18nKey = (slug: string): string => {
             <div className="flex items-stretch">
               <OfflineEntryButton />
             </div>
+          </div>
           </div>
         </div>
       </div>
