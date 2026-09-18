@@ -60,7 +60,7 @@ export function DonateSection() {
     <div id="donate" className="relative transition-transform hover:rotate-0 md:rotate-1">
       <div className="">
       <BkkCloudBox className="bg-white dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip tall>
-      <div className="px-8 pb-8 pt-8">
+      <div className="px-10 pb-10 pt-10">
         <div className="mb-4 flex items-center gap-5 text-sm">
           <div>
             <p className="text-[11px] text-ink-muted">Terkumpul</p>

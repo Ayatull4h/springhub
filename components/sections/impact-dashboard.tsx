@@ -166,7 +166,7 @@ export function ImpactDashboard() {
 
           <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <BkkCloudBox className="bg-white p-8 pb-14 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
+            <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
               <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
@@ -220,7 +220,7 @@ export function ImpactDashboard() {
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2">
-            <BkkCloudBox className="bg-white p-8 pb-14 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip tall>
+            <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip tall>
               <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
@@ -243,7 +243,7 @@ export function ImpactDashboard() {
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <BkkCloudBox className="bg-white p-8 pb-14 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
+            <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
               <BkkInnerWave className="absolute bottom-0 left-0 text-leaf-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">
