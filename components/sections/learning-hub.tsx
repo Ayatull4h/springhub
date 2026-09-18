@@ -88,9 +88,8 @@ export function LearningHub() {
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (
-              <div className="">
-              <BkkCloudBox key={c.id} className="flex flex-col bg-white p-5 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={ci % 2 === 0}>
-                <div className="-mx-5 -mt-5 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
+              <BkkCloudBox key={c.id} className="flex flex-col bg-white p-6 pb-8 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={ci % 2 === 0} tall>
+                <div className="-mx-6 -mt-6 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
                 <span className="chip mt-4 -rotate-2 self-start bg-tang-100 font-bold text-tang-700 dark:bg-bkk-900/30 dark:text-bkk-200">
@@ -148,7 +147,6 @@ export function LearningHub() {
                       : t("learn.startCourse")}
                 </Link>
               </BkkCloudBox>
-              </div>
             );
           })}
         </div>
