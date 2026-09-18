@@ -114,14 +114,6 @@ export function BkkInnerWave({ className = "" }: { className?: string }) {
   );
 }
 
-/** Warna siluet awan per tone. */
-const CLOUD_TONES: Record<string, string> = {
-  candy: "text-lagoon-200/90 dark:text-slate-800",
-  sunset: "text-tang-200/90 dark:text-slate-800",
-  lagoon: "text-bkkblue-200/90 dark:text-slate-800",
-  white: "text-white/90 dark:text-slate-700/60",
-};
-
 /**
  * Boks awan: kotaknya SENDIRI berbentuk awan via clip-path (bukan kotak
  * ber-radius). Isi wajib punya padding lega agar tak terpotong punuk.
