@@ -136,7 +136,7 @@ export function ImpactDashboard() {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
-                <BkkCloudWrap outerClassName={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`} boxClassName={`overflow-hidden p-5 pb-10 shadow-elevated md:pb-12 ${STAT_CARDS[si % STAT_CARDS.length]}`} tone="white" size="sm" side={STAT_SIDES[si % STAT_SIDES.length]}>
+                <BkkCloudWrap outerClassName={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`} boxClassName={`overflow-hidden p-7 pb-12 shadow-elevated md:p-8 md:pb-14 ${STAT_CARDS[si % STAT_CARDS.length]}`} tone="white" size="sm" side={STAT_SIDES[si % STAT_SIDES.length]}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
                   <div className="flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-[55%_45%_50%_50%/50%_55%_45%_50%] bg-white/40 text-bkk-900">
