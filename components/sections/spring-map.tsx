@@ -566,7 +566,7 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         )}
 
-        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[2.5rem] bg-white p-5 pb-6 shadow-card dark:bg-slate-900" tone="candy" side="left" size="md">
+        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[54%_46%_50%_50%/7%_9%_8%_10%] bg-white p-5 pb-6 shadow-card dark:bg-slate-900" tone="candy" side="left" size="md">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
@@ -647,7 +647,7 @@ const formTitleI18nKey = (slug: string): string => {
           )}
         </BkkCloudWrap>
 
-        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[2.5rem] bg-gradient-to-br from-lagoon-100 to-white p-5 pb-6 shadow-card dark:from-slate-800 dark:to-slate-900" tone="sunset" side="right" size="md">
+        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[46%_54%_50%_50%/9%_7%_10%_8%] bg-gradient-to-br from-lagoon-100 to-white p-5 pb-6 shadow-card dark:from-slate-800 dark:to-slate-900" tone="sunset" side="right" size="md">
           <div className="flex items-center justify-between gap-2">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ClipboardList className="h-4 w-4 text-brand-600" />
