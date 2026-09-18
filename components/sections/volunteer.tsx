@@ -23,7 +23,7 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BKK_CARD_RADII, BkkCurve, BkkWeave, BkkTitleCloud, BkkCloudEdge, BkkCloudWrap } from "./bkk-decor";
+import { BKK_CARD_RADII, BkkCurve, BkkWeave, BkkTitleCloud, BkkCloudEdge, BkkCloudBox } from "./bkk-decor";
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -144,7 +144,8 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <BkkCloudWrap outerClassName="mt-3 flex-1 transition-transform hover:rotate-0 md:-rotate-[0.5deg]" boxClassName="rounded-[60%_40%_55%_45%/14%_20%_16%_22%] bg-white p-5 shadow-elevated dark:bg-slate-900" tone="candy" flip={false} variant={2}>
+          <div className="mt-3 flex-1 transition-transform hover:rotate-0 md:-rotate-[0.5deg]">
+          <BkkCloudBox className="bg-white p-5 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={false}>
             <ul className="grid gap-5 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
@@ -226,10 +227,12 @@ export function VolunteerActivities() {
               </button>
             </div>
           )}
-          </BkkCloudWrap>
+          </BkkCloudBox>
+          </div>
         </div>
 
-        <BkkCloudWrap outerClassName="flex flex-col transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full" boxClassName="rounded-[40%_60%_45%_55%/20%_14%_22%_16%] bg-gradient-to-br from-tang-100 to-cream p-6 shadow-elevated h-full dark:from-slate-800 dark:to-slate-900" tone="lagoon" flip variant={1}>
+        <div className="flex flex-col transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full">
+        <BkkCloudBox className="bg-gradient-to-br from-tang-100 to-cream p-6 h-full dark:from-slate-800 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip>
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-ink">
               {t("volunteer.submitProject")}
@@ -306,7 +309,8 @@ export function VolunteerActivities() {
               </button>
             )}
           </div>
-        </BkkCloudWrap>
+        </BkkCloudBox>
+        </div>
       </div>
 
       <PointsGuideModal open={showPoints} onClose={() => setShowPoints(false)} />

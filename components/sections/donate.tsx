@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Heart, CheckCircle2, Loader2, Layers, Droplets, Telescope } from "lucide-react";
 import { DONATION_TIERS } from "@/lib/xendit";
 import { useI18n } from "@/lib/i18n";
-import { BkkCloudWrap } from "./bkk-decor";
+import { BkkCloudBox } from "./bkk-decor";
 
 const tierIcons: Record<string, React.ReactNode> = {
   trench: <Layers className="h-4 w-4 text-amber-600" />,
@@ -58,7 +58,8 @@ export function DonateSection() {
 
   return (
     <div id="donate" className="relative transition-transform hover:rotate-0 md:rotate-1">
-      <BkkCloudWrap boxClassName="rounded-[58%_42%_60%_40%/16%_20%_14%_22%] bg-white shadow-elevated ring-4 ring-tang-200 dark:bg-slate-900 dark:ring-slate-700" tone="sunset" flip variant={1}>
+      <div className="">
+      <BkkCloudBox className="bg-white dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip>
       <div className="px-5 pb-5 pt-5">
         <div className="mb-4 flex items-center gap-5 text-sm">
           <div>
@@ -148,7 +149,8 @@ export function DonateSection() {
           </button>
         </form>
       </div>
-      </BkkCloudWrap>
+      </BkkCloudBox>
+      </div>
     </div>
   );
 }

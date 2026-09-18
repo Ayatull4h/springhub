@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { LiteYouTubeEmbed } from "@/components/lite-youtube-embed";
-import { BkkCloudWrap } from "./bkk-decor";
+import { BkkCloudBox } from "./bkk-decor";
 
 export function Hero() {
   const { t } = useI18n();
@@ -37,9 +37,11 @@ export function Hero() {
         </div>
       </div>
 
-      <BkkCloudWrap boxClassName="aspect-video overflow-hidden rounded-[55%_45%_60%_40%/28%_32%_24%_36%] bg-slate-900 shadow-elevated ring-4 ring-tang-200 dark:ring-slate-700" tone="lagoon" flip variant={2}>
+      <div className="">
+      <BkkCloudBox className="aspect-video bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip>
         <LiteYouTubeEmbed videoId="oUDA1loE8BE" title="Jaga Semesta · SpringHub" />
-      </BkkCloudWrap>
+      </BkkCloudBox>
+      </div>
 
       {/* Mobile fallback — YouTube link */}
       <a href="https://www.youtube.com/watch?v=oUDA1loE8BE" target="_blank" className="mt-2 inline-flex items-center gap-1 text-xs text-ink-muted hover:text-brand-600 md:hidden">

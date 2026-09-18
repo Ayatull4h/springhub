@@ -5,14 +5,14 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BkkInnerWave, BkkCloudWrap, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
+import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
 
 /* Tiap kartu bentuk + warna beda total — solid 4 warna palet ColorHunt */
 const STAT_CARDS = [
-  "bg-tang-500 rounded-[63%_37%_54%_46%/55%_48%_52%_45%]",
-  "bg-cream rounded-[37%_63%_46%_54%/45%_55%_48%_52%]",
-  "bg-lagoon-500 rounded-[54%_46%_38%_62%/52%_58%_42%_48%]",
-  "bg-leaf-500 rounded-[42%_58%_62%_38%/48%_42%_58%_52%]",
+  "bg-tang-500",
+  "bg-cream",
+  "bg-lagoon-500",
+  "bg-leaf-500",
 ];
 const STAT_TILTS = ["md:-rotate-2", "md:rotate-1", "md:-rotate-2", "md:rotate-2"];
 
@@ -135,7 +135,8 @@ export function ImpactDashboard() {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
-                <BkkCloudWrap outerClassName={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`} boxClassName={`overflow-hidden p-7 pb-12 shadow-elevated md:p-8 md:pb-14 ${STAT_CARDS[si % STAT_CARDS.length]}`} tone="white" flip={si % 2 === 1} variant={((si % 2) + 1) as 1 | 2}>
+                <div className={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`}>
+                <BkkCloudBox className={`${STAT_CARDS[si % STAT_CARDS.length]} p-8 pb-14 md:p-10 md:pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.18)]`} flip={si % 2 === 1}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
                   <div className="flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-[55%_45%_50%_50%/50%_55%_45%_50%] bg-white/40 text-bkk-900">
@@ -156,14 +157,16 @@ export function ImpactDashboard() {
                   <div className="mt-1 text-sm font-bold text-bkk-900/70">
                     {t(IconToStatKey[s.icon])}
                   </div>
-                </BkkCloudWrap>
+                </BkkCloudBox>
+                </div>
                 </BkkReveal>
               );
             })}
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
-            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[63%_37%_54%_46%/18%_22%_20%_24%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="sunset" flip={false} variant={1}>
+            <div className="transition-transform hover:rotate-0 md:-rotate-2">
+            <BkkCloudBox className="bg-white p-8 pb-14 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false}>
               <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
@@ -213,9 +216,11 @@ export function ImpactDashboard() {
                   </button>
                 </div>
               )}
-            </BkkCloudWrap>
+            </BkkCloudBox>
+            </div>
 
-            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2" boxClassName="overflow-hidden rounded-[37%_63%_46%_54%/22%_18%_24%_20%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="lagoon" flip variant={2}>
+            <div className="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2">
+            <BkkCloudBox className="bg-white p-8 pb-14 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip>
               <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
@@ -234,9 +239,11 @@ export function ImpactDashboard() {
                   </li>
                 ))}
               </ol>
-            </BkkCloudWrap>
+            </BkkCloudBox>
+            </div>
 
-            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[54%_46%_62%_38%/20%_24%_18%_22%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="candy" flip={false} variant={2}>
+            <div className="transition-transform hover:rotate-0 md:-rotate-2">
+            <BkkCloudBox className="bg-white p-8 pb-14 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false}>
               <BkkInnerWave className="absolute bottom-0 left-0 text-leaf-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">
@@ -258,10 +265,11 @@ export function ImpactDashboard() {
                         {t("dashboard.volunteers.pts")}
                       </span>
                     </div>
-                  </li>
+                    </li>
                 ))}
               </ol>
-            </BkkCloudWrap>
+            </BkkCloudBox>
+            </div>
           </div>
         </>
       )}

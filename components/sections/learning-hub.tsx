@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve, BKK_CARD_RADII, BKK_CARD_TILTS, BkkTitleCloud, BkkCloudWrap } from "./bkk-decor";
+import { BkkCurve, BKK_CARD_RADII, BKK_CARD_TILTS, BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
 
 type CourseItem = {
   id: string;
@@ -88,7 +88,8 @@ export function LearningHub() {
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (
-              <BkkCloudWrap key={c.id} outerClassName={`transition-transform hover:rotate-0 ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]} ${ci % 3 === 1 ? "md:translate-y-4" : ""}`} boxClassName={`card flex flex-col overflow-hidden ${BKK_CARD_RADII[ci % BKK_CARD_RADII.length]}`} tone="candy" flip={ci % 2 === 0} variant={(((ci + 1) % 2) + 1) as 1 | 2}>
+              <div className="">
+              <BkkCloudBox className=" drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={ci % 2 === 0}>
                 <div className="-mx-5 -mt-5 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
@@ -146,7 +147,8 @@ export function LearningHub() {
                       ? "Continue"
                       : t("learn.startCourse")}
                 </Link>
-              </BkkCloudWrap>
+              </BkkCloudBox>
+              </div>
             );
           })}
         </div>

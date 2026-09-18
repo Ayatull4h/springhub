@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Handshake, ArrowRight, Sprout, Layers, Droplets, Telescope } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCloudWrap } from "@/components/sections/bkk-decor";
+import { BkkCloudBox } from "@/components/sections/bkk-decor";
 
 const projectTypes = [
   { icon: Sprout, label: "donate.partnerTree", desc: "donate.partnerTreeDesc", color: "text-emerald-600" },
@@ -17,7 +17,8 @@ export function PartnerSection() {
 
   return (
     <section className="container-page overflow-x-clip py-16">
-      <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-1" boxClassName="rounded-[60%_40%_58%_42%/22%_28%_20%_30%] bg-gradient-to-br from-tang-500 via-tang-500 to-bkkpink-600 px-8 py-10 text-white shadow-elevated md:px-12" tone="white" flip={false} variant={2}>
+      <div className="transition-transform hover:rotate-0 md:-rotate-1">
+      <BkkCloudBox className="bg-gradient-to-br from-tang-500 via-tang-500 to-bkkpink-600 px-8 py-10 text-white md:px-12 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={false}>
       <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-sm font-semibold text-bkk-100">
@@ -56,7 +57,8 @@ export function PartnerSection() {
           </Link>
         </div>
       </div>
-      </BkkCloudWrap>
+      </BkkCloudBox>
+      </div>
     </section>
   );
 }

@@ -114,7 +114,6 @@ export function BkkInnerWave({ className = "" }: { className?: string }) {
   );
 }
 
-/** Set warna gugusan gelembung. */
 /** Warna siluet awan per tone. */
 const CLOUD_TONES: Record<string, string> = {
   candy: "text-lagoon-200/90 dark:text-slate-800",
@@ -123,73 +122,40 @@ const CLOUD_TONES: Record<string, string> = {
   white: "text-white/90 dark:text-slate-700/60",
 };
 
-/** Siluet awan utuh: beberapa blob digabung (1 fill = 1 bentuk). */
-export function BkkCloud({
-  className = "",
-  variant = 1,
-}: {
-  className?: string;
-  variant?: 1 | 2;
-}) {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 360 220"
-      preserveAspectRatio="none"
-      className={`pointer-events-none absolute ${className}`}
-      fill="currentColor"
-    >
-      <g>
-        <ellipse cx="180" cy="165" rx="165" ry="55" />
-        {variant === 2 ? (
-          <>
-            <circle cx="280" cy="120" r="52" />
-            <circle cx="205" cy="85" r="62" />
-            <circle cx="125" cy="90" r="52" />
-            <circle cx="65" cy="125" r="42" />
-            <circle cx="320" cy="135" r="32" />
-          </>
-        ) : (
-          <>
-            <circle cx="80" cy="120" r="52" />
-            <circle cx="155" cy="85" r="62" />
-            <circle cx="235" cy="90" r="52" />
-            <circle cx="295" cy="125" r="42" />
-            <circle cx="40" cy="135" r="32" />
-          </>
-        )}
-      </g>
-    </svg>
-  );
-}
-
 /**
- * Pembungkus awan: 1 siluet awan utuh di belakang kotak isi.
- * Satu-satunya cara membuat awan — jangan tempel lingkaran manual lagi.
+ * Boks awan: kotaknya SENDIRI berbentuk awan via clip-path (bukan kotak
+ * ber-radius). Isi wajib punya padding lega agar tak terpotong punuk.
+ * Shadow via drop-shadow filter (box-shadow ikut terpotong clip!).
  */
-export function BkkCloudWrap({
+const CLOUD_PATH =
+  "M0.055,0.885 C0.02,0.885 0.015,0.83 0.03,0.79 C0.005,0.75 0.01,0.70 0.035,0.66 C0.01,0.615 0.02,0.565 0.05,0.55 C0.055,0.47 0.09,0.435 0.115,0.44 C0.13,0.35 0.175,0.315 0.205,0.34 C0.225,0.24 0.285,0.21 0.315,0.26 C0.345,0.16 0.415,0.15 0.445,0.22 C0.475,0.13 0.545,0.135 0.565,0.21 C0.60,0.14 0.665,0.16 0.675,0.23 C0.72,0.20 0.775,0.24 0.775,0.31 C0.83,0.30 0.875,0.34 0.865,0.42 C0.925,0.43 0.955,0.48 0.94,0.56 C0.99,0.585 1.0,0.64 0.975,0.69 C1.0,0.74 0.985,0.80 0.95,0.815 C0.945,0.875 0.90,0.895 0.86,0.885 C0.83,0.925 0.70,0.93 0.60,0.915 C0.45,0.945 0.25,0.94 0.15,0.915 C0.10,0.925 0.07,0.905 0.055,0.885 Z";
+
+export function BkkCloudBox({
   children,
-  boxClassName = "",
+  className = "",
   outerClassName = "",
-  tone = "candy",
   flip = false,
-  variant = 1,
 }: {
   children: ReactNode;
-  boxClassName?: string;
+  /** bg + padding + drop-shadow. TANPA rounded/shadow/ring/overflow. */
+  className?: string;
   outerClassName?: string;
-  tone?: keyof typeof CLOUD_TONES;
   flip?: boolean;
-  variant?: 1 | 2;
 }) {
-  const color = CLOUD_TONES[tone] ?? CLOUD_TONES.candy;
+  const rawId = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const id = `bkk-cloudbox-${rawId}`;
   return (
-    <div className={`relative ${outerClassName}`}>
-      <BkkCloud
-        variant={variant}
-        className={`-inset-x-8 -top-12 bottom-0 h-auto w-[calc(100%+64px)] ${flip ? "-scale-x-100" : ""} ${color}`}
-      />
-      <div className={`relative ${boxClassName}`}>{children}</div>
+    <div className={outerClassName}>
+      <svg aria-hidden="true" style={{ position: "absolute", width: 0, height: 0 }}>
+        <defs>
+          <clipPath id={id} clipPathUnits="objectBoundingBox">
+            <path d={CLOUD_PATH} transform={flip ? "translate(1,0) scale(-1,1)" : undefined} />
+          </clipPath>
+        </defs>
+      </svg>
+      <div className={`relative ${className}`} style={{ clipPath: `url(#${id})` }}>
+        {children}
+      </div>
     </div>
   );
 }

@@ -20,7 +20,7 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BkkCurve, BkkWeave, BkkTitleCloud, BkkInnerWave, BkkCloudWrap, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
+import { BkkCurve, BkkWeave, BkkTitleCloud, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -566,7 +566,8 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         )}
 
-        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[60%_40%_55%_45%/14%_18%_16%_20%] bg-white p-6 pb-8 shadow-card dark:bg-slate-900" tone="candy" flip={false} variant={1}>
+        <div className="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6">
+        <BkkCloudBox className="bg-white p-7 pb-8 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false}>
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
@@ -645,9 +646,11 @@ const formTitleI18nKey = (slug: string): string => {
               </button>
             </div>
           )}
-        </BkkCloudWrap>
+          </BkkCloudBox>
+        </div>
 
-        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[40%_60%_45%_55%/18%_14%_20%_16%] bg-gradient-to-br from-lagoon-100 to-white p-6 pb-8 shadow-card dark:from-slate-800 dark:to-slate-900" tone="sunset" flip variant={2}>
+        <div className="transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6">
+        <BkkCloudBox className="bg-gradient-to-br from-lagoon-100 to-white p-7 pb-8 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:from-slate-800 dark:to-slate-900" flip>
           <div className="flex items-center justify-between gap-2">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ClipboardList className="h-4 w-4 text-brand-600" />
@@ -714,7 +717,8 @@ const formTitleI18nKey = (slug: string): string => {
               <OfflineEntryButton />
             </div>
           </div>
-        </BkkCloudWrap>
+          </BkkCloudBox>
+        </div>
         </div>
       </div>
       <PointsGuideModal open={showGuide} onClose={() => setShowGuide(false)} />
