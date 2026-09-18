@@ -63,7 +63,7 @@ export function LearningHub() {
   }
 
   return (
-    <section id="learn" className="bg-cream pt-16 md:pt-20 dark:bg-slate-900">
+    <section id="learn" className="overflow-x-clip bg-cream pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("learn.title")}{" "}
@@ -88,7 +88,7 @@ export function LearningHub() {
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (
-              <BkkCloudWrap key={c.id} outerClassName={`transition-transform hover:rotate-0 ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]} ${ci % 3 === 1 ? "md:translate-y-4" : ""}`} boxClassName={`card flex flex-col overflow-hidden ${BKK_CARD_RADII[ci % BKK_CARD_RADII.length]}`} tone="candy" side={ci % 2 ? "right" : "left"} size="sm">
+              <BkkCloudWrap key={c.id} outerClassName={`transition-transform hover:rotate-0 ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]} ${ci % 3 === 1 ? "md:translate-y-4" : ""}`} boxClassName={`card flex flex-col overflow-hidden ${BKK_CARD_RADII[ci % BKK_CARD_RADII.length]}`} tone="candy" side={ci % 2 ? "right" : "left"} size="sm" count={5 + (ci % 3)}>
                 <div className="-mx-5 -mt-5 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>

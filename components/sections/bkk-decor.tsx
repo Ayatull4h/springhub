@@ -149,6 +149,24 @@ const BUBBLE_POS = {
   },
 } as const;
 
+/** Tambahan untuk count 4–8: mengisi atas-tengah dan sisi (tetap di luar kotak). */
+const BUBBLE_EXTRA = {
+  sm: [
+    "left-1/2 -top-7 h-7 w-7",
+    "-right-2 top-5 h-5 w-5",
+    "-left-2 top-5 h-5 w-5",
+    "right-1/4 -top-6 h-6 w-6",
+    "left-1/4 -top-5 h-5 w-5",
+  ],
+  md: [
+    "left-1/2 -top-12 h-14 w-14",
+    "-right-8 top-6 h-10 w-10",
+    "-left-8 top-6 h-10 w-10",
+    "right-1/4 -top-8 h-8 w-8",
+    "left-1/4 -top-6 h-6 w-6",
+  ],
+} as const;
+
 /**
  * Pembungkus awan: gugusan 3 lingkaran beda ukuran di belakang kotak isi.
  * Satu-satunya cara membuat awan — jangan tempel lingkaran manual lagi.
@@ -160,6 +178,7 @@ export function BkkCloudWrap({
   tone = "candy",
   side = "left",
   size = "md",
+  count = 3,
 }: {
   children: ReactNode;
   boxClassName?: string;
@@ -167,9 +186,14 @@ export function BkkCloudWrap({
   tone?: keyof typeof BUBBLE_TONES;
   side?: keyof (typeof BUBBLE_POS)["md"];
   size?: keyof typeof BUBBLE_POS;
+  /** Jumlah blob 3–8. Semua di zona atas/sisi (tak menutupi isi). */
+  count?: number;
 }) {
   const colors = BUBBLE_TONES[tone] ?? BUBBLE_TONES.candy;
-  const pos = BUBBLE_POS[size][side];
+  const base = BUBBLE_POS[size][side];
+  const extra = BUBBLE_EXTRA[size];
+  const n = Math.min(8, Math.max(3, Math.round(count)));
+  const pos = [...base, ...extra].slice(0, n);
   return (
     <div className={`relative ${outerClassName}`}>
       {pos.map((p, i) => (

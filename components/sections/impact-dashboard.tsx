@@ -107,7 +107,7 @@ export function ImpactDashboard() {
   ];
 
   return (
-    <section id="dashboard" className="bg-cream pb-0 pt-0 md:pt-0 dark:bg-slate-900">
+    <section id="dashboard" className="overflow-x-clip bg-cream pb-0 pt-0 md:pt-0 dark:bg-slate-900">
       <BkkCurve top="bg-white dark:bg-[#0b0f15]" bottom="text-cream dark:text-slate-900" accent="text-tang-200" />
       <div className="container-page pt-10 md:pt-14">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
@@ -136,7 +136,7 @@ export function ImpactDashboard() {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
-                <BkkCloudWrap outerClassName={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`} boxClassName={`overflow-hidden p-7 pb-12 shadow-elevated md:p-8 md:pb-14 ${STAT_CARDS[si % STAT_CARDS.length]}`} tone="white" size="sm" side={STAT_SIDES[si % STAT_SIDES.length]}>
+                <BkkCloudWrap outerClassName={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`} boxClassName={`overflow-hidden p-7 pb-12 shadow-elevated md:p-8 md:pb-14 ${STAT_CARDS[si % STAT_CARDS.length]}`} tone="white" size="sm" side={STAT_SIDES[si % STAT_SIDES.length]} count={[4, 5, 3, 6][si % 4]}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
                   <div className="flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-[55%_45%_50%_50%/50%_55%_45%_50%] bg-white/40 text-bkk-900">
@@ -164,7 +164,7 @@ export function ImpactDashboard() {
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
-            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[63%_37%_54%_46%/18%_22%_20%_24%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="sunset" side="left" size="sm">
+            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[63%_37%_54%_46%/18%_22%_20%_24%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="sunset" side="left" size="sm" count={5}>
               <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
@@ -216,7 +216,7 @@ export function ImpactDashboard() {
               )}
             </BkkCloudWrap>
 
-            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2" boxClassName="overflow-hidden rounded-[37%_63%_46%_54%/22%_18%_24%_20%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="lagoon" side="right" size="sm">
+            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2" boxClassName="overflow-hidden rounded-[37%_63%_46%_54%/22%_18%_24%_20%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="lagoon" side="right" size="sm" count={6}>
               <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
@@ -237,7 +237,7 @@ export function ImpactDashboard() {
               </ol>
             </BkkCloudWrap>
 
-            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[54%_46%_62%_38%/20%_24%_18%_22%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="candy" side="left" size="sm">
+            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[54%_46%_62%_38%/20%_24%_18%_22%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="candy" side="left" size="sm" count={4}>
               <BkkInnerWave className="absolute bottom-0 left-0 text-leaf-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">

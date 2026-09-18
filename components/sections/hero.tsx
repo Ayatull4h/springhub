@@ -10,7 +10,7 @@ export function Hero() {
   const { t } = useI18n();
 
   return (
-    <section className="container-page grid gap-10 pt-12 pb-16 md:grid-cols-2 md:items-center md:pt-20">
+    <section className="container-page grid gap-10 overflow-x-clip pt-12 pb-16 md:grid-cols-2 md:items-center md:pt-20">
       <div>
         <h1
           className="font-display text-4xl font-bold leading-tight tracking-tight text-bkk-700 md:text-6xl dark:text-white"
@@ -37,7 +37,7 @@ export function Hero() {
         </div>
       </div>
 
-      <BkkCloudWrap boxClassName="aspect-video overflow-hidden rounded-[55%_45%_60%_40%/28%_32%_24%_36%] bg-slate-900 shadow-elevated ring-4 ring-tang-200 dark:ring-slate-700" tone="lagoon" side="right" size="md">
+      <BkkCloudWrap boxClassName="aspect-video overflow-hidden rounded-[55%_45%_60%_40%/28%_32%_24%_36%] bg-slate-900 shadow-elevated ring-4 ring-tang-200 dark:ring-slate-700" tone="lagoon" side="right" size="md" count={5}>
         <LiteYouTubeEmbed videoId="oUDA1loE8BE" title="Jaga Semesta · SpringHub" />
       </BkkCloudWrap>
 

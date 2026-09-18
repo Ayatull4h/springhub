@@ -203,7 +203,7 @@ export function EventSchedule() {
 
   if (items.length === 0) {
     return (
-      <section id="jadwal" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
+      <section id="jadwal" className="overflow-x-clip bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
         <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
           <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
@@ -218,7 +218,7 @@ export function EventSchedule() {
   }
 
   return (
-    <section id="jadwal" className="bg-white pt-16 md:pt-20 dark:bg-slate-900">
+    <section id="jadwal" className="overflow-x-clip bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>

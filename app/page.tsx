@@ -19,7 +19,7 @@ export default function HomePage() {
       <VolunteerActivities />
       <EventSchedule />
 
-      <section className="bg-[#c9f0dd] pt-16 md:pt-20 dark:bg-slate-900">
+      <section className="overflow-x-clip bg-[#c9f0dd] pt-16 md:pt-20 dark:bg-slate-900">
         <div className="container-page">
         <RealActionHeader />
 
