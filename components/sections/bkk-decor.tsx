@@ -218,19 +218,23 @@ export function BkkSticker({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border-4 border-white px-4 py-1.5 font-display text-sm font-bold text-bkk-900 shadow-[0_6px_16px_rgba(11,15,21,0.28)] ${bg} ${tilt} ${className}`}
+      className={`inline-flex items-center gap-1 rounded-[55%_45%_60%_40%/50%_50%_50%_50%] border-4 border-white px-4 py-1.5 font-display text-sm font-bold text-bkk-900 shadow-[0_6px_16px_rgba(11,15,21,0.28)] ${bg} ${tilt} ${className}`}
     >
       {children}
     </span>
   );
 }
 
-/** Radius organik puffy + kemiringan selang-seling untuk kartu. */
+/** Blob total — 8 varian, tidak ada yang kembar bersebelahan. */
 export const BKK_CARD_RADII = [
-  "rounded-[46%_54%_52%_48%/22%_30%_24%_32%]",
-  "rounded-[54%_46%_48%_52%/30%_22%_32%_24%]",
-  "rounded-[48%_52%_46%_54%/26%_32%_20%_28%]",
-  "rounded-[52%_48%_54%_46%/20%_26%_30%_22%]",
+  "rounded-[63%_37%_54%_46%/55%_48%_52%_45%]",
+  "rounded-[37%_63%_46%_54%/45%_55%_48%_52%]",
+  "rounded-[54%_46%_38%_62%/52%_58%_42%_48%]",
+  "rounded-[42%_58%_62%_38%/48%_42%_58%_52%]",
+  "rounded-[58%_42%_36%_64%/60%_44%_56%_40%]",
+  "rounded-[36%_64%_58%_42%/40%_60%_44%_56%]",
+  "rounded-[48%_52%_64%_36%/58%_46%_54%_42%]",
+  "rounded-[64%_36%_42%_58%/42%_58%_46%_54%]",
 ];
 
 export const BKK_CARD_TILTS = [
@@ -240,12 +244,16 @@ export const BKK_CARD_TILTS = [
   "md:rotate-[1.5deg]",
 ];
 
-/** Radius + miring kecil untuk baris/pil kompak (aman di gap rapat). */
+/** Baris pil-blob (bukan rounded biasa) — 8 varian. */
 export const BKK_ROW_RADII = [
-  "rounded-[1.2rem_2rem_1rem_1.8rem]",
-  "rounded-[2rem_1.2rem_1.8rem_1rem]",
-  "rounded-[1rem_1.8rem_1.2rem_2rem]",
-  "rounded-[1.8rem_1rem_2rem_1.2rem]",
+  "rounded-[58%_42%_55%_45%/60%_60%_40%_40%]",
+  "rounded-[42%_58%_45%_55%/40%_40%_60%_60%]",
+  "rounded-[55%_45%_60%_40%/55%_55%_45%_45%]",
+  "rounded-[45%_55%_40%_60%/45%_45%_55%_55%]",
+  "rounded-[62%_38%_52%_48%/58%_62%_38%_42%]",
+  "rounded-[38%_62%_48%_52%/42%_38%_62%_58%]",
+  "rounded-[52%_48%_62%_38%/60%_40%_60%_40%]",
+  "rounded-[48%_52%_38%_62%/40%_60%_40%_60%]",
 ];
 
 export const BKK_ROW_TILTS = [

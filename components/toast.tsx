@@ -52,7 +52,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div
             key={t.id}
             role="alert"
-            className={`flex items-center gap-2.5 rounded-lg px-4 py-3 text-sm font-medium shadow-lg transition-all duration-300 ${colors[t.type]}`}
+            className={`flex items-center gap-2.5 rounded-[40%_60%_45%_55%/45%_55%_40%_60%] px-4 py-3 text-sm font-medium shadow-lg transition-all duration-300 ${colors[t.type]}`}
           >
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs font-bold">
               {icons[t.type]}

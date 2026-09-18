@@ -120,9 +120,9 @@ export function SiteFooter() {
                 type="email"
                 required
                 placeholder={t("footer.newsletterPlaceholder")}
-                className="flex-1 rounded-md border border-white/25 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/50 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                className="flex-1 rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border border-white/25 bg-white/10 px-4 py-2 text-sm text-white placeholder:text-white/50 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30"
               />
-              <button type="submit" className="rounded-full bg-white px-4 py-2 font-display text-sm font-bold text-bkk-800 shadow-[3px_3px_0_rgba(0,0,0,0.35)] transition hover:rotate-0 rotate-1">
+              <button type="submit" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white px-4 py-2 font-display text-sm font-bold text-bkk-800 shadow-[3px_3px_0_rgba(0,0,0,0.35)] transition hover:rotate-0 rotate-1">
                 {t("footer.subscribe")}
               </button>
             </form>
@@ -135,7 +135,7 @@ export function SiteFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="Instagram · @jagasemesta"
-              className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white hover:bg-white/25"
+              className="grid h-9 w-9 place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-white/15 text-white hover:bg-white/25"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6m4.4 3.17a2.17 2.17 0 1 1 0 4.34 2.17 2.17 0 0 1 0-4.34M12 20a8 8 0 1 1 0-16 8 8 0 0 1 0 16m0-2a6 6 0 1 0 0-12 6 6 0 0 0 0 12"/></svg>
             </Link>
@@ -144,7 +144,7 @@ export function SiteFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="YouTube · @jagasemesta"
-              className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white hover:bg-white/25"
+              className="grid h-9 w-9 place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-white/15 text-white hover:bg-white/25"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 0 0 .5 6.19 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.81 3.02 3.02 0 0 0 2.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.81M9.55 15.57V8.43L15.82 12z"/></svg>
             </Link>
@@ -153,7 +153,7 @@ export function SiteFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="TikTok · @jagasemesta"
-              className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white hover:bg-white/25"
+              className="grid h-9 w-9 place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-white/15 text-white hover:bg-white/25"
             >
               <TikTokIcon className="h-4 w-4" />
             </Link>
@@ -162,7 +162,7 @@ export function SiteFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="Facebook · @jagasemesta"
-              className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white hover:bg-white/25"
+              className="grid h-9 w-9 place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-white/15 text-white hover:bg-white/25"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10.02 10.02 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02"/></svg>
             </Link>

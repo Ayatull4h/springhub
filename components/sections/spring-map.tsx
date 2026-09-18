@@ -465,7 +465,7 @@ const formTitleI18nKey = (slug: string): string => {
         {t("map.description")}
       </p>
 
-      <div className="mx-auto mt-4 flex max-w-3xl items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2 text-xs text-amber-900 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-200">
+      <div className="mx-auto mt-4 flex max-w-3xl items-start gap-2 rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border border-amber-200 bg-amber-50/60 px-4 py-2 text-xs text-amber-900 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-200">
         <ShieldCheck className="mt-0.5 h-4 w-4 flex-none" />
         <span
           dangerouslySetInnerHTML={{
@@ -477,7 +477,7 @@ const formTitleI18nKey = (slug: string): string => {
       </div>
 
       {/* Full-width map */}
-      <div className="relative mt-8 overflow-hidden rounded-[3rem_4.5rem_2.5rem_4rem] bg-white shadow-elevated ring-4 ring-tang-200 dark:bg-slate-900 dark:ring-slate-700">
+      <div className="relative mt-8 overflow-hidden rounded-[58%_42%_60%_40%/16%_20%_14%_22%] bg-white shadow-elevated ring-4 ring-tang-200 dark:bg-slate-900 dark:ring-slate-700">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-ink">{t("map.show")}</span>
@@ -495,7 +495,7 @@ const formTitleI18nKey = (slug: string): string => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari mata air, desa, provinsi..."
-                className="h-9 w-[200px] rounded-lg border border-ink-line bg-white pl-8 pr-8 text-sm placeholder:text-ink-subtle focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+                className="h-9 w-[200px] rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border border-ink-line bg-white pl-8 pr-8 text-sm placeholder:text-ink-subtle focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
               />
               {searchQuery && (
                 <button
@@ -535,7 +535,7 @@ const formTitleI18nKey = (slug: string): string => {
             <button
               onClick={loadMoreReports}
               disabled={loadingMore}
-              className="inline-flex items-center gap-2 rounded-md border border-ink-line px-4 py-2 text-sm font-medium text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] border border-ink-line px-4 py-2 text-sm font-medium text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white disabled:opacity-50"
             >
               {loadingMore ? (
                 <>
@@ -555,18 +555,18 @@ const formTitleI18nKey = (slug: string): string => {
       <div className="mt-6 grid gap-5 lg:grid-cols-12">
 
         {reportsError && (
-          <div className="lg:col-span-12 rounded-md bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-300">
+          <div className="lg:col-span-12 rounded-[40%_60%_45%_55%/45%_55%_40%_60%] bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-300">
             {reportsError}. <button onClick={() => fetchReports(1, "replace")} className="underline font-medium">Coba lagi</button>
           </div>
         )}
 
         {formsError && (
-          <div className="lg:col-span-12 rounded-md bg-amber-50 dark:bg-amber-900/30 p-3 text-xs text-amber-700 dark:text-amber-300">
+          <div className="lg:col-span-12 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-amber-50 dark:bg-amber-900/30 p-3 text-xs text-amber-700 dark:text-amber-300">
             {formsError}
           </div>
         )}
 
-        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[54%_46%_50%_50%/7%_9%_8%_10%] bg-white p-5 pb-6 shadow-card dark:bg-slate-900" tone="candy" side="left" size="md">
+        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[60%_40%_55%_45%/14%_18%_16%_20%] bg-white p-6 pb-8 shadow-card dark:bg-slate-900" tone="candy" side="left" size="md">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
@@ -595,7 +595,7 @@ const formTitleI18nKey = (slug: string): string => {
                   key={r.id}
                   className={`flex items-start gap-3 border border-ink-line/60 p-3 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[ri % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[ri % BKK_ROW_TILTS.length]}`}
                 >
-                  <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-2xl ${/restoration/.test(r.formSlug) ? "bg-tang-100 dark:bg-tang-700/30" : /trench/.test(r.formSlug) ? "bg-bkkpink-100 dark:bg-bkkpink-700/30" : /tree|seedling/.test(r.formSlug) ? "bg-leaf-100 dark:bg-leaf-700/30" : "bg-lagoon-100 dark:bg-lagoon-700/30"}`}>
+                  <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] ${/restoration/.test(r.formSlug) ? "bg-tang-100 dark:bg-tang-700/30" : /trench/.test(r.formSlug) ? "bg-bkkpink-100 dark:bg-bkkpink-700/30" : /tree|seedling/.test(r.formSlug) ? "bg-leaf-100 dark:bg-leaf-700/30" : "bg-lagoon-100 dark:bg-lagoon-700/30"}`}>
                     <Droplets className={`h-5 w-5 ${/restoration/.test(r.formSlug) ? "text-tang-600" : /trench/.test(r.formSlug) ? "text-bkkpink-600" : /tree|seedling/.test(r.formSlug) ? "text-leaf-600" : "text-lagoon-600"}`} />
                   </span>
                   <div className="min-w-0 flex-1">
@@ -629,7 +629,7 @@ const formTitleI18nKey = (slug: string): string => {
               <button
                 onClick={() => { setPage(p => Math.max(1, p - 1)); }}
                 disabled={page === 1}
-                className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+                className="rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
               >
                 ← {t("common.previous")}
               </button>
@@ -639,7 +639,7 @@ const formTitleI18nKey = (slug: string): string => {
               <button
                 onClick={() => { setPage(p => p + 1); }}
                 disabled={currentPage * itemsPerPage >= visible.length}
-                className="rounded-md border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+                className="rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-ink-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
               >
                 {t("common.next")} →
               </button>
@@ -647,7 +647,7 @@ const formTitleI18nKey = (slug: string): string => {
           )}
         </BkkCloudWrap>
 
-        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[46%_54%_50%_50%/9%_7%_10%_8%] bg-gradient-to-br from-lagoon-100 to-white p-5 pb-6 shadow-card dark:from-slate-800 dark:to-slate-900" tone="sunset" side="right" size="md">
+        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[40%_60%_45%_55%/18%_14%_20%_16%] bg-gradient-to-br from-lagoon-100 to-white p-6 pb-8 shadow-card dark:from-slate-800 dark:to-slate-900" tone="sunset" side="right" size="md">
           <div className="flex items-center justify-between gap-2">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ClipboardList className="h-4 w-4 text-brand-600" />
@@ -704,7 +704,7 @@ const formTitleI18nKey = (slug: string): string => {
               href="/seedlings"
               className="group flex flex-col items-center justify-center rounded-[1.5rem_1rem_1.8rem_1rem] border border-green-200 bg-gradient-to-br from-green-50 to-white px-3 py-3 text-center text-sm transition-all duration-200 hover:-translate-y-0.5 hover:rotate-0 hover:shadow-elevated hover:border-green-300 cursor-pointer md:-rotate-1 dark:border-slate-700 dark:from-slate-800 dark:to-slate-800"
             >
-              <span className="mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 transition-transform duration-200 group-hover:scale-110 dark:bg-green-900/50">
+              <span className="mb-1 flex h-8 w-8 items-center justify-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-green-100 transition-transform duration-200 group-hover:scale-110 dark:bg-green-900/50">
                 <Sprout className="h-4 w-4 text-green-600 dark:text-green-400" />
               </span>
               <span className="text-xs font-semibold text-ink dark:text-slate-100">Pasar Bibit</span>

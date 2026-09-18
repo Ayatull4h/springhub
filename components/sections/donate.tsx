@@ -49,7 +49,7 @@ export function DonateSection() {
   };
 
   if (done) return (
-    <div id="donate" className="rounded-3xl bg-white p-8 shadow-elevated ring-2 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
+    <div id="donate" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white p-8 shadow-elevated ring-2 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
       <CheckCircle2 className="h-12 w-12 text-emerald-500" />
       <h3 className="mt-4 text-xl font-bold">Permintaan Donasi Terkirim</h3>
       <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Xendit yang terbuka.</p>
@@ -58,7 +58,7 @@ export function DonateSection() {
 
   return (
     <div id="donate" className="relative transition-transform hover:rotate-0 md:rotate-1">
-      <BkkCloudWrap boxClassName="rounded-[4rem_2.5rem_4.5rem_2rem] bg-white shadow-elevated ring-4 ring-tang-200 dark:bg-slate-900 dark:ring-slate-700" tone="sunset" side="right" size="md">
+      <BkkCloudWrap boxClassName="rounded-[58%_42%_60%_40%/16%_20%_14%_22%] bg-white shadow-elevated ring-4 ring-tang-200 dark:bg-slate-900 dark:ring-slate-700" tone="sunset" side="right" size="md">
       <div className="px-5 pb-5 pt-5">
         <div className="mb-4 flex items-center gap-5 text-sm">
           <div>
@@ -86,7 +86,7 @@ export function DonateSection() {
           <select
             value={tierId}
             onChange={e => { setTierId(e.target.value); setError(""); }}
-            className="w-full rounded-full border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
+            className="w-full rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
             required
           >
             <option value="">{t("donate.chooseImpact")}</option>
@@ -107,7 +107,7 @@ export function DonateSection() {
               type="number"
               value={customAmount}
               onChange={e => setCustomAmount(e.target.value)}
-              className="w-full rounded-full border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
+              className="w-full rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
               placeholder="Jumlah donasi (Rp)"
               min={1000}
               required
@@ -119,20 +119,20 @@ export function DonateSection() {
               required
               value={name}
               onChange={e => setName(e.target.value)}
-              className="flex-1 min-w-0 rounded-full border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
+              className="flex-1 min-w-0 rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
               placeholder="Nama Anda"
             />
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="flex-1 min-w-0 rounded-full border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
+              className="flex-1 min-w-0 rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border-2 border-tang-100 bg-white px-4 py-2 text-sm focus:border-tang-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
               placeholder="Email"
             />
           </div>
 
           {error && (
-            <div className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            <div className="rounded-[40%_60%_45%_55%/45%_55%_40%_60%] bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-900/30 dark:text-red-300">
               {error}
             </div>
           )}
@@ -140,7 +140,7 @@ export function DonateSection() {
           <button
             type="submit"
             disabled={loading || !name || (tierId !== "custom" && !tier) || (tierId === "custom" && !customAmount)}
-            className="w-full justify-center gap-2 rounded-full bg-tang-500 py-3 font-display text-sm font-bold text-white shadow-[4px_4px_0_rgba(120,53,15,0.9)] ring-2 ring-white/60 transition hover:rotate-0 hover:bg-tang-600 -rotate-1"
+            className="w-full justify-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-tang-500 py-3 font-display text-sm font-bold text-white shadow-[4px_4px_0_rgba(120,53,15,0.9)] ring-2 ring-white/60 transition hover:rotate-0 hover:bg-tang-600 -rotate-1"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
               <><Heart className="h-4 w-4" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>

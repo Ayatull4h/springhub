@@ -76,14 +76,14 @@ function RegisterPopup({ event, onClose }: { event: EventItem; onClose: () => vo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4" onClick={onClose}>
-      <div className="my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800" onClick={(e) => e.stopPropagation()}>
+      <div className="my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white p-6 shadow-2xl dark:bg-slate-800" onClick={(e) => e.stopPropagation()}>
         {done ? (
           <div className="py-8 text-center">
             <h3 className="text-lg font-bold text-ink">Pendaftaran terkirim!</h3>
             <p className="mt-2 text-sm text-ink-muted">
               Kamu akan menerima email pengingat H-1 sebelum acara. Sampai jumpa di lokasi!
             </p>
-            <button onClick={onClose} className="mt-4 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+            <button onClick={onClose} className="mt-4 rounded-[40%_60%_45%_55%/45%_55%_40%_60%] bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
               Tutup
             </button>
           </div>
@@ -101,28 +101,28 @@ function RegisterPopup({ event, onClose }: { event: EventItem; onClose: () => vo
             <form onSubmit={submit} className="mt-4 space-y-3">
               <div>
                 <label className="text-xs font-medium text-ink-muted">Nama lengkap</label>
-                <input required value={form.nama} onChange={(e) => setForm({ ...form, nama: e.target.value })} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" />
+                <input required value={form.nama} onChange={(e) => setForm({ ...form, nama: e.target.value })} className="mt-1 w-full rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-ink-line px-4 py-2 text-sm dark:bg-slate-800 dark:text-white" />
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">Domisili saat ini</label>
-                <input value={form.domisili} onChange={(e) => setForm({ ...form, domisili: e.target.value })} placeholder="cth: Boyolali" className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" />
+                <input value={form.domisili} onChange={(e) => setForm({ ...form, domisili: e.target.value })} placeholder="cth: Boyolali" className="mt-1 w-full rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-ink-line px-4 py-2 text-sm dark:bg-slate-800 dark:text-white" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-medium text-ink-muted">Ikut berapa hari</label>
-                  <input required type="number" min={1} max={30} value={form.hari} onChange={(e) => setForm({ ...form, hari: e.target.value })} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" />
+                  <input required type="number" min={1} max={30} value={form.hari} onChange={(e) => setForm({ ...form, hari: e.target.value })} className="mt-1 w-full rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-ink-line px-4 py-2 text-sm dark:bg-slate-800 dark:text-white" />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-ink-muted">No. WA</label>
-                  <input required value={form.wa} onChange={(e) => setForm({ ...form, wa: e.target.value })} placeholder="0812..." className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" />
+                  <input required value={form.wa} onChange={(e) => setForm({ ...form, wa: e.target.value })} placeholder="0812..." className="mt-1 w-full rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-ink-line px-4 py-2 text-sm dark:bg-slate-800 dark:text-white" />
                 </div>
               </div>
               <div>
                 <label className="text-xs font-medium text-ink-muted">Email (untuk pengingat H-1)</label>
-                <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white" />
+                <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="mt-1 w-full rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-ink-line px-4 py-2 text-sm dark:bg-slate-800 dark:text-white" />
               </div>
               {error && <p className="text-sm text-red-600">{error}</p>}
-              <button type="submit" disabled={sending} className="w-full rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50">
+              <button type="submit" disabled={sending} className="w-full rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50">
                 {sending ? "Mengirim..." : "Kirim Pendaftaran"}
               </button>
             </form>
@@ -229,10 +229,10 @@ export function EventSchedule() {
 
       <div className="mt-4 flex items-center justify-end gap-2">
         <span className="mr-auto text-xs text-ink-muted">{page + 1} / {items.length}</span>
-        <button onClick={goPrev} className="rounded-full border border-ink-line p-2 text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white" aria-label="Sebelumnya">
+        <button onClick={goPrev} className="rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-ink-line p-2 text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white" aria-label="Sebelumnya">
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <button onClick={goNext} className="rounded-full border border-ink-line p-2 text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white" aria-label="Berikutnya">
+        <button onClick={goNext} className="rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-ink-line p-2 text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white" aria-label="Berikutnya">
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
@@ -288,15 +288,15 @@ export function EventSchedule() {
                     </p>
                   )}
                   {ended ? (
-                    <button disabled className="mt-3 w-full cursor-not-allowed rounded-lg bg-slate-200 px-4 py-2 text-sm font-medium text-slate-500 dark:bg-slate-700">
+                    <button disabled className="mt-3 w-full cursor-not-allowed rounded-[40%_60%_45%_55%/45%_55%_40%_60%] bg-slate-200 px-4 py-2 text-sm font-medium text-slate-500 dark:bg-slate-700">
                       Selesai
                     </button>
                   ) : item.googleFormUrl ? (
-                    <a href={item.googleFormUrl} target="_blank" rel="noreferrer" className="mt-3 block w-full rounded-lg bg-brand-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-brand-700">
+                    <a href={item.googleFormUrl} target="_blank" rel="noreferrer" className="mt-3 block w-full rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-brand-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-brand-700">
                       Daftar
                     </a>
                   ) : (
-                    <button onClick={() => setPopup(item)} className="mt-3 w-full rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+                    <button onClick={() => setPopup(item)} className="mt-3 w-full rounded-[40%_60%_45%_55%/45%_55%_40%_60%] bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
                       Daftar
                     </button>
                   )}

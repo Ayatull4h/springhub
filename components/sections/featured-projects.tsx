@@ -102,7 +102,7 @@ export function FeaturedProjects() {
                     )}
                   </div>
                   <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-                    <span className={`mb-2 inline-flex w-fit -rotate-2 rounded-full px-2.5 py-0.5 text-xs font-bold ${badgeColor}`}>
+                    <span className={`mb-2 inline-flex w-fit -rotate-2 rounded-[55%_45%_60%_40%/60%_55%_45%_60%] px-2.5 py-0.5 text-xs font-bold ${badgeColor}`}>
                       {info.label}
                     </span>
                     <h3 className="text-base font-semibold text-ink group-hover:text-sky-600 transition-colors">

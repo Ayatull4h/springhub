@@ -22,14 +22,14 @@ export function Hero() {
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <Link
             href="#map"
-            className="rounded-full bg-bkk-700 px-7 py-3.5 font-display text-base font-bold text-white shadow-[5px_5px_0_rgba(61,22,96,0.9)] ring-2 ring-white/50 transition hover:rotate-0 hover:scale-[1.03] -rotate-1"
+            className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-bkk-700 px-7 py-3.5 font-display text-base font-bold text-white shadow-[5px_5px_0_rgba(61,22,96,0.9)] ring-2 ring-white/50 transition hover:rotate-0 hover:scale-[1.03] -rotate-1"
           >
             {t("hero.cta.start")}
             <ArrowRight className="ml-2 inline h-4 w-4" />
           </Link>
           <Link
             href="https://jagasemesta.org/"
-            className="rounded-full bg-cream px-7 py-3.5 font-display text-base font-bold text-bkk-800 shadow-[5px_5px_0_rgba(61,22,96,0.9)] ring-2 ring-tang-200 transition hover:rotate-0 hover:scale-[1.03] rotate-1 dark:bg-slate-800 dark:text-white"
+            className="rounded-[40%_60%_45%_55%/45%_55%_40%_60%] bg-cream px-7 py-3.5 font-display text-base font-bold text-bkk-800 shadow-[5px_5px_0_rgba(61,22,96,0.9)] ring-2 ring-tang-200 transition hover:rotate-0 hover:scale-[1.03] rotate-1 dark:bg-slate-800 dark:text-white"
           >
             {t("hero.cta.back")}
             <ArrowRight className="ml-2 inline h-4 w-4" />
@@ -37,7 +37,7 @@ export function Hero() {
         </div>
       </div>
 
-      <BkkCloudWrap boxClassName="aspect-video overflow-hidden rounded-[2.5rem_3.5rem_2rem_3rem] bg-slate-900 shadow-elevated ring-4 ring-tang-200 dark:ring-slate-700" tone="lagoon" side="right" size="md">
+      <BkkCloudWrap boxClassName="aspect-video overflow-hidden rounded-[55%_45%_60%_40%/28%_32%_24%_36%] bg-slate-900 shadow-elevated ring-4 ring-tang-200 dark:ring-slate-700" tone="lagoon" side="right" size="md">
         <LiteYouTubeEmbed videoId="oUDA1loE8BE" title="Jaga Semesta · SpringHub" />
       </BkkCloudWrap>
 
