@@ -37,7 +37,7 @@ export function Hero() {
         </div>
       </div>
 
-      <BkkCloudWrap boxClassName="aspect-video overflow-hidden rounded-[55%_45%_60%_40%/28%_32%_24%_36%] bg-slate-900 shadow-elevated ring-4 ring-tang-200 dark:ring-slate-700" tone="lagoon" side="right" size="md" count={5}>
+      <BkkCloudWrap boxClassName="aspect-video overflow-hidden rounded-[55%_45%_60%_40%/28%_32%_24%_36%] bg-slate-900 shadow-elevated ring-4 ring-tang-200 dark:ring-slate-700" tone="lagoon" flip variant={2}>
         <LiteYouTubeEmbed videoId="oUDA1loE8BE" title="Jaga Semesta · SpringHub" />
       </BkkCloudWrap>
 

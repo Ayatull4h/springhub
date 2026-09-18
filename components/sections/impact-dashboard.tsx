@@ -15,7 +15,6 @@ const STAT_CARDS = [
   "bg-leaf-500 rounded-[42%_58%_62%_38%/48%_42%_58%_52%]",
 ];
 const STAT_TILTS = ["md:-rotate-2", "md:rotate-1", "md:-rotate-2", "md:rotate-2"];
-const STAT_SIDES = ["left", "right", "left", "right"] as const;
 
 
 const iconMap: Record<string, typeof Droplets> = {
@@ -136,7 +135,7 @@ export function ImpactDashboard() {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
-                <BkkCloudWrap outerClassName={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`} boxClassName={`overflow-hidden p-7 pb-12 shadow-elevated md:p-8 md:pb-14 ${STAT_CARDS[si % STAT_CARDS.length]}`} tone="white" size="sm" side={STAT_SIDES[si % STAT_SIDES.length]} count={[4, 5, 3, 6][si % 4]}>
+                <BkkCloudWrap outerClassName={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`} boxClassName={`overflow-hidden p-7 pb-12 shadow-elevated md:p-8 md:pb-14 ${STAT_CARDS[si % STAT_CARDS.length]}`} tone="white" flip={si % 2 === 1} variant={((si % 2) + 1) as 1 | 2}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
                   <div className="flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-[55%_45%_50%_50%/50%_55%_45%_50%] bg-white/40 text-bkk-900">
@@ -164,7 +163,7 @@ export function ImpactDashboard() {
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
-            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[63%_37%_54%_46%/18%_22%_20%_24%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="sunset" side="left" size="sm" count={5}>
+            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[63%_37%_54%_46%/18%_22%_20%_24%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="sunset" flip={false} variant={1}>
               <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
@@ -216,7 +215,7 @@ export function ImpactDashboard() {
               )}
             </BkkCloudWrap>
 
-            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2" boxClassName="overflow-hidden rounded-[37%_63%_46%_54%/22%_18%_24%_20%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="lagoon" side="right" size="sm" count={6}>
+            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2" boxClassName="overflow-hidden rounded-[37%_63%_46%_54%/22%_18%_24%_20%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="lagoon" flip variant={2}>
               <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
@@ -237,7 +236,7 @@ export function ImpactDashboard() {
               </ol>
             </BkkCloudWrap>
 
-            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[54%_46%_62%_38%/20%_24%_18%_22%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="candy" side="left" size="sm" count={4}>
+            <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-2" boxClassName="overflow-hidden rounded-[54%_46%_62%_38%/20%_24%_18%_22%] bg-white p-6 pb-12 shadow-elevated dark:bg-slate-900" tone="candy" flip={false} variant={2}>
               <BkkInnerWave className="absolute bottom-0 left-0 text-leaf-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">

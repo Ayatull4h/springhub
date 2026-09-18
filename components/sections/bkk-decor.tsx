@@ -115,60 +115,56 @@ export function BkkInnerWave({ className = "" }: { className?: string }) {
 }
 
 /** Set warna gugusan gelembung. */
-const BUBBLE_TONES: Record<string, string[]> = {
-  candy: [
-    "bg-lagoon-200/80 dark:bg-slate-800",
-    "bg-tang-200/80 dark:bg-slate-800",
-    "bg-bkk-200/80 dark:bg-slate-800",
-  ],
-  sunset: [
-    "bg-tang-200/80 dark:bg-slate-800",
-    "bg-pink-200/80 dark:bg-slate-800",
-    "bg-bkksun/70 dark:bg-slate-800",
-  ],
-  lagoon: [
-    "bg-lagoon-200/80 dark:bg-slate-800",
-    "bg-bkkblue-200/80 dark:bg-slate-800",
-    "bg-leaf-100 dark:bg-slate-800",
-  ],
-  white: [
-    "bg-white/70 dark:bg-slate-700/60",
-    "bg-white/50 dark:bg-slate-700/60",
-    "bg-white/80 dark:bg-slate-700/60",
-  ],
+/** Warna siluet awan per tone. */
+const CLOUD_TONES: Record<string, string> = {
+  candy: "text-lagoon-200/90 dark:text-slate-800",
+  sunset: "text-tang-200/90 dark:text-slate-800",
+  lagoon: "text-bkkblue-200/90 dark:text-slate-800",
+  white: "text-white/90 dark:text-slate-700/60",
 };
 
-const BUBBLE_POS = {
-  sm: {
-    left: ["-left-3 -top-5 h-12 w-12", "-top-8 left-10 h-8 w-8", "-left-1 top-8 h-6 w-6"],
-    right: ["-right-3 -top-5 h-12 w-12", "-top-8 right-10 h-8 w-8", "-right-1 top-8 h-6 w-6"],
-  },
-  md: {
-    left: ["-left-6 -top-10 h-28 w-28", "-top-14 left-24 h-20 w-20 md:left-28", "-left-3 top-20 h-14 w-14"],
-    right: ["-right-6 -top-10 h-28 w-28", "-top-14 right-24 h-20 w-20 md:right-28", "-right-3 top-20 h-14 w-14"],
-  },
-} as const;
-
-/** Tambahan untuk count 4–8: mengisi atas-tengah dan sisi (tetap di luar kotak). */
-const BUBBLE_EXTRA = {
-  sm: [
-    "left-1/2 -top-7 h-7 w-7",
-    "-right-2 top-5 h-5 w-5",
-    "-left-2 top-5 h-5 w-5",
-    "right-1/4 -top-6 h-6 w-6",
-    "left-1/4 -top-5 h-5 w-5",
-  ],
-  md: [
-    "left-1/2 -top-12 h-14 w-14",
-    "-right-8 top-6 h-10 w-10",
-    "-left-8 top-6 h-10 w-10",
-    "right-1/4 -top-8 h-8 w-8",
-    "left-1/4 -top-6 h-6 w-6",
-  ],
-} as const;
+/** Siluet awan utuh: beberapa blob digabung (1 fill = 1 bentuk). */
+export function BkkCloud({
+  className = "",
+  variant = 1,
+}: {
+  className?: string;
+  variant?: 1 | 2;
+}) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 360 220"
+      preserveAspectRatio="none"
+      className={`pointer-events-none absolute ${className}`}
+      fill="currentColor"
+    >
+      <g>
+        <ellipse cx="180" cy="165" rx="165" ry="55" />
+        {variant === 2 ? (
+          <>
+            <circle cx="280" cy="120" r="52" />
+            <circle cx="205" cy="85" r="62" />
+            <circle cx="125" cy="90" r="52" />
+            <circle cx="65" cy="125" r="42" />
+            <circle cx="320" cy="135" r="32" />
+          </>
+        ) : (
+          <>
+            <circle cx="80" cy="120" r="52" />
+            <circle cx="155" cy="85" r="62" />
+            <circle cx="235" cy="90" r="52" />
+            <circle cx="295" cy="125" r="42" />
+            <circle cx="40" cy="135" r="32" />
+          </>
+        )}
+      </g>
+    </svg>
+  );
+}
 
 /**
- * Pembungkus awan: gugusan 3 lingkaran beda ukuran di belakang kotak isi.
+ * Pembungkus awan: 1 siluet awan utuh di belakang kotak isi.
  * Satu-satunya cara membuat awan — jangan tempel lingkaran manual lagi.
  */
 export function BkkCloudWrap({
@@ -176,33 +172,23 @@ export function BkkCloudWrap({
   boxClassName = "",
   outerClassName = "",
   tone = "candy",
-  side = "left",
-  size = "md",
-  count = 3,
+  flip = false,
+  variant = 1,
 }: {
   children: ReactNode;
   boxClassName?: string;
   outerClassName?: string;
-  tone?: keyof typeof BUBBLE_TONES;
-  side?: keyof (typeof BUBBLE_POS)["md"];
-  size?: keyof typeof BUBBLE_POS;
-  /** Jumlah blob 3–8. Semua di zona atas/sisi (tak menutupi isi). */
-  count?: number;
+  tone?: keyof typeof CLOUD_TONES;
+  flip?: boolean;
+  variant?: 1 | 2;
 }) {
-  const colors = BUBBLE_TONES[tone] ?? BUBBLE_TONES.candy;
-  const base = BUBBLE_POS[size][side];
-  const extra = BUBBLE_EXTRA[size];
-  const n = Math.min(8, Math.max(3, Math.round(count)));
-  const pos = [...base, ...extra].slice(0, n);
+  const color = CLOUD_TONES[tone] ?? CLOUD_TONES.candy;
   return (
     <div className={`relative ${outerClassName}`}>
-      {pos.map((p, i) => (
-        <div
-          key={i}
-          aria-hidden="true"
-          className={`pointer-events-none absolute rounded-full ${p} ${colors[i % colors.length]}`}
-        />
-      ))}
+      <BkkCloud
+        variant={variant}
+        className={`-inset-x-8 -top-12 bottom-0 h-auto w-[calc(100%+64px)] ${flip ? "-scale-x-100" : ""} ${color}`}
+      />
       <div className={`relative ${boxClassName}`}>{children}</div>
     </div>
   );
