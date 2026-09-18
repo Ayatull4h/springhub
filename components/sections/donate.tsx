@@ -97,7 +97,7 @@ export function DonateSection() {
           </select>
 
           {tier && (
-            <div className="rounded-2xl bg-cream px-3 py-2 text-sm font-medium text-tang-700 dark:bg-bkk-900/30 dark:text-bkk-200">
+            <div className="rounded-[45%_55%_50%_50%/60%_55%_65%_60%] bg-cream px-3 py-2 text-sm font-medium text-tang-700 dark:bg-bkk-900/30 dark:text-bkk-200">
               {tierIcons[tier.id]} <strong>{tier.impact}</strong> — {tier.label}
             </div>
           )}
