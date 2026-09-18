@@ -144,7 +144,7 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <BkkCloudWrap outerClassName="mt-3 flex-1 transition-transform hover:rotate-0 md:-rotate-[0.5deg]" boxClassName="rounded-[2.5rem_3.5rem_2rem_3rem] bg-white p-4 shadow-elevated dark:bg-slate-900" tone="candy" side="left" size="md">
+          <BkkCloudWrap outerClassName="mt-3 flex-1 transition-transform hover:rotate-0 md:-rotate-[0.5deg]" boxClassName="rounded-[2.5rem_3.5rem_2rem_3rem] bg-white p-4 shadow-elevated dark:bg-slate-900" tone="candy" side="left" size="sm">
             <ul className="grid gap-5 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
@@ -229,7 +229,7 @@ export function VolunteerActivities() {
           </BkkCloudWrap>
         </div>
 
-        <BkkCloudWrap outerClassName="flex flex-col transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full" boxClassName="rounded-[4rem_2rem_4.5rem_2rem] bg-gradient-to-br from-tang-100 to-cream p-5 shadow-elevated h-full dark:from-slate-800 dark:to-slate-900" tone="lagoon" side="right" size="md">
+        <BkkCloudWrap outerClassName="flex flex-col transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full" boxClassName="rounded-[4rem_2rem_4.5rem_2rem] bg-gradient-to-br from-tang-100 to-cream p-5 shadow-elevated h-full dark:from-slate-800 dark:to-slate-900" tone="lagoon" side="right" size="sm">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-ink">
               {t("volunteer.submitProject")}
