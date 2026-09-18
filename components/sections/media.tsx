@@ -203,7 +203,7 @@ export function MediaSection() {
           href="https://youtube.com/@jagasemesta"
           target="_blank"
           rel="noreferrer"
-          className="rounded-full bg-white px-5 py-2.5 font-display text-sm font-bold text-bkk-800 shadow-lg transition hover:bg-bkk-50"
+          className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white px-5 py-2.5 font-display text-sm font-bold text-bkk-800 shadow-lg transition hover:bg-bkk-50"
         >
           {t("media.visitYoutube")}
           <ExternalLink className="h-3.5 w-3.5" />
@@ -233,14 +233,14 @@ export function MediaSection() {
             </span>
             <button
               onClick={goPrev}
-              className="rounded-full border border-white/40 p-2 text-white transition hover:bg-white/15"
+              className="rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-white/40 p-2 text-white transition hover:bg-white/15"
               aria-label="Sebelumnya"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               onClick={goNext}
-              className="rounded-full border border-white/40 p-2 text-white transition hover:bg-white/15"
+              className="rounded-[55%_45%_60%_40%/60%_55%_45%_60%] border border-white/40 p-2 text-white transition hover:bg-white/15"
               aria-label="Berikutnya"
             >
               <ChevronRight className="h-4 w-4" />
@@ -284,7 +284,7 @@ export function MediaSection() {
                       if (item.linkUrl) window.open(item.linkUrl, item.linkUrl.startsWith("http") ? "_blank" : "_self", "noreferrer");
                     }}
                     onKeyDown={(e) => { if (o !== 0 && (e.key === "Enter" || e.key === " ")) goTo(i); }}
-                    className={`group block w-[266px] overflow-hidden rounded-[2.5rem_3.5rem_2rem_3rem] bg-white p-4 shadow-elevated transition-transform hover:rotate-0 dark:bg-slate-900 ${o !== 0 ? "cursor-pointer" : ""} sm:w-[290px] ${o === 0 ? "" : o < 0 ? "md:-rotate-2" : "md:rotate-2"}`}
+                    className={`group block w-[266px] overflow-hidden rounded-[58%_42%_60%_40%/28%_32%_24%_36%] bg-white p-4 shadow-elevated transition-transform hover:rotate-0 dark:bg-slate-900 ${o !== 0 ? "cursor-pointer" : ""} sm:w-[290px] ${o === 0 ? "" : o < 0 ? "md:-rotate-2" : "md:rotate-2"}`}
                   >
                     <div className="-mx-4 -mt-4 mb-3 h-28 overflow-hidden bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
                       <MediaThumb item={item} />

@@ -105,7 +105,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
       onKeyDown={(e) => { if (e.key === "Escape") onClose(); }}
     >
       <div
-        className="relative max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 pb-10 shadow-2xl"
+        className="relative max-h-[80vh] w-full max-w-md overflow-y-auto rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white dark:bg-slate-800 p-6 pb-10 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
