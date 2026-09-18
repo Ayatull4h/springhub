@@ -567,7 +567,7 @@ const formTitleI18nKey = (slug: string): string => {
         )}
 
         <div className="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6">
-        <BkkCloudBox className="bg-white p-7 pb-8 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
+        <BkkCloudBox className="bg-white p-8 pb-10 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
@@ -650,7 +650,7 @@ const formTitleI18nKey = (slug: string): string => {
         </div>
 
         <div className="transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6">
-        <BkkCloudBox className="bg-gradient-to-br from-lagoon-100 to-white p-7 pb-8 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:from-slate-800 dark:to-slate-900" flip tall>
+        <BkkCloudBox className="bg-gradient-to-br from-lagoon-100 to-white p-8 pb-10 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:from-slate-800 dark:to-slate-900" flip tall>
           <div className="flex items-center justify-between gap-2">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ClipboardList className="h-4 w-4 text-brand-600" />
