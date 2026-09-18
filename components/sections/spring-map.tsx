@@ -20,7 +20,7 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BkkCurve, BkkWeave, BkkTitleCloud, BkkInnerWave, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
+import { BkkCurve, BkkWeave, BkkTitleCloud, BkkInnerWave, BkkCloudWrap, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -566,11 +566,7 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         )}
 
-        <div className="relative transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6">
-          <div aria-hidden="true" className="pointer-events-none absolute -left-6 -top-10 h-28 w-28 rounded-full bg-lagoon-200/80 dark:bg-slate-800" />
-          <div aria-hidden="true" className="pointer-events-none absolute -top-14 left-28 h-20 w-20 rounded-full bg-tang-200/80 dark:bg-slate-800" />
-          <div aria-hidden="true" className="pointer-events-none absolute -left-3 top-20 h-14 w-14 rounded-full bg-bkk-200/80 dark:bg-slate-800" />
-          <div className="relative rounded-[2.5rem] bg-white p-5 pb-6 shadow-card dark:bg-slate-900">
+        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[2.5rem] bg-white p-5 pb-6 shadow-card dark:bg-slate-900" tone="candy" side="left" size="md">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
@@ -649,14 +645,9 @@ const formTitleI18nKey = (slug: string): string => {
               </button>
             </div>
           )}
-          </div>
-        </div>
+        </BkkCloudWrap>
 
-        <div className="relative transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6">
-          <div aria-hidden="true" className="pointer-events-none absolute -right-6 -top-10 h-28 w-28 rounded-full bg-tang-200/80 dark:bg-slate-800" />
-          <div aria-hidden="true" className="pointer-events-none absolute -top-14 right-28 h-20 w-20 rounded-full bg-pink-200/80 dark:bg-slate-800" />
-          <div aria-hidden="true" className="pointer-events-none absolute -right-3 top-20 h-14 w-14 rounded-full bg-lagoon-200/80 dark:bg-slate-800" />
-          <div className="relative rounded-[2.5rem] bg-gradient-to-br from-lagoon-100 to-white p-5 pb-6 shadow-card dark:from-slate-800 dark:to-slate-900">
+        <BkkCloudWrap outerClassName="transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6" boxClassName="rounded-[2.5rem] bg-gradient-to-br from-lagoon-100 to-white p-5 pb-6 shadow-card dark:from-slate-800 dark:to-slate-900" tone="sunset" side="right" size="md">
           <div className="flex items-center justify-between gap-2">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ClipboardList className="h-4 w-4 text-brand-600" />
@@ -723,12 +714,11 @@ const formTitleI18nKey = (slug: string): string => {
               <OfflineEntryButton />
             </div>
           </div>
-          </div>
+        </BkkCloudWrap>
         </div>
       </div>
       <PointsGuideModal open={showGuide} onClose={() => setShowGuide(false)} />
       <FloatingPointsButton />
-      </div>
       <BkkCurve top="bg-transparent" bottom="text-[#f6f1fb] dark:text-slate-900" accent="text-bkkblue-200" />
     </section>
   );

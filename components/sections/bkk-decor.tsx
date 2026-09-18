@@ -114,6 +114,76 @@ export function BkkInnerWave({ className = "" }: { className?: string }) {
   );
 }
 
+/** Set warna gugusan gelembung. */
+const BUBBLE_TONES: Record<string, string[]> = {
+  candy: [
+    "bg-lagoon-200/80 dark:bg-slate-800",
+    "bg-tang-200/80 dark:bg-slate-800",
+    "bg-bkk-200/80 dark:bg-slate-800",
+  ],
+  sunset: [
+    "bg-tang-200/80 dark:bg-slate-800",
+    "bg-pink-200/80 dark:bg-slate-800",
+    "bg-bkksun/70 dark:bg-slate-800",
+  ],
+  lagoon: [
+    "bg-lagoon-200/80 dark:bg-slate-800",
+    "bg-bkkblue-200/80 dark:bg-slate-800",
+    "bg-leaf-100 dark:bg-slate-800",
+  ],
+  white: [
+    "bg-white/70 dark:bg-slate-700/60",
+    "bg-white/50 dark:bg-slate-700/60",
+    "bg-white/80 dark:bg-slate-700/60",
+  ],
+};
+
+const BUBBLE_POS = {
+  sm: {
+    left: ["-left-3 -top-5 h-12 w-12", "-top-8 left-10 h-8 w-8", "-left-1 top-8 h-6 w-6"],
+    right: ["-right-3 -top-5 h-12 w-12", "-top-8 right-10 h-8 w-8", "-right-1 top-8 h-6 w-6"],
+  },
+  md: {
+    left: ["-left-6 -top-10 h-28 w-28", "-top-14 left-24 h-20 w-20 md:left-28", "-left-3 top-20 h-14 w-14"],
+    right: ["-right-6 -top-10 h-28 w-28", "-top-14 right-24 h-20 w-20 md:right-28", "-right-3 top-20 h-14 w-14"],
+  },
+} as const;
+
+/**
+ * Pembungkus awan: gugusan 3 lingkaran beda ukuran di belakang kotak isi.
+ * Satu-satunya cara membuat awan — jangan tempel lingkaran manual lagi.
+ */
+export function BkkCloudWrap({
+  children,
+  boxClassName = "",
+  outerClassName = "",
+  tone = "candy",
+  side = "left",
+  size = "md",
+}: {
+  children: ReactNode;
+  boxClassName?: string;
+  outerClassName?: string;
+  tone?: keyof typeof BUBBLE_TONES;
+  side?: keyof (typeof BUBBLE_POS)["md"];
+  size?: keyof typeof BUBBLE_POS;
+}) {
+  const colors = BUBBLE_TONES[tone] ?? BUBBLE_TONES.candy;
+  const pos = BUBBLE_POS[size][side];
+  return (
+    <div className={`relative ${outerClassName}`}>
+      {pos.map((p, i) => (
+        <div
+          key={i}
+          aria-hidden="true"
+          className={`pointer-events-none absolute rounded-full ${p} ${colors[i % colors.length]}`}
+        />
+      ))}
+      <div className={`relative ${boxClassName}`}>{children}</div>
+    </div>
+  );
+}
+
 /** Anyaman rotan kuning (motif khas BKK) untuk sudut section. */
 export function BkkWeave({ className = "" }: { className?: string }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");

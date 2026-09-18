@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { LiteYouTubeEmbed } from "@/components/lite-youtube-embed";
+import { BkkCloudWrap } from "./bkk-decor";
 
 export function Hero() {
   const { t } = useI18n();
@@ -36,15 +37,9 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="relative">
-        <div
-          aria-hidden="true"
-          className="absolute -inset-3 rotate-2 rounded-[3.5rem_2.5rem_4rem_2rem] bg-lagoon-200/70 dark:bg-slate-800"
-        />
-        <div className="relative aspect-video overflow-hidden rounded-[2.5rem_3.5rem_2rem_3rem] bg-slate-900 shadow-elevated ring-4 ring-tang-200 dark:ring-slate-700">
-          <LiteYouTubeEmbed videoId="oUDA1loE8BE" title="Jaga Semesta · SpringHub" />
-        </div>
-      </div>
+      <BkkCloudWrap boxClassName="aspect-video overflow-hidden rounded-[2.5rem_3.5rem_2rem_3rem] bg-slate-900 shadow-elevated ring-4 ring-tang-200 dark:ring-slate-700" tone="lagoon" side="right" size="md">
+        <LiteYouTubeEmbed videoId="oUDA1loE8BE" title="Jaga Semesta · SpringHub" />
+      </BkkCloudWrap>
 
       {/* Mobile fallback — YouTube link */}
       <a href="https://www.youtube.com/watch?v=oUDA1loE8BE" target="_blank" className="mt-2 inline-flex items-center gap-1 text-xs text-ink-muted hover:text-brand-600 md:hidden">

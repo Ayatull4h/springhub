@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve, BKK_CARD_RADII, BKK_CARD_TILTS, BkkTitleCloud } from "./bkk-decor";
+import { BkkCurve, BKK_CARD_RADII, BKK_CARD_TILTS, BkkTitleCloud, BkkCloudWrap } from "./bkk-decor";
 
 type CourseItem = {
   id: string;
@@ -88,7 +88,7 @@ export function LearningHub() {
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (
-              <article key={c.id} className={`card flex flex-col overflow-hidden transition-transform hover:rotate-0 ${BKK_CARD_RADII[ci % BKK_CARD_RADII.length]} ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]} ${ci % 3 === 1 ? "md:translate-y-4" : ""}`}>
+              <BkkCloudWrap key={c.id} outerClassName={`transition-transform hover:rotate-0 ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]} ${ci % 3 === 1 ? "md:translate-y-4" : ""}`} boxClassName={`card flex flex-col overflow-hidden ${BKK_CARD_RADII[ci % BKK_CARD_RADII.length]}`} tone="candy" side={ci % 2 ? "right" : "left"} size="sm">
                 <div className="-mx-5 -mt-5 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
@@ -146,7 +146,7 @@ export function LearningHub() {
                       ? "Continue"
                       : t("learn.startCourse")}
                 </Link>
-              </article>
+              </BkkCloudWrap>
             );
           })}
         </div>
