@@ -18,7 +18,7 @@ export function PartnerSection() {
   return (
     <section className="container-page overflow-x-clip py-16">
       <div className="transition-transform hover:rotate-0 md:-rotate-1">
-      <BkkCloudBox className="bg-gradient-to-br from-tang-500 via-tang-500 to-bkkpink-600 px-8 py-10 text-white md:px-12 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={false}>
+      <BkkCloudBox className="bg-gradient-to-br from-tang-500 via-tang-500 to-bkkpink-600 px-12 py-10 text-white md:px-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={false}>
       <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-sm font-semibold text-bkk-100">
