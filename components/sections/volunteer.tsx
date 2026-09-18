@@ -159,7 +159,7 @@ export function VolunteerActivities() {
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>
-                  <div className={`mt-3 flex h-32 items-center justify-center overflow-hidden rounded-lg ${
+                  <div className={`mt-3 flex h-32 items-center justify-center overflow-hidden rounded-2xl ${
                     a.formSlug?.includes("trench")
                       ? "bg-gradient-to-br from-amber-50 to-stone-100 dark:from-amber-900/30 dark:to-stone-900/50"
                       : a.formSlug?.includes("seedling")
