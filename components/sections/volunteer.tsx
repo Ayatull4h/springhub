@@ -128,8 +128,8 @@ export function VolunteerActivities() {
 
   return (
     <section id="community" className="relative overflow-hidden bg-[#f6f1fb] pt-16 md:pt-20 dark:bg-slate-900/60">
-      <KepekIcon className="pointer-events-none absolute -left-10 top-24 hidden w-40 -rotate-6 opacity-90 md:block lg:w-52" />
-      <WaderIcon className="pointer-events-none absolute -left-6 top-64 hidden w-32 rotate-3 opacity-80 md:block lg:w-40" />
+      <KepekIcon className="pointer-events-none absolute bottom-24 left-[6%] hidden w-24 -rotate-6 opacity-80 lg:block" />
+      <WaderIcon className="pointer-events-none absolute bottom-32 right-[10%] hidden w-20 rotate-6 opacity-80 lg:block" />
       <div className="container-page relative z-10">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("volunteer.title")}{" "}

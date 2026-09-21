@@ -456,8 +456,8 @@ const formTitleI18nKey = (slug: string): string => {
 
   return (
     <section id="map" className="relative overflow-hidden bg-white pt-16 md:pt-20 dark:bg-slate-900">
-      <PariIcon className="pointer-events-none absolute -right-10 -top-8 hidden w-40 rotate-6 opacity-90 md:block lg:w-52" />
-      <UcengIcon className="pointer-events-none absolute -right-4 top-40 hidden w-32 -rotate-3 opacity-80 md:block lg:w-40" />
+      <PariIcon className="pointer-events-none absolute right-10 top-24 hidden w-24 rotate-6 opacity-80 lg:block" />
+      <UcengIcon className="pointer-events-none absolute right-48 top-40 hidden w-20 -rotate-3 opacity-80 lg:block" />
       <div className="container-page relative z-10">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-cream dark:text-slate-800">{t("map.title")}{" "}
