@@ -34,7 +34,7 @@ export default function HomePage() {
           </div>
         </div>
         </div>
-        <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-bkk-200" />
+        <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-sky-200" />
       </section>
 
       <PartnerSection />

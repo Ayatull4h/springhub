@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Heart, CheckCircle2, Loader2, Layers, Droplets, Telescope } from "lucide-react";
 import { DONATION_TIERS } from "@/lib/xendit";
 import { useI18n } from "@/lib/i18n";
-import { BkkCloudBox } from "./bkk-decor";
 
 const tierIcons: Record<string, React.ReactNode> = {
   trench: <Layers className="h-4 w-4 text-amber-600" />,
@@ -49,7 +48,7 @@ export function DonateSection() {
   };
 
   if (done) return (
-    <div id="donate" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white p-8 shadow-elevated ring-2 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
+    <div id="donate" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white p-8 shadow-elevated ring-2 ring-amber-200 dark:bg-slate-900 dark:ring-slate-700">
       <CheckCircle2 className="h-12 w-12 text-emerald-500" />
       <h3 className="mt-4 text-xl font-bold">Permintaan Donasi Terkirim</h3>
       <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Xendit yang terbuka.</p>
@@ -58,10 +57,10 @@ export function DonateSection() {
 
   return (
     <div id="donate" className="relative transition-transform hover:rotate-0 md:rotate-1">
-      <div className="">
-      <BkkCloudBox className="bg-white dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip tall>
-      <div className="px-10 pb-10 pt-10">
-        <div className="mb-4 flex items-center gap-5 text-sm">
+      <div className="relative rounded-[3%_3%_9%_9%/2%_2%_5%_5%] border-t-8 border-leaf-600 bg-gradient-to-b from-amber-800 via-[#8a5a2b] to-amber-950 p-3 drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)] md:p-4 dark:border-leaf-700 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
+      <div className="rounded-[2%_2%_7%_7%/1.5%_1.5%_4%_4%] bg-cream dark:bg-slate-900">
+      <div className="px-6 pb-10 pt-10 md:px-10">
+        <div className="mb-4 flex flex-wrap items-center gap-5 text-sm">
           <div>
             <p className="text-[11px] text-ink-muted">Terkumpul</p>
             <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Rp 48,2 Juta</p>
@@ -78,8 +77,8 @@ export function DonateSection() {
           </div>
         </div>
 
-        <h3 className="font-display text-lg font-bold text-bkk-700 dark:text-white">
-          {t("donate.title")} <span className="text-bkk-500">{t("donate.titleAccent")}</span>
+        <h3 className="font-display text-lg font-bold text-sky-900 dark:text-white">
+          {t("donate.title")} <span className="text-lagoon-600">{t("donate.titleAccent")}</span>
         </h3>
         <p className="mt-1 text-sm text-ink-muted">{t("donate.description")}</p>
 
@@ -98,7 +97,7 @@ export function DonateSection() {
           </select>
 
           {tier && (
-            <div className="rounded-[45%_55%_50%_50%/60%_55%_65%_60%] bg-cream px-3 py-2 text-sm font-medium text-tang-700 dark:bg-bkk-900/30 dark:text-bkk-200">
+            <div className="rounded-[45%_55%_50%_50%/60%_55%_65%_60%] bg-cream px-3 py-2 text-sm font-medium text-tang-700 dark:bg-sky-900/30 dark:text-sky-200">
               {tierIcons[tier.id]} <strong>{tier.impact}</strong> — {tier.label}
             </div>
           )}
@@ -141,7 +140,7 @@ export function DonateSection() {
           <button
             type="submit"
             disabled={loading || !name || (tierId !== "custom" && !tier) || (tierId === "custom" && !customAmount)}
-            className="w-full justify-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-tang-500 py-3 font-display text-sm font-bold text-white shadow-[4px_4px_0_rgba(120,53,15,0.9)] ring-2 ring-white/60 transition hover:rotate-0 hover:bg-tang-600 -rotate-1"
+            className="w-full justify-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-tang-500 py-3 font-display text-sm font-bold text-amber-950 shadow-[4px_4px_0_rgba(120,53,15,0.9)] ring-2 ring-white/60 transition hover:rotate-0 hover:bg-tang-600 -rotate-1"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
               <><Heart className="h-4 w-4" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>
@@ -149,7 +148,7 @@ export function DonateSection() {
           </button>
         </form>
       </div>
-      </BkkCloudBox>
+      </div>
       </div>
     </div>
   );

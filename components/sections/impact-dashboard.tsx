@@ -9,10 +9,10 @@ import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BkkInnerWave, BkkCloudBo
 
 /* Tiap kartu bentuk + warna beda total — solid 4 warna palet ColorHunt */
 const STAT_CARDS = [
-  "bg-lagoon-500 rounded-[50%_50%_46%_54%/62%_64%_36%_38%] dark:bg-lagoon-600",
-  "bg-amber-800 rounded-[48%_52%_10%_10%/85%_90%_12%_12%] dark:bg-amber-900",
-  "bg-leaf-600 rounded-[6%_55%_6%_55%/48%_10%_48%_10%] dark:bg-leaf-700",
-  "bg-tang-500 rounded-[58%_42%_55%_45%/55%_48%_52%_45%]",
+  "bg-lagoon-700 rounded-[50%_50%_46%_54%/62%_64%_36%_38%] dark:bg-lagoon-800",
+  "bg-amber-800 rounded-[48%_52%_22%_22%/28%_30%_14%_14%] dark:bg-amber-900",
+  "bg-leaf-700 rounded-[6%_55%_6%_55%/48%_10%_48%_10%] dark:bg-leaf-800",
+  "bg-tang-600 rounded-[58%_42%_55%_45%/55%_48%_52%_45%] dark:bg-tang-700",
 ];
 const STAT_TILTS = ["md:-rotate-2", "md:rotate-1", "md:-rotate-2", "md:rotate-2"];
 
@@ -109,7 +109,7 @@ export function ImpactDashboard() {
     <section id="dashboard" className="overflow-x-clip bg-cream pb-0 pt-0 md:pt-0 dark:bg-slate-900">
       <BkkCurve top="bg-white dark:bg-[#0b0f15]" bottom="text-cream dark:text-slate-900" accent="text-tang-200" />
       <div className="container-page pt-10 md:pt-14">
-      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
         {t("dashboard.title")}{" "}
         <span className="text-tang-600">{t("dashboard.titleAccent")}</span>
       </h2>
@@ -121,11 +121,11 @@ export function ImpactDashboard() {
 
       {loading ? (
         <div className="mt-10 flex flex-col items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-bkk-700 dark:text-white" />
-          <p className="mt-3 text-sm text-bkk-700/70 dark:text-white/80">{t("common.loading")}</p>
+          <Loader2 className="h-8 w-8 animate-spin text-sky-900 dark:text-white" />
+          <p className="mt-3 text-sm text-sky-900/70 dark:text-white/80">{t("common.loading")}</p>
         </div>
       ) : !data ? (
-        <div className="mt-10 text-center text-bkk-700/70 dark:text-white/80">
+        <div className="mt-10 text-center text-sky-900/70 dark:text-white/80">
           <p>{t("dashboard.noData")}</p>
         </div>
       ) : (
@@ -139,7 +139,7 @@ export function ImpactDashboard() {
                 <BkkCloudBox className={`${STAT_CARDS[si % STAT_CARDS.length]} p-8 pb-14 md:p-10 md:pb-16 ${si % 4 === 1 ? "drop-shadow-[0_18px_36px_rgba(120,53,15,0.45)]" : "drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]"}`} flip={si % 2 === 1}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
                   {si % 4 === 3 && (
-                    <span aria-hidden="true" className="absolute -right-4 top-1/2 h-12 w-12 -translate-y-1/2 rotate-45 bg-tang-500" />
+                    <span aria-hidden="true" className="absolute right-3 top-1/2 h-12 w-12 -translate-y-1/2 rotate-45 bg-white/20" />
                   )}
                   <div className="relative flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-[55%_45%_50%_50%/50%_55%_45%_50%] bg-white/25 text-white">
@@ -169,10 +169,9 @@ export function ImpactDashboard() {
 
           <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
-              <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
+            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-sky-200 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
-                <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
+                <TrendingUp className="h-4 w-4 text-sky-700" aria-hidden="true" />
                 {t("dashboard.monthly")}
               </h3>
               <ul className="mt-4 space-y-4">
@@ -188,9 +187,9 @@ export function ImpactDashboard() {
                           {formatNumber(p.value)} {suffix}
                         </span>
                       </div>
-                      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-bkk-100 dark:bg-slate-700">
+                      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-sky-100 dark:bg-slate-700">
                         <div
-                          className="h-full rounded-full bg-bkk-500"
+                          className="h-full rounded-full bg-lagoon-500"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -219,59 +218,57 @@ export function ImpactDashboard() {
                   </button>
                 </div>
               )}
-            </BkkCloudBox>
+            </div>
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2">
-            <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip tall>
-              <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
+            <div className="relative rounded-[55%_6%_55%_6%/10%_50%_10%_50%] bg-white p-10 pb-12 ring-4 ring-leaf-200 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topRegions.map((r, ri) => (
                   <li
                     key={r.rank}
-                    className={`flex items-start gap-3 border border-bkk-100 px-3 py-2.5 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[ri % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[ri % BKK_ROW_TILTS.length]}`}
+                    className={`flex items-start gap-3 border border-sky-200 px-3 py-2.5 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[ri % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[ri % BKK_ROW_TILTS.length]}`}
                   >
-                    <span className="grid h-6 w-6 flex-none place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-bkk-700 text-xs font-bold text-white">
+                    <span className="grid h-6 w-6 flex-none place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-sky-800 text-xs font-bold text-white">
                       {r.rank}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-semibold text-ink">{r.name}</div>
                       <div className="text-xs text-ink-muted">{r.detail}</div>
                     </div>
-                  </li>
+                    </li>
                 ))}
               </ol>
-            </BkkCloudBox>
+            </div>
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
-              <BkkInnerWave className="absolute bottom-0 left-0 text-leaf-100 dark:text-slate-800" />
+            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-tang-200 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topVolunteers.map((v, vi) => (
                   <li
                     key={v.rank}
-                    className={`flex items-center gap-3 border border-bkk-100 px-3 py-2.5 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[vi % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[vi % BKK_ROW_TILTS.length]}`}
+                    className={`flex items-center gap-3 border border-sky-200 px-3 py-2.5 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[vi % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[vi % BKK_ROW_TILTS.length]}`}
                   >
-                    <span className="grid h-6 w-6 flex-none place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-bkk-700 text-xs font-bold text-white">
+                    <span className="grid h-6 w-6 flex-none place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-sky-800 text-xs font-bold text-white">
                       {v.rank}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-semibold text-ink">{v.name}</div>
                       <div className="text-xs text-ink-muted">{v.region}</div>
                     </div>
-                    <div className="font-display text-sm font-bold text-bkk-700 dark:text-bkk-200">
+                    <div className="font-display text-sm font-bold text-sky-900 dark:text-sky-200">
                       {formatNumber(v.points)}
                       <span className="ml-1 text-[10px] font-medium text-ink-subtle">
                         {t("dashboard.volunteers.pts")}
                       </span>
                     </div>
-                    </li>
+                  </li>
                 ))}
               </ol>
-            </BkkCloudBox>
+            </div>
             </div>
           </div>
         </>

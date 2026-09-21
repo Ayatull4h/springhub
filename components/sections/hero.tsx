@@ -51,7 +51,7 @@ export function Hero() {
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
                 href="#map"
-                className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-sky-800 px-7 py-3.5 font-display text-base font-bold text-white shadow-[5px_5px_0_rgba(8,47,73,0.9)] ring-2 ring-white/50 transition hover:rotate-0 hover:scale-[1.03] -rotate-1 dark:bg-lagoon-600"
+                className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-sky-800 px-7 py-3.5 font-display text-base font-bold text-white shadow-[5px_5px_0_rgba(8,47,73,0.9)] ring-2 ring-white/50 transition hover:rotate-0 hover:scale-[1.03] -rotate-1"
               >
                 {t("hero.cta.start")}
                 <ArrowRight className="ml-2 inline h-4 w-4" />
@@ -74,8 +74,8 @@ export function Hero() {
         </div>
 
         {/* Mobile fallback — YouTube link */}
-        <a href="https://www.youtube.com/watch?v=oUDA1loE8BE" target="_blank" className="relative mt-4 inline-flex items-center gap-1 text-xs font-semibold text-sky-900 hover:text-sky-700 md:hidden dark:text-slate-300">
-          ▶️ Tonton di YouTube
+        <a href="https://www.youtube.com/watch?v=oUDA1loE8BE" target="_blank" rel="noreferrer" className="relative mt-4 inline-flex items-center gap-1 text-xs font-semibold text-sky-900 hover:text-sky-700 md:hidden dark:text-slate-300">
+          <span aria-hidden="true">▶️</span> Tonton di YouTube
         </a>
       </div>
     </section>

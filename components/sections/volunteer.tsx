@@ -23,8 +23,8 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BKK_CARD_RADII, BkkCurve, BkkTitleCloud, BkkCloudEdge, BkkCloudBox } from "./bkk-decor";
-import { KepekIcon, WaderIcon } from "./eco-icons";
+import { BKK_CARD_RADII, BkkCurve, BkkTitleCloud, BkkCloudEdge } from "./bkk-decor";
+import { BambooIcon } from "./eco-icons";
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -127,13 +127,13 @@ export function VolunteerActivities() {
   );
 
   return (
-    <section id="community" className="relative overflow-hidden bg-[#f6f1fb] pt-16 md:pt-20 dark:bg-slate-900/60">
-      <KepekIcon className="pointer-events-none absolute bottom-24 left-[6%] hidden w-24 -rotate-6 opacity-80 lg:block" />
-      <WaderIcon className="pointer-events-none absolute bottom-32 right-[10%] hidden w-20 rotate-6 opacity-80 lg:block" />
+    <section id="community" className="relative overflow-hidden bg-[#e3f4f6] pt-16 md:pt-20 dark:bg-slate-900/60">
+      <BambooIcon className="pointer-events-none absolute bottom-16 left-[3%] hidden w-28 opacity-80 lg:block" />
+      <BambooIcon className="pointer-events-none absolute bottom-16 right-[3%] hidden w-28 opacity-80 lg:block" />
       <div className="container-page relative z-10">
-      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("volunteer.title")}{" "}
-        <span className="text-bkk-500">{t("volunteer.titleAccent")}</span></BkkTitleCloud>
+        <span className="text-lagoon-600">{t("volunteer.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mt-3 max-w-2xl text-ink-muted">
         {t("volunteer.description", {
@@ -146,8 +146,7 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <div className="mt-3 flex-1 transition-transform hover:rotate-0 md:-rotate-[0.5deg]">
-          <BkkCloudBox className="bg-white p-10 pb-12 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={false} tall>
+          <div className="relative mt-3 flex-1 rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-leaf-200 transition-transform hover:rotate-0 dark:bg-slate-900 dark:ring-slate-700 md:-rotate-[0.5deg] drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]">
             <ul className="grid gap-5 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
@@ -158,7 +157,7 @@ export function VolunteerActivities() {
                       <div className="text-sm font-semibold text-ink">{a.user}</div>
                       <div className="text-xs text-ink-muted">{a.action}</div>
                     </div>
-                    <span className="chip bg-tang-100 font-bold text-tang-700 dark:bg-bkk-900/40 dark:text-bkk-200">
+                    <span className="chip bg-tang-100 font-bold text-tang-700 dark:bg-sky-900/40 dark:text-sky-200">
                       <Sparkles className="h-3 w-3" />+{a.points} {t("volunteer.pts")}
                     </span>
                   </div>
@@ -229,12 +228,10 @@ export function VolunteerActivities() {
               </button>
             </div>
           )}
-          </BkkCloudBox>
           </div>
         </div>
 
-        <div className="flex flex-col transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full">
-        <BkkCloudBox className="bg-gradient-to-br from-tang-100 to-cream p-10 pb-12 h-full dark:from-slate-800 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip tall>
+        <div className="relative flex h-full flex-col rounded-[55%_6%_55%_6%/10%_50%_10%_50%] bg-gradient-to-br from-leaf-100 to-cream p-10 pb-12 ring-4 ring-leaf-200 transition-transform hover:rotate-0 dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700 md:rotate-1 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] lg:col-span-5">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-ink">
               {t("volunteer.submitProject")}
@@ -311,7 +308,6 @@ export function VolunteerActivities() {
               </button>
             )}
           </div>
-        </BkkCloudBox>
         </div>
       </div>
 

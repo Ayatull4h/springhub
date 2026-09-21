@@ -33,7 +33,7 @@ function fmtDate(iso: string, locale: string): string {
 function EventThumb({ item }: { item: EventItem }) {
   if (!item.imageUrl) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-tang-500/90 to-bkkpink-600/90">
+      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-tang-500/90 to-sky-800/90">
         <CalendarDays className="h-10 w-10 text-white/80" />
       </div>
     );
@@ -205,8 +205,8 @@ export function EventSchedule() {
     return (
       <section id="jadwal" className="overflow-x-clip bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
-        <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-          <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
+        <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+          <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-lagoon-600">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
         </h2>
         <p className="mt-3 max-w-2xl text-ink-muted">
           {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
@@ -220,8 +220,8 @@ export function EventSchedule() {
   return (
     <section id="jadwal" className="overflow-x-clip bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
-      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
+      <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+        <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-lagoon-600">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
       </h2>
       <p className="mt-3 max-w-2xl text-ink-muted">
         {t("event.description", "Ikut restorasi mata air dan tanam pohon bulan depan. Daftar langsung, tanpa kuota.")}

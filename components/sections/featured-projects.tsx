@@ -7,7 +7,7 @@ import {
   MapPin, TreePine, Droplets, Users, FolderOpen,
 } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
-import { BKK_CARD_TILTS, BkkCloudBox } from "./bkk-decor";
+import { BKK_CARD_TILTS } from "./bkk-decor";
 
 type ProjectItem = {
   id?: string;
@@ -63,14 +63,14 @@ export function FeaturedProjects() {
   return (
     <>
       <div>
-        <h3 className="font-display text-xl font-bold tracking-tight text-bkk-700 dark:text-white">
+        <h3 className="font-display text-xl font-bold tracking-tight text-sky-900 dark:text-white">
           Proyek Unggulan
         </h3>
         <p className="mt-1 text-xs text-ink-muted">
           Dukung proyek unggulan kami, pantau perkembangannya secara transparan, dan salurkan donasi Anda sekarang.
         </p>
 
-        <div className="mt-6 grid grid-cols-2 gap-5 md:gap-7">
+        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7">
           {allProjects.length === 0 && (
             <div className="col-span-2 card flex flex-col items-center py-10 text-center">
               <FolderOpen className="h-8 w-8 text-sky-400/60" />
@@ -89,12 +89,11 @@ export function FeaturedProjects() {
                 ? "bg-leaf-100 text-leaf-700 dark:bg-leaf-700/30 dark:text-leaf-100"
                 : /trench/.test(p.typeId)
                   ? "bg-tang-100 text-tang-700 dark:bg-tang-700/30 dark:text-tang-100"
-                  : "bg-bkkpink-100 text-bkkpink-700 dark:bg-bkkpink-700/30 dark:text-bkkpink-100";
+                  : "bg-tang-100 text-tang-700 dark:bg-tang-700/30 dark:text-tang-100";
             const progress = p.goalAmount > 0 ? Math.round((p.raisedAmount / p.goalAmount) * 100) : 0;
             return (
               <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
-                <div className="">
-                <BkkCloudBox className="flex flex-col bg-white p-5 pb-7 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={pi % 2 === 1} tall>
+                <div className={`flex flex-col rounded-[8%_50%_8%_50%/22%_8%_22%_8%] bg-white p-5 pb-7 ring-4 ring-leaf-100 transition-transform hover:rotate-0 dark:bg-slate-900 dark:ring-slate-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] ${BKK_CARD_TILTS[pi % BKK_CARD_TILTS.length]}`}>
                   <div className="flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
                     {p.featuredPhoto?.url ? (
                       <img src={p.featuredPhoto.url} alt={p.title} className="h-full w-full object-cover" />
@@ -139,7 +138,6 @@ export function FeaturedProjects() {
                       Lihat Detail <ArrowRight className="h-4 w-4" />
                     </div>
                   </div>
-                </BkkCloudBox>
                 </div>
               </Link>
             );

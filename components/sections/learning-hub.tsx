@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
+import { BookOpen, Clock, Layers, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve, BKK_CARD_TILTS, BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
+import { BkkCurve, BKK_CARD_TILTS, BkkTitleCloud } from "./bkk-decor";
+import { BanyanIcon } from "./eco-icons";
 
 type CourseItem = {
   id: string;
@@ -63,10 +64,11 @@ export function LearningHub() {
   }
 
   return (
-    <section id="learn" className="overflow-x-clip bg-cream pt-16 md:pt-20 dark:bg-slate-900">
-      <div className="container-page">
-      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("learn.title")}{" "}
+    <section id="learn" className="relative overflow-x-clip bg-cream pt-16 md:pt-20 dark:bg-slate-900">
+      <BanyanIcon className="pointer-events-none absolute -top-2 right-[4%] hidden w-56 opacity-90 lg:block" />
+      <div className="container-page relative">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+        <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("learn.title")}{" "}
         <span className="text-lagoon-600">{t("learn.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mt-3 max-w-2xl text-ink-muted">
@@ -88,11 +90,11 @@ export function LearningHub() {
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (
-              <BkkCloudBox key={c.id} className="flex flex-col bg-white p-6 pb-8 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={ci % 2 === 0} tall>
+              <div key={c.id} className={`flex flex-col overflow-hidden rounded-[8%_50%_8%_50%/30%_8%_30%_8%] bg-white p-6 pb-8 ring-4 ring-leaf-200 transition-transform hover:rotate-0 dark:bg-slate-900 dark:ring-slate-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]}`}>
                 <div className="-mx-6 -mt-6 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
-                <span className="chip mt-4 -rotate-2 self-start bg-tang-100 font-bold text-tang-700 dark:bg-bkk-900/30 dark:text-bkk-200">
+                <span className="chip mt-4 -rotate-2 self-start bg-tang-100 font-bold text-tang-700 dark:bg-sky-900/30 dark:text-sky-200">
                   {c.level}
                 </span>
                 <h3 className="mt-2 text-base font-semibold text-ink">
@@ -146,7 +148,7 @@ export function LearningHub() {
                       ? "Continue"
                       : t("learn.startCourse")}
                 </Link>
-              </BkkCloudBox>
+              </div>
             );
           })}
         </div>
