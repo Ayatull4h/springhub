@@ -141,7 +141,7 @@ export function VolunteerActivities() {
         })}
       </p>
 
-      <div className="mt-10 grid gap-4 lg:grid-cols-12">
+      <div className="vol-grid mt-10 grid gap-4 lg:grid-cols-12">
         <div className="flex flex-col lg:col-span-7">
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}

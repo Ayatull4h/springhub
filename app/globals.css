@@ -329,6 +329,13 @@ button:not(:disabled) {
   #river-main [class*="river-bank"] .river-cards {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
+  /* volunteer: susun vertikal di tepian */
+  #river-main [class*="river-bank"] .vol-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  #river-main [class*="river-bank"] .vol-grid > div {
+    grid-column: auto;
+  }
 }
 
 @keyframes river-current {
