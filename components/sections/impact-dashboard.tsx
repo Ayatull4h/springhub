@@ -9,10 +9,10 @@ import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BkkInnerWave, BkkCloudBo
 
 /* Tiap kartu bentuk + warna beda total — solid 4 warna palet ColorHunt */
 const STAT_CARDS = [
-  "bg-tang-500",
-  "bg-cream",
-  "bg-lagoon-500",
-  "bg-leaf-500",
+  "bg-lagoon-500 rounded-[50%_50%_46%_54%/62%_64%_36%_38%] dark:bg-lagoon-600",
+  "bg-amber-800 rounded-[48%_52%_10%_10%/85%_90%_12%_12%] dark:bg-amber-900",
+  "bg-leaf-600 rounded-[6%_55%_6%_55%/48%_10%_48%_10%] dark:bg-leaf-700",
+  "bg-tang-500 rounded-[58%_42%_55%_45%/55%_48%_52%_45%]",
 ];
 const STAT_TILTS = ["md:-rotate-2", "md:rotate-1", "md:-rotate-2", "md:rotate-2"];
 
@@ -136,10 +136,13 @@ export function ImpactDashboard() {
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
                 <div className={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`}>
-                <BkkCloudBox className={`${STAT_CARDS[si % STAT_CARDS.length]} p-8 pb-14 md:p-10 md:pb-16 ${si % 4 === 1 ? "drop-shadow-[0_18px_36px_rgba(201,106,31,0.45)]" : "drop-shadow-[0_18px_28px_rgba(61,22,96,0.18)]"}`} flip={si % 2 === 1}>
+                <BkkCloudBox className={`${STAT_CARDS[si % STAT_CARDS.length]} p-8 pb-14 md:p-10 md:pb-16 ${si % 4 === 1 ? "drop-shadow-[0_18px_36px_rgba(120,53,15,0.45)]" : "drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]"}`} flip={si % 2 === 1}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
-                  <div className="flex items-center justify-between">
-                    <span className="grid h-10 w-10 place-items-center rounded-[55%_45%_50%_50%/50%_55%_45%_50%] bg-white/40 text-bkk-900">
+                  {si % 4 === 3 && (
+                    <span aria-hidden="true" className="absolute -right-4 top-1/2 h-12 w-12 -translate-y-1/2 rotate-45 bg-tang-500" />
+                  )}
+                  <div className="relative flex items-center justify-between">
+                    <span className="grid h-10 w-10 place-items-center rounded-[55%_45%_50%_50%/50%_55%_45%_50%] bg-white/25 text-white">
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </span>
                     <BkkSticker
@@ -151,10 +154,10 @@ export function ImpactDashboard() {
                       {(s.delta?.match(/^[+-]?\d+/) ?? ["0"])[0]}
                     </BkkSticker>
                   </div>
-                  <div className="mt-4 font-display text-3xl font-bold tracking-tight text-bkk-900 md:text-4xl">
+                  <div className="relative mt-4 font-display text-3xl font-bold tracking-tight text-white md:text-4xl">
                     {s.display ?? formatNumber(s.value)}
                   </div>
-                  <div className="mt-1 text-sm font-bold text-bkk-900/70">
+                  <div className="relative mt-1 text-sm font-bold text-white/85">
                     {t(IconToStatKey[s.icon])}
                   </div>
                 </BkkCloudBox>
