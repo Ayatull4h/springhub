@@ -64,7 +64,7 @@ export function LearningHub() {
   }
 
   return (
-    <section id="learn" className="relative overflow-x-clip bg-cream pt-16 md:pt-20 dark:bg-slate-900">
+    <section id="learn" className="relative overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <BanyanIcon className="pointer-events-none absolute -top-2 right-[4%] hidden w-56 opacity-90 lg:block" />
       <div className="container-page relative">
       <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
@@ -86,7 +86,7 @@ export function LearningHub() {
           <p className="mt-2 text-sm text-ink-muted">No courses available yet</p>
         </div>
       ) : (
-        <div className="mt-10 grid gap-5 md:grid-cols-2 md:gap-7 lg:grid-cols-3">
+        <div className="river-cards mt-10 grid gap-5 md:grid-cols-2 md:gap-7 lg:grid-cols-3">
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (

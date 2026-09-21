@@ -203,7 +203,7 @@ export function EventSchedule() {
 
   if (items.length === 0) {
     return (
-      <section id="jadwal" className="overflow-x-clip bg-white pt-16 md:pt-20 dark:bg-slate-900">
+      <section id="jadwal" className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <div className="container-page">
         <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
           <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-lagoon-600">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
@@ -212,13 +212,13 @@ export function EventSchedule() {
           {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
         </p>
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-[#c9f0dd] dark:text-slate-900" accent="text-bkkpink-500" />
+      <BkkCurve top="bg-transparent" bottom="text-sky-100 dark:text-slate-900" accent="text-tang-500" />
       </section>
     );
   }
 
   return (
-    <section id="jadwal" className="overflow-x-clip bg-white pt-16 md:pt-20 dark:bg-slate-900">
+    <section id="jadwal" className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <div className="container-page">
       <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-lagoon-600">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
@@ -320,7 +320,7 @@ export function EventSchedule() {
 
       {popup && <RegisterPopup event={popup} onClose={() => setPopup(null)} />}
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-[#c9f0dd] dark:text-slate-900" accent="text-bkkpink-500" />
+      <BkkCurve top="bg-transparent" bottom="text-sky-100 dark:text-slate-900" accent="text-tang-500" />
     </section>
   );
 }

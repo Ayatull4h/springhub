@@ -106,7 +106,7 @@ export function ImpactDashboard() {
   ];
 
   return (
-    <section id="dashboard" className="overflow-x-clip bg-cream pb-0 pt-0 md:pt-0 dark:bg-slate-900">
+    <section id="dashboard" className="overflow-x-clip bg-transparent pb-0 pt-0 md:pt-0 dark:bg-transparent">
       <BkkCurve top="bg-white dark:bg-[#0b0f15]" bottom="text-cream dark:text-slate-900" accent="text-tang-200" />
       <div className="container-page pt-10 md:pt-14">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
@@ -130,7 +130,7 @@ export function ImpactDashboard() {
         </div>
       ) : (
         <>
-          <div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-7">
+          <div className="river-stats mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-7">
             {data.impactStats.map((s, si) => {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
@@ -167,7 +167,7 @@ export function ImpactDashboard() {
             })}
           </div>
 
-          <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
+          <div className="river-trio mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
             <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-sky-200 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">

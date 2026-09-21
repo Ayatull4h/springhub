@@ -283,6 +283,41 @@ button:not(:disabled) {
   }
 }
 
+/* Sungai: konten selalu di atas aliran */
+#river-main > section {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes river-current {
+  to { stroke-dashoffset: -172; }
+}
+.animate-river-current {
+  animation: river-current 2.6s linear infinite;
+}
+@keyframes river-current-slow {
+  to { stroke-dashoffset: -196; }
+}
+.animate-river-current-slow {
+  animation: river-current-slow 4.5s linear infinite;
+}
+@keyframes river-drift {
+  from { top: -6%; }
+  to { top: 104%; }
+}
+.animate-river-drift {
+  animation-name: river-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes river-sway {
+  0%, 100% { transform: translateX(-26px) rotate(-8deg); }
+  50% { transform: translateX(26px) rotate(8deg); }
+}
+.animate-river-sway {
+  animation: river-sway 5s ease-in-out infinite;
+}
+
 /* Print styles */
 @media print {
   header, footer, .fixed, .sticky, button, .btn-primary, .btn-secondary, [class*="shadow-"] {

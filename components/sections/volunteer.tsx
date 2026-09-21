@@ -127,7 +127,7 @@ export function VolunteerActivities() {
   );
 
   return (
-    <section id="community" className="relative overflow-hidden bg-[#e3f4f6] pt-16 md:pt-20 dark:bg-slate-900/60">
+    <section id="community" className="relative overflow-hidden bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <BambooIcon className="pointer-events-none absolute bottom-16 left-[3%] hidden w-28 opacity-80 lg:block" />
       <BambooIcon className="pointer-events-none absolute bottom-16 right-[3%] hidden w-28 opacity-80 lg:block" />
       <div className="container-page relative z-10">
