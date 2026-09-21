@@ -31,7 +31,7 @@ function Drifter({
 
 export function RiverFlow() {
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden print:hidden">
       <svg
         className="absolute inset-0 h-full w-full dark:opacity-40"
         viewBox="0 0 1440 6000"
@@ -75,14 +75,14 @@ export function RiverFlow() {
       </svg>
 
       {/* daun hanyut */}
-      <Drifter left="44%" top="-4%" duration="26s" delay="0s">
+      <Drifter left="44%" top="-6%" duration="26s" delay="0s">
         <div className="h-5 w-7 rounded-[50%_10%_50%_10%] bg-leaf-500/80 rotate-12" />
       </Drifter>
-      <Drifter left="56%" top="-4%" duration="32s" delay="-11s">
+      <Drifter left="56%" top="-6%" duration="32s" delay="-11s">
         <div className="h-4 w-6 rounded-[10%_50%_10%_50%] bg-leaf-600/70 -rotate-12" />
       </Drifter>
-      <Drifter left="50%" top="-4%" duration="38s" delay="-23s">
-        <div className="h-6 w-8 rounded-[50%_10%_50%_10%] bg-leaf-400/70 rotate-45" />
+      <Drifter left="50%" top="-6%" duration="38s" delay="-23s">
+        <div className="h-6 w-8 rounded-[50%_10%_50%_10%] bg-leaf-500/70 rotate-45" />
       </Drifter>
       {/* ikan hanyut */}
       <Drifter left="53%" top="-6%" duration="30s" delay="-7s">
