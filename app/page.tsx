@@ -16,10 +16,16 @@ export default function HomePage() {
     <div id="river-main" className="relative">
       <RiverFlow />
       <Hero />
-      <ImpactDashboard />
+      <div className="river-bank-l container-page">
+        <ImpactDashboard />
+      </div>
       <SpringMap />
-      <VolunteerActivities />
-      <EventSchedule />
+      <div className="river-bank-r container-page">
+        <VolunteerActivities />
+      </div>
+      <div className="river-bank-l container-page">
+        <EventSchedule />
+      </div>
 
       <section className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
         <div className="container-page">
@@ -37,8 +43,12 @@ export default function HomePage() {
         <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-sky-200" />
       </section>
 
-      <PartnerSection />
-      <LearningHub />
+      <div className="river-bank-c container-page">
+        <PartnerSection />
+      </div>
+      <div className="river-bank-l container-page">
+        <LearningHub />
+      </div>
       <MediaSection />
     </div>
   );

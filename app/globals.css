@@ -284,9 +284,51 @@ button:not(:disabled) {
 }
 
 /* Sungai: konten selalu di atas aliran */
-#river-main > section {
+#river-main > section,
+#river-main > div[class*="river-bank"] {
   position: relative;
   z-index: 1;
+}
+
+/* Tepian sungai: kartu menepi kiri/kanan, aliran di tengah (desktop) */
+@media (min-width: 1024px) {
+  #river-main .river-bank-l,
+  #river-main .river-bank-r,
+  #river-main .river-bank-c {
+    display: flex;
+  }
+  #river-main .river-bank-l {
+    justify-content: flex-start;
+  }
+  #river-main .river-bank-r {
+    justify-content: flex-end;
+  }
+  #river-main .river-bank-c {
+    justify-content: center;
+  }
+  #river-main .river-bank-l > section,
+  #river-main .river-bank-r > section {
+    width: 47%;
+    min-width: 0;
+  }
+  #river-main .river-bank-c > section {
+    width: 62%;
+    min-width: 0;
+  }
+  #river-main .river-bank-l > section .container-page,
+  #river-main .river-bank-r > section .container-page,
+  #river-main .river-bank-c > section .container-page {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /* di tepian sempit: grid dipadatkan */
+  #river-main [class*="river-bank"] .river-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #river-main [class*="river-bank"] .river-trio,
+  #river-main [class*="river-bank"] .river-cards {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
 }
 
 @keyframes river-current {
