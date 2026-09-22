@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Clock, Layers, Loader2 } from "lucide-react";
+import { BookOpen, Clock, Layers, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkTitleCloud, BkkCloudBox, BkkInnerWave } from "./bkk-decor";
-import { BanyanIcon } from "./eco-icons";
-import { HangingRoots, Pebbles, MiniRiver } from "./river-ornaments";
+import { BkkCurve, BKK_CARD_TILTS, BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
 
 type CourseItem = {
   id: string;
@@ -28,26 +26,9 @@ type ProgressItem = {
 
 
 
-const CLOUD_TILTS = ["-rotate-1", "rotate-1", "-rotate-2"];
-const BADGE_VARIANTS = [
-  "rounded-[55%_45%_60%_40%/55%_50%_50%_45%] bg-tang-100 text-tang-700",
-  "rounded-[45%_55%_50%_50%/50%_55%_45%_50%] bg-sky-100 text-sky-700",
-  "rounded-[50%_50%_55%_45%/55%_45%_55%_45%] bg-leaf-100 text-leaf-700",
-];
-const CHIP_TILTS = ["-rotate-2", "rotate-2", "-rotate-1"];
-const BTN_VARIANTS = [
-  "rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-sky-800 shadow-[3px_3px_0_rgba(8,47,73,0.9)] -rotate-1",
-  "rounded-[40%_60%_45%_55%/45%_55%_40%_60%] bg-emerald-800 shadow-[3px_3px_0_rgba(6,78,59,0.9)] rotate-1",
-  "rounded-[55%_45%_60%_40%/50%_55%_45%_50%] bg-amber-800 shadow-[3px_3px_0_rgba(120,53,15,0.9)] -rotate-2",
-];
-const CARD_SKINS = [
-  "from-[#FFFDF6] to-cream-dark dark:from-slate-900 dark:to-slate-900",
-  "from-[#F0F9FF] to-sky-200 dark:from-sky-900 dark:to-sky-800",
-  "from-[#FFFDF6] to-cream-dark dark:from-slate-900 dark:to-slate-900",
-];
-
 export function LearningHub() {
-  const { t } = useI18n();const [courses, setCourses] = useState<CourseItem[]>([]);
+  const { t } = useI18n();
+  const [courses, setCourses] = useState<CourseItem[]>([]);
   const [progress, setProgress] = useState<ProgressItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{ userId?: string } | null>(null);
@@ -82,16 +63,11 @@ export function LearningHub() {
   }
 
   return (
-    <section id="learn" className="relative overflow-x-clip bg-cream pt-16 md:pt-20 dark:bg-slate-900">
-      <BanyanIcon className="pointer-events-none absolute -top-2 right-[4%] hidden w-56 opacity-90 lg:block" />
-      <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-1/3 h-80 w-80 rounded-full bg-leaf-100/60 blur-3xl dark:bg-leaf-700/20" />
-      <HangingRoots className="pointer-events-none absolute left-[8%] top-0 hidden w-24 opacity-80 lg:block" />
-      <Pebbles className="pointer-events-none absolute bottom-16 left-[3%] hidden w-20 opacity-70 lg:block" />
-      <div className="container-page relative">
+    <section id="learn" className="overflow-x-clip bg-cream pt-16 md:pt-20 dark:bg-slate-900">
+      <div className="container-page">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        <MiniRiver className="mr-3 inline-block h-12 w-12 align-middle md:h-16 md:w-16" />
-        <BkkTitleCloud cloudClass="text-leaf-100 dark:text-slate-800">{t("learn.title")}{" "}
-        <span className="text-leaf-600">{t("learn.titleAccent")}</span></BkkTitleCloud>
+        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("learn.title")}{" "}
+        <span className="text-lagoon-600">{t("learn.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mt-3 max-w-2xl text-ink-muted">
         {t("learn.description")}
@@ -108,25 +84,15 @@ export function LearningHub() {
           <p className="mt-2 text-sm text-ink-muted">No courses available yet</p>
         </div>
       ) : (
-        <div className="river-cards mt-10 grid gap-5 md:grid-cols-2 md:gap-7 lg:grid-cols-3">
+        <div className="mt-10 grid gap-5 md:grid-cols-2 md:gap-7 lg:grid-cols-3">
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
-            const vi = ci % 3;
             return (
-              <div key={c.id} className={`transition-transform hover:rotate-0 ${CLOUD_TILTS[vi]}`}>
-              <BkkCloudBox className={`flex h-full flex-col items-center bg-gradient-to-b ${CARD_SKINS[vi]} px-10 pb-14 pt-8 text-center drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]`} flip={ci % 2 === 0} tall>
-                {/* tekstur riak air */}
-                <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 top-8 leading-[0] text-white/70">
-                  <BkkInnerWave />
+              <BkkCloudBox key={c.id} className="flex flex-col bg-white p-6 pb-8 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={ci % 2 === 0} tall>
+                <div className="-mx-6 -mt-6 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
+                  <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
-                <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 bottom-8 leading-[0] rotate-180 text-white/50">
-                  <BkkInnerWave />
-                </div>
-                <div className="relative z-10 flex h-full w-full max-w-[78%] flex-col items-center text-center">
-                <span className={`grid h-16 w-16 place-items-center ${BADGE_VARIANTS[vi]}`}>
-                  <BookOpen className="h-8 w-8" />
-                </span>
-                <span className={`chip mt-4 bg-bkk-100 font-bold text-bkk-700 dark:bg-bkk-900/30 dark:text-bkk-200 ${CHIP_TILTS[vi]}`}>
+                <span className="chip mt-4 -rotate-2 self-start bg-tang-100 font-bold text-tang-700 dark:bg-bkk-900/30 dark:text-bkk-200">
                   {c.level}
                 </span>
                 <h3 className="mt-2 text-base font-semibold text-ink">
@@ -149,7 +115,7 @@ export function LearningHub() {
 
                 {/* Progress indicator */}
                 {prog && (
-                  <div className="mt-3 w-full self-stretch">
+                  <div className="mt-3">
                     <div className="flex h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                       <div
                         className="rounded-full bg-brand-600 transition-all"
@@ -171,7 +137,7 @@ export function LearningHub() {
 
                 <Link
                   href={`/learn/${c.slug}`}
-                  className={`mt-5 inline-flex w-[86%] items-center justify-center gap-1.5 px-4 py-2.5 font-display text-sm font-bold text-white ring-2 ring-white/60 transition hover:rotate-0 hover:scale-[1.02] ${BTN_VARIANTS[vi]}`}
+                  className="btn-secondary mt-5 inline-flex items-center justify-center gap-1.5"
                 >
                   <BookOpen className="h-4 w-4" />
                   {prog?.completed
@@ -180,14 +146,13 @@ export function LearningHub() {
                       ? "Continue"
                       : t("learn.startCourse")}
                 </Link>
-                </div>
               </BkkCloudBox>
-              </div>
             );
           })}
         </div>
       )}
       </div>
+      <BkkCurve top="bg-transparent" bottom="text-lagoon-500 dark:text-lagoon-600" accent="text-tang-500" />
     </section>
   );
 }

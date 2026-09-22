@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2, Waves } from "lucide-react";
+import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { BkkReveal, BkkSticker, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
+import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
 
 /* Tiap kartu bentuk + warna beda total — solid 4 warna palet ColorHunt */
 const STAT_CARDS = [
@@ -106,10 +106,10 @@ export function ImpactDashboard() {
   ];
 
   return (
-    <section id="dashboard" className="overflow-x-clip bg-transparent pb-0 pt-0 md:pt-0 dark:bg-transparent">
+    <section id="dashboard" className="overflow-x-clip bg-cream pb-0 pt-0 md:pt-0 dark:bg-slate-900">
+      <BkkCurve top="bg-white dark:bg-[#0b0f15]" bottom="text-cream dark:text-slate-900" accent="text-tang-200" />
       <div className="container-page pt-10 md:pt-14">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        <Waves className="mx-auto mb-2 h-8 w-8 text-lagoon-500" aria-hidden="true" />
         {t("dashboard.title")}{" "}
         <span className="text-tang-600">{t("dashboard.titleAccent")}</span>
       </h2>
@@ -121,16 +121,16 @@ export function ImpactDashboard() {
 
       {loading ? (
         <div className="mt-10 flex flex-col items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-sky-900 dark:text-white" />
-          <p className="mt-3 text-sm text-sky-900/70 dark:text-white/80">{t("common.loading")}</p>
+          <Loader2 className="h-8 w-8 animate-spin text-bkk-700 dark:text-white" />
+          <p className="mt-3 text-sm text-bkk-700/70 dark:text-white/80">{t("common.loading")}</p>
         </div>
       ) : !data ? (
-        <div className="mt-10 text-center text-sky-900/70 dark:text-white/80">
+        <div className="mt-10 text-center text-bkk-700/70 dark:text-white/80">
           <p>{t("dashboard.noData")}</p>
         </div>
       ) : (
         <>
-          <div className="river-stats mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-7">
+          <div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-7">
             {data.impactStats.map((s, si) => {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
@@ -138,7 +138,7 @@ export function ImpactDashboard() {
                 <div className={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`}>
                 <BkkCloudBox className={`${STAT_CARDS[si % STAT_CARDS.length]} p-8 pb-14 md:p-10 md:pb-16 ${si % 4 === 1 ? "drop-shadow-[0_18px_36px_rgba(201,106,31,0.45)]" : "drop-shadow-[0_18px_28px_rgba(61,22,96,0.18)]"}`} flip={si % 2 === 1}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
-                  <div className="relative flex items-center justify-between">
+                  <div className="flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-[55%_45%_50%_50%/50%_55%_45%_50%] bg-white/40 text-bkk-900">
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </span>
@@ -151,10 +151,10 @@ export function ImpactDashboard() {
                       {(s.delta?.match(/^[+-]?\d+/) ?? ["0"])[0]}
                     </BkkSticker>
                   </div>
-                  <div className="relative mt-4 font-display text-3xl font-bold tracking-tight text-bkk-900 md:text-4xl">
+                  <div className="mt-4 font-display text-3xl font-bold tracking-tight text-bkk-900 md:text-4xl">
                     {s.display ?? formatNumber(s.value)}
                   </div>
-                  <div className="relative mt-1 text-sm font-bold text-bkk-900/70">
+                  <div className="mt-1 text-sm font-bold text-bkk-900/70">
                     {t(IconToStatKey[s.icon])}
                   </div>
                 </BkkCloudBox>
@@ -164,11 +164,12 @@ export function ImpactDashboard() {
             })}
           </div>
 
-          <div className="river-trio mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
+          <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <BkkCloudBox className="bg-white p-10 pb-12 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900" flip={false} tall>
+            <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
+              <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
-                <TrendingUp className="h-4 w-4 text-sky-700" aria-hidden="true" />
+                <TrendingUp className="h-4 w-4 text-bkk-600" aria-hidden="true" />
                 {t("dashboard.monthly")}
               </h3>
               <ul className="mt-4 space-y-4">
@@ -184,9 +185,9 @@ export function ImpactDashboard() {
                           {formatNumber(p.value)} {suffix}
                         </span>
                       </div>
-                      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-sky-100 dark:bg-slate-700">
+                      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-bkk-100 dark:bg-slate-700">
                         <div
-                          className="h-full rounded-full bg-lagoon-500"
+                          className="h-full rounded-full bg-bkk-500"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -219,50 +220,52 @@ export function ImpactDashboard() {
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2">
-            <BkkCloudBox className="bg-white p-10 pb-12 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900" flip tall>
+            <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip tall>
+              <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topRegions.map((r, ri) => (
                   <li
                     key={r.rank}
-                    className={`flex items-start gap-3 border border-sky-200 px-3 py-2.5 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[ri % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[ri % BKK_ROW_TILTS.length]}`}
+                    className={`flex items-start gap-3 border border-bkk-100 px-3 py-2.5 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[ri % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[ri % BKK_ROW_TILTS.length]}`}
                   >
-                    <span className="grid h-6 w-6 flex-none place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-sky-800 text-xs font-bold text-white">
+                    <span className="grid h-6 w-6 flex-none place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-bkk-700 text-xs font-bold text-white">
                       {r.rank}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-semibold text-ink">{r.name}</div>
                       <div className="text-xs text-ink-muted">{r.detail}</div>
                     </div>
-                    </li>
+                  </li>
                 ))}
               </ol>
             </BkkCloudBox>
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <BkkCloudBox className="bg-gradient-to-br from-tang-100 to-cream p-10 pb-12 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:from-slate-800 dark:to-slate-900" flip={false} tall>
+            <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
+              <BkkInnerWave className="absolute bottom-0 left-0 text-leaf-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topVolunteers.map((v, vi) => (
                   <li
                     key={v.rank}
-                    className={`flex items-center gap-3 border border-sky-200 px-3 py-2.5 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[vi % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[vi % BKK_ROW_TILTS.length]}`}
+                    className={`flex items-center gap-3 border border-bkk-100 px-3 py-2.5 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[vi % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[vi % BKK_ROW_TILTS.length]}`}
                   >
-                    <span className="grid h-6 w-6 flex-none place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-sky-800 text-xs font-bold text-white">
+                    <span className="grid h-6 w-6 flex-none place-items-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-bkk-700 text-xs font-bold text-white">
                       {v.rank}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-semibold text-ink">{v.name}</div>
                       <div className="text-xs text-ink-muted">{v.region}</div>
                     </div>
-                    <div className="font-display text-sm font-bold text-sky-900 dark:text-sky-200">
+                    <div className="font-display text-sm font-bold text-bkk-700 dark:text-bkk-200">
                       {formatNumber(v.points)}
                       <span className="ml-1 text-[10px] font-medium text-ink-subtle">
                         {t("dashboard.volunteers.pts")}
                       </span>
                     </div>
-                  </li>
+                    </li>
                 ))}
               </ol>
             </BkkCloudBox>
@@ -271,6 +274,7 @@ export function ImpactDashboard() {
         </>
       )}
       </div>
+      <BkkCloudEdge top="bg-transparent" bottom="text-white dark:text-slate-900" />
     </section>
   );
 }

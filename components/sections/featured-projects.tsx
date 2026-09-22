@@ -59,33 +59,18 @@ export function FeaturedProjects() {
   const safePage = Math.min(page, totalPages - 1);
   const start = safePage * PER_PAGE;
   const visible = allProjects.slice(start, start + PER_PAGE);
-  const totalRaised = allProjects.reduce((s, p) => s + (p.raisedAmount || 0), 0);
-  const totalGoal = allProjects.reduce((s, p) => s + (p.goalAmount || 0), 0);
-  const totalPct = totalGoal > 0 ? Math.min(100, Math.round((totalRaised / totalGoal) * 100)) : 0;
 
   return (
     <>
       <div>
-        <h3 className="font-display text-xl font-bold tracking-tight text-sky-900 dark:text-white">
+        <h3 className="font-display text-xl font-bold tracking-tight text-bkk-700 dark:text-white">
           Proyek Unggulan
         </h3>
         <p className="mt-1 text-xs text-ink-muted">
           Dukung proyek unggulan kami, pantau perkembangannya secara transparan, dan salurkan donasi Anda sekarang.
         </p>
 
-        {allProjects.length > 0 && (
-          <div className="mt-4 rounded-[45%_55%_50%_50%/30%_28%_25%_30%] bg-gradient-to-br from-lagoon-100 to-sky-100 px-5 py-3 ring-2 ring-lagoon-200/70 dark:from-sky-900/40 dark:to-sky-800/40 dark:ring-sky-700">
-            <div className="flex items-baseline justify-between text-xs">
-              <span className="font-bold text-sky-900 dark:text-sky-100">Rp {formatNumber(totalRaised)} <span className="font-medium text-ink-muted">terkumpul</span></span>
-              <span className="font-bold text-sky-800 dark:text-lagoon-200">{totalPct}%</span>
-            </div>
-            <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-white/70 dark:bg-slate-700">
-              <div className="h-full rounded-full bg-gradient-to-r from-lagoon-500 to-sky-500" style={{ width: `${totalPct}%` }} />
-            </div>
-          </div>
-        )}
-
-        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7">
+        <div className="mt-6 grid grid-cols-2 gap-5 md:gap-7">
           {allProjects.length === 0 && (
             <div className="col-span-2 card flex flex-col items-center py-10 text-center">
               <FolderOpen className="h-8 w-8 text-sky-400/60" />
@@ -104,12 +89,12 @@ export function FeaturedProjects() {
                 ? "bg-leaf-100 text-leaf-700 dark:bg-leaf-700/30 dark:text-leaf-100"
                 : /trench/.test(p.typeId)
                   ? "bg-tang-100 text-tang-700 dark:bg-tang-700/30 dark:text-tang-100"
-                  : "bg-tang-100 text-tang-700 dark:bg-tang-700/30 dark:text-tang-100";
+                  : "bg-bkkpink-100 text-bkkpink-700 dark:bg-bkkpink-700/30 dark:text-bkkpink-100";
             const progress = p.goalAmount > 0 ? Math.round((p.raisedAmount / p.goalAmount) * 100) : 0;
             return (
               <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
-                <div className={`transition-transform hover:rotate-0 ${BKK_CARD_TILTS[pi % BKK_CARD_TILTS.length]}`}>
-                <BkkCloudBox className="flex flex-col bg-white p-5 pb-7 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={pi % 2 === 1} tall>
+                <div className="">
+                <BkkCloudBox className="flex flex-col bg-white p-5 pb-7 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={pi % 2 === 1} tall>
                   <div className="flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
                     {p.featuredPhoto?.url ? (
                       <img src={p.featuredPhoto.url} alt={p.title} className="h-full w-full object-cover" />

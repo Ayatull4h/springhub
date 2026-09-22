@@ -9,4 +9,4 @@ export const APP_BUILD_TAG = "2026-09-09d";
  * Revisi staging — NAIKKAN tiap deploy staging agar ketahuan HP user
  * jalanin build staging yang mana (tampil kecil di footer).
  */
-export const STAGING_REV = "s36";
+export const STAGING_REV = "s37";

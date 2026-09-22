@@ -1,6 +1,7 @@
 import { Hero } from "@/components/sections/hero";
 import { ImpactDashboard } from "@/components/sections/impact-dashboard";
 import { SpringMap } from "@/components/sections/spring-map";
+import { EcosystemStrip } from "@/components/sections/ecosystem";
 import { VolunteerActivities } from "@/components/sections/volunteer";
 import { EventSchedule } from "@/components/sections/event-schedule";
 import { FeaturedProjects } from "@/components/sections/featured-projects";
@@ -9,16 +10,18 @@ import { LearningHub } from "@/components/sections/learning-hub";
 import { RealActionHeader } from "@/components/sections/real-action-header";
 import { MediaSection } from "@/components/sections/media";
 import { DonateSection } from "@/components/sections/donate";
+import { BkkCurve } from "@/components/sections/bkk-decor";
 export default function HomePage() {
   return (
-    <div>
+    <>
       <Hero />
       <ImpactDashboard />
       <SpringMap />
+      <EcosystemStrip />
       <VolunteerActivities />
       <EventSchedule />
 
-      <section id="about" className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
+      <section className="overflow-x-clip bg-[#c9f0dd] pt-16 md:pt-20 dark:bg-slate-900">
         <div className="container-page">
         <RealActionHeader />
 
@@ -31,11 +34,12 @@ export default function HomePage() {
           </div>
         </div>
         </div>
+        <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-bkk-200" />
       </section>
 
       <PartnerSection />
       <LearningHub />
       <MediaSection />
-    </div>
+    </>
   );
 }

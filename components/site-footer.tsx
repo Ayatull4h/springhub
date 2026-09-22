@@ -11,7 +11,6 @@ import { Logo } from "./logo";
 import { CONTACTS } from "@/lib/contacts";
 import { STAGING_REV } from "@/lib/app-version";
 import { useI18n } from "@/lib/i18n";
-import { Shell, Starfish } from "./sections/river-ornaments";
 
 // TikTok isn't in lucide — inline SVG.
 function TikTokIcon({ className }: { className?: string }) {
@@ -36,10 +35,10 @@ export function SiteFooter() {
       title: t("footer.platform"),
       links: [
         { label: t("map.title"), href: "/#map" },
-        { label: t("dashboard.title"), href: "/#dashboard" },
-        { label: t("volunteer.title"), href: "/#community" },
-        { label: t("learn.title"), href: "/#learn" },
-        { label: t("media.title"), href: "/#media" },
+        { label: t("dashboard.title"), href: "#dashboard" },
+        { label: t("volunteer.title"), href: "#community" },
+        { label: t("learn.title"), href: "#learn" },
+        { label: t("media.title"), href: "#media" },
       ],
     },
     {
@@ -55,8 +54,8 @@ export function SiteFooter() {
       title: t("footer.about"),
       links: [
         { label: t("footer.ourMission"), href: "/#about" },
-        { label: t("footer.becomePartner"), href: "/#community" },
-        { label: t("footer.impactReport"), href: "/#media" },
+        { label: t("footer.becomePartner"), href: "#community" },
+        { label: t("footer.impactReport"), href: "#media" },
       ],
     },
     {
@@ -71,19 +70,8 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-b from-sky-900 to-[#04222e] text-white">
-      {/* dasar sungai: pasir + batu */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-amber-200/25 to-transparent" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-4 left-[8%] h-8 w-10 rounded-[55%_45%_58%_42%/50%_55%_45%_52%] bg-stone-500/40" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-6 right-[12%] h-6 w-8 rounded-[45%_55%_42%_58%/55%_45%_55%_45%] bg-stone-500/40" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-3 left-[45%] h-5 w-7 rounded-[50%_50%_55%_45%/60%_55%_45%_50%] bg-stone-500/30" />
-      <Shell className="pointer-events-none absolute bottom-6 left-[30%] hidden w-14 -rotate-12 opacity-80 md:block" />
-      <Starfish className="pointer-events-none absolute bottom-8 right-[32%] hidden w-12 rotate-12 opacity-80 md:block" />
-      {/* gelembung naik */}
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-10 left-[20%] h-3 w-3 rounded-full bg-white/20" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-20 left-[24%] h-2 w-2 rounded-full bg-white/15" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-14 right-[28%] h-3.5 w-3.5 rounded-full bg-white/15" />
-      <div className="container-page relative grid gap-10 py-14 md:grid-cols-12">
+    <footer className="bg-lagoon-700 text-white">
+      <div className="container-page grid gap-10 py-14 md:grid-cols-12">
         <div className="md:col-span-4">
           <Logo tone="dark" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/80">
@@ -134,7 +122,7 @@ export function SiteFooter() {
                 placeholder={t("footer.newsletterPlaceholder")}
                 className="flex-1 rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border border-white/25 bg-white/10 px-4 py-2 text-sm text-white placeholder:text-white/50 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30"
               />
-              <button type="submit" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-brand-700 px-4 py-2 font-display text-sm font-bold text-white shadow-[3px_3px_0_rgba(8,47,73,0.9)] transition hover:rotate-0 hover:bg-brand-800 rotate-1">
+              <button type="submit" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white px-4 py-2 font-display text-sm font-bold text-bkk-800 shadow-[3px_3px_0_rgba(0,0,0,0.35)] transition hover:rotate-0 rotate-1">
                 {t("footer.subscribe")}
               </button>
             </form>

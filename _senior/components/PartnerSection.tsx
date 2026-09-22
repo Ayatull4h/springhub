@@ -4,8 +4,6 @@ import Link from "next/link";
 import { Handshake, ArrowRight, Sprout, Layers, Droplets, Telescope } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { BkkCloudBox } from "@/components/sections/bkk-decor";
-import { UcengIcon, WaderIcon } from "@/components/sections/eco-icons";
-import { Pebbles, LilyPad } from "@/components/sections/river-ornaments";
 
 const projectTypes = [
   { icon: Sprout, label: "donate.partnerTree", desc: "donate.partnerTreeDesc", color: "text-emerald-600" },
@@ -18,41 +16,30 @@ export function PartnerSection() {
   const { t } = useI18n();
 
   return (
-      <section className="container-page relative overflow-x-clip py-16">
-      <div aria-hidden="true" className="pointer-events-none absolute left-1/4 top-0 h-64 w-2/3 rounded-full bg-lagoon-200/50 blur-3xl dark:bg-sky-800/30" />
+    <section className="container-page overflow-x-clip py-16">
       <div className="transition-transform hover:rotate-0 md:-rotate-1">
-      <BkkCloudBox className="bg-gradient-to-br from-lagoon-100 to-white px-12 py-10 text-sky-950 md:px-16 dark:from-slate-800 dark:to-slate-900 dark:text-white drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]" flip={false} tall>
-      {/* riak genangan */}
-      <div aria-hidden="true" className="pointer-events-none absolute left-[8%] top-[12%] h-16 w-1/3 rounded-[50%] border-[3px] border-white/50" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-[10%] right-[10%] h-20 w-1/4 rounded-[50%] border-2 border-white/40" />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-4 rounded-[46%_54%_52%_48%/24%_28%_26%_30%] border-2 border-white/30" />
-      {/* penghuni genangan */}
-      <UcengIcon className="pointer-events-none absolute bottom-[14%] left-[6%] hidden w-16 -rotate-6 opacity-80 sm:block" />
-      <WaderIcon className="pointer-events-none absolute right-[5%] top-[12%] hidden w-14 rotate-6 opacity-80 sm:block" />
-      <LilyPad className="pointer-events-none absolute bottom-[8%] right-[22%] hidden w-16 rotate-12 opacity-80 lg:block" />
-      <Pebbles className="pointer-events-none absolute left-[3%] top-[16%] hidden w-14 opacity-70 lg:block" />
-      <div className="relative">
-      <div className="flex flex-col items-start gap-5">
+      <BkkCloudBox className="bg-gradient-to-br from-tang-500 via-tang-500 to-bkkpink-600 px-12 py-10 text-white md:px-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={false}>
+      <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 text-sm font-semibold text-sky-900 dark:text-sky-100">
-            <Handshake className="h-4 w-4 text-sky-700 dark:text-bkksun" />
+          <div className="flex items-center gap-2 text-sm font-semibold text-bkk-100">
+            <Handshake className="h-4 w-4 text-bkksun" />
             {t("donate.becomePartner")}
           </div>
-          <h3 className="mt-1 font-display text-xl font-bold tracking-tight text-sky-950 md:text-2xl dark:text-white">
+          <h3 className="mt-1 font-display text-xl font-bold tracking-tight text-white md:text-2xl">
             {t("donate.partnerTitle")}
           </h3>
-          <p className="mt-1 max-w-xl text-sm text-sky-950/75 dark:text-white/80">
+          <p className="mt-1 max-w-xl text-sm text-white/80">
             {t("donate.partnerDesc")}
           </p>
 
-          <ul className="mt-3 grid gap-x-4 gap-y-2 text-xs text-sky-950/75 sm:grid-cols-2 dark:text-white/75">
+          <ul className="mt-3 grid gap-x-4 gap-y-2 text-xs text-white/75 sm:grid-cols-2">
             {projectTypes.map(pt => {
               const Icon = pt.icon;
               return (
                 <li key={pt.label} className="flex items-center gap-1.5">
-                  <Icon className={`h-3.5 w-3.5 flex-none ${pt.color}`} />
+                  <Icon className="h-3.5 w-3.5 flex-none text-bkksun" />
                   <span>
-                    <span className="font-semibold text-sky-950 dark:text-white">{t(pt.label)}</span>
+                    <span className="font-semibold text-white">{t(pt.label)}</span>
                     {" · "}{t(pt.desc)}
                   </span>
                 </li>
@@ -62,13 +49,12 @@ export function PartnerSection() {
         </div>
 
         <div className="flex flex-shrink-0 flex-wrap items-center gap-2 md:ml-auto">
-          <a href="mailto:info@jagasemesta.id" className="whitespace-nowrap rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-tang-500 px-5 py-2.5 font-display text-sm font-bold text-amber-950 shadow-[3px_3px_0_rgba(120,53,15,0.9)] ring-2 ring-white/60 transition hover:rotate-0 -rotate-1">
+          <a href="mailto:info@jagasemesta.id" className="whitespace-nowrap rounded-full bg-bkksun px-5 py-2.5 font-display text-sm font-bold text-bkk-900 transition hover:brightness-95">
             {t("donate.becomePartnerCta")} <ArrowRight className="ml-1 inline h-4 w-4" />
           </a>
-          <Link href="/help" className="whitespace-nowrap rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border-2 border-sky-800/30 px-5 py-2.5 text-sm font-semibold text-sky-900 transition hover:bg-white/40 dark:border-white/40 dark:text-white dark:hover:bg-white/10">
+          <Link href="/help" className="whitespace-nowrap rounded-full border border-white/40 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10">
             {t("donate.downloadDeck")}
           </Link>
-        </div>
         </div>
       </div>
       </BkkCloudBox>

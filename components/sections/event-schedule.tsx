@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { CalendarDays, MapPin, Users, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve, BkkTitleCloud, BkkInnerWave, BkkCloudBox } from "./bkk-decor";
+import { BkkCurve, BkkTitleCloud } from "./bkk-decor";
 
 type EventItem = {
   id: string;
@@ -33,7 +33,7 @@ function fmtDate(iso: string, locale: string): string {
 function EventThumb({ item }: { item: EventItem }) {
   if (!item.imageUrl) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-tang-500/90 to-sky-800/90">
+      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-tang-500/90 to-bkkpink-600/90">
         <CalendarDays className="h-10 w-10 text-white/80" />
       </div>
     );
@@ -203,39 +203,29 @@ export function EventSchedule() {
 
   if (items.length === 0) {
     return (
-      <section id="jadwal" className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
+      <section id="jadwal" className="overflow-x-clip bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
         <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-tang-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
+          <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
         </h2>
         <p className="mt-3 max-w-2xl text-ink-muted">
           {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
         </p>
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-sky-100 dark:text-slate-900" accent="text-tang-500" />
+      <BkkCurve top="bg-transparent" bottom="text-[#c9f0dd] dark:text-slate-900" accent="text-bkkpink-500" />
       </section>
     );
   }
 
   return (
-    <section id="jadwal" className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
+    <section id="jadwal" className="overflow-x-clip bg-white pt-16 md:pt-20 dark:bg-slate-900">
       <div className="container-page">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
-        <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-tang-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
+        <BkkTitleCloud cloudClass="text-bkk-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-bkk-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
       </h2>
       <p className="mt-3 max-w-2xl text-ink-muted">
         {t("event.description", "Ikut restorasi mata air dan tanam pohon bulan depan. Daftar langsung, tanpa kuota.")}
       </p>
-
-      {/* spanduk ombak */}
-      <div aria-hidden="true" className="pointer-events-none relative mt-6 h-20 overflow-hidden rounded-[45%_55%_50%_50%/60%_60%_40%_40%] bg-gradient-to-r from-lagoon-100 via-sky-100 to-lagoon-100 dark:from-sky-900/40 dark:via-sky-800/40 dark:to-sky-900/40">
-        <div className="absolute inset-x-0 bottom-0 leading-[0] text-lagoon-200 dark:text-sky-700">
-          <BkkInnerWave />
-        </div>
-        <div className="absolute inset-x-0 bottom-1 leading-[0] text-white/70 dark:text-white/20">
-          <BkkInnerWave />
-        </div>
-      </div>
 
       <div className="mt-4 flex items-center justify-end gap-2">
         <span className="mr-auto text-xs text-ink-muted">{page + 1} / {items.length}</span>
@@ -276,8 +266,8 @@ export function EventSchedule() {
                 transition: "transform .6s cubic-bezier(.25,.8,.25,1), opacity .6s, filter .6s",
               }}
             >
-              {/* Kolam kaca */}
-              <BkkCloudBox className="w-[266px] border-2 border-white/50 bg-white/60 p-6 pb-8 backdrop-blur-md drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:border-slate-600/50 dark:bg-slate-800/60 sm:w-[290px]" flip={i % 2 === 0} tall>
+              {/* Kaca glassmorphism */}
+              <div className="w-[266px] overflow-hidden rounded-[2.5rem_3.5rem_2rem_3rem] border border-white/40 bg-white/60 shadow-xl backdrop-blur-md dark:border-slate-600/50 dark:bg-slate-800/60 sm:w-[290px]">
                 <div className="h-28 overflow-hidden">
                   <EventThumb item={item} />
                 </div>
@@ -311,7 +301,7 @@ export function EventSchedule() {
                     </button>
                   )}
                 </div>
-              </BkkCloudBox>
+              </div>
             </div>
           );
         })}
@@ -330,7 +320,7 @@ export function EventSchedule() {
 
       {popup && <RegisterPopup event={popup} onClose={() => setPopup(null)} />}
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-sky-100 dark:text-slate-900" accent="text-tang-500" />
+      <BkkCurve top="bg-transparent" bottom="text-[#c9f0dd] dark:text-slate-900" accent="text-bkkpink-500" />
     </section>
   );
 }

@@ -20,8 +20,8 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BkkCurve, BkkWeave, BkkTitleCloud, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
-import { Reeds, Pebbles } from "./river-ornaments";
+import { BkkCurve, BkkTitleCloud, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
+import { UcengIcon, PariIcon } from "./eco-icons";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -455,12 +455,13 @@ const formTitleI18nKey = (slug: string): string => {
   const visibleList = visible.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <section id="map" className="relative overflow-hidden bg-[#f7f2fc] pt-16 md:pt-20 dark:bg-slate-900/40">
-      <BkkWeave className="-right-14 -top-14 rotate-12 opacity-60" />
+    <section id="map" className="relative overflow-hidden bg-white pt-16 md:pt-20 dark:bg-slate-900">
+      <PariIcon className="pointer-events-none absolute right-10 top-24 hidden w-24 rotate-6 opacity-80 lg:block" />
+      <UcengIcon className="pointer-events-none absolute right-48 top-40 hidden w-20 -rotate-3 opacity-80 lg:block" />
       <div className="container-page relative z-10">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-cream dark:text-slate-800">{t("map.title")}{" "}
-        <span className="text-lagoon-600">{t("map.titleAccent")}</span></BkkTitleCloud>
+        <span className="text-bkk-500">{t("map.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mt-3 max-w-2xl text-ink-muted">
         {t("map.description")}
@@ -477,13 +478,8 @@ const formTitleI18nKey = (slug: string): string => {
         />
       </div>
 
-      {/* Full-width map — cincin batu kali */}
-      <Reeds className="pointer-events-none absolute left-[1%] top-1/3 hidden w-20 opacity-90 xl:block" />
-      <Reeds className="pointer-events-none absolute right-[1%] top-1/2 hidden w-24 -scale-x-100 opacity-90 xl:block" />
-      <Pebbles className="pointer-events-none absolute bottom-24 right-[4%] hidden w-20 opacity-80 xl:block" />
-      <div className="relative mt-8">
-      <div className="relative overflow-hidden rounded-[48%_52%_50%_50%/10%_12%_10%_12%] bg-white p-3 shadow-elevated ring-4 ring-lagoon-200 md:p-4 dark:bg-slate-900 dark:ring-slate-700">
-      <div className="overflow-hidden rounded-[46%_54%_48%_52%/8%_10%_8%_10%] bg-white dark:bg-slate-900">
+      {/* Full-width map */}
+      <div className="relative mt-8 overflow-hidden rounded-[58%_42%_60%_40%/16%_20%_14%_22%] bg-white shadow-elevated ring-4 ring-tang-200 dark:bg-slate-900 dark:ring-slate-700">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-ink">{t("map.show")}</span>
@@ -536,27 +532,25 @@ const formTitleI18nKey = (slug: string): string => {
             mapPoints={filteredMapPoints}
           />
         </div>
-      </div>
-      </div>
-      {hasMoreReports && (
-        <div className="mt-4 text-center">
-          <button
-            onClick={loadMoreReports}
-            disabled={loadingMore}
-            className="inline-flex items-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white/85 px-5 py-2.5 text-sm font-semibold text-ink shadow-elevated ring-2 ring-stone-300 backdrop-blur transition hover:rotate-0 hover:bg-white dark:bg-slate-800/85 dark:text-slate-200 dark:ring-slate-600 disabled:opacity-50"
-          >
-            {loadingMore ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> {t("map.loadingMore")}
-              </>
-            ) : (
-              <>
-                {t("map.loadMore")} ({reports.length}/{totalReports})
-              </>
-            )}
-          </button>
-        </div>
-      )}
+        {hasMoreReports && (
+          <div className="border-t border-ink-line px-4 py-3 text-center dark:border-slate-700">
+            <button
+              onClick={loadMoreReports}
+              disabled={loadingMore}
+              className="inline-flex items-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] border border-ink-line px-4 py-2 text-sm font-medium text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white disabled:opacity-50"
+            >
+              {loadingMore ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> {t("map.loadingMore")}
+                </>
+              ) : (
+                <>
+                  {t("map.loadMore")} ({reports.length}/{totalReports})
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Below the map: report details (left) + Report Your Contribution (right) */}
@@ -575,7 +569,7 @@ const formTitleI18nKey = (slug: string): string => {
         )}
 
         <div className="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6">
-        <BkkCloudBox className="bg-white p-10 pb-12 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900" flip={false} tall>
+        <BkkCloudBox className="bg-white p-10 pb-12 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}
@@ -604,8 +598,8 @@ const formTitleI18nKey = (slug: string): string => {
                   key={r.id}
                   className={`flex items-start gap-3 border border-ink-line/60 p-3 transition-transform hover:rotate-0 dark:border-slate-700 ${BKK_ROW_RADII[ri % BKK_ROW_RADII.length]} ${BKK_ROW_TILTS[ri % BKK_ROW_TILTS.length]}`}
                 >
-                  <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] ${/restoration/.test(r.formSlug) ? "bg-tang-100 dark:bg-tang-700/30" : /trench/.test(r.formSlug) ? "bg-tang-100 dark:bg-tang-700/30" : /tree|seedling/.test(r.formSlug) ? "bg-leaf-100 dark:bg-leaf-700/30" : "bg-lagoon-100 dark:bg-lagoon-700/30"}`}>
-                    <Droplets className={`h-5 w-5 ${/restoration/.test(r.formSlug) ? "text-tang-600" : /trench/.test(r.formSlug) ? "text-tang-600" : /tree|seedling/.test(r.formSlug) ? "text-leaf-600" : "text-lagoon-600"}`} />
+                  <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] ${/restoration/.test(r.formSlug) ? "bg-tang-100 dark:bg-tang-700/30" : /trench/.test(r.formSlug) ? "bg-bkkpink-100 dark:bg-bkkpink-700/30" : /tree|seedling/.test(r.formSlug) ? "bg-leaf-100 dark:bg-leaf-700/30" : "bg-lagoon-100 dark:bg-lagoon-700/30"}`}>
+                    <Droplets className={`h-5 w-5 ${/restoration/.test(r.formSlug) ? "text-tang-600" : /trench/.test(r.formSlug) ? "text-bkkpink-600" : /tree|seedling/.test(r.formSlug) ? "text-leaf-600" : "text-lagoon-600"}`} />
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
@@ -658,7 +652,7 @@ const formTitleI18nKey = (slug: string): string => {
         </div>
 
         <div className="transition-transform hover:rotate-0 md:rotate-[0.5deg] lg:col-span-6">
-        <BkkCloudBox className="bg-gradient-to-br from-lagoon-100 to-white p-10 pb-12 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:from-slate-800 dark:to-slate-900" flip tall>
+        <BkkCloudBox className="bg-gradient-to-br from-lagoon-100 to-white p-10 pb-12 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:from-slate-800 dark:to-slate-900" flip tall>
           <div className="flex items-center justify-between gap-2">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ClipboardList className="h-4 w-4 text-brand-600" />
@@ -703,7 +697,7 @@ const formTitleI18nKey = (slug: string): string => {
                 <>
                   {t("map.discoveryPrompt")}{" "}
                   <Link href="/report/spring-monitoring" className="font-semibold text-brand-700 hover:underline">
-                    {t("map.discoveryCta", "Isi survei")}
+                    {t("map.discoveryPrompt")}
                   </Link>
                 </>
               )}
@@ -731,7 +725,7 @@ const formTitleI18nKey = (slug: string): string => {
       </div>
       <PointsGuideModal open={showGuide} onClose={() => setShowGuide(false)} />
       <FloatingPointsButton />
-      <BkkCurve top="bg-transparent" bottom="text-[#e3f4f6] dark:text-slate-900" accent="text-sky-200" />
+      <BkkCurve top="bg-transparent" bottom="text-[#f6f1fb] dark:text-slate-900" accent="text-bkkblue-200" />
     </section>
   );
 }

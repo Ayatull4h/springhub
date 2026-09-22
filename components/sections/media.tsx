@@ -5,8 +5,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, Video, CalendarDays, FileText, Newspaper, ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve, BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
-import { WaderIcon, UcengIcon, KepekIcon, PariIcon } from "./eco-icons";
+import { BkkCurve, BkkTitleCloud } from "./bkk-decor";
 
 type MediaItem = {
   id: string;
@@ -188,24 +187,12 @@ export function MediaSection() {
   };
 
   return (
-    <section id="media" className="relative overflow-hidden bg-gradient-to-b from-lagoon-500 via-sky-700 to-sky-900 pt-16 md:pt-20 dark:from-lagoon-600 dark:via-sky-800 dark:to-sky-950">
-      {/* kawanan ikan */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-4 z-0 hidden justify-between px-[6%] md:flex">
-        <WaderIcon className="w-20 -rotate-3 opacity-70" />
-        <KepekIcon className="w-16 rotate-3 opacity-70" />
-        <UcengIcon className="w-24 opacity-70" />
-        <PariIcon className="w-28 -rotate-2 opacity-70" />
-      </div>
-      {/* gelembung */}
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-16 left-[12%] h-4 w-4 rounded-full bg-white/25" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-28 left-[18%] h-2.5 w-2.5 rounded-full bg-white/20" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-24 right-[14%] h-5 w-5 rounded-full bg-white/20" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-40 right-[22%] h-3 w-3 rounded-full bg-white/25" />
-      <div className="container-page relative z-10">
+    <section id="media" className="relative overflow-hidden bg-lagoon-500 pt-16 md:pt-20 dark:bg-lagoon-600">
+      <div className="container-page relative">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-display text-3xl font-bold tracking-tight text-white md:text-5xl">
-            <BkkTitleCloud cloudClass="text-sky-900">{t("media.title")}{" "}
+            <BkkTitleCloud cloudClass="text-bkk-700">{t("media.title")}{" "}
             <span className="text-bkksun">{t("media.titleAccent")}</span></BkkTitleCloud>
           </h2>
           <p className="mt-2 max-w-2xl text-white/85">
@@ -216,7 +203,7 @@ export function MediaSection() {
           href="https://youtube.com/@jagasemesta"
           target="_blank"
           rel="noreferrer"
-          className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white px-5 py-2.5 font-display text-sm font-bold text-sky-900 shadow-lg transition hover:bg-sky-50"
+          className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white px-5 py-2.5 font-display text-sm font-bold text-bkk-800 shadow-lg transition hover:bg-bkk-50"
         >
           {t("media.visitYoutube")}
           <ExternalLink className="h-3.5 w-3.5" />
@@ -235,7 +222,7 @@ export function MediaSection() {
           ))}
         </div>
       ) : items.length === 0 ? (
-        <div className="mt-8 text-center text-white/80">
+        <div className="mt-8 text-center text-ink-muted">
           <p>{t("media.empty", "No media content yet. Check back soon!")}</p>
         </div>
       ) : (
@@ -294,13 +281,12 @@ export function MediaSection() {
                     aria-label={item.title}
                     onClick={() => {
                       if (o !== 0) { goTo(i); return; }
-                      if (item.linkUrl) window.open(item.linkUrl, item.linkUrl.startsWith("http") ? "_blank" : "_self", "noopener,noreferrer");
+                      if (item.linkUrl) window.open(item.linkUrl, item.linkUrl.startsWith("http") ? "_blank" : "_self", "noreferrer");
                     }}
                     onKeyDown={(e) => { if (o !== 0 && (e.key === "Enter" || e.key === " ")) goTo(i); }}
-                    className={`group block w-[266px] transition-transform hover:rotate-0 ${o !== 0 ? "cursor-pointer" : ""} sm:w-[290px] ${o === 0 ? "" : o < 0 ? "md:-rotate-2" : "md:rotate-2"}`}
+                    className={`group block w-[266px] overflow-hidden rounded-[58%_42%_60%_40%/28%_32%_24%_36%] bg-white p-4 shadow-elevated transition-transform hover:rotate-0 dark:bg-slate-900 ${o !== 0 ? "cursor-pointer" : ""} sm:w-[290px] ${o === 0 ? "" : o < 0 ? "md:-rotate-2" : "md:rotate-2"}`}
                   >
-                    <BkkCloudBox className="bg-white p-5 pb-6 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={o < 0} tall>
-                    <div className="-mx-5 -mt-5 mb-3 h-28 overflow-hidden bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
+                    <div className="-mx-4 -mt-4 mb-3 h-28 overflow-hidden bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/30 dark:to-brand-900/50">
                       <MediaThumb item={item} />
                     </div>
                     <span className={`chip text-xs ${typeColors[item.type] || "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"}`}>
@@ -316,7 +302,6 @@ export function MediaSection() {
                         {item.linkLabel} <ArrowRight className="h-3 w-3" />
                       </span>
                     )}
-                    </BkkCloudBox>
                   </div>
                 </div>
               );

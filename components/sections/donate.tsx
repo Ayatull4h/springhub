@@ -49,7 +49,7 @@ export function DonateSection() {
   };
 
   if (done) return (
-    <div id="donate" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white p-8 shadow-elevated ring-2 ring-amber-200 dark:bg-slate-900 dark:ring-slate-700">
+    <div id="donate" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white p-8 shadow-elevated ring-2 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
       <CheckCircle2 className="h-12 w-12 text-emerald-500" />
       <h3 className="mt-4 text-xl font-bold">Permintaan Donasi Terkirim</h3>
       <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Xendit yang terbuka.</p>
@@ -58,31 +58,13 @@ export function DonateSection() {
 
   return (
     <div id="donate" className="relative transition-transform hover:rotate-0 md:rotate-1">
-      {/* gelembung grafik mengambang */}
-      <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-4 hidden w-40 -rotate-6 rounded-[55%_45%_60%_40%/50%_55%_45%_50%] border-2 border-white/70 bg-white/70 p-4 shadow-elevated backdrop-blur-sm xl:block dark:bg-slate-800/70">
-        <div className="text-[10px] font-bold text-ink-muted">Donasi / minggu</div>
-        <div className="mt-2 flex h-16 items-end justify-center gap-1.5">
-          <div className="w-4 rounded-t-full bg-lagoon-500/80" style={{ height: "35%" }} />
-          <div className="w-4 rounded-t-full bg-leaf-600/80" style={{ height: "55%" }} />
-          <div className="w-4 rounded-t-full bg-tang-500/80" style={{ height: "45%" }} />
-          <div className="w-4 rounded-t-full bg-lagoon-600/80" style={{ height: "75%" }} />
-          <div className="w-4 rounded-t-full bg-leaf-700/80" style={{ height: "100%" }} />
-        </div>
-      </div>
-      <div aria-hidden="true" className="pointer-events-none absolute -right-28 bottom-16 hidden w-44 rotate-3 rounded-[45%_55%_50%_50%/55%_50%_55%_45%] border-2 border-white/70 bg-white/70 p-4 shadow-elevated backdrop-blur-sm xl:block dark:bg-slate-800/70">
-        <div className="text-[10px] font-bold text-ink-muted">Mata air pulih</div>
-        <svg viewBox="0 0 100 40" className="mt-1 h-12 w-full" fill="none" strokeLinecap="round">
-          <polyline points="2,34 20,28 38,30 56,20 74,22 98,8" stroke="#0E858C" strokeWidth="3" />
-          <circle cx="98" cy="8" r="3.5" fill="#0E858C" />
-          <circle cx="56" cy="20" r="2.5" fill="#fff" stroke="#0E858C" strokeWidth="2" />
-        </svg>
-      </div>
-      <BkkCloudBox className="bg-white dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip tall>
+      <div className="">
+      <BkkCloudBox className="bg-white dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip tall>
       <div className="px-10 pb-10 pt-10">
-        <div className="mb-4 flex flex-wrap items-center gap-5 text-sm">
+        <div className="mb-4 flex items-center gap-5 text-sm">
           <div>
             <p className="text-[11px] text-ink-muted">Terkumpul</p>
-            <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Rp 49,2 Juta</p>
+            <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Rp 48,2 Juta</p>
           </div>
           <div className="h-8 w-px bg-ink-line" />
           <div>
@@ -96,8 +78,8 @@ export function DonateSection() {
           </div>
         </div>
 
-        <h3 className="font-display text-lg font-bold text-sky-900 dark:text-white">
-          {t("donate.title")} <span className="text-lagoon-600">{t("donate.titleAccent")}</span>
+        <h3 className="font-display text-lg font-bold text-bkk-700 dark:text-white">
+          {t("donate.title")} <span className="text-bkk-500">{t("donate.titleAccent")}</span>
         </h3>
         <p className="mt-1 text-sm text-ink-muted">{t("donate.description")}</p>
 
@@ -116,7 +98,7 @@ export function DonateSection() {
           </select>
 
           {tier && (
-            <div className="rounded-[45%_55%_50%_50%/60%_55%_65%_60%] bg-cream px-3 py-2 text-sm font-medium text-tang-700 dark:bg-sky-900/30 dark:text-sky-200">
+            <div className="rounded-[45%_55%_50%_50%/60%_55%_65%_60%] bg-cream px-3 py-2 text-sm font-medium text-tang-700 dark:bg-bkk-900/30 dark:text-bkk-200">
               {tierIcons[tier.id]} <strong>{tier.impact}</strong> — {tier.label}
             </div>
           )}
@@ -159,7 +141,7 @@ export function DonateSection() {
           <button
             type="submit"
             disabled={loading || !name || (tierId !== "custom" && !tier) || (tierId === "custom" && !customAmount)}
-            className="w-full justify-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-tang-500 py-3 font-display text-sm font-bold text-amber-950 shadow-[4px_4px_0_rgba(120,53,15,0.9)] ring-2 ring-white/60 transition hover:rotate-0 hover:bg-tang-600 -rotate-1"
+            className="w-full justify-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-tang-500 py-3 font-display text-sm font-bold text-white shadow-[4px_4px_0_rgba(120,53,15,0.9)] ring-2 ring-white/60 transition hover:rotate-0 hover:bg-tang-600 -rotate-1"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
               <><Heart className="h-4 w-4" /> {effectiveAmount > 0 ? `Rp ${effectiveAmount.toLocaleString("id-ID")}` : t("donate.continue")}</>
@@ -168,6 +150,7 @@ export function DonateSection() {
         </form>
       </div>
       </BkkCloudBox>
+      </div>
     </div>
   );
 }

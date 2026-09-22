@@ -66,8 +66,8 @@ export function SiteHeader() {
   ];
 
   return (
-    <header className="relative z-40 mx-3 mt-3 md:mx-6">
-      <div className="container-page flex min-h-16 items-center justify-between gap-2 rounded-[46%_54%_52%_48%/28%_32%_30%_34%] bg-cream/95 py-2 shadow-[0_10px_36px_rgba(8,47,73,0.22)] ring-2 ring-white backdrop-blur md:rounded-[48%_52%_50%_50%/38%_42%_40%_44%] dark:bg-slate-900/95 dark:ring-slate-700">
+    <header className="sticky top-0 z-40 border-b border-bkk-100 bg-white/95 shadow-[0_2px_16px_rgba(103,39,159,0.08)] backdrop-blur dark:border-slate-700 dark:bg-slate-900/90">
+      <div className="container-page flex h-16 items-center justify-between">
         <Link href="/" aria-label="SpringHub home">
           <Logo />
         </Link>
@@ -85,7 +85,7 @@ export function SiteHeader() {
             <Link
               key={item.label}
               href={item.href}
-              className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] px-4 py-2 font-display text-sm font-semibold text-bkk-700 transition hover:bg-white/70 dark:text-bkk-200 dark:hover:bg-slate-800"
+              className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] px-4 py-2 font-display text-sm font-semibold text-bkk-700 transition hover:bg-bkk-50 dark:text-bkk-200 dark:hover:bg-slate-800"
             >
               {item.label}
             </Link>
@@ -160,7 +160,7 @@ export function SiteHeader() {
               <Link
                 href="/sign-in"
                 prefetch={false}
-                className="hidden text-sm font-semibold text-bkk-700 hover:text-bkk-800 sm:inline dark:text-bkk-200"
+                className="hidden text-sm font-semibold text-bkk-700 hover:text-bkk-800 dark:text-bkk-200 sm:inline"
               >
                 {t("nav.signIn")}
               </Link>
@@ -177,14 +177,14 @@ export function SiteHeader() {
       </div>
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="mx-3 mt-2 rounded-[2rem] bg-cream shadow-elevated ring-2 ring-white md:hidden dark:bg-slate-900 dark:ring-slate-700">
+        <div className="border-t border-bkk-100 bg-white dark:border-slate-700 dark:bg-slate-900 md:hidden">
           <nav className="container-page flex flex-col gap-1 py-4" aria-label="Mobile">
             {nav.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="rounded-[40%_60%_45%_55%/45%_55%_40%_60%] px-3 py-2.5 font-display text-sm font-semibold text-bkk-700 transition hover:bg-white/70 dark:text-bkk-200 dark:hover:bg-slate-800"
+                className="rounded-[40%_60%_45%_55%/45%_55%_40%_60%] px-3 py-2.5 font-display text-sm font-semibold text-bkk-700 transition hover:bg-bkk-50 dark:text-bkk-200 dark:hover:bg-slate-800"
               >
                 {item.label}
               </Link>
