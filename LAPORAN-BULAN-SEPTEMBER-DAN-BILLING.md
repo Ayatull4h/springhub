@@ -1,13 +1,13 @@
 # Laporan Bulan September dan Billing — SpringHub
 
-**Periode:** 1 – 30 September 2026 *(disusun 22 September 2026; progres s.d. tanggal tersebut)*
+**Periode:** 1 – 30 September 2026
 **Proyek:** SpringHub — Jaga Semesta (www.springhub.id)
 **Penyusun:** Ayatullah Reza — Pengembang Website
 **Lingkungan kerja:** Staging (`rev s15` → `rev s32`). Produksi **tidak disentuh** (tetap di titik stabil).
 
 ---
 
-## Bagian 1 — iPhone, Foto & Carousel (7–11 September)
+## Bagian 1 — iPhone, Foto & Carousel
 
 Fokus minggu ini: HP iPhone dan halaman media.
 
@@ -23,7 +23,7 @@ Fokus minggu ini: HP iPhone dan halaman media.
 
 ---
 
-## Bagian 2 — Dashboard & Gaya BKKCAW (14–15 September)
+## Bagian 2 — Dashboard & Gaya BKKCAW
 
 - **Angka "Restored Springs" dikurasi 30+** (tadinya dinamis membingungkan).
 - **Gaya visual BKKCAW masuk**: font Lexend, ungu, blob abstrak, ombak, stiker — fondasi rupa-rupa bulan ini.
@@ -31,13 +31,13 @@ Fokus minggu ini: HP iPhone dan halaman media.
 
 ---
 
-## Bagian 3 — Era Kotak Awan (17–18 September)
+## Bagian 3 — Era Kotak Awan
 
 Semua kontainer landing jadi **awan clip-path** (1 siluet gabungan per kontainer, bukan tumpukan), blob 8 varian, padding lega agar isi tak terpotong, stempel `rev` di footer untuk diagnosis cache. Ikan kartun gantikan anyaman.
 
 ---
 
-## Bagian 4 — Tema Sungai Mengalir (21–22 September, `rev s15` → `rev s32`)
+## Bagian 4 — Tema Sungai Mengalir
 
 Landing dirombak total: **satu sungai mengalir dari kubangan hero sampai laut footer**, kartu-kartu menepi di kiri-kanan.
 
@@ -57,7 +57,7 @@ Landing dirombak total: **satu sungai mengalir dari kubangan hero sampai laut fo
 
 ---
 
-## Galeri — Tangkapan Layar Staging (22 September 2026)
+## Galeri — Tangkapan Layar Staging
 
 ### 1. Hero — Kubangan
 ![Hero](laporan-september/img/01-hero.png)

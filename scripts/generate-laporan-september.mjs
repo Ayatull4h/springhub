@@ -47,11 +47,11 @@ async function main() {
 <body>
 <div style="text-align:center;margin-bottom:30px;padding-bottom:20px;border-bottom:2px solid #0891b2;">
   <h1 style="font-size:26pt;border:none;margin-bottom:4px;">SpringHub — Jaga Semesta</h1>
-  <p style="color:#64748b;">Laporan Bulan September & Billing — 22 September 2026</p>
+  <p style="color:#64748b;">Laporan Bulan September & Billing — Periode 1–30 September 2026</p>
 </div>
 ${bodyHtml}
 <div style="text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid #e2e8f0;font-size:9pt;color:#94a3b8;">
-  <p>Laporan dibuat 22 September 2026 — SpringHub — www.springhub.id</p>
+  <p>Laporan Bulan September 2026 — SpringHub — www.springhub.id</p>
 </div>
 </body>
 </html>`;
