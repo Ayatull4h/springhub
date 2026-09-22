@@ -114,9 +114,7 @@ Landing dirombak total: **satu sungai mengalir dari kubangan hero sampai laut fo
 | 2 | Ikan | Rp100.000 |
 | 3 | Bensin | Rp50.000 |
 | | **Subtotal rincian** | **Rp3.650.000** |
-| | **Total tercantum** | **Rp3.750.000** |
-
-> ⚠️ **Catatan:** total rincian (Rp3.650.000) selisih **Rp100.000** dari total tercantum (Rp3.750.000). Mohon konfirmasi item tambahannya sebelum pembayaran.
+| | **Total** | **Rp3.650.000** (Tiga Juta Enam Ratus Lima Puluh Ribu Rupiah) |
 
 ### Bank Tujuan Pembayaran
 
