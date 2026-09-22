@@ -23,7 +23,7 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BKK_CARD_RADII, BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
+import { BKK_CARD_RADII, BkkWeave, BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
 import { BambooIcon } from "./eco-icons";
 import { GrassTuft, Pebbles } from "./river-ornaments";
 
@@ -129,6 +129,7 @@ export function VolunteerActivities() {
 
   return (
     <section id="community" className="relative overflow-hidden bg-lagoon-100/40 pt-16 md:pt-20 dark:bg-slate-900/40">
+      <BkkWeave className="-left-16 top-24 hidden -rotate-12 opacity-50 md:block" />
       <BambooIcon className="pointer-events-none absolute bottom-16 left-[3%] hidden w-28 opacity-80 lg:block" />
       <BambooIcon className="pointer-events-none absolute bottom-16 right-[3%] hidden w-28 opacity-80 lg:block" />
       <GrassTuft className="pointer-events-none absolute bottom-8 left-[2%] hidden w-20 opacity-90 lg:block" />

@@ -20,9 +20,8 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BkkCurve, BkkTitleCloud, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
+import { BkkCurve, BkkWeave, BkkTitleCloud, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
 import { Reeds, Pebbles } from "./river-ornaments";
-import { UcengIcon, PariIcon } from "./eco-icons";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -457,8 +456,7 @@ const formTitleI18nKey = (slug: string): string => {
 
   return (
     <section id="map" className="relative overflow-hidden bg-[#f7f2fc] pt-16 md:pt-20 dark:bg-slate-900/40">
-      <PariIcon className="pointer-events-none absolute right-10 top-24 hidden w-24 rotate-6 opacity-80 lg:block" />
-      <UcengIcon className="pointer-events-none absolute right-48 top-40 hidden w-20 -rotate-3 opacity-80 lg:block" />
+      <BkkWeave className="-right-14 -top-14 hidden rotate-12 opacity-60 md:block" />
       <div className="container-page relative z-10">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-cream dark:text-slate-800">{t("map.title")}{" "}
