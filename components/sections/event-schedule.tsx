@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { CalendarDays, MapPin, Users, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve, BkkTitleCloud, BkkInnerWave } from "./bkk-decor";
+import { BkkCurve, BkkTitleCloud, BkkInnerWave, BkkCloudBox } from "./bkk-decor";
 
 type EventItem = {
   id: string;
@@ -277,7 +277,7 @@ export function EventSchedule() {
               }}
             >
               {/* Kolam kaca */}
-              <div className="w-[266px] overflow-hidden rounded-[45%_55%_50%_50%/22%_25%_20%_23%] border-2 border-white/50 bg-white/60 shadow-xl ring-4 ring-lagoon-200/70 backdrop-blur-md dark:border-slate-600/50 dark:bg-slate-800/60 dark:ring-slate-700 sm:w-[290px]">
+              <BkkCloudBox className="w-[266px] border-2 border-white/50 bg-white/60 p-6 pb-8 backdrop-blur-md drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:border-slate-600/50 dark:bg-slate-800/60 sm:w-[290px]" flip={i % 2 === 0} tall>
                 <div className="h-28 overflow-hidden">
                   <EventThumb item={item} />
                 </div>
@@ -311,7 +311,7 @@ export function EventSchedule() {
                     </button>
                   )}
                 </div>
-              </div>
+              </BkkCloudBox>
             </div>
           );
         })}

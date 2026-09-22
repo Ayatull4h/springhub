@@ -23,7 +23,7 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BKK_CARD_RADII, BkkTitleCloud } from "./bkk-decor";
+import { BKK_CARD_RADII, BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
 import { BambooIcon } from "./eco-icons";
 import { GrassTuft, Pebbles } from "./river-ornaments";
 
@@ -150,7 +150,8 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <div className="relative mt-3 flex-1 rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-leaf-600/40 outline outline-4 outline-offset-[6px] outline-white/70 transition-transform hover:rotate-0 dark:bg-slate-900 dark:ring-slate-700 dark:outline-white/10 md:-rotate-[0.5deg] drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]">
+          <div className="mt-3 flex-1 transition-transform hover:rotate-0 md:-rotate-[0.5deg]">
+          <BkkCloudBox className="bg-white p-10 pb-12 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={false} tall>
             <ul className="grid gap-5 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
@@ -232,10 +233,12 @@ export function VolunteerActivities() {
               </button>
             </div>
           )}
-          </div>
+          </BkkCloudBox>
+        </div>
         </div>
 
-        <div className="relative flex h-full flex-col rounded-[55%_6%_55%_6%/10%_50%_10%_50%] bg-gradient-to-br from-leaf-100 to-cream p-10 pb-12 ring-4 ring-leaf-600/40 outline outline-4 outline-offset-[6px] outline-white/70 transition-transform hover:rotate-0 dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700 dark:outline-white/10 md:rotate-1 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] lg:col-span-5">
+        <div className="flex flex-col transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full">
+        <BkkCloudBox className="bg-gradient-to-br from-tang-100 to-cream p-10 pb-12 h-full dark:from-slate-800 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip tall>
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-ink">
               {t("volunteer.submitProject")}
@@ -312,6 +315,7 @@ export function VolunteerActivities() {
               </button>
             )}
           </div>
+        </BkkCloudBox>
         </div>
       </div>
 

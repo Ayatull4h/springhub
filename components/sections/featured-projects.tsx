@@ -7,7 +7,7 @@ import {
   MapPin, TreePine, Droplets, Users, FolderOpen,
 } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
-import { BKK_CARD_TILTS } from "./bkk-decor";
+import { BKK_CARD_TILTS, BkkCloudBox } from "./bkk-decor";
 
 type ProjectItem = {
   id?: string;
@@ -108,7 +108,8 @@ export function FeaturedProjects() {
             const progress = p.goalAmount > 0 ? Math.round((p.raisedAmount / p.goalAmount) * 100) : 0;
             return (
               <Link key={p.id || p.title} href={p.id ? `/projects/${p.id}` : "/projects"} className="group block">
-                <div className={`flex flex-col rounded-[8%_50%_8%_50%/22%_8%_22%_8%] bg-white p-5 pb-7 ring-4 ring-leaf-100 transition-transform hover:rotate-0 dark:bg-slate-900 dark:ring-slate-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] ${BKK_CARD_TILTS[pi % BKK_CARD_TILTS.length]}`}>
+                <div className={`transition-transform hover:rotate-0 ${BKK_CARD_TILTS[pi % BKK_CARD_TILTS.length]}`}>
+                <BkkCloudBox className="flex flex-col bg-white p-5 pb-7 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={pi % 2 === 1} tall>
                   <div className="flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/20">
                     {p.featuredPhoto?.url ? (
                       <img src={p.featuredPhoto.url} alt={p.title} className="h-full w-full object-cover" />
@@ -153,6 +154,7 @@ export function FeaturedProjects() {
                       Lihat Detail <ArrowRight className="h-4 w-4" />
                     </div>
                   </div>
+                </BkkCloudBox>
                 </div>
               </Link>
             );

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Handshake, ArrowRight, Sprout, Layers, Droplets, Telescope } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { BkkCloudBox } from "@/components/sections/bkk-decor";
 import { UcengIcon, WaderIcon } from "@/components/sections/eco-icons";
 import { Pebbles, LilyPad } from "@/components/sections/river-ornaments";
 
@@ -20,7 +21,7 @@ export function PartnerSection() {
       <section className="container-page relative overflow-x-clip py-16">
       <div aria-hidden="true" className="pointer-events-none absolute left-1/4 top-0 h-64 w-2/3 rounded-full bg-lagoon-200/50 blur-3xl dark:bg-sky-800/30" />
       <div className="transition-transform hover:rotate-0 md:-rotate-1">
-      <div className="relative overflow-hidden rounded-[46%_54%_52%_48%/8%_10%_9%_11%] bg-gradient-to-br from-lagoon-200 via-sky-300 to-sky-500 px-6 py-12 text-sky-950 ring-4 ring-lagoon-200/70 md:px-12 dark:from-sky-900 dark:via-sky-800 dark:to-sky-900 dark:text-white dark:ring-sky-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]">
+      <BkkCloudBox className="bg-gradient-to-br from-lagoon-100 to-white px-12 py-10 text-sky-950 md:px-16 dark:from-slate-800 dark:to-slate-900 dark:text-white drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]" flip={false} tall>
       {/* riak genangan */}
       <div aria-hidden="true" className="pointer-events-none absolute left-[8%] top-[12%] h-16 w-1/3 rounded-[50%] border-[3px] border-white/50" />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-[10%] right-[10%] h-20 w-1/4 rounded-[50%] border-2 border-white/40" />
@@ -70,7 +71,7 @@ export function PartnerSection() {
         </div>
         </div>
       </div>
-      </div>
+      </BkkCloudBox>
       </div>
     </section>
   );
