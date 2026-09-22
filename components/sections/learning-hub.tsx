@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
+import { BkkTitleCloud, BkkCloudBox, BkkInnerWave } from "./bkk-decor";
 import { BanyanIcon } from "./eco-icons";
-import { HangingRoots, Pebbles } from "./river-ornaments";
+import { HangingRoots, Pebbles, MiniRiver } from "./river-ornaments";
 
 type CourseItem = {
   id: string;
@@ -39,6 +39,11 @@ const BTN_VARIANTS = [
   "rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-sky-800 shadow-[3px_3px_0_rgba(8,47,73,0.9)] -rotate-1",
   "rounded-[40%_60%_45%_55%/45%_55%_40%_60%] bg-emerald-800 shadow-[3px_3px_0_rgba(6,78,59,0.9)] rotate-1",
   "rounded-[55%_45%_60%_40%/50%_55%_45%_50%] bg-amber-800 shadow-[3px_3px_0_rgba(120,53,15,0.9)] -rotate-2",
+];
+const CARD_SKINS = [
+  "from-[#FFFDF6] to-cream-dark dark:from-slate-900 dark:to-slate-900",
+  "from-[#F0F9FF] to-sky-200 dark:from-sky-900 dark:to-sky-800",
+  "from-[#FFFDF6] to-cream-dark dark:from-slate-900 dark:to-slate-900",
 ];
 
 export function LearningHub() {
@@ -84,6 +89,7 @@ export function LearningHub() {
       <Pebbles className="pointer-events-none absolute bottom-16 left-[3%] hidden w-20 opacity-70 lg:block" />
       <div className="container-page relative">
       <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+        <MiniRiver className="mr-3 inline-block h-12 w-12 align-middle md:h-16 md:w-16" />
         <BkkTitleCloud cloudClass="text-leaf-100 dark:text-slate-800">{t("learn.title")}{" "}
         <span className="text-leaf-600">{t("learn.titleAccent")}</span></BkkTitleCloud>
       </h2>
@@ -108,7 +114,15 @@ export function LearningHub() {
             const vi = ci % 3;
             return (
               <div key={c.id} className={`transition-transform hover:rotate-0 ${CLOUD_TILTS[vi]}`}>
-              <BkkCloudBox className="flex h-full flex-col items-center bg-gradient-to-b from-[#FFFDF6] to-cream-dark p-6 pb-8 text-center dark:from-slate-900 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={ci % 2 === 0} tall>
+              <BkkCloudBox className={`flex h-full flex-col items-center bg-gradient-to-b ${CARD_SKINS[vi]} p-6 pb-8 text-center drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]`} flip={ci % 2 === 0} tall>
+                {/* tekstur riak air */}
+                <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 top-8 leading-[0] text-white/70">
+                  <BkkInnerWave />
+                </div>
+                <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 bottom-8 leading-[0] rotate-180 text-white/50">
+                  <BkkInnerWave />
+                </div>
+                <div className="relative z-10 flex h-full flex-col items-center text-center">
                 <span className={`grid h-16 w-16 place-items-center ${BADGE_VARIANTS[vi]}`}>
                   <BookOpen className="h-8 w-8" />
                 </span>
@@ -166,6 +180,7 @@ export function LearningHub() {
                       ? "Continue"
                       : t("learn.startCourse")}
                 </Link>
+                </div>
               </BkkCloudBox>
               </div>
             );

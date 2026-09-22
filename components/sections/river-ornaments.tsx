@@ -149,3 +149,16 @@ export function Sparkle({ className = "" }: P) {
     </Base>
   );
 }
+
+/** Mini sungai berliku: pita air + tepi pasir. */
+export function MiniRiver({ className = "" }: P) {
+  return (
+    <Base className={className} viewBox="0 0 64 64">
+      <path d="M38 4 C30 14 46 20 38 30 C30 40 46 46 38 60" stroke="#E9D9B0" strokeWidth="14" strokeLinecap="round" />
+      <path d="M38 4 C30 14 46 20 38 30 C30 40 46 46 38 60" stroke="#38BDF8" strokeWidth="9" strokeLinecap="round" />
+      <path d="M36 12 q6,-4 12,0 M34 30 q6,-4 12,0 M36 48 q6,-4 12,0" stroke="#FFFFFF" strokeWidth="2" />
+      <ellipse cx="18" cy="50" rx="7" ry="5" fill="#CBD5E1" stroke="#475569" strokeWidth="2" />
+      <ellipse cx="50" cy="16" rx="6" ry="4.5" fill="#E2E8F0" stroke="#475569" strokeWidth="2" />
+    </Base>
+  );
+}
