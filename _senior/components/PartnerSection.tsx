@@ -19,7 +19,7 @@ export function PartnerSection() {
   return (
     <section className="container-page overflow-x-clip py-16">
       <div className="transition-transform hover:rotate-0 md:-rotate-1">
-      <div className="relative overflow-hidden rounded-[46%_54%_52%_48%/22%_26%_24%_28%] bg-gradient-to-br from-lagoon-200 via-sky-200 to-lagoon-300 px-6 py-12 text-sky-950 ring-4 ring-lagoon-300/70 md:px-16 dark:from-sky-900 dark:via-sky-800 dark:to-sky-900 dark:text-white dark:ring-sky-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]">
+      <div className="relative overflow-hidden rounded-[46%_54%_52%_48%/8%_10%_9%_11%] bg-gradient-to-br from-lagoon-200 via-sky-200 to-lagoon-300 px-6 py-12 text-sky-950 ring-4 ring-lagoon-300/70 md:px-12 dark:from-sky-900 dark:via-sky-800 dark:to-sky-900 dark:text-white dark:ring-sky-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]">
       {/* riak genangan */}
       <div aria-hidden="true" className="pointer-events-none absolute left-[8%] top-[12%] h-16 w-1/3 rounded-[50%] border-[3px] border-white/50" />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-[10%] right-[10%] h-20 w-1/4 rounded-[50%] border-2 border-white/40" />
@@ -30,7 +30,7 @@ export function PartnerSection() {
       <LilyPad className="pointer-events-none absolute bottom-[8%] right-[22%] hidden w-16 rotate-12 opacity-80 lg:block" />
       <Pebbles className="pointer-events-none absolute left-[3%] top-[16%] hidden w-14 opacity-70 lg:block" />
       <div className="relative">
-      <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col items-start gap-5">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-sm font-semibold text-sky-900 dark:text-sky-100">
             <Handshake className="h-4 w-4 text-sky-700 dark:text-bkksun" />
