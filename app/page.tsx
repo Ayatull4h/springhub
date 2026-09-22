@@ -27,7 +27,7 @@ export default function HomePage() {
         <EventSchedule />
       </div>
 
-      <section className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
+      <section id="about" className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
         <div className="container-page">
         <RealActionHeader />
 

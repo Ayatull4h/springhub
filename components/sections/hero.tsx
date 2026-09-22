@@ -28,7 +28,7 @@ export function Hero() {
       <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-sky-200/60 blur-3xl dark:bg-sky-900/40" />
       <div aria-hidden="true" className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-tang-200/50 blur-3xl dark:bg-tang-700/20" />
       {/* KUBANGAN: satu kolam berisi judul + video */}
-      <div className="relative rounded-[46%_54%_52%_48%/8%_10%_7%_9%] bg-gradient-to-b from-sky-200 via-lagoon-200 to-sky-400 px-6 py-14 md:px-14 md:py-20 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
+      <div className="relative rounded-[46%_54%_52%_48%/8%_10%_7%_9%] bg-gradient-to-b from-sky-200 via-lagoon-500 to-sky-500 px-6 py-14 md:px-14 md:py-20 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
         {/* bingkai dalam kolam */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-3 rounded-[46%_54%_52%_48%/10%_12%_9%_11%] border-2 border-white/40" />
         {/* riak konsentris */}

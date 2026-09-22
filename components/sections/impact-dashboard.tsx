@@ -170,7 +170,7 @@ export function ImpactDashboard() {
 
           <div className="river-trio mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-gradient-to-b from-sky-50 to-white p-10 pb-12 ring-4 ring-sky-200 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700">
+            <div className="relative rounded-[48%_52%_50%_50%/28%_30%_26%_32%] bg-gradient-to-b from-stone-50 to-stone-200 p-10 pb-12 ring-4 ring-stone-300 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700">
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-sky-700" aria-hidden="true" />
                 {t("dashboard.monthly")}

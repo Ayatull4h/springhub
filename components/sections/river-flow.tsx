@@ -78,16 +78,16 @@ export function RiverFlow() {
       >
         <defs>
           <linearGradient id="riverWater" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#B8E8F0" />
-            <stop offset="45%" stopColor="#8FD8E4" />
-            <stop offset="75%" stopColor="#5BBFD2" />
-            <stop offset="100%" stopColor="#2A9DB5" />
+            <stop offset="0%" stopColor="#9BE7F2" />
+            <stop offset="45%" stopColor="#38D6E8" />
+            <stop offset="75%" stopColor="#0EA5E9" />
+            <stop offset="100%" stopColor="#0369A1" />
           </linearGradient>
         </defs>
         {/* tepi pasir sungai */}
         <path d={MAIN_FLOW} fill="none" stroke="#E9D9B0" strokeWidth="290" strokeLinecap="round" className="dark:opacity-0" />
         {/* tepi dalam (kedalaman) */}
-        <path d={MAIN_FLOW} fill="none" stroke="#2A9DB5" strokeWidth="248" strokeLinecap="round" opacity="0.55" />
+        <path d={MAIN_FLOW} fill="none" stroke="#0288D1" strokeWidth="248" strokeLinecap="round" opacity="0.55" />
         {/* badan air */}
         <path d={MAIN_FLOW} fill="none" stroke="url(#riverWater)" strokeWidth="210" strokeLinecap="round" />
         {/* highlight tengah */}

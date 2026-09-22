@@ -58,6 +58,25 @@ export function DonateSection() {
 
   return (
     <div id="donate" className="relative transition-transform hover:rotate-0 md:rotate-1">
+      {/* gelembung grafik mengambang */}
+      <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-4 hidden w-40 -rotate-6 rounded-[55%_45%_60%_40%/50%_55%_45%_50%] border-2 border-white/70 bg-white/70 p-4 shadow-elevated backdrop-blur-sm xl:block dark:bg-slate-800/70">
+        <div className="text-[10px] font-bold text-ink-muted">Donasi / minggu</div>
+        <div className="mt-2 flex h-16 items-end justify-center gap-1.5">
+          <div className="w-4 rounded-t-full bg-lagoon-500/80" style={{ height: "35%" }} />
+          <div className="w-4 rounded-t-full bg-leaf-600/80" style={{ height: "55%" }} />
+          <div className="w-4 rounded-t-full bg-tang-500/80" style={{ height: "45%" }} />
+          <div className="w-4 rounded-t-full bg-lagoon-600/80" style={{ height: "75%" }} />
+          <div className="w-4 rounded-t-full bg-leaf-700/80" style={{ height: "100%" }} />
+        </div>
+      </div>
+      <div aria-hidden="true" className="pointer-events-none absolute -right-28 bottom-16 hidden w-44 rotate-3 rounded-[45%_55%_50%_50%/55%_50%_55%_45%] border-2 border-white/70 bg-white/70 p-4 shadow-elevated backdrop-blur-sm xl:block dark:bg-slate-800/70">
+        <div className="text-[10px] font-bold text-ink-muted">Mata air pulih</div>
+        <svg viewBox="0 0 100 40" className="mt-1 h-12 w-full" fill="none" strokeLinecap="round">
+          <polyline points="2,34 20,28 38,30 56,20 74,22 98,8" stroke="#0E858C" strokeWidth="3" />
+          <circle cx="98" cy="8" r="3.5" fill="#0E858C" />
+          <circle cx="56" cy="20" r="2.5" fill="#fff" stroke="#0E858C" strokeWidth="2" />
+        </svg>
+      </div>
       <div className="relative rounded-[3%_3%_9%_9%/2%_2%_5%_5%] border-t-8 border-leaf-600 bg-gradient-to-b from-amber-800 via-[#8a5a2b] to-amber-950 p-3 drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)] md:p-4 dark:border-leaf-700 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
       <GrassTuft className="pointer-events-none absolute -top-7 left-6 hidden w-16 md:block" />
       <GrassTuft className="pointer-events-none absolute -top-7 right-8 hidden w-14 -scale-x-100 md:block" />
@@ -67,7 +86,7 @@ export function DonateSection() {
         <div className="mb-4 flex flex-wrap items-center gap-5 text-sm">
           <div>
             <p className="text-[11px] text-ink-muted">Terkumpul</p>
-            <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Rp 48,2 Juta</p>
+            <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Rp 49,2 Juta</p>
           </div>
           <div className="h-8 w-px bg-ink-line" />
           <div>

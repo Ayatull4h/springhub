@@ -285,7 +285,7 @@ button:not(:disabled) {
 
 /* Sungai: konten selalu di atas aliran */
 #river-main {
-  background: linear-gradient(180deg, #f0f9ff 0%, #fffbeb 28%, #f0f9ff 55%, #e0f2fe 82%, #bae6fd 100%);
+  background: linear-gradient(180deg, #e0f2fe 0%, #fef9c3 28%, #e0f2fe 55%, #bae6fd 82%, #7dd3fc 100%);
 }
 .dark #river-main {
   background: linear-gradient(180deg, #0b0f15 0%, #0b0f15 100%);
