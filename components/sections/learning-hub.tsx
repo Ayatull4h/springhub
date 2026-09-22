@@ -109,7 +109,7 @@ export function LearningHub() {
             const vi = ci % 3;
             return (
               <div key={c.id} className={`transition-transform hover:rotate-0 ${CLOUD_TILTS[vi]}`}>
-              <BkkCloudBox className="flex h-full flex-col bg-white p-6 pb-8 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={ci % 2 === 0} tall>
+              <BkkCloudBox className="flex h-full flex-col bg-gradient-to-b from-[#FFFDF6] to-[#FFF3D6] p-6 pb-8 dark:from-slate-900 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={ci % 2 === 0} tall>
                 <div className={`-mx-6 -mt-6 mb-3 flex h-32 items-center justify-center overflow-hidden ${THUMB_VARIANTS[vi]}`}>
                   <BookOpen className={`h-12 w-12 ${THUMB_ICONS[vi]}`} />
                 </div>
