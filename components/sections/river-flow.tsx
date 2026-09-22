@@ -45,6 +45,8 @@ export function RiverFlow() {
             <stop offset="100%" stopColor="#3FA9BC" />
           </linearGradient>
         </defs>
+        {/* tepi pasir sungai */}
+        <path d={MAIN_FLOW} fill="none" stroke="#E9D9B0" strokeWidth="290" strokeLinecap="round" className="dark:opacity-0" />
         {/* tepi sungai */}
         <path d={MAIN_FLOW} fill="none" stroke="#E3F6F9" strokeWidth="300" strokeLinecap="round" className="dark:opacity-0" />
         {/* badan air */}
@@ -72,6 +74,21 @@ export function RiverFlow() {
           opacity="0.5"
           className="animate-river-current-slow"
         />
+        {/* buih di tikungan */}
+        <g fill="#ffffff" opacity="0.55">
+          <circle cx="700" cy="1100" r="11" />
+          <circle cx="742" cy="1124" r="7" />
+          <circle cx="676" cy="1132" r="5" />
+          <circle cx="700" cy="2300" r="11" />
+          <circle cx="742" cy="2324" r="7" />
+          <circle cx="676" cy="2332" r="5" />
+          <circle cx="700" cy="3500" r="11" />
+          <circle cx="742" cy="3524" r="7" />
+          <circle cx="676" cy="3532" r="5" />
+          <circle cx="700" cy="4700" r="11" />
+          <circle cx="742" cy="4724" r="7" />
+          <circle cx="676" cy="4732" r="5" />
+        </g>
       </svg>
 
       {/* daun hanyut */}

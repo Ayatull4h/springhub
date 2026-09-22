@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Heart, CheckCircle2, Loader2, Layers, Droplets, Telescope } from "lucide-react";
 import { DONATION_TIERS } from "@/lib/xendit";
 import { useI18n } from "@/lib/i18n";
+import { GrassTuft, Pebbles } from "./river-ornaments";
 
 const tierIcons: Record<string, React.ReactNode> = {
   trench: <Layers className="h-4 w-4 text-amber-600" />,
@@ -58,6 +59,9 @@ export function DonateSection() {
   return (
     <div id="donate" className="relative transition-transform hover:rotate-0 md:rotate-1">
       <div className="relative rounded-[3%_3%_9%_9%/2%_2%_5%_5%] border-t-8 border-leaf-600 bg-gradient-to-b from-amber-800 via-[#8a5a2b] to-amber-950 p-3 drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)] md:p-4 dark:border-leaf-700 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
+      <GrassTuft className="pointer-events-none absolute -top-7 left-6 hidden w-16 md:block" />
+      <GrassTuft className="pointer-events-none absolute -top-7 right-8 hidden w-14 -scale-x-100 md:block" />
+      <Pebbles className="pointer-events-none absolute -bottom-4 right-10 hidden w-20 opacity-90 md:block" />
       <div className="rounded-[2%_2%_7%_7%/1.5%_1.5%_4%_4%] bg-cream dark:bg-slate-900">
       <div className="px-6 pb-10 pt-10 md:px-10">
         <div className="mb-4 flex flex-wrap items-center gap-5 text-sm">

@@ -206,7 +206,7 @@ export function EventSchedule() {
       <section id="jadwal" className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <div className="container-page">
         <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
-          <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-lagoon-600">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
+        <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-tang-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
         </h2>
         <p className="mt-3 max-w-2xl text-ink-muted">
           {t("event.empty", "Belum ada jadwal. Pantau terus — restorasi dan tanam pohon berikutnya segera diumumkan.")}
@@ -266,8 +266,8 @@ export function EventSchedule() {
                 transition: "transform .6s cubic-bezier(.25,.8,.25,1), opacity .6s, filter .6s",
               }}
             >
-              {/* Kaca glassmorphism */}
-              <div className="w-[266px] overflow-hidden rounded-[2.5rem_3.5rem_2rem_3rem] border border-white/40 bg-white/60 shadow-xl backdrop-blur-md dark:border-slate-600/50 dark:bg-slate-800/60 sm:w-[290px]">
+              {/* Kolam kaca */}
+              <div className="w-[266px] overflow-hidden rounded-[45%_55%_50%_50%/22%_25%_20%_23%] border-2 border-white/50 bg-white/60 shadow-xl ring-4 ring-lagoon-200/70 backdrop-blur-md dark:border-slate-600/50 dark:bg-slate-800/60 dark:ring-slate-700 sm:w-[290px]">
                 <div className="h-28 overflow-hidden">
                   <EventThumb item={item} />
                 </div>

@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { LiteYouTubeEmbed } from "@/components/lite-youtube-embed";
 import { WaderIcon, UcengIcon } from "./eco-icons";
+import { LilyPad } from "./river-ornaments";
 
 const STONES = [
   "left-[6%] top-[18%] h-10 w-12",
@@ -24,6 +25,8 @@ export function Hero() {
     <section className="container-page overflow-x-clip pt-12 pb-16 md:pt-20">
       {/* KUBANGAN: satu kolam berisi judul + video */}
       <div className="relative rounded-[46%_54%_52%_48%/8%_10%_7%_9%] bg-gradient-to-b from-sky-200 via-lagoon-200 to-lagoon-300 px-6 py-14 md:px-14 md:py-20 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
+        {/* bingkai dalam kolam */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-3 rounded-[46%_54%_52%_48%/10%_12%_9%_11%] border-2 border-white/40" />
         {/* riak konsentris */}
         <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-10 h-24 w-2/3 -translate-x-1/2 rounded-[50%] border-4 border-white/40" />
         <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-6 h-16 w-1/2 -translate-x-1/2 rounded-[50%] border-2 border-white/30" />
@@ -35,9 +38,11 @@ export function Hero() {
             className={`pointer-events-none absolute rounded-[55%_45%_58%_42%/50%_55%_45%_52%] bg-gradient-to-br from-stone-300 to-stone-400 shadow-md dark:from-slate-600 dark:to-slate-700 ${pos}`}
           />
         ))}
-        {/* ikan kecil di kolam */}
+        {/* ikan + teratai di kolam */}
         <WaderIcon className="pointer-events-none absolute bottom-10 left-[10%] hidden w-20 -rotate-6 opacity-90 md:block" />
         <UcengIcon className="pointer-events-none absolute right-[9%] top-16 hidden w-16 rotate-6 opacity-90 md:block" />
+        <LilyPad className="pointer-events-none absolute bottom-6 right-[16%] hidden w-24 rotate-6 opacity-90 md:block" />
+        <LilyPad className="pointer-events-none absolute left-[16%] top-8 hidden w-16 -rotate-12 opacity-80 md:block" />
 
         <div className="relative grid items-center gap-10 md:grid-cols-2">
           <div>

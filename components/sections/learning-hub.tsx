@@ -6,6 +6,7 @@ import { BookOpen, Clock, Layers, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { BkkCurve, BKK_CARD_TILTS, BkkTitleCloud } from "./bkk-decor";
 import { BanyanIcon } from "./eco-icons";
+import { HangingRoots, Pebbles } from "./river-ornaments";
 
 type CourseItem = {
   id: string;
@@ -66,10 +67,12 @@ export function LearningHub() {
   return (
     <section id="learn" className="relative overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <BanyanIcon className="pointer-events-none absolute -top-2 right-[4%] hidden w-56 opacity-90 lg:block" />
+      <HangingRoots className="pointer-events-none absolute left-[8%] top-0 hidden w-24 opacity-80 lg:block" />
+      <Pebbles className="pointer-events-none absolute bottom-16 left-[3%] hidden w-20 opacity-70 lg:block" />
       <div className="container-page relative">
       <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
-        <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("learn.title")}{" "}
-        <span className="text-lagoon-600">{t("learn.titleAccent")}</span></BkkTitleCloud>
+        <BkkTitleCloud cloudClass="text-leaf-100 dark:text-slate-800">{t("learn.title")}{" "}
+        <span className="text-leaf-600">{t("learn.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mt-3 max-w-2xl text-ink-muted">
         {t("learn.description")}

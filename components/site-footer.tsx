@@ -11,6 +11,7 @@ import { Logo } from "./logo";
 import { CONTACTS } from "@/lib/contacts";
 import { STAGING_REV } from "@/lib/app-version";
 import { useI18n } from "@/lib/i18n";
+import { Shell, Starfish } from "./sections/river-ornaments";
 
 // TikTok isn't in lucide — inline SVG.
 function TikTokIcon({ className }: { className?: string }) {
@@ -76,6 +77,8 @@ export function SiteFooter() {
       <div aria-hidden="true" className="pointer-events-none absolute bottom-4 left-[8%] h-8 w-10 rounded-[55%_45%_58%_42%/50%_55%_45%_52%] bg-stone-500/40" />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-6 right-[12%] h-6 w-8 rounded-[45%_55%_42%_58%/55%_45%_55%_45%] bg-stone-500/40" />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-3 left-[45%] h-5 w-7 rounded-[50%_50%_55%_45%/60%_55%_45%_50%] bg-stone-500/30" />
+      <Shell className="pointer-events-none absolute bottom-6 left-[30%] hidden w-14 -rotate-12 opacity-80 md:block" />
+      <Starfish className="pointer-events-none absolute bottom-8 right-[32%] hidden w-12 rotate-12 opacity-80 md:block" />
       {/* gelembung naik */}
       <div aria-hidden="true" className="pointer-events-none absolute bottom-10 left-[20%] h-3 w-3 rounded-full bg-white/20" />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-20 left-[24%] h-2 w-2 rounded-full bg-white/15" />

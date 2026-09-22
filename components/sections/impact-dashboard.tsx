@@ -136,7 +136,7 @@ export function ImpactDashboard() {
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
                 <div className={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`}>
-                <BkkCloudBox className={`${STAT_CARDS[si % STAT_CARDS.length]} p-8 pb-14 md:p-10 md:pb-16 ${si % 4 === 1 ? "drop-shadow-[0_18px_36px_rgba(120,53,15,0.45)]" : "drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]"}`} flip={si % 2 === 1}>
+                <BkkCloudBox className={`${STAT_CARDS[si % STAT_CARDS.length]} p-8 pb-14 outline outline-4 outline-offset-[6px] outline-white/60 md:p-10 md:pb-16 dark:outline-white/10 ${si % 4 === 1 ? "drop-shadow-[0_18px_36px_rgba(120,53,15,0.45)]" : "drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]"}`} flip={si % 2 === 1}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
                   {si % 4 === 3 && (
                     <span aria-hidden="true" className="absolute right-3 top-1/2 h-12 w-12 -translate-y-1/2 rotate-45 bg-white/20" />
@@ -169,7 +169,7 @@ export function ImpactDashboard() {
 
           <div className="river-trio mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-sky-200 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
+            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-sky-200 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-sky-700" aria-hidden="true" />
                 {t("dashboard.monthly")}
@@ -222,7 +222,7 @@ export function ImpactDashboard() {
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2">
-            <div className="relative rounded-[55%_6%_55%_6%/10%_50%_10%_50%] bg-white p-10 pb-12 ring-4 ring-leaf-200 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
+            <div className="relative rounded-[55%_6%_55%_6%/10%_50%_10%_50%] bg-white p-10 pb-12 ring-4 ring-leaf-200 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topRegions.map((r, ri) => (
@@ -244,7 +244,7 @@ export function ImpactDashboard() {
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-tang-200 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
+            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-tang-200 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topVolunteers.map((v, vi) => (

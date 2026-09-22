@@ -292,6 +292,19 @@ button:not(:disabled) {
 
 /* Tepian sungai: kartu menepi kiri/kanan, aliran di tengah (desktop) */
 @media (min-width: 1024px) {
+  #river-main .river-bank-l > section,
+  #river-main .river-bank-r > section {
+    position: relative;
+  }
+  #river-main .river-bank-l > section::before,
+  #river-main .river-bank-r > section::before {
+    content: "";
+    position: absolute;
+    inset: -2rem -4rem;
+    z-index: -1;
+    background: radial-gradient(ellipse at center, rgba(233, 217, 176, 0.4), transparent 70%);
+    pointer-events: none;
+  }
   #river-main .river-bank-l,
   #river-main .river-bank-r,
   #river-main .river-bank-c {

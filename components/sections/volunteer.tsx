@@ -25,6 +25,7 @@ import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 import { BKK_CARD_RADII, BkkCurve, BkkTitleCloud, BkkCloudEdge } from "./bkk-decor";
 import { BambooIcon } from "./eco-icons";
+import { GrassTuft, Pebbles } from "./river-ornaments";
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -130,10 +131,13 @@ export function VolunteerActivities() {
     <section id="community" className="relative overflow-hidden bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <BambooIcon className="pointer-events-none absolute bottom-16 left-[3%] hidden w-28 opacity-80 lg:block" />
       <BambooIcon className="pointer-events-none absolute bottom-16 right-[3%] hidden w-28 opacity-80 lg:block" />
+      <GrassTuft className="pointer-events-none absolute bottom-8 left-[2%] hidden w-20 opacity-90 lg:block" />
+      <GrassTuft className="pointer-events-none absolute bottom-8 right-[2%] hidden w-20 opacity-90 lg:block" />
+      <Pebbles className="pointer-events-none absolute bottom-10 left-[12%] hidden w-16 opacity-70 lg:block" />
       <div className="container-page relative z-10">
       <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("volunteer.title")}{" "}
-        <span className="text-lagoon-600">{t("volunteer.titleAccent")}</span></BkkTitleCloud>
+        <span className="text-leaf-600">{t("volunteer.titleAccent")}</span></BkkTitleCloud>
       </h2>
       <p className="mt-3 max-w-2xl text-ink-muted">
         {t("volunteer.description", {
@@ -146,7 +150,7 @@ export function VolunteerActivities() {
           <h3 className="text-sm font-semibold text-ink">
             {t("volunteer.recentActivities")}
           </h3>
-          <div className="relative mt-3 flex-1 rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-leaf-200 transition-transform hover:rotate-0 dark:bg-slate-900 dark:ring-slate-700 md:-rotate-[0.5deg] drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]">
+          <div className="relative mt-3 flex-1 rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-leaf-200 outline outline-4 outline-offset-[6px] outline-white/70 transition-transform hover:rotate-0 dark:bg-slate-900 dark:ring-slate-700 dark:outline-white/10 md:-rotate-[0.5deg] drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]">
             <ul className="grid gap-5 md:grid-cols-2">
             {visibleActs.map((a: any, i) => {
               const form = getForm(a.formSlug);
@@ -231,7 +235,7 @@ export function VolunteerActivities() {
           </div>
         </div>
 
-        <div className="relative flex h-full flex-col rounded-[55%_6%_55%_6%/10%_50%_10%_50%] bg-gradient-to-br from-leaf-100 to-cream p-10 pb-12 ring-4 ring-leaf-200 transition-transform hover:rotate-0 dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700 md:rotate-1 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] lg:col-span-5">
+        <div className="relative flex h-full flex-col rounded-[55%_6%_55%_6%/10%_50%_10%_50%] bg-gradient-to-br from-leaf-100 to-cream p-10 pb-12 ring-4 ring-leaf-200 outline outline-4 outline-offset-[6px] outline-white/70 transition-transform hover:rotate-0 dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700 dark:outline-white/10 md:rotate-1 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] lg:col-span-5">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-ink">
               {t("volunteer.submitProject")}
