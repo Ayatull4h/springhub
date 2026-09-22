@@ -128,14 +128,14 @@ export function VolunteerActivities() {
   );
 
   return (
-    <section id="community" className="relative overflow-hidden bg-transparent pt-16 md:pt-20 dark:bg-transparent">
+    <section id="community" className="relative overflow-hidden bg-lagoon-100/40 pt-16 md:pt-20 dark:bg-slate-900/40">
       <BambooIcon className="pointer-events-none absolute bottom-16 left-[3%] hidden w-28 opacity-80 lg:block" />
       <BambooIcon className="pointer-events-none absolute bottom-16 right-[3%] hidden w-28 opacity-80 lg:block" />
       <GrassTuft className="pointer-events-none absolute bottom-8 left-[2%] hidden w-20 opacity-90 lg:block" />
       <GrassTuft className="pointer-events-none absolute bottom-8 right-[2%] hidden w-20 opacity-90 lg:block" />
       <Pebbles className="pointer-events-none absolute bottom-10 left-[12%] hidden w-16 opacity-70 lg:block" />
       <div className="container-page relative z-10">
-      <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("volunteer.title")}{" "}
         <span className="text-leaf-600">{t("volunteer.titleAccent")}</span></BkkTitleCloud>
       </h2>

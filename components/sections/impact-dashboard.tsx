@@ -108,7 +108,7 @@ export function ImpactDashboard() {
   return (
     <section id="dashboard" className="overflow-x-clip bg-transparent pb-0 pt-0 md:pt-0 dark:bg-transparent">
       <div className="container-page pt-10 md:pt-14">
-      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+      <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <Waves className="mx-auto mb-2 h-8 w-8 text-lagoon-500" aria-hidden="true" />
         {t("dashboard.title")}{" "}
         <span className="text-tang-600">{t("dashboard.titleAccent")}</span>

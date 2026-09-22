@@ -7,7 +7,7 @@ export function RealActionHeader() {
   const { t } = useI18n();
   return (
     <>
-      <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("action.title")}{" "}
         <span className="text-bkk-500">{t("action.titleAccent")}</span></BkkTitleCloud>
       </h2>

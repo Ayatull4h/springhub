@@ -9,22 +9,14 @@ import { LearningHub } from "@/components/sections/learning-hub";
 import { RealActionHeader } from "@/components/sections/real-action-header";
 import { MediaSection } from "@/components/sections/media";
 import { DonateSection } from "@/components/sections/donate";
-import { RiverFlow } from "@/components/sections/river-flow";
 export default function HomePage() {
   return (
-    <div id="river-main" className="relative">
-      <RiverFlow />
+    <div>
       <Hero />
-      <div className="river-bank-l container-page">
-        <ImpactDashboard />
-      </div>
+      <ImpactDashboard />
       <SpringMap />
-      <div className="river-bank-r container-page">
-        <VolunteerActivities />
-      </div>
-      <div className="river-bank-l container-page">
-        <EventSchedule />
-      </div>
+      <VolunteerActivities />
+      <EventSchedule />
 
       <section id="about" className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
         <div className="container-page">
@@ -41,12 +33,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="river-bank-c container-page">
-        <PartnerSection />
-      </div>
-      <div className="river-bank-l container-page">
-        <LearningHub />
-      </div>
+      <PartnerSection />
+      <LearningHub />
       <MediaSection />
     </div>
   );

@@ -82,13 +82,13 @@ export function LearningHub() {
   }
 
   return (
-    <section id="learn" className="relative overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
+    <section id="learn" className="relative overflow-x-clip bg-cream pt-16 md:pt-20 dark:bg-slate-900">
       <BanyanIcon className="pointer-events-none absolute -top-2 right-[4%] hidden w-56 opacity-90 lg:block" />
       <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-1/3 h-80 w-80 rounded-full bg-leaf-100/60 blur-3xl dark:bg-leaf-700/20" />
       <HangingRoots className="pointer-events-none absolute left-[8%] top-0 hidden w-24 opacity-80 lg:block" />
       <Pebbles className="pointer-events-none absolute bottom-16 left-[3%] hidden w-20 opacity-70 lg:block" />
       <div className="container-page relative">
-      <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <MiniRiver className="mr-3 inline-block h-12 w-12 align-middle md:h-16 md:w-16" />
         <BkkTitleCloud cloudClass="text-leaf-100 dark:text-slate-800">{t("learn.title")}{" "}
         <span className="text-leaf-600">{t("learn.titleAccent")}</span></BkkTitleCloud>

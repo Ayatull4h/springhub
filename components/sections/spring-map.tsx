@@ -20,7 +20,7 @@ import { FORMS, getForm } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BkkCurve, BkkTitleCloud, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
+import { BkkCurve, BkkTitleCloud, BkkInnerWave, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
 import { Reeds, Pebbles } from "./river-ornaments";
 import { UcengIcon, PariIcon } from "./eco-icons";
 import { StatusInfo } from "@/components/sections/status-info";
@@ -456,11 +456,11 @@ const formTitleI18nKey = (slug: string): string => {
   const visibleList = visible.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <section id="map" className="relative overflow-hidden bg-transparent pt-16 md:pt-20 dark:bg-transparent">
+    <section id="map" className="relative overflow-hidden bg-[#f7f2fc] pt-16 md:pt-20 dark:bg-slate-900/40">
       <PariIcon className="pointer-events-none absolute right-10 top-24 hidden w-24 rotate-6 opacity-80 lg:block" />
       <UcengIcon className="pointer-events-none absolute right-48 top-40 hidden w-20 -rotate-3 opacity-80 lg:block" />
       <div className="container-page relative z-10">
-      <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+      <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-cream dark:text-slate-800">{t("map.title")}{" "}
         <span className="text-lagoon-600">{t("map.titleAccent")}</span></BkkTitleCloud>
       </h2>
@@ -484,10 +484,6 @@ const formTitleI18nKey = (slug: string): string => {
       <Reeds className="pointer-events-none absolute right-[1%] top-1/2 hidden w-24 -scale-x-100 opacity-90 xl:block" />
       <Pebbles className="pointer-events-none absolute bottom-24 right-[4%] hidden w-20 opacity-80 xl:block" />
       <div className="relative mt-8">
-      {/* inlet: sungai masuk danau */}
-      <div aria-hidden="true" className="pointer-events-none absolute -top-5 left-1/2 z-10 h-12 w-44 -translate-x-1/2 rounded-[50%] bg-gradient-to-b from-lagoon-200 to-lagoon-500 ring-4 ring-white/60 dark:from-sky-800 dark:to-sky-600 dark:ring-white/20" />
-      {/* outlet: sungai keluar danau (di belakang bingkai agar tak tutup tombol) */}
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-5 left-1/2 h-12 w-44 -translate-x-1/2 rounded-[50%] bg-gradient-to-b from-lagoon-500 to-lagoon-200 ring-4 ring-white/60 dark:from-sky-600 dark:to-sky-800 dark:ring-white/20" />
       <div className="relative overflow-hidden rounded-[48%_52%_50%_50%/10%_12%_10%_12%] bg-stone-200 p-3 shadow-elevated ring-4 ring-stone-300 md:p-4 dark:bg-slate-800 dark:ring-slate-700">
       <div className="overflow-hidden rounded-[46%_54%_48%_52%/8%_10%_8%_10%] bg-white dark:bg-slate-900">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
