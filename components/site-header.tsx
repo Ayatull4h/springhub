@@ -58,12 +58,15 @@ export function SiteHeader() {
   }
 
   const nav = [
-    { label: t("nav.about", "About"), href: "/#about" },
-    { label: t("nav.impact", "Impact"), href: "/#dashboard" },
+    { label: t("nav.map"), href: "/#map" },
+    { label: t("nav.dashboard"), href: "/#dashboard" },
+    { label: t("nav.community"), href: "/#community" },
+    { label: t("nav.learn"), href: "/#learn" },
+    { label: t("nav.media"), href: "/#media" },
   ];
 
   return (
-    <header className="sticky top-3 z-40 px-3 md:px-6">
+    <header className="relative z-40 mx-3 mt-3 md:mx-6">
       <div className="container-page flex min-h-16 items-center justify-between gap-2 rounded-[46%_54%_52%_48%/28%_32%_30%_34%] bg-cream/95 py-2 shadow-[0_10px_36px_rgba(8,47,73,0.22)] ring-2 ring-white backdrop-blur md:rounded-[48%_52%_50%_50%/38%_42%_40%_44%] dark:bg-slate-900/95 dark:ring-slate-700">
         <Link href="/" aria-label="SpringHub home">
           <Logo />
@@ -82,7 +85,7 @@ export function SiteHeader() {
             <Link
               key={item.label}
               href={item.href}
-              className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] px-4 py-2 font-display text-sm font-semibold text-sky-900 transition hover:bg-white/70 dark:text-sky-100 dark:hover:bg-slate-800"
+              className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] px-4 py-2 font-display text-sm font-semibold text-bkk-700 transition hover:bg-white/70 dark:text-bkk-200 dark:hover:bg-slate-800"
             >
               {item.label}
             </Link>
@@ -157,16 +160,16 @@ export function SiteHeader() {
               <Link
                 href="/sign-in"
                 prefetch={false}
-                className="hidden text-sm font-semibold text-sky-900 hover:text-sky-700 sm:inline dark:text-sky-100"
+                className="hidden text-sm font-semibold text-bkk-700 hover:text-bkk-800 sm:inline dark:text-bkk-200"
               >
-                {t("nav.login", "Login")}
+                {t("nav.signIn")}
               </Link>
               <Link
                 href="/join"
                 prefetch={false}
                 className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-bkk-700 px-5 py-2.5 font-display text-sm font-bold text-white shadow-[3px_3px_0_rgba(61,22,96,0.9)] transition hover:rotate-0 hover:bg-bkk-800 -rotate-1"
               >
-                {t("nav.register", "Register")}
+                {t("nav.join")}
               </Link>
             </>
           )}
@@ -181,7 +184,7 @@ export function SiteHeader() {
                 key={item.label}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="rounded-[40%_60%_45%_55%/45%_55%_40%_60%] px-3 py-2.5 font-display text-sm font-semibold text-sky-900 transition hover:bg-white/70 dark:text-sky-100 dark:hover:bg-slate-800"
+                className="rounded-[40%_60%_45%_55%/45%_55%_40%_60%] px-3 py-2.5 font-display text-sm font-semibold text-bkk-700 transition hover:bg-white/70 dark:text-bkk-200 dark:hover:bg-slate-800"
               >
                 {item.label}
               </Link>
@@ -227,7 +230,7 @@ export function SiteHeader() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="rounded-md px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-slate-100 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
               >
-                {t("nav.login", "Login")}
+                {t("nav.signIn")}
               </Link>
             )}
           </nav>
