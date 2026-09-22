@@ -114,7 +114,7 @@ export function LearningHub() {
             const vi = ci % 3;
             return (
               <div key={c.id} className={`transition-transform hover:rotate-0 ${CLOUD_TILTS[vi]}`}>
-              <BkkCloudBox className={`flex h-full flex-col items-center bg-gradient-to-b ${CARD_SKINS[vi]} p-6 pb-12 pt-8 text-center drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]`} flip={ci % 2 === 0} tall>
+              <BkkCloudBox className={`flex h-full flex-col items-center bg-gradient-to-b ${CARD_SKINS[vi]} px-10 pb-14 pt-8 text-center drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]`} flip={ci % 2 === 0} tall>
                 {/* tekstur riak air */}
                 <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 top-8 leading-[0] text-white/70">
                   <BkkInnerWave />
@@ -171,7 +171,7 @@ export function LearningHub() {
 
                 <Link
                   href={`/learn/${c.slug}`}
-                  className={`mt-5 inline-flex w-[94%] items-center justify-center gap-1.5 px-4 py-2.5 font-display text-sm font-bold text-white ring-2 ring-white/60 transition hover:rotate-0 hover:scale-[1.02] ${BTN_VARIANTS[vi]}`}
+                  className={`mt-5 inline-flex w-[86%] items-center justify-center gap-1.5 px-4 py-2.5 font-display text-sm font-bold text-white ring-2 ring-white/60 transition hover:rotate-0 hover:scale-[1.02] ${BTN_VARIANTS[vi]}`}
                 >
                   <BookOpen className="h-4 w-4" />
                   {prog?.completed
