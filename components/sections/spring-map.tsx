@@ -456,7 +456,7 @@ const formTitleI18nKey = (slug: string): string => {
   const visibleList = visible.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <section id="map" className="relative overflow-hidden bg-white pt-16 md:pt-20 dark:bg-slate-900">
+    <section id="map" className="relative overflow-hidden bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <PariIcon className="pointer-events-none absolute right-10 top-24 hidden w-24 rotate-6 opacity-80 lg:block" />
       <UcengIcon className="pointer-events-none absolute right-48 top-40 hidden w-20 -rotate-3 opacity-80 lg:block" />
       <div className="container-page relative z-10">
@@ -483,7 +483,10 @@ const formTitleI18nKey = (slug: string): string => {
       <Reeds className="pointer-events-none absolute left-[1%] top-1/3 hidden w-20 opacity-90 xl:block" />
       <Reeds className="pointer-events-none absolute right-[1%] top-1/2 hidden w-24 -scale-x-100 opacity-90 xl:block" />
       <Pebbles className="pointer-events-none absolute bottom-24 right-[4%] hidden w-20 opacity-80 xl:block" />
-      <div className="relative mt-8 overflow-hidden rounded-[48%_52%_50%_50%/10%_12%_10%_12%] bg-stone-200 p-3 shadow-elevated ring-4 ring-stone-300 md:p-4 dark:bg-slate-800 dark:ring-slate-700">
+      <div className="relative mt-8">
+      {/* inlet: sungai masuk danau */}
+      <div aria-hidden="true" className="pointer-events-none absolute -top-5 left-1/2 z-10 h-12 w-44 -translate-x-1/2 rounded-[50%] bg-gradient-to-b from-lagoon-200 to-lagoon-500 ring-4 ring-white/60 dark:from-sky-800 dark:to-sky-600 dark:ring-white/20" />
+      <div className="relative overflow-hidden rounded-[48%_52%_50%_50%/10%_12%_10%_12%] bg-stone-200 p-3 shadow-elevated ring-4 ring-stone-300 md:p-4 dark:bg-slate-800 dark:ring-slate-700">
       <div className="overflow-hidden rounded-[46%_54%_48%_52%/8%_10%_8%_10%] bg-white dark:bg-slate-900">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
           <div className="flex flex-wrap items-center gap-3">
@@ -557,6 +560,9 @@ const formTitleI18nKey = (slug: string): string => {
           </div>
         )}
       </div>
+      </div>
+      {/* outlet: sungai keluar danau */}
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-5 left-1/2 z-10 h-12 w-44 -translate-x-1/2 rounded-[50%] bg-gradient-to-b from-lagoon-500 to-lagoon-200 ring-4 ring-white/60 dark:from-sky-600 dark:to-sky-800 dark:ring-white/20" />
       </div>
 
       {/* Below the map: report details (left) + Report Your Contribution (right) */}
