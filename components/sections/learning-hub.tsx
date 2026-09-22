@@ -122,7 +122,7 @@ export function LearningHub() {
                 <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 bottom-8 leading-[0] rotate-180 text-white/50">
                   <BkkInnerWave />
                 </div>
-                <div className="relative z-10 flex h-full flex-col items-center text-center">
+                <div className="relative z-10 flex h-full w-full max-w-[78%] flex-col items-center text-center">
                 <span className={`grid h-16 w-16 place-items-center ${BADGE_VARIANTS[vi]}`}>
                   <BookOpen className="h-8 w-8" />
                 </span>
