@@ -129,7 +129,7 @@ export function VolunteerActivities() {
 
   return (
     <section id="community" className="relative overflow-hidden bg-lagoon-100/40 pt-16 md:pt-20 dark:bg-slate-900/40">
-      <BkkWeave className="-left-16 top-24 hidden -rotate-12 opacity-50 md:block" />
+      <BkkWeave className="-left-16 top-24 -rotate-12 opacity-50" />
       <BambooIcon className="pointer-events-none absolute bottom-16 left-[3%] hidden w-28 opacity-80 lg:block" />
       <BambooIcon className="pointer-events-none absolute bottom-16 right-[3%] hidden w-28 opacity-80 lg:block" />
       <GrassTuft className="pointer-events-none absolute bottom-8 left-[2%] hidden w-20 opacity-90 lg:block" />
