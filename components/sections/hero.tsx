@@ -6,6 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { LiteYouTubeEmbed } from "@/components/lite-youtube-embed";
 import { WaderIcon, UcengIcon } from "./eco-icons";
 import { LilyPad } from "./river-ornaments";
+import { BkkSticker } from "./bkk-decor";
 
 const STONES = [
   "left-[6%] top-[18%] h-10 w-12",
@@ -43,6 +44,9 @@ export function Hero() {
         <UcengIcon className="pointer-events-none absolute right-[9%] top-16 hidden w-16 rotate-6 opacity-90 md:block" />
         <LilyPad className="pointer-events-none absolute bottom-6 right-[16%] hidden w-24 rotate-6 opacity-90 md:block" />
         <LilyPad className="pointer-events-none absolute left-[16%] top-8 hidden w-16 -rotate-12 opacity-80 md:block" />
+        <BkkSticker tilt="rotate-3" className="absolute left-[4%] top-5 hidden text-xs md:inline-flex">
+          {t("hero.badge", "100% Komunitas")}
+        </BkkSticker>
 
         <div className="relative grid items-center gap-10 md:grid-cols-2">
           <div>

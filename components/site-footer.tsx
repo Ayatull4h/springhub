@@ -134,7 +134,7 @@ export function SiteFooter() {
                 placeholder={t("footer.newsletterPlaceholder")}
                 className="flex-1 rounded-[40%_60%_45%_55%/45%_55%_40%_60%] border border-white/25 bg-white/10 px-4 py-2 text-sm text-white placeholder:text-white/50 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30"
               />
-              <button type="submit" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white px-4 py-2 font-display text-sm font-bold text-sky-900 shadow-[3px_3px_0_rgba(0,0,0,0.35)] transition hover:rotate-0 rotate-1">
+              <button type="submit" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-bkksun px-4 py-2 font-display text-sm font-bold text-bkk-900 shadow-[3px_3px_0_rgba(0,0,0,0.35)] transition hover:rotate-0 rotate-1">
                 {t("footer.subscribe")}
               </button>
             </form>

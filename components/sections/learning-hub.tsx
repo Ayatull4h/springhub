@@ -97,7 +97,7 @@ export function LearningHub() {
                 <div className="-mx-6 -mt-6 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
-                <span className="chip mt-4 -rotate-2 self-start bg-tang-100 font-bold text-tang-700 dark:bg-sky-900/30 dark:text-sky-200">
+                <span className="chip mt-4 -rotate-2 self-start bg-bkk-100 font-bold text-bkk-700 dark:bg-bkk-900/30 dark:text-bkk-200">
                   {c.level}
                 </span>
                 <h3 className="mt-2 text-base font-semibold text-ink">
