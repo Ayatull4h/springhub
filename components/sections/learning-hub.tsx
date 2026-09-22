@@ -29,12 +29,11 @@ type ProgressItem = {
 
 
 const CLOUD_TILTS = ["-rotate-1", "rotate-1", "-rotate-2"];
-const THUMB_VARIANTS = [
-  "rounded-[45%_55%_50%_50%/42%_44%_36%_40%] bg-gradient-to-br from-tang-200 to-cream dark:from-amber-900/40 dark:to-amber-900/60",
-  "rounded-[55%_45%_52%_48%/38%_42%_44%_36%] bg-gradient-to-br from-sky-200 to-white dark:from-sky-900/40 dark:to-sky-900/60",
-  "rounded-[50%_50%_48%_52%/44%_38%_42%_46%] bg-gradient-to-br from-leaf-500/40 to-cream dark:from-emerald-900/40 dark:to-emerald-900/60",
+const BADGE_VARIANTS = [
+  "rounded-[55%_45%_60%_40%/55%_50%_50%_45%] bg-tang-100 text-tang-700",
+  "rounded-[45%_55%_50%_50%/50%_55%_45%_50%] bg-sky-100 text-sky-700",
+  "rounded-[50%_50%_55%_45%/55%_45%_55%_45%] bg-leaf-100 text-leaf-700",
 ];
-const THUMB_ICONS = ["text-tang-600", "text-sky-600", "text-leaf-700"];
 const CHIP_TILTS = ["-rotate-2", "rotate-2", "-rotate-1"];
 const BTN_VARIANTS = [
   "rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-sky-800 shadow-[3px_3px_0_rgba(8,47,73,0.9)] -rotate-1",
@@ -109,11 +108,11 @@ export function LearningHub() {
             const vi = ci % 3;
             return (
               <div key={c.id} className={`transition-transform hover:rotate-0 ${CLOUD_TILTS[vi]}`}>
-              <BkkCloudBox className="flex h-full flex-col bg-gradient-to-b from-[#FFFDF6] to-cream-dark p-6 pb-8 dark:from-slate-900 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={ci % 2 === 0} tall>
-                <div className={`-mx-6 -mt-6 mb-3 flex h-36 items-center justify-center overflow-hidden ${THUMB_VARIANTS[vi]}`}>
-                  <BookOpen className={`h-14 w-14 ${THUMB_ICONS[vi]}`} />
-                </div>
-                <span className={`chip mt-4 self-start bg-bkk-100 font-bold text-bkk-700 dark:bg-bkk-900/30 dark:text-bkk-200 ${CHIP_TILTS[vi]}`}>
+              <BkkCloudBox className="flex h-full flex-col items-center bg-gradient-to-b from-[#FFFDF6] to-cream-dark p-6 pb-8 text-center dark:from-slate-900 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={ci % 2 === 0} tall>
+                <span className={`grid h-16 w-16 place-items-center ${BADGE_VARIANTS[vi]}`}>
+                  <BookOpen className="h-8 w-8" />
+                </span>
+                <span className={`chip mt-4 bg-bkk-100 font-bold text-bkk-700 dark:bg-bkk-900/30 dark:text-bkk-200 ${CHIP_TILTS[vi]}`}>
                   {c.level}
                 </span>
                 <h3 className="mt-2 text-base font-semibold text-ink">
@@ -136,7 +135,7 @@ export function LearningHub() {
 
                 {/* Progress indicator */}
                 {prog && (
-                  <div className="mt-3">
+                  <div className="mt-3 w-full self-stretch">
                     <div className="flex h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                       <div
                         className="rounded-full bg-brand-600 transition-all"
@@ -158,7 +157,7 @@ export function LearningHub() {
 
                 <Link
                   href={`/learn/${c.slug}`}
-                  className={`mt-5 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 font-display text-sm font-bold text-white ring-2 ring-white/60 transition hover:rotate-0 hover:scale-[1.02] ${BTN_VARIANTS[vi]}`}
+                  className={`mt-5 inline-flex w-full items-center justify-center gap-1.5 px-4 py-2.5 font-display text-sm font-bold text-white ring-2 ring-white/60 transition hover:rotate-0 hover:scale-[1.02] ${BTN_VARIANTS[vi]}`}
                 >
                   <BookOpen className="h-4 w-4" />
                   {prog?.completed

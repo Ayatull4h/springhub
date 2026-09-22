@@ -542,27 +542,27 @@ const formTitleI18nKey = (slug: string): string => {
             mapPoints={filteredMapPoints}
           />
         </div>
-        {hasMoreReports && (
-          <div className="border-t border-ink-line px-4 py-3 text-center dark:border-slate-700">
-            <button
-              onClick={loadMoreReports}
-              disabled={loadingMore}
-              className="inline-flex items-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] border border-ink-line px-4 py-2 text-sm font-medium text-ink-muted transition hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-700 dark:hover:text-white disabled:opacity-50"
-            >
-              {loadingMore ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> {t("map.loadingMore")}
-                </>
-              ) : (
-                <>
-                  {t("map.loadMore")} ({reports.length}/{totalReports})
-                </>
-              )}
-            </button>
-          </div>
-        )}
       </div>
       </div>
+      {hasMoreReports && (
+        <div className="mt-4 text-center">
+          <button
+            onClick={loadMoreReports}
+            disabled={loadingMore}
+            className="inline-flex items-center gap-2 rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white/85 px-5 py-2.5 text-sm font-semibold text-ink shadow-elevated ring-2 ring-stone-300 backdrop-blur transition hover:rotate-0 hover:bg-white dark:bg-slate-800/85 dark:text-slate-200 dark:ring-slate-600 disabled:opacity-50"
+          >
+            {loadingMore ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> {t("map.loadingMore")}
+              </>
+            ) : (
+              <>
+                {t("map.loadMore")} ({reports.length}/{totalReports})
+              </>
+            )}
+          </button>
+        </div>
+      )}
       </div>
 
       {/* Below the map: report details (left) + Report Your Contribution (right) */}
