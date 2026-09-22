@@ -28,11 +28,11 @@ type ProgressItem = {
 
 
 
-const CLOUD_TILTS = ["md:-rotate-1", "md:rotate-1", "md:-rotate-2"];
+const CLOUD_TILTS = ["-rotate-1", "rotate-1", "-rotate-2"];
 const THUMB_VARIANTS = [
-  "rounded-[45%_55%_50%_50%/42%_44%_36%_40%] bg-gradient-to-br from-tang-100 to-cream dark:from-amber-900/30 dark:to-amber-900/50",
-  "rounded-[55%_45%_52%_48%/38%_42%_44%_36%] bg-gradient-to-br from-sky-100 to-white dark:from-sky-900/30 dark:to-sky-900/50",
-  "rounded-[50%_50%_48%_52%/44%_38%_42%_46%] bg-gradient-to-br from-leaf-100 to-cream dark:from-emerald-900/30 dark:to-emerald-900/50",
+  "rounded-[45%_55%_50%_50%/42%_44%_36%_40%] bg-gradient-to-br from-tang-200 to-cream dark:from-amber-900/40 dark:to-amber-900/60",
+  "rounded-[55%_45%_52%_48%/38%_42%_44%_36%] bg-gradient-to-br from-sky-200 to-white dark:from-sky-900/40 dark:to-sky-900/60",
+  "rounded-[50%_50%_48%_52%/44%_38%_42%_46%] bg-gradient-to-br from-leaf-500/40 to-cream dark:from-emerald-900/40 dark:to-emerald-900/60",
 ];
 const THUMB_ICONS = ["text-tang-600", "text-sky-600", "text-leaf-700"];
 const CHIP_TILTS = ["-rotate-2", "rotate-2", "-rotate-1"];
@@ -109,9 +109,9 @@ export function LearningHub() {
             const vi = ci % 3;
             return (
               <div key={c.id} className={`transition-transform hover:rotate-0 ${CLOUD_TILTS[vi]}`}>
-              <BkkCloudBox className="flex h-full flex-col bg-gradient-to-b from-[#FFFDF6] to-[#FFF3D6] p-6 pb-8 dark:from-slate-900 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={ci % 2 === 0} tall>
-                <div className={`-mx-6 -mt-6 mb-3 flex h-32 items-center justify-center overflow-hidden ${THUMB_VARIANTS[vi]}`}>
-                  <BookOpen className={`h-12 w-12 ${THUMB_ICONS[vi]}`} />
+              <BkkCloudBox className="flex h-full flex-col bg-gradient-to-b from-[#FFFDF6] to-cream-dark p-6 pb-8 dark:from-slate-900 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)]" flip={ci % 2 === 0} tall>
+                <div className={`-mx-6 -mt-6 mb-3 flex h-36 items-center justify-center overflow-hidden ${THUMB_VARIANTS[vi]}`}>
+                  <BookOpen className={`h-14 w-14 ${THUMB_ICONS[vi]}`} />
                 </div>
                 <span className={`chip mt-4 self-start bg-bkk-100 font-bold text-bkk-700 dark:bg-bkk-900/30 dark:text-bkk-200 ${CHIP_TILTS[vi]}`}>
                   {c.level}

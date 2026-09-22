@@ -160,7 +160,7 @@ export function BkkCloudBox({
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 60% 45% at 30% 18%, rgba(255,255,255,0.5), transparent 60%), radial-gradient(ellipse 55% 40% at 78% 88%, rgba(8,47,73,0.10), transparent 55%)",
+              "radial-gradient(ellipse 60% 45% at 30% 18%, rgba(255,255,255,0.65), transparent 60%), radial-gradient(ellipse 55% 40% at 78% 88%, rgba(8,47,73,0.16), transparent 55%)",
           }}
         />
         {children}

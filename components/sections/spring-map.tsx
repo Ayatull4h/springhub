@@ -486,6 +486,8 @@ const formTitleI18nKey = (slug: string): string => {
       <div className="relative mt-8">
       {/* inlet: sungai masuk danau */}
       <div aria-hidden="true" className="pointer-events-none absolute -top-5 left-1/2 z-10 h-12 w-44 -translate-x-1/2 rounded-[50%] bg-gradient-to-b from-lagoon-200 to-lagoon-500 ring-4 ring-white/60 dark:from-sky-800 dark:to-sky-600 dark:ring-white/20" />
+      {/* outlet: sungai keluar danau (di belakang bingkai agar tak tutup tombol) */}
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-5 left-1/2 h-12 w-44 -translate-x-1/2 rounded-[50%] bg-gradient-to-b from-lagoon-500 to-lagoon-200 ring-4 ring-white/60 dark:from-sky-600 dark:to-sky-800 dark:ring-white/20" />
       <div className="relative overflow-hidden rounded-[48%_52%_50%_50%/10%_12%_10%_12%] bg-stone-200 p-3 shadow-elevated ring-4 ring-stone-300 md:p-4 dark:bg-slate-800 dark:ring-slate-700">
       <div className="overflow-hidden rounded-[46%_54%_48%_52%/8%_10%_8%_10%] bg-white dark:bg-slate-900">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-line p-4">
@@ -561,8 +563,6 @@ const formTitleI18nKey = (slug: string): string => {
         )}
       </div>
       </div>
-      {/* outlet: sungai keluar danau */}
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-5 left-1/2 z-10 h-12 w-44 -translate-x-1/2 rounded-[50%] bg-gradient-to-b from-lagoon-500 to-lagoon-200 ring-4 ring-white/60 dark:from-sky-600 dark:to-sky-800 dark:ring-white/20" />
       </div>
 
       {/* Below the map: report details (left) + Report Your Contribution (right) */}
