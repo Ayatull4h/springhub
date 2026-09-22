@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2 } from "lucide-react";
+import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2, Waves } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
@@ -9,10 +9,10 @@ import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BkkInnerWave, BkkCloudBo
 
 /* Tiap kartu bentuk + warna beda total — solid 4 warna palet ColorHunt */
 const STAT_CARDS = [
-  "bg-lagoon-700 rounded-[50%_50%_46%_54%/62%_64%_36%_38%] dark:bg-lagoon-800",
-  "bg-amber-800 rounded-[48%_52%_22%_22%/28%_30%_14%_14%] dark:bg-amber-900",
-  "bg-leaf-700 rounded-[6%_55%_6%_55%/48%_10%_48%_10%] dark:bg-leaf-800",
-  "bg-tang-600 rounded-[58%_42%_55%_45%/55%_48%_52%_45%] dark:bg-tang-700",
+  "bg-gradient-to-br from-leaf-700 to-emerald-900 rounded-[50%_50%_46%_54%/62%_64%_36%_38%] dark:from-leaf-700 dark:to-emerald-950",
+  "bg-gradient-to-br from-amber-700 to-amber-900 rounded-[48%_52%_22%_22%/28%_30%_14%_14%] dark:from-amber-800 dark:to-amber-950",
+  "bg-gradient-to-br from-emerald-700 to-emerald-900 rounded-[6%_55%_6%_55%/48%_10%_48%_10%] dark:from-emerald-800 dark:to-emerald-950",
+  "bg-gradient-to-br from-tang-700 to-amber-900 rounded-[58%_42%_55%_45%/55%_48%_52%_45%] dark:from-tang-700 dark:to-amber-950",
 ];
 const STAT_TILTS = ["md:-rotate-2", "md:rotate-1", "md:-rotate-2", "md:rotate-2"];
 
@@ -110,6 +110,7 @@ export function ImpactDashboard() {
       <BkkCurve top="bg-white dark:bg-[#0b0f15]" bottom="text-cream dark:text-slate-900" accent="text-tang-200" />
       <div className="container-page pt-10 md:pt-14">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
+        <Waves className="mx-auto mb-2 h-8 w-8 text-lagoon-500" aria-hidden="true" />
         {t("dashboard.title")}{" "}
         <span className="text-tang-600">{t("dashboard.titleAccent")}</span>
       </h2>
@@ -139,7 +140,7 @@ export function ImpactDashboard() {
                 <BkkCloudBox className={`${STAT_CARDS[si % STAT_CARDS.length]} p-8 pb-14 outline outline-4 outline-offset-[6px] outline-white/60 md:p-10 md:pb-16 dark:outline-white/10 ${si % 4 === 1 ? "drop-shadow-[0_18px_36px_rgba(120,53,15,0.45)]" : "drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]"}`} flip={si % 2 === 1}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
                   {si % 4 === 3 && (
-                    <span aria-hidden="true" className="absolute right-3 top-1/2 h-12 w-12 -translate-y-1/2 rotate-45 bg-white/20" />
+                    <span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 h-12 w-12 -translate-y-1/2 rotate-45 bg-white/20" />
                   )}
                   <div className="relative flex items-center justify-between">
                     <span className="grid h-10 w-10 place-items-center rounded-[55%_45%_50%_50%/50%_55%_45%_50%] bg-white/25 text-white">
@@ -169,7 +170,7 @@ export function ImpactDashboard() {
 
           <div className="river-trio mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-sky-200 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
+            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-gradient-to-b from-sky-50 to-white p-10 pb-12 ring-4 ring-sky-200 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700">
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
                 <TrendingUp className="h-4 w-4 text-sky-700" aria-hidden="true" />
                 {t("dashboard.monthly")}
@@ -222,7 +223,7 @@ export function ImpactDashboard() {
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2">
-            <div className="relative rounded-[55%_6%_55%_6%/10%_50%_10%_50%] bg-white p-10 pb-12 ring-4 ring-leaf-200 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
+            <div className="relative rounded-[55%_6%_55%_6%/10%_50%_10%_50%] bg-gradient-to-b from-leaf-100 to-white p-10 pb-12 ring-4 ring-leaf-600/40 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700">
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topRegions.map((r, ri) => (
@@ -244,7 +245,7 @@ export function ImpactDashboard() {
             </div>
 
             <div className="transition-transform hover:rotate-0 md:-rotate-2">
-            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-white p-10 pb-12 ring-4 ring-tang-200 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
+            <div className="relative rounded-[6%_55%_6%_55%/50%_10%_50%_10%] bg-gradient-to-b from-tang-100 to-white p-10 pb-12 ring-4 ring-tang-200 outline outline-4 outline-offset-[6px] outline-white/70 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700">
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>
               <ol className="mt-4 space-y-3">
                 {data.topVolunteers.map((v, vi) => (

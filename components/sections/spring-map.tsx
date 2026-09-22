@@ -575,7 +575,7 @@ const formTitleI18nKey = (slug: string): string => {
         )}
 
         <div className="transition-transform hover:rotate-0 md:-rotate-[0.5deg] lg:col-span-6">
-        <div className="rounded-[46%_54%_50%_50%/8%_10%_8%_10%] bg-stone-100 p-10 pb-12 ring-4 ring-stone-300 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:bg-slate-900 dark:ring-slate-700">
+        <div className="rounded-[46%_54%_50%_50%/8%_10%_8%_10%] bg-gradient-to-b from-stone-50 to-stone-200 p-10 pb-12 ring-4 ring-stone-300 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] dark:from-slate-800 dark:to-slate-900 dark:ring-slate-700">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">
               {t("map.springDetails")}

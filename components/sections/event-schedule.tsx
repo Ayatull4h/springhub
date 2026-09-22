@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { CalendarDays, MapPin, Users, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve, BkkTitleCloud } from "./bkk-decor";
+import { BkkCurve, BkkTitleCloud, BkkInnerWave } from "./bkk-decor";
 
 type EventItem = {
   id: string;
@@ -221,11 +221,21 @@ export function EventSchedule() {
     <section id="jadwal" className="overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <div className="container-page">
       <h2 className="font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
-        <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-lagoon-600">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
+        <BkkTitleCloud cloudClass="text-amber-100 dark:text-slate-800">{t("event.title", "Jadwal")} <span className="text-tang-500">{t("event.titleAccent", "Mendatang")}</span></BkkTitleCloud>
       </h2>
       <p className="mt-3 max-w-2xl text-ink-muted">
         {t("event.description", "Ikut restorasi mata air dan tanam pohon bulan depan. Daftar langsung, tanpa kuota.")}
       </p>
+
+      {/* spanduk ombak */}
+      <div aria-hidden="true" className="pointer-events-none relative mt-6 h-20 overflow-hidden rounded-[45%_55%_50%_50%/60%_60%_40%_40%] bg-gradient-to-r from-lagoon-100 via-sky-100 to-lagoon-100 dark:from-sky-900/40 dark:via-sky-800/40 dark:to-sky-900/40">
+        <div className="absolute inset-x-0 bottom-0 leading-[0] text-lagoon-200 dark:text-sky-700">
+          <BkkInnerWave />
+        </div>
+        <div className="absolute inset-x-0 bottom-1 leading-[0] text-white/70 dark:text-white/20">
+          <BkkInnerWave />
+        </div>
+      </div>
 
       <div className="mt-4 flex items-center justify-end gap-2">
         <span className="mr-auto text-xs text-ink-muted">{page + 1} / {items.length}</span>

@@ -112,3 +112,40 @@ export function Starfish({ className = "" }: P) {
     </Base>
   );
 }
+
+/** Bebek kartun: badan kuning + paruh oranye. */
+export function DuckIcon({ className = "" }: P) {
+  return (
+    <Base className={className}>
+      <ellipse cx="30" cy="40" rx="18" ry="12" fill="#FDE047" stroke="#854D0E" strokeWidth="2.5" />
+      <circle cx="44" cy="24" r="10" fill="#FDE047" stroke="#854D0E" strokeWidth="2.5" />
+      <path d="M52 22 L60 25 L52 28 Z" fill="#FB923C" stroke="#9A3412" strokeWidth="2" />
+      <circle cx="46" cy="22" r="2" fill="#1C1917" />
+      <path d="M20 40 Q26 34 32 40 Q26 44 20 40 Z" fill="#FACC15" stroke="#854D0E" strokeWidth="1.5" />
+      <path d="M12 44 Q30 52 48 44 L48 48 Q30 56 12 48 Z" fill="#7DD3FC" stroke="#0369A1" strokeWidth="2" />
+    </Base>
+  );
+}
+
+/** Tanaman air: pita hijau bergelombang. */
+export function WaterPlant({ className = "" }: P) {
+  return (
+    <Base className={className} viewBox="0 0 64 80">
+      <path d="M20 78 C14 60 26 48 20 30 C17 20 22 12 20 4" stroke="#15803D" strokeWidth="4" />
+      <path d="M34 78 C34 62 30 52 34 38 C37 28 33 18 35 8" stroke="#16A34A" strokeWidth="4" />
+      <path d="M48 78 C54 64 44 54 48 40 C50 32 47 24 49 16" stroke="#15803D" strokeWidth="4" />
+      <ellipse cx="20" cy="30" rx="4" ry="7" fill="#4ADE80" stroke="#15803D" strokeWidth="1.5" />
+      <ellipse cx="35" cy="52" rx="4" ry="7" fill="#86EFAC" stroke="#15803D" strokeWidth="1.5" />
+      <ellipse cx="48" cy="24" rx="4" ry="7" fill="#4ADE80" stroke="#15803D" strokeWidth="1.5" />
+    </Base>
+  );
+}
+
+/** Kilau cahaya di air (bintang 4 titik). */
+export function Sparkle({ className = "" }: P) {
+  return (
+    <Base className={className} viewBox="0 0 32 32">
+      <path d="M16 2 L19 13 L30 16 L19 19 L16 30 L13 19 L2 16 L13 13 Z" fill="#FFFFFF" stroke="#BAE6FD" strokeWidth="1.5" />
+    </Base>
+  );
+}

@@ -284,6 +284,12 @@ button:not(:disabled) {
 }
 
 /* Sungai: konten selalu di atas aliran */
+#river-main {
+  background: linear-gradient(180deg, #f0f9ff 0%, #fffbeb 28%, #f0f9ff 55%, #e0f2fe 82%, #bae6fd 100%);
+}
+.dark #river-main {
+  background: linear-gradient(180deg, #0b0f15 0%, #0b0f15 100%);
+}
 #river-main > section,
 #river-main > div[class*="river-bank"] {
   position: relative;
@@ -378,6 +384,15 @@ button:not(:disabled) {
 }
 .animate-river-sway {
   animation: river-sway 5s ease-in-out infinite;
+}
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  50% { opacity: 0.9; transform: scale(1.15); }
+}
+.animate-sparkle {
+  animation: sparkle-twinkle 3s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 /* Print styles */

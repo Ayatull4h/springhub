@@ -67,6 +67,7 @@ export function LearningHub() {
   return (
     <section id="learn" className="relative overflow-x-clip bg-transparent pt-16 md:pt-20 dark:bg-transparent">
       <BanyanIcon className="pointer-events-none absolute -top-2 right-[4%] hidden w-56 opacity-90 lg:block" />
+      <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-1/3 h-80 w-80 rounded-full bg-leaf-100/60 blur-3xl dark:bg-leaf-700/20" />
       <HangingRoots className="pointer-events-none absolute left-[8%] top-0 hidden w-24 opacity-80 lg:block" />
       <Pebbles className="pointer-events-none absolute bottom-16 left-[3%] hidden w-20 opacity-70 lg:block" />
       <div className="container-page relative">
@@ -93,7 +94,7 @@ export function LearningHub() {
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
             return (
-              <div key={c.id} className={`flex flex-col overflow-hidden rounded-[8%_50%_8%_50%/30%_8%_30%_8%] bg-white p-6 pb-8 ring-4 ring-leaf-200 transition-transform hover:rotate-0 dark:bg-slate-900 dark:ring-slate-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]}`}>
+              <div key={c.id} className={`flex flex-col overflow-hidden rounded-[8%_50%_8%_50%/30%_8%_30%_8%] bg-white p-6 pb-8 ring-4 ring-leaf-600/40 transition-transform hover:rotate-0 dark:bg-slate-900 dark:ring-slate-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.16)] ${BKK_CARD_TILTS[ci % BKK_CARD_TILTS.length]}`}>
                 <div className="-mx-6 -mt-6 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>

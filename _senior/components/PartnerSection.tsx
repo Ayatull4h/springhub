@@ -17,9 +17,10 @@ export function PartnerSection() {
   const { t } = useI18n();
 
   return (
-    <section className="container-page overflow-x-clip py-16">
+      <section className="container-page relative overflow-x-clip py-16">
+      <div aria-hidden="true" className="pointer-events-none absolute left-1/4 top-0 h-64 w-2/3 rounded-full bg-lagoon-200/50 blur-3xl dark:bg-sky-800/30" />
       <div className="transition-transform hover:rotate-0 md:-rotate-1">
-      <div className="relative overflow-hidden rounded-[46%_54%_52%_48%/8%_10%_9%_11%] bg-gradient-to-br from-lagoon-200 via-sky-200 to-lagoon-300 px-6 py-12 text-sky-950 ring-4 ring-lagoon-300/70 md:px-12 dark:from-sky-900 dark:via-sky-800 dark:to-sky-900 dark:text-white dark:ring-sky-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]">
+      <div className="relative overflow-hidden rounded-[46%_54%_52%_48%/8%_10%_9%_11%] bg-gradient-to-br from-lagoon-200 via-sky-200 to-sky-300 px-6 py-12 text-sky-950 ring-4 ring-lagoon-200/70 md:px-12 dark:from-sky-900 dark:via-sky-800 dark:to-sky-900 dark:text-white dark:ring-sky-700 drop-shadow-[0_18px_28px_rgba(8,47,73,0.35)]">
       {/* riak genangan */}
       <div aria-hidden="true" className="pointer-events-none absolute left-[8%] top-[12%] h-16 w-1/3 rounded-[50%] border-[3px] border-white/50" />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-[10%] right-[10%] h-20 w-1/4 rounded-[50%] border-2 border-white/40" />
