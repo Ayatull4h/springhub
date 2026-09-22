@@ -10,7 +10,6 @@ import { RealActionHeader } from "@/components/sections/real-action-header";
 import { MediaSection } from "@/components/sections/media";
 import { DonateSection } from "@/components/sections/donate";
 import { RiverFlow } from "@/components/sections/river-flow";
-import { BkkCurve } from "@/components/sections/bkk-decor";
 export default function HomePage() {
   return (
     <div id="river-main" className="relative">
@@ -40,7 +39,6 @@ export default function HomePage() {
           </div>
         </div>
         </div>
-        <BkkCurve top="bg-transparent" bottom="text-white dark:text-slate-900" accent="text-bkk-200" />
       </section>
 
       <div className="river-bank-c container-page">

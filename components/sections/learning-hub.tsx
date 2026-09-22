@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Clock, Layers, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { BkkCurve, BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
+import { BkkTitleCloud, BkkCloudBox } from "./bkk-decor";
 import { BanyanIcon } from "./eco-icons";
 import { HangingRoots, Pebbles } from "./river-ornaments";
 
@@ -158,7 +158,6 @@ export function LearningHub() {
         </div>
       )}
       </div>
-      <BkkCurve top="bg-transparent" bottom="text-lagoon-500 dark:text-lagoon-600" accent="text-tang-500" />
     </section>
   );
 }

@@ -23,7 +23,7 @@ import { getForm, POINTS_MAP } from "@/lib/forms";
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
-import { BKK_CARD_RADII, BkkCurve, BkkTitleCloud, BkkCloudEdge } from "./bkk-decor";
+import { BKK_CARD_RADII, BkkTitleCloud } from "./bkk-decor";
 import { BambooIcon } from "./eco-icons";
 import { GrassTuft, Pebbles } from "./river-ornaments";
 
@@ -317,7 +317,6 @@ export function VolunteerActivities() {
 
       <PointsGuideModal open={showPoints} onClose={() => setShowPoints(false)} />
       </div>
-      <BkkCloudEdge top="bg-transparent" bottom="text-white dark:text-slate-900" />
     </section>
   );
 }

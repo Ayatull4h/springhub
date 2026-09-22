@@ -5,7 +5,7 @@ import { Droplets, Sprout, Sparkles, Layers, TrendingUp, Loader2, Waves } from "
 import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { DraftBanner } from "@/components/draft-banner";
-import { BkkReveal, BkkCurve, BkkSticker, BkkCloudEdge, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
+import { BkkReveal, BkkSticker, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
 
 /* Tiap kartu bentuk + warna beda total — solid 4 warna palet ColorHunt */
 const STAT_CARDS = [
@@ -107,7 +107,6 @@ export function ImpactDashboard() {
 
   return (
     <section id="dashboard" className="overflow-x-clip bg-transparent pb-0 pt-0 md:pt-0 dark:bg-transparent">
-      <BkkCurve top="bg-white dark:bg-[#0b0f15]" bottom="text-cream dark:text-slate-900" accent="text-tang-200" />
       <div className="container-page pt-10 md:pt-14">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-sky-900 md:text-5xl dark:text-white">
         <Waves className="mx-auto mb-2 h-8 w-8 text-lagoon-500" aria-hidden="true" />
@@ -275,7 +274,6 @@ export function ImpactDashboard() {
         </>
       )}
       </div>
-      <BkkCloudEdge top="bg-transparent" bottom="text-white dark:text-slate-900" />
     </section>
   );
 }
