@@ -4,6 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   reactStrictMode: true,
+  poweredByHeader: false,
   output: "standalone",
   images: {
     remotePatterns: [
