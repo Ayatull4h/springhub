@@ -82,6 +82,14 @@ export function ImpactDashboard() {
     layers: "dashboard.stat.trenches",
   };
 
+  // Angka marketing untuk landing (bukan hitungan DB)
+  const DISPLAY_OVERRIDE: Record<string, string> = {
+    droplet: "500+",
+    sparkles: "30+",
+    tree: "20k+",
+    layers: "200+",
+  };
+
   const monthlyKeys = [
     "dashboard.monthly.treePlanting",
     "dashboard.monthly.springMonitoring",
@@ -133,7 +141,7 @@ export function ImpactDashboard() {
                     </span>
                   </div>
                   <div className="mt-4 text-3xl font-bold tracking-tight">
-                    {s.display ?? formatNumber(s.value)}
+                    {DISPLAY_OVERRIDE[s.icon] ?? s.display ?? formatNumber(s.value)}
                   </div>
                   <div className="mt-1 text-sm text-ink-muted">
                     {t(IconToStatKey[s.icon])}
