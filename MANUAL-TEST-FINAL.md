@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
 **Tanggal**: 8 September 2026 (Update: download ZIP per springs + jadwal event + 3 kartu media + popup scroll + thumbnail YT otomatis, hapus 29 dummy, prod 268 springs)
 **Domain**: https://www.springhub.id (produksi) + http://76.13.198.18:8080 (staging, basic auth 181ff4f6c436d9a69f9dd12e / 1a20e619d2d431d66ac60b17)
-**Total Test**: ~225 test case — 26 kategori ( +12 download/event/media, +8 event mendatang)
+**Total Test**: ~259 test case — 27 kategori ( +34 browser smoke/matriks foto 23 Sep 2026)
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -464,3 +464,75 @@ Login admin dulu (`admin@springhub.id` / `demo12345`), buka `www.springhub.id/ad
 | 26.6 | Admin lihat pendaftar | Buka `/admin/events` → Pendaftar → harus ada tabel nama/domisi/hari/WA/email + Export CSV terdownload | |
 | 26.7 | Jadikan rekap | Klik Rekap → cek Latest Media → harus ada kartu "Rekap: ..." | |
 | 26.8 | Reminder H-1 | Tunggu cron per jam → pendaftar event besok terima email "Pengingat: ..." (cek `/var/log/springhub-event-reminder.log`) | |
+
+---
+
+## Test 27 — Browser Smoke + Matriks Foto Produksi (34 tes) — BARU 23 Sep 2026
+
+> Versi klik-browser (tanpa curl) untuk penguji non-teknis. Wajib **mode incognito** + tutup semua tab biasa dulu (hindari cache lama).
+> Tulis ✅/❌ per baris. **P0 gagal → STOP, laporkan dulu.**
+
+**Akun:** volunteer `volunteer@springhub.id` / `vol12345` · admin `admin@springhub.id` / `demo12345`
+
+### P0 — Wajib (10 tes)
+
+| # | Tes | Benar kalau... | Hasil |
+|---|---|---|---|
+| 27.P0-1 | Buka https://www.springhub.id incognito | Landing < 5 detik, tanpa putih | |
+| 27.P0-2 | Login volunteer | Nama muncul kanan atas | |
+| 27.P0-3 | Password salah 1x | Error merah, tetap di login | |
+| 27.P0-4 | Form teks saja `/report/spring-monitoring` | Terkirim tanpa foto | |
+| 27.P0-5 | 1 foto JPG < 1 MB | Terkirim, foto tampil di detail | |
+| 27.P0-6 | 3 foto sekaligus | Counter 3/5, semua tampil | |
+| 27.P0-7 | Foto langsung kamera HP | Terkirim, tidak loading selamanya | |
+| 27.P0-8 | Peta `/#map` | Laporan muncul ≤ 1 menit | |
+| 27.P0-9 | `/profile` | Poin + riwayat bertambah | |
+| 27.P0-10 | Logout | Kembali jadi tamu | |
+
+### P1 — Matriks Foto (10 tes, 1 form baru per baris)
+
+| # | Format / Ukuran / Mode | Benar kalau... | Hasil |
+|---|---|---|---|
+| 27.P1-1 | JPG < 1 MB, online | Terkirim | |
+| 27.P1-2 | JPG 3–8 MB, online | Terkirim (auto-kompres) | |
+| 27.P1-3 | PNG, online | Terkirim | |
+| 27.P1-4 | WebP, online | Terkirim | |
+| 27.P1-5 | HEIC iPhone, online | Terkirim (boleh lambat) | |
+| 27.P1-6 | Foto > 10 MB | **Ditolak** pesan maks 10 MB | |
+| 27.P1-7 | File PDF | **Ditolak** pesan format | |
+| 27.P1-8 | JPG, **offline** (`/offline`, data mati) | Antre → terkirim saat online | |
+| 27.P1-9 | HEIC, **offline** | Sama seperti P1-8 | |
+| 27.P1-10 | 5 foto + 1 lagi | Foto ke-6 **ditolak** (maks 5) | |
+
+### P2 — Fitur (9 tes)
+
+| # | Area | Benar kalau... | Hasil |
+|---|---|---|---|
+| 27.P2-1 | `/seedlings` ajukan bibit | Status pending tercatat | |
+| 27.P2-2 | `/learn` 1 modul selesai | Progress + poin masuk | |
+| 27.P2-3 | Donasi Rp10.000 | Sampai bayar / pesan kunci (catat mana) | |
+| 27.P2-4 | `/projects` 1 proyek | Detail + donasi tampil | |
+| 27.P2-5 | Lonceng notifikasi | Isi/kosong wajar | |
+| 27.P2-6 | PWA HP + `/offline` tanpa internet | Terbuka & bisa isi form | |
+| 27.P2-7 | Offline penuh → online 1 menit | Laporan + foto muncul | |
+| 27.P2-8 | Mode gelap | Semua terbaca | |
+| 27.P2-9 | Toggle ID/EN | Form ikut ganti | |
+
+### P3 — Admin (5 tes, login admin)
+
+| # | Tes | Benar kalau... | Hasil |
+|---|---|---|---|
+| 27.P3-1 | `/admin` statistik wajar | Ya | |
+| 27.P3-2 | Approve 1 pending | Approved + poin masuk | |
+| 27.P3-3 | Foto di review tampil semua | Tanpa ikon rusak | |
+| 27.P3-4 | Download ZIP 1 mata air | ZIP terbuka | |
+| 27.P3-5 | Buat/edit kursus | Tampil di `/learn` | |
+
+### Template bug
+
+```
+BUG-__: ... | Waktu: __ | HP/Browser: __ | Online/Offline: __
+Langkah: 1... 2... | Terjadi: __ | Seharusnya: __ | Screenshot: __
+```
+
+*Skor: ___ / 34. Sehat kalau P0 10/10 + P1 ≥ 8/10.*
