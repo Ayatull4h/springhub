@@ -11,6 +11,7 @@ import { useI18n } from "@/lib/i18n";
 import { LocationPicker } from "@/components/map/location-picker";
 import { useAutoSave } from "@/lib/use-auto-save";
 import { offlineDB } from "@/lib/offline-db";
+import { compressImageFile } from "@/lib/compress-image";
 
 function BlobPreview({ file, alt }: { file: File; alt: string }) {
   const url = useMemo(() => URL.createObjectURL(file), [file]);
@@ -310,32 +311,41 @@ export default function ReportFormPage() {
 
     // Upload foto dengan CSRF header (route sekarang mewajibkan CSRF)
     const uploadPhotoWithCsrf = async (reportId: string, fd: FormData, fields: FormField[]) => {
-      const { token: csrf } = await fetch("/api/csrf").then(r => r.json());
       const photoFieldIds = fields.filter((f: FormField) => f.type === "photo").map((f: FormField) => f.id);
       const errors: string[] = [];
       for (const fieldId of photoFieldIds) {
         const files = fd.getAll(fieldId);
         for (const file of files) {
           if (file && file instanceof File && file.size > 0) {
-            try {
-              const photoPayload = new FormData();
-              photoPayload.append("photo", file);
-              photoPayload.append("field_id", fieldId);
-              const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
-                method: "POST",
-                headers: csrf ? { "x-csrf-token": csrf } : {},
-                body: photoPayload,
-              });
-              if (!photoRes.ok) {
-                const photoData = await photoRes.json().catch(() => null);
-                errors.push(
-                  photoData?.error
-                    ? `Foto ${file.name}: ${photoData.error}`
-                    : `Foto ${file.name} gagal diupload`
-                );
+            let done = false;
+            // Coba 2x: ulangi dengan token CSRF baru bila gagal (kecuali 400 = salah file)
+            for (let attempt = 0; attempt < 2 && !done; attempt++) {
+              try {
+                const { token: csrf } = await fetch("/api/csrf").then(r => r.json());
+                const photoPayload = new FormData();
+                photoPayload.append("photo", file);
+                photoPayload.append("field_id", fieldId);
+                const photoRes = await fetch(`/api/reports/${reportId}/photos`, {
+                  method: "POST",
+                  headers: csrf ? { "x-csrf-token": csrf } : {},
+                  body: photoPayload,
+                });
+                if (photoRes.ok) {
+                  done = true;
+                } else if (photoRes.status === 400 || photoRes.status === 413 || attempt === 1) {
+                  // 400/413 = salah di file (tak perlu retry); attempt terakhir = menyerah + lapor
+                  const photoData = await photoRes.json().catch(() => null);
+                  errors.push(
+                    photoData?.error
+                      ? `Foto ${file.name}: ${photoData.error}`
+                      : `Foto ${file.name} gagal diupload`
+                  );
+                  done = true;
+                }
+                // 403/5xx attempt 0 = lanjut loop (coba lagi token baru)
+              } catch {
+                if (attempt === 1) errors.push(`Foto ${file.name} gagal — cek koneksi lalu coba lagi`);
               }
-            } catch {
-              errors.push(`Foto ${file.name} gagal — cek koneksi`);
             }
           }
         }
@@ -889,13 +899,18 @@ function FieldRenderer({
               capture="environment"
               multiple
               required={field.required && currentCount === 0}
-              onChange={(e) => {
+              onChange={async (e) => {
                 const selectedFiles = e.target.files;
                 if (selectedFiles && selectedFiles.length > 0) {
+                  // Kompres di HP dulu (1280px JPEG) — file mentah 5-12MB
+                  // bikin POST jebol + upload lambat. Gagal kompres = pakai mentah.
+                  const done = await Promise.all(
+                    Array.from(selectedFiles).map((f) => compressImageFile(f).catch(() => f))
+                  );
                   setPhotoFiles?.(prev => {
                     const files = prev[field.id] || [];
                     const remaining = 5 - files.length;
-                    const newFiles = Array.from(selectedFiles).slice(0, remaining);
+                    const newFiles = done.slice(0, remaining);
                     return { ...prev, [field.id]: [...files, ...newFiles] };
                   });
                 }

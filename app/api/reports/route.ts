@@ -35,7 +35,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const formData = await request.formData();
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+    } catch {
+      return NextResponse.json(
+        { error: "Data terlalu besar atau rusak. Kecilkan foto (maks 10 MB per foto, total disarankan < 8 MB) lalu coba lagi." },
+        { status: 413 }
+      );
+    }
     const formSlug = formData.get("form_slug") as string;
 
     if (!formSlug) {
