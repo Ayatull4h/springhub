@@ -1,7 +1,6 @@
 import { Hero } from "@/components/sections/hero";
 import { ImpactDashboard } from "@/components/sections/impact-dashboard";
 import { SpringMap } from "@/components/sections/spring-map";
-import { EcosystemStrip } from "@/components/sections/ecosystem";
 import { VolunteerActivities } from "@/components/sections/volunteer";
 import { EventSchedule } from "@/components/sections/event-schedule";
 import { FeaturedProjects } from "@/components/sections/featured-projects";
@@ -17,7 +16,6 @@ export default function HomePage() {
       <Hero />
       <ImpactDashboard />
       <SpringMap />
-      <EcosystemStrip />
       <VolunteerActivities />
       <EventSchedule />
 
