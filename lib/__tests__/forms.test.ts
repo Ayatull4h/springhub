@@ -52,6 +52,7 @@ describe("springMonitoringSchema", () => {
       B1_nama: "Mata Air Cibeureum",
       B5_jenis: "Mata air",
       B6_aliran: "Mengalir deras",
+      B7_debit_5th: "Sama",
       C1_warna: "Air jernih",
       C2_lahan: "Pemukiman",
       C3_tutupan: "Rindang",
