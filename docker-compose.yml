@@ -63,7 +63,7 @@ services:
     env_file:
       - .env.production
     environment:
-      DATABASE_URL: "postgresql://springhub:${DB_PASSWORD:?DB_PASSWORD belum di-set}@postgres:5432/springhub?connection_limit=10&pool_timeout=10"
+      DATABASE_URL: "postgresql://springhub_app:${APP_DB_PASSWORD:?APP_DB_PASSWORD belum di-set}@postgres:5432/springhub?connection_limit=10&pool_timeout=10"
       REDIS_URL: "redis://default:${REDIS_PASSWORD:?REDIS_PASSWORD belum di-set}@redis:6379"
       REDIS_QUEUE_URL: "redis://default:${REDIS_PASSWORD:?REDIS_PASSWORD belum di-set}@redis:6379"
       UPLOAD_DIR: "/data/uploads"
