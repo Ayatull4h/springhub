@@ -596,7 +596,7 @@ async function countItems(storeName: StoreNames): Promise<number> {
  */
 const STORES_META: Record<StoreNames, number> = {
   "pending-reports": 1,
-  "form-definitions": 1,
+  "form-definitions": 2,
   "tile-manifest": 1,
   "tile-blobs": 1,
   "draft-reports": 1,

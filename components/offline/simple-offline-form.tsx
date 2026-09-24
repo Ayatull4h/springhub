@@ -162,8 +162,6 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
             })),
           }));
           setForms(normalized);
-
-          // Bersihin queue + pending-reports lama yang pake field ID numeric/UUID (sebelum fix)
           for (const store of [
             { getAll: () => offlineDB.getAllQueued(), del: (id: string) => offlineDB.deleteQueued(id) },
             { getAll: () => offlineDB.getAllReports(), del: (id: string) => offlineDB.deleteReport(id) },
@@ -179,6 +177,25 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
             }
           }
         }
+        // Segarkan definisi dari server — cache IDB bisa basi saat admin ubah form.
+        // Tanpa ini user isi form lama (field terhapus) lalu gagal saat sync.
+        try {
+          const fres = await fetch("/api/forms");
+          if (fres.ok) {
+            const fdata = await fres.json();
+            const fresh = fdata.forms || fdata.data || fdata;
+            if (Array.isArray(fresh) && fresh.length > 0) {
+              await offlineDB.saveForms(fresh);
+              setForms(fresh.map((form: any) => ({
+                ...form,
+                fields: (form.fields || []).map((f: any) => ({
+                  ...f,
+                  id: f.fieldId || String(f.id),
+                })),
+              })));
+            }
+          }
+        } catch { /* offline — pakai cache/static */ }
       } catch (err) {
         console.error("Failed to load forms:", err);
       } finally {
