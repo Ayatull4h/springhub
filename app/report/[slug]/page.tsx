@@ -820,21 +820,32 @@ function FieldRenderer({
           </select>
         </div>
       );
-    case "multiselect":
+    case "multiselect": {
+      // C7 wajib kondisional: terkunci bila "Tidak Ada" ancaman
+      const isC7 = field.id === "C7_jenis_ancaman";
+      const c7Locked = isC7 && (fieldData?.["C6_ancaman"] as string) === "Tidak Ada";
       return (
         <fieldset>
           <legend className="text-sm font-medium text-ink">
             {field.label}
-            {required}
+            {field.required || (isC7 && !c7Locked) ? required : null}
           </legend>
+          {c7Locked && (
+            <p className="mt-1 text-xs text-ink-muted">
+              {locale === "en"
+                ? "Locked — select \"Yes\" on Visible Threats to fill this."
+                : "Terkunci — pilih \"Ya\" pada Terlihat Ancaman untuk mengisi."}
+            </p>
+          )}
           <div className="mt-2 space-y-1.5">
             {(locale === "en" && field.optionsEn?.length ? field.optionsEn : field.options)?.map((opt: string, i: number) => (
-              <label key={opt} className="flex items-center gap-2 text-sm text-ink-muted">
+              <label key={opt} className={`flex items-center gap-2 text-sm ${c7Locked ? "text-ink-subtle" : "text-ink-muted"}`}>
                 <input
                   type="checkbox"
                   name={`${field.id}[]`}
                   value={field.options?.[i] || opt}
-                  className="h-4 w-4 rounded border-ink-line text-brand-600 focus:ring-brand-500"
+                  disabled={c7Locked}
+                  className="h-4 w-4 rounded border-ink-line text-brand-600 focus:ring-brand-500 disabled:opacity-40"
                 />
                 {opt}
               </label>
@@ -842,6 +853,7 @@ function FieldRenderer({
           </div>
         </fieldset>
       );
+    }
     case "photo":
       const accumulated = photoFiles?.[field.id] ?? [];
       const currentCount = accumulated.length;

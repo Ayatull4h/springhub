@@ -143,6 +143,23 @@ export async function POST(request: Request) {
       fieldData[key] = value as string;
     }
 
+    // C7 wajib kondisional (survei): hanya bila ada ancaman
+    if (formSlug === "spring-monitoring") {
+      const c6 = fieldData["C6_ancaman"];
+      if (c6 === "Tidak Ada") {
+        delete fieldData["C7_jenis_ancaman"];
+      } else if (c6 === "Ya") {
+        const raw = fieldData["C7_jenis_ancaman"];
+        const vals = Array.isArray(raw) ? raw : raw ? [raw] : [];
+        if (vals.length === 0) {
+          return NextResponse.json(
+            { error: "Pilih minimal 1 Jenis Ancaman (atau ubah Terlihat Ancaman menjadi Tidak Ada)." },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     // Snap location to 5km protection grid (hanya untuk form yang terkait spring)
     let snappedLat: number | null = null;
     let snappedLng: number | null = null;

@@ -73,6 +73,8 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
   const [gpsStatus, setGpsStatus] = useState<"idle" | "getting" | "got" | "error">("idle");
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [syncStatus, setSyncStatus] = useState<{ ok: boolean; message: string; time: number } | null>(null);
+  // C7 wajib kondisional: terkunci bila C6 = "Tidak Ada"
+  const [c6Ancaman, setC6Ancaman] = useState<string>("");
   const [queueCount, setQueueCount] = useState(0);
   const [compressing, setCompressing] = useState(false);
   const [quotaInfo, setQuotaInfo] = useState<{ usedMB: string; quotaMB: string; small: boolean } | null>(null);
@@ -602,11 +604,11 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
           </div>
         )}
 
-        {formDef?.fields.map((field: FormField) => (
+        {formDef?.fields.filter((f: FormField) => f.id !== "E1_cerita").map((field: FormField) => (
           <div key={field.id} className="w-full">
              <label htmlFor={`offline-${field.id}`} className="block text-sm font-medium text-ink">
               {locale === "en" && field.labelEn ? field.labelEn : field.label}
-              {field.required && <span className="ml-1 text-red-500">*</span>}
+              {(field.required || (field.id === "C7_jenis_ancaman" && c6Ancaman === "Ya")) && <span className="ml-1 text-red-500">*</span>}
               {field.help && <span className="ml-2 text-xs font-normal text-ink-subtle">{field.help}</span>}
             </label>
 
@@ -642,6 +644,7 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
               <select
                 id={`offline-${field.id}`} name={field.id}
                 required={field.required}
+                onChange={field.id === "C6_ancaman" ? (e) => setC6Ancaman(e.target.value) : undefined}
                 className="mt-1 w-full rounded-md border border-ink-line px-3 py-2 text-sm dark:bg-slate-800 dark:text-white"
               >
                 <option value="">{t("offline.chooseEllipsis")}</option>
@@ -679,10 +682,14 @@ export function SimpleOfflineForm({ onExit }: { onExit?: () => void }) {
             ) : field.type === "multiselect" ? (
               <fieldset>
                 <div className="mt-2 space-y-1.5">
+                  {field.id === "C7_jenis_ancaman" && c6Ancaman === "Tidak Ada" && (
+                    <p className="text-xs text-ink-muted">Terkunci — pilih "Ya" pada Terlihat Ancaman untuk mengisi.</p>
+                  )}
                   {field.options?.map((opt) => (
                     <label key={opt} className="flex items-center gap-2 text-sm text-ink-muted">
                       <input type="checkbox" name={`${field.id}[]`} value={opt}
-                        className="h-4 w-4 rounded border-ink-line text-brand-600 focus:ring-brand-500"
+                        disabled={field.id === "C7_jenis_ancaman" && c6Ancaman === "Tidak Ada"}
+                        className="h-4 w-4 rounded border-ink-line text-brand-600 focus:ring-brand-500 disabled:opacity-40"
                       />
                       {opt}
                     </label>
