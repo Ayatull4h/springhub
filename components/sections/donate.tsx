@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Heart, CheckCircle2, Loader2, Layers, Droplets, Telescope } from "lucide-react";
-import { DONATION_TIERS } from "@/lib/xendit";
+import { DONATION_TIERS } from "@/lib/midtrans";
 import { useI18n } from "@/lib/i18n";
 
 const tierIcons: Record<string, React.ReactNode> = {
@@ -51,7 +51,7 @@ export function DonateSection() {
     <div id="donate" className="card p-8">
       <CheckCircle2 className="h-12 w-12 text-emerald-500" />
       <h3 className="mt-4 text-xl font-bold">Permintaan Donasi Terkirim</h3>
-      <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Xendit yang terbuka.</p>
+      <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Midtrans yang terbuka.</p>
     </div>
   );
 

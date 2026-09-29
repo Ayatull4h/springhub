@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Heart, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import { DONATION_TIERS } from "@/lib/xendit";
+import { DONATION_TIERS } from "@/lib/midtrans";
 
 const TIER_ICONS: Record<string, string> = { trench: "🛠️", sediment: "🗑️", monitoring: "📊" };
 
@@ -40,7 +40,7 @@ export function DonationCard() {
       <div className="mx-auto max-w-md text-center">
         <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500" />
         <h3 className="mt-3 text-lg font-bold">Permintaan Donasi Dikirim!</h3>
-        <p className="text-sm text-ink-muted">Buka halaman Xendit untuk menyelesaikan pembayaran.</p>
+        <p className="text-sm text-ink-muted">Buka halaman Midtrans untuk menyelesaikan pembayaran.</p>
       </div>
     </section>
   );
