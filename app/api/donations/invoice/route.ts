@@ -78,11 +78,15 @@ export async function POST(request: Request) {
     const externalId = `DON-${randomUUID()}`;
 
     // ── Persist donation record ──
+    // invoiceId diisi externalId dulu (kolom @unique tak boleh "" ganda —
+    // baris gagal harus tetap unik agar tidak meracuni donasi berikutnya),
+    // lalu ditimpa snap token asli setelah Midtrans merespons.
     const created = await prisma.donation.create({
       data: {
         userId: session?.userId ?? null,
         projectId: projectId || null,
         externalId,
+        invoiceId: externalId,
         amountIdr: amount,
         tierId: tierId || "",
         donorName: donorName.trim(),
