@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, AlertCircle, CheckCircle2, Upload, FileText } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { LocationPicker } from "@/components/map/location-picker";
 
 function BlobPreview({ file }: { file: File }) {
   const url = useMemo(() => URL.createObjectURL(file), [file]);
@@ -178,16 +179,14 @@ export default function NewProjectPage() {
       return (
         <div key={id}>
           <label className="mb-1 block text-sm font-medium text-ink">{label} {required && <span className="text-red-500">*</span>}</label>
-          <input type="text" value={val} onChange={e => updateField(id, e.target.value)} required={required} placeholder="Klik untuk dapatkan koordinat" readOnly className="input w-full bg-slate-50 dark:bg-slate-800" />
-          {navigator.geolocation && (
-            <button type="button" onClick={() => navigator.geolocation.getCurrentPosition(
-              pos => updateField(id, `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`),
-              () => {},
-              { enableHighAccuracy: true }
-            )} className="mt-1 text-xs text-brand-600 hover:underline">
-              📍 Dapatkan Lokasi Saat Ini
-            </button>
-          )}
+          <input type="text" value={val} readOnly placeholder="Pilih dari peta atau deteksi lokasi" aria-label={label} className="input w-full bg-slate-50 dark:bg-slate-800" />
+          <div className="mt-2">
+            <LocationPicker
+              name={id}
+              required={false}
+              onPick={(la, ln) => updateField(id, `${la.toFixed(6)}, ${ln.toFixed(6)}`)}
+            />
+          </div>
         </div>
       );
     }

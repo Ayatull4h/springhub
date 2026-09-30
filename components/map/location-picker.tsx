@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, type ChangeEvent } from "react";
+import { useState, useCallback, useEffect, type ChangeEvent } from "react";
 import dynamic from "next/dynamic";
 import {
   MapPin,
@@ -36,9 +36,11 @@ export type LocationPickerProps = {
   /** Name prefix untuk input hidden — akan menghasilkan name_lat dan name_lng */
   name: string;
   required?: boolean;
+  /** Dipanggil tiap lat+lng valid terisi (deteksi/peta/manual) */
+  onPick?: (lat: number, lng: number) => void;
 };
 
-export function LocationPicker({ name, required }: LocationPickerProps) {
+export function LocationPicker({ name, required, onPick }: LocationPickerProps) {
   const { t } = useI18n();
 
   const [lat, setLat] = useState("");
@@ -106,6 +108,15 @@ export function LocationPicker({ name, required }: LocationPickerProps) {
     setLng(pickedLng.toFixed(6));
     setStatus("success");
   }, []);
+
+  // Teruskan koordinat ke parent (mis. form proyek gabungkan "lat,lng")
+  useEffect(() => {
+    if (onPick && lat !== "" && lng !== "") {
+      const la = parseFloat(lat);
+      const ln = parseFloat(lng);
+      if (!isNaN(la) && !isNaN(ln)) onPick(la, ln);
+    }
+  }, [lat, lng, onPick]);
 
   // ── Toggle input mode ─────────────────────────────────────────────────────
   const toggleMode = useCallback(() => {
