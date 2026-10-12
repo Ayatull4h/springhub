@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { randomUUID } from "crypto";
-import { createSnapTransaction, DONATION_TIERS } from "@/lib/midtrans";
+import { createSnapTransaction, snapRedirectUrl, DONATION_TIERS } from "@/lib/midtrans";
 import { getSession } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";
 import { donationLimiter } from "@/lib/rate-limit";
@@ -71,6 +71,37 @@ export async function POST(request: Request) {
           { error: "Proyek tidak ditemukan atau belum disetujui" },
           { status: 400 }
         );
+      }
+    }
+
+    // ── Idempotency: pakai ulang donasi pending yang sama (<15 mnt) ──
+    // Mencegah tagihan ganda saat user refresh/klik 2x atau request timeout
+    // lalu retry: order_id SAMA dipakai ulang, Midtrans menolak duplikat.
+    const reuseWindow = new Date(Date.now() - 15 * 60 * 1000);
+    const reuseOwner = session?.userId
+      ? { userId: session.userId }
+      : donorEmail
+        ? { userId: null, donorEmail }
+        : null;
+    if (reuseOwner) {
+      const existingPending = await prisma.donation.findFirst({
+        where: {
+          ...reuseOwner,
+          status: "pending",
+          amountIdr: amount,
+          projectId: projectId || null,
+          createdAt: { gte: reuseWindow },
+        },
+        select: { id: true, invoiceId: true },
+        orderBy: { createdAt: "desc" },
+      });
+      if (existingPending?.invoiceId) {
+        return NextResponse.json({
+          success: true,
+          reused: true,
+          donation: { id: existingPending.id, invoiceId: existingPending.invoiceId },
+          invoiceUrl: snapRedirectUrl(existingPending.invoiceId),
+        });
       }
     }
 

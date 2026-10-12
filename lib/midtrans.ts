@@ -41,6 +41,15 @@ function snapBaseUrl(): string {
   return process.env.MIDTRANS_IS_PRODUCTION === "true" ? SNAP_PROD_URL : SNAP_SANDBOX_URL;
 }
 
+/** Rekonstruksi URL bayar dari snap token (untuk pakai ulang transaksi pending). */
+export function snapRedirectUrl(token: string): string {
+  const base =
+    process.env.MIDTRANS_IS_PRODUCTION === "true"
+      ? "https://app.midtrans.com/snap/v2/vtweb"
+      : "https://app.sandbox.midtrans.com/snap/v2/vtweb";
+  return `${base}/${token}`;
+}
+
 export type CreateSnapInput = {
   orderId: string;
   amount: number;

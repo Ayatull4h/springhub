@@ -28,6 +28,10 @@ Alur setiap klik: HP → DNS Cloudflare (104.21.30.76 / 172.67.172.125, IP asli 
 
 Contoh 1 laporan (3 foto) = 8 hit: definisi form, sesi, CSRF, kirim laporan, CSRF, 3× foto.
 
+## 6. Anti Tagihan Ganda Donasi
+
+Refresh/klik-ganda/timeout tidak menagih 2x: donasi pending yang sama (donor + nominal + proyek, umur < 15 menit) dipakai ulang `order_id`-nya; Midtrans menolak order ganda; webhook idempoten + CAS atomik; nominal webhook dicocokkan DB. Expiry transaksi tetap 24 jam (aman untuk VA bank).
+
 ## 4. Status Keamanan (audit 50 item)
 
 **Sudah diterapkan:** RCE Next.js ditutup (15.5.26), DB least-privilege, `.env` 600, `x-powered-by` mati, backup terenkripsi + restore test lolos, CSRF semua mutasi, bcrypt 12 + lockout, reset token sekali pakai, upload magic-bytes + nama acak, HSTS/frame/nosniff/CSP/referrer aktif, rate limit + fail2ban + Sentry, Midtrans signature + cek nominal + IP Allow.
