@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e0f2fe"/><stop offset="1" stop-color="#f0f9ff"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dcfce7"/><stop offset="1" stop-color="#f0fdf4"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fef3c7"/><stop offset="1" stop-color="#fffbeb"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0284c7"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="860" fill="#ffffff"/>
+  <text x="640" y="46" text-anchor="middle" font-size="30" font-weight="bold" fill="#0c4a6e">Peta Lalu Lintas Web SpringHub</text>
+  <text x="640" y="72" text-anchor="middle" font-size="14" fill="#64748b">www.springhub.id — alur request, kapasitas &amp; pengaman (per 2026)</text>
+
+  <!-- USER -->
+  <g>
+    <rect x="30" y="240" width="170" height="150" rx="18" fill="url(#amber)" stroke="#f59e0b" stroke-width="2"/>
+    <text x="115" y="272" text-anchor="middle" font-size="40">📱</text>
+    <text x="115" y="300" text-anchor="middle" font-size="16" font-weight="bold" fill="#92400e">Pengguna</text>
+    <text x="115" y="322" text-anchor="middle" font-size="12" fill="#92400e">HP / Laptop</text>
+    <text x="115" y="340" text-anchor="middle" font-size="12" fill="#92400e">8 klik / 1 laporan</text>
+    <text x="115" y="358" text-anchor="middle" font-size="12" fill="#92400e">foto ±300 KB</text>
+  </g>
+
+  <!-- DNS -->
+  <g>
+    <rect x="250" y="240" width="190" height="150" rx="18" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+    <text x="345" y="272" text-anchor="middle" font-size="40">📖</text>
+    <text x="345" y="300" text-anchor="middle" font-size="16" font-weight="bold" fill="#334155">DNS Cloudflare</text>
+    <text x="345" y="322" text-anchor="middle" font-size="12" fill="#334155">buku telepon internet</text>
+    <text x="345" y="340" text-anchor="middle" font-size="12" fill="#334155">104.21.30.76</text>
+    <text x="345" y="358" text-anchor="middle" font-size="12" fill="#334155">172.67.172.125</text>
+  </g>
+
+  <!-- CLOUDFLARE -->
+  <g>
+    <rect x="490" y="200" width="230" height="230" rx="18" fill="url(#sky)" stroke="#0284c7" stroke-width="2.5"/>
+    <text x="605" y="232" text-anchor="middle" font-size="40">🛡️</text>
+    <text x="605" y="260" text-anchor="middle" font-size="16" font-weight="bold" fill="#0c4a6e">Cloudflare</text>
+    <text x="605" y="282" text-anchor="middle" font-size="12" fill="#0c4a6e">satpam + jalan tol</text>
+    <text x="605" y="304" text-anchor="middle" font-size="12" fill="#0c4a6e">• IP asli disembunyikan</text>
+    <text x="605" y="324" text-anchor="middle" font-size="12" fill="#0c4a6e">• WAF: Midtrans Allow</text>
+    <text x="605" y="344" text-anchor="middle" font-size="12" fill="#0c4a6e">• HTTPS paksa + DDoS</text>
+    <text x="605" y="364" text-anchor="middle" font-size="12" fill="#0c4a6e">• Cache gambar/statik</text>
+    <text x="605" y="392" text-anchor="middle" font-size="12" font-weight="bold" fill="#b45309">⚠ proxy harus selalu ON</text>
+  </g>
+
+  <!-- VPS -->
+  <g>
+    <rect x="770" y="120" width="480" height="560" rx="18" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8 5"/>
+    <text x="1010" y="146" text-anchor="middle" font-size="14" font-weight="bold" fill="#64748b">VPS 76.13.198.18 — 4 CPU · 15 GB RAM · 193 GB disk</text>
+
+    <rect x="795" y="165" width="430" height="95" rx="14" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+    <text x="1010" y="192" text-anchor="middle" font-size="15" font-weight="bold" fill="#334155">🚪 Nginx — pintu gerbang (port 80/443)</text>
+    <text x="1010" y="214" text-anchor="middle" font-size="12" fill="#334155">2.048 koneksi · file max 20 MB · rate limit: API 30/dtk, login 5/dtk, lapor 1/dtk</text>
+    <text x="1010" y="234" text-anchor="middle" font-size="12" fill="#334155">UFW: hanya 22/80/443 terbuka</text>
+
+    <rect x="795" y="280" width="210" height="130" rx="14" fill="url(#green)" stroke="#16a34a" stroke-width="2"/>
+    <text x="900" y="308" text-anchor="middle" font-size="15" font-weight="bold" fill="#14532d">📦 Web (1 GB)</text>
+    <text x="900" y="330" text-anchor="middle" font-size="12" fill="#14532d">Next.js 15 · ~50–100</text>
+    <text x="900" y="348" text-anchor="middle" font-size="12" fill="#14532d">user bareng</text>
+    <text x="900" y="372" text-anchor="middle" font-size="12" font-weight="bold" fill="#14532d">+ Worker (512 MB)</text>
+    <text x="900" y="390" text-anchor="middle" font-size="12" fill="#14532d">proses foto &amp; email</text>
+
+    <rect x="1015" y="280" width="210" height="130" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="1120" y="308" text-anchor="middle" font-size="15" font-weight="bold" fill="#5b21b6">🗄️ Postgres</text>
+    <text x="1120" y="330" text-anchor="middle" font-size="12" fill="#5b21b6">pool 10 koneksi</text>
+    <text x="1120" y="348" text-anchor="middle" font-size="12" font-weight="bold" fill="#b45309">⚠ leher botol #1</text>
+    <text x="1120" y="372" text-anchor="middle" font-size="12" fill="#5b21b6">+ Redis antrean</text>
+    <text x="1120" y="390" text-anchor="middle" font-size="12" fill="#5b21b6">localhost saja ✅</text>
+
+    <rect x="795" y="430" width="430" height="110" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <text x="1010" y="456" text-anchor="middle" font-size="15" font-weight="bold" fill="#9a3412">🔒 Pengaman dalam</text>
+    <text x="1010" y="478" text-anchor="middle" font-size="12" fill="#9a3412">DB role least-privilege · CSRF · bcrypt 12 · lockout · fail2ban · backup terenkripsi</text>
+    <text x="1010" y="500" text-anchor="middle" font-size="12" fill="#9a3412">Midtrans: signature + cek nominal · foto: magic-bytes, max 10 MB</text>
+    <text x="1010" y="522" text-anchor="middle" font-size="12" font-weight="bold" fill="#b91c1c">✘ Tanpa: captcha, MFA, SSH key-only, pentest formal</text>
+
+    <rect x="795" y="560" width="430" height="95" rx="14" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+    <text x="1010" y="586" text-anchor="middle" font-size="15" font-weight="bold" fill="#115e59">📈 Kapasitas &amp; pecah telur</text>
+    <text x="1010" y="608" text-anchor="middle" font-size="12" fill="#115e59">Aman: ratusan submit bareng · 100 relawan/hari = receh (±45 MB/hari)</text>
+    <text x="1010" y="630" text-anchor="middle" font-size="12" fill="#115e59">Jebol duluan: pool DB → 503 sesaat, sembuh sendiri · Naik kelas: pool → web ke-2 → R2</text>
+  </g>
+
+  <!-- arrows -->
+  <line x1="200" y1="315" x2="246" y2="315" stroke="#0284c7" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="440" y1="315" x2="486" y2="315" stroke="#0284c7" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="720" y1="315" x2="766" y2="315" stroke="#0284c7" stroke-width="3" marker-end="url(#arr)"/>
+  <text x="223" y="305" text-anchor="middle" font-size="11" fill="#0284c7">tanya IP</text>
+  <text x="463" y="305" text-anchor="middle" font-size="11" fill="#0284c7">bersih</text>
+  <text x="743" y="305" text-anchor="middle" font-size="11" fill="#0284c7">terus</text>
+
+  <text x="640" y="730" text-anchor="middle" font-size="13" fill="#64748b">Legenda: 🛡️ pelindung · ⚠ perhatian · ✅ aman · ✘ belum ada</text>
+  <text x="640" y="756" text-anchor="middle" font-size="13" fill="#64748b">Contoh 1 laporan (3 foto): 8 hit API — form, sesi, CSRF, lapor, CSRF, 3× foto</text>
+  <text x="640" y="800" text-anchor="middle" font-size="12" fill="#94a3b8">SpringHub · Jaga Semesta · www.springhub.id</text>
+</svg>
