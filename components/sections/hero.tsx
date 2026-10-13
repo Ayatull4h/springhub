@@ -37,7 +37,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="">
+      <div className="transition-transform hover:rotate-0 md:rotate-2">
       <BkkCloudBox className="aspect-video bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip>
         <LiteYouTubeEmbed videoId="oUDA1loE8BE" title="Jaga Semesta · SpringHub" />
       </BkkCloudBox>

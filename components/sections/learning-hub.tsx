@@ -87,8 +87,10 @@ export function LearningHub() {
         <div className="mt-10 grid gap-5 md:grid-cols-2 md:gap-7 lg:grid-cols-3">
           {courses.map((c, ci) => {
             const prog = getProgress(c.slug);
+            const tilts = ["md:-rotate-2", "md:rotate-1 md:translate-y-6", "md:-rotate-1 md:translate-y-2"];
             return (
-              <BkkCloudBox key={c.id} className="flex flex-col bg-white p-6 pb-8 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={ci % 2 === 0} tall>
+              <div key={c.id} className={`transition-transform hover:rotate-0 ${tilts[ci % tilts.length]}`}>
+              <BkkCloudBox className="flex flex-col bg-white p-6 pb-8 dark:bg-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip={ci % 2 === 0} tall>
                 <div className="-mx-6 -mt-6 mb-3 flex h-32 items-center justify-center bg-gradient-to-br from-tang-100 to-cream dark:from-indigo-900/30 dark:to-indigo-900/50">
                   <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
                 </div>
@@ -147,6 +149,7 @@ export function LearningHub() {
                       : t("learn.startCourse")}
                 </Link>
               </BkkCloudBox>
+              </div>
             );
           })}
         </div>

@@ -27,7 +27,7 @@ export default function HomePage() {
           <div className="lg:border-r lg:border-ink-line lg:pr-8 xl:pr-12">
             <FeaturedProjects />
           </div>
-          <div className="lg:pl-8 xl:pl-12 lg:self-stretch">
+          <div className="lg:pl-8 xl:pl-12 lg:self-stretch lg:translate-y-8">
             <DonateSection />
           </div>
         </div>

@@ -14,7 +14,7 @@ const STAT_CARDS = [
   "bg-lagoon-500",
   "bg-leaf-500",
 ];
-const STAT_TILTS = ["md:-rotate-2", "md:rotate-1", "md:-rotate-2", "md:rotate-2"];
+const STAT_TILTS = ["md:-rotate-2", "md:rotate-1", "md:-rotate-1", "md:rotate-2"];
 
 
 const iconMap: Record<string, typeof Droplets> = {
@@ -143,7 +143,7 @@ export function ImpactDashboard() {
               const Icon = iconMap[s.icon] ?? Droplets;
               return (
                 <BkkReveal key={s.label} delay={(si % 4) * 90}>
-                <div className={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-3" : ""}`}>
+                <div className={`transition-transform hover:rotate-0 ${STAT_TILTS[si % STAT_TILTS.length]} ${si % 2 ? "md:translate-y-6" : "md:-translate-y-1"}`}>
                 <BkkCloudBox className={`${STAT_CARDS[si % STAT_CARDS.length]} p-8 pb-14 md:p-10 md:pb-16 ${si % 4 === 1 ? "drop-shadow-[0_18px_36px_rgba(201,106,31,0.45)]" : "drop-shadow-[0_18px_28px_rgba(61,22,96,0.18)]"}`} flip={si % 2 === 1}>
                   <BkkInnerWave className="absolute bottom-0 left-0 text-white/30" />
                   <div className="flex items-center justify-between">
@@ -173,7 +173,7 @@ export function ImpactDashboard() {
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-7">
-            <div className="transition-transform hover:rotate-0 md:-rotate-2">
+            <div className="transition-transform hover:rotate-0 md:-rotate-2 md:translate-y-1">
             <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
               <BkkInnerWave className="absolute bottom-0 left-0 text-tang-100 dark:text-slate-800" />
               <h3 className="relative flex items-center gap-2 font-display text-sm font-bold text-ink">
@@ -227,7 +227,7 @@ export function ImpactDashboard() {
             </BkkCloudBox>
             </div>
 
-            <div className="transition-transform hover:rotate-0 md:-translate-y-2 md:rotate-2">
+            <div className="transition-transform hover:rotate-0 md:translate-y-8 md:rotate-1">
             <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip tall>
               <BkkInnerWave className="absolute bottom-0 left-0 text-lagoon-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.regions")}</h3>
@@ -250,7 +250,7 @@ export function ImpactDashboard() {
             </BkkCloudBox>
             </div>
 
-            <div className="transition-transform hover:rotate-0 md:-rotate-2">
+            <div className="transition-transform hover:rotate-0 md:-rotate-1 md:translate-y-3">
             <BkkCloudBox className="bg-white p-10 pb-16 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)] dark:bg-slate-900" flip={false} tall>
               <BkkInnerWave className="absolute bottom-0 left-0 text-leaf-100 dark:text-slate-800" />
               <h3 className="relative font-display text-sm font-bold text-ink">{t("dashboard.volunteers")}</h3>

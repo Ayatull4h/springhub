@@ -233,7 +233,7 @@ export function VolunteerActivities() {
           </div>
         </div>
 
-        <div className="flex flex-col transition-transform hover:rotate-0 md:rotate-1 lg:col-span-5 h-full">
+        <div className="flex flex-col transition-transform hover:rotate-0 md:rotate-2 md:translate-y-5 lg:col-span-5 h-full">
         <BkkCloudBox className="bg-gradient-to-br from-tang-100 to-cream p-10 pb-12 h-full dark:from-slate-800 dark:to-slate-900 drop-shadow-[0_18px_28px_rgba(61,22,96,0.16)]" flip tall>
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-ink">
