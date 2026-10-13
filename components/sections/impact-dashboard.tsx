@@ -114,8 +114,8 @@ export function ImpactDashboard() {
   ];
 
   return (
-    <section id="dashboard" className="overflow-x-clip bg-cream pb-0 pt-0 md:pt-0 dark:bg-slate-900">
-      <BkkCurve top="bg-white dark:bg-[#0b0f15]" bottom="text-cream dark:text-slate-900" accent="text-tang-200" />
+    <section id="dashboard" className="overflow-x-clip bg-transparent pb-0 pt-0 md:pt-0 dark:bg-transparent">
+      <BkkCurve top="bg-transparent" bottom="text-cream dark:text-slate-900" accent="text-tang-200" />
       <div className="container-page pt-10 md:pt-14">
       <h2 className="text-center font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         {t("dashboard.title")}{" "}

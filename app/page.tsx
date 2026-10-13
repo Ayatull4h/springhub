@@ -12,7 +12,7 @@ import { DonateSection } from "@/components/sections/donate";
 import { BkkCurve } from "@/components/sections/bkk-decor";
 export default function HomePage() {
   return (
-    <>
+    <div className="landing-flow">
       <Hero />
       <ImpactDashboard />
       <SpringMap />
@@ -38,6 +38,6 @@ export default function HomePage() {
       <PartnerSection />
       <LearningHub />
       <MediaSection />
-    </>
+    </div>
   );
 }
