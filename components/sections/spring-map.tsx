@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 import { BkkCurve, BkkTitleCloud, BkkInnerWave, BkkCloudBox, BKK_ROW_RADII, BKK_ROW_TILTS } from "./bkk-decor";
-import { UcengIcon, PariIcon } from "./eco-icons";
+import { BambooIcon } from "./eco-icons";
 import { StatusInfo } from "@/components/sections/status-info";
 import { FloatingPointsButton } from "@/components/floating-points-button";
 import { MapFilter } from "@/components/map/map-filter";
@@ -456,8 +456,8 @@ const formTitleI18nKey = (slug: string): string => {
 
   return (
     <section id="map" className="relative overflow-hidden bg-white pt-16 md:pt-20 dark:bg-slate-900">
-      <PariIcon className="pointer-events-none absolute right-10 top-24 hidden w-24 rotate-6 opacity-80 lg:block" />
-      <UcengIcon className="pointer-events-none absolute right-48 top-40 hidden w-20 -rotate-3 opacity-80 lg:block" />
+      <BambooIcon className="pointer-events-none absolute right-[3%] top-8 hidden w-24 opacity-90 lg:block" />
+      <BambooIcon className="pointer-events-none absolute right-[10%] top-28 hidden w-20 opacity-80 lg:block" />
       <div className="container-page relative z-10">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-cream dark:text-slate-800">{t("map.title")}{" "}

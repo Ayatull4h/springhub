@@ -24,7 +24,7 @@ import { formatNumber } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { PointsGuideModal } from "@/components/sections/points-guide-modal";
 import { BKK_CARD_RADII, BkkCurve, BkkTitleCloud, BkkCloudEdge, BkkCloudBox } from "./bkk-decor";
-import { KepekIcon, WaderIcon } from "./eco-icons";
+import { BambooIcon } from "./eco-icons";
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -128,8 +128,8 @@ export function VolunteerActivities() {
 
   return (
     <section id="community" className="relative overflow-hidden bg-[#f6f1fb] pt-16 md:pt-20 dark:bg-slate-900/60">
-      <KepekIcon className="pointer-events-none absolute bottom-24 left-[6%] hidden w-24 -rotate-6 opacity-80 lg:block" />
-      <WaderIcon className="pointer-events-none absolute bottom-32 right-[10%] hidden w-20 rotate-6 opacity-80 lg:block" />
+      <BambooIcon className="pointer-events-none absolute bottom-16 left-[4%] hidden w-28 opacity-80 lg:block" />
+      <BambooIcon className="pointer-events-none absolute bottom-16 right-[4%] hidden w-28 opacity-80 lg:block" />
       <div className="container-page relative z-10">
       <h2 className="font-display text-3xl font-bold tracking-tight text-bkk-700 md:text-5xl dark:text-white">
         <BkkTitleCloud cloudClass="text-white dark:text-slate-800">{t("volunteer.title")}{" "}
