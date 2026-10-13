@@ -688,7 +688,7 @@ const formTitleI18nKey = (slug: string): string => {
               </Link>
             ))}
           </div>
-          <div className="mt-3 flex items-start gap-2 rounded-[1rem_1.8rem_1rem_1.5rem] border border-ink-line/60 bg-white px-3 py-2 text-xs text-ink-muted dark:border-slate-700 dark:bg-slate-800">
+          <div className="mt-3 flex items-start gap-2 rounded-[48%_52%_50%_50%/30%_32%_28%_30%] border border-ink-line/60 bg-white px-3 py-2 text-xs text-ink-muted dark:border-slate-700 dark:bg-slate-800">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-none text-brand-600" />
             <span>
               {t("map.discoveryPrompt").includes("href=") ? (
@@ -707,7 +707,7 @@ const formTitleI18nKey = (slug: string): string => {
           <div className="mt-3 grid grid-cols-2 gap-3">
             <Link
               href="/seedlings"
-              className="group flex flex-col items-center justify-center rounded-[1.5rem_1rem_1.8rem_1rem] border border-green-200 bg-gradient-to-br from-green-50 to-white px-3 py-3 text-center text-sm transition-all duration-200 hover:-translate-y-0.5 hover:rotate-0 hover:shadow-elevated hover:border-green-300 cursor-pointer md:-rotate-1 dark:border-slate-700 dark:from-slate-800 dark:to-slate-800"
+              className="group flex flex-col items-center justify-center rounded-[52%_48%_55%_45%/32%_30%_34%_32%] border border-green-200 bg-gradient-to-br from-green-50 to-white px-3 py-3 text-center text-sm transition-all duration-200 hover:-translate-y-0.5 hover:rotate-0 hover:shadow-elevated hover:border-green-300 cursor-pointer md:-rotate-1 dark:border-slate-700 dark:from-slate-800 dark:to-slate-800"
             >
               <span className="mb-1 flex h-8 w-8 items-center justify-center rounded-[55%_45%_60%_40%/60%_55%_45%_60%] bg-green-100 transition-transform duration-200 group-hover:scale-110 dark:bg-green-900/50">
                 <Sprout className="h-4 w-4 text-green-600 dark:text-green-400" />

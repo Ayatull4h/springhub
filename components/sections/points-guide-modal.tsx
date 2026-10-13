@@ -122,7 +122,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
         </p>
 
         {userData !== null && (
-          <div className="mt-4 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 p-4 text-white">
+          <div className="mt-4 rounded-[46%_54%_52%_48%/28%_30%_26%_32%] bg-gradient-to-r from-brand-600 to-brand-500 p-4 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wider text-white/80">Poin Kamu</p>
@@ -145,7 +145,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
             const items = rules.filter((r) => r.category === cat.key);
             if (items.length === 0) return null;
             return (
-              <div key={cat.key} className={`mt-4 rounded-xl ${cat.bg} p-3`}>
+              <div key={cat.key} className={`mt-4 rounded-[52%_48%_55%_45%/30%_28%_32%_30%] ${cat.bg} p-3`}>
                 <h4 className="mb-2 text-sm font-semibold text-ink">
                   {cat.label}
                 </h4>
@@ -155,7 +155,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
                     return (
                       <div
                         key={rule.id}
-                        className="flex items-center justify-between rounded-lg bg-white/80 dark:bg-slate-800/80 px-3 py-2"
+                        className="flex items-center justify-between rounded-[55%_45%_60%_40%/50%_55%_45%_50%] bg-white/80 dark:bg-slate-800/80 px-3 py-2"
                       >
                         <div className="flex items-center gap-2.5">
                           <Icon className="h-4 w-4 text-brand-600 shrink-0" />
@@ -181,7 +181,7 @@ export function PointsGuideModal({ open, onClose }: Props) {
         )}
 
         {!loading && rules.length === 0 && (
-          <div className="mt-6 rounded-xl bg-slate-50 p-6 text-center text-sm text-ink-muted dark:bg-slate-800">
+          <div className="mt-6 rounded-[48%_52%_50%_50%/32%_30%_34%_32%] bg-slate-50 p-6 text-center text-sm text-ink-muted dark:bg-slate-800">
             Belum ada aturan poin yang tersedia.
           </div>
         )}
