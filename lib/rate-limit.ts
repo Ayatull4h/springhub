@@ -136,7 +136,7 @@ export const loginLockout = createRateLimiter("login-lockout", {
   maxRequests: 5,
 });
 
-// Webhook: 10 requests per 60 detik — cegah flood dari Xendit callback
+// Webhook: 10 requests per 60 detik — cegah flood dari callback Midtrans
 export const webhookLimiter = createRateLimiter("webhook", {
   windowMs: 60_000,
   maxRequests: 10,

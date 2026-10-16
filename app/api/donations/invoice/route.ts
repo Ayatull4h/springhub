@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { randomUUID } from "crypto";
-import { createInvoice, DONATION_TIERS } from "@/lib/xendit";
+import { createSnapTransaction, snapRedirectUrl, DONATION_TIERS } from "@/lib/midtrans";
 import { getSession } from "@/lib/auth";
 import { verifyCsrfToken } from "@/lib/csrf";
 import { donationLimiter } from "@/lib/rate-limit";
@@ -74,15 +74,50 @@ export async function POST(request: Request) {
       }
     }
 
+    // ── Idempotency: pakai ulang donasi pending yang sama (<15 mnt) ──
+    // Mencegah tagihan ganda saat user refresh/klik 2x atau request timeout
+    // lalu retry: order_id SAMA dipakai ulang, Midtrans menolak duplikat.
+    const reuseWindow = new Date(Date.now() - 15 * 60 * 1000);
+    const reuseOwner = session?.userId
+      ? { userId: session.userId }
+      : donorEmail
+        ? { userId: null, donorEmail }
+        : null;
+    if (reuseOwner) {
+      const existingPending = await prisma.donation.findFirst({
+        where: {
+          ...reuseOwner,
+          status: "pending",
+          amountIdr: amount,
+          projectId: projectId || null,
+          createdAt: { gte: reuseWindow },
+        },
+        select: { id: true, invoiceId: true },
+        orderBy: { createdAt: "desc" },
+      });
+      if (existingPending?.invoiceId) {
+        return NextResponse.json({
+          success: true,
+          reused: true,
+          donation: { id: existingPending.id, invoiceId: existingPending.invoiceId },
+          invoiceUrl: snapRedirectUrl(existingPending.invoiceId),
+        });
+      }
+    }
+
     // Generate unique external ID
     const externalId = `DON-${randomUUID()}`;
 
     // ── Persist donation record ──
+    // invoiceId diisi externalId dulu (kolom @unique tak boleh "" ganda —
+    // baris gagal harus tetap unik agar tidak meracuni donasi berikutnya),
+    // lalu ditimpa snap token asli setelah Midtrans merespons.
     const created = await prisma.donation.create({
       data: {
         userId: session?.userId ?? null,
         projectId: projectId || null,
         externalId,
+        invoiceId: externalId,
         amountIdr: amount,
         tierId: tierId || "",
         donorName: donorName.trim(),
@@ -91,19 +126,19 @@ export async function POST(request: Request) {
       },
     });
 
-    // ── Create real Xendit invoice ──
-    let invoice: Awaited<ReturnType<typeof createInvoice>>;
+    // ── Create real Midtrans Snap transaction ──
+    let snap: Awaited<ReturnType<typeof createSnapTransaction>>;
     try {
-      invoice = await createInvoice({
-        externalId,
+      snap = await createSnapTransaction({
+        orderId: externalId,
         amount,
         payerEmail: donorEmail || undefined,
+        payerName: donorName.trim() || undefined,
         description: projectId
           ? `Donasi untuk proyek — SpringHub`
           : tierId
             ? `Donasi ${tierId} — SpringHub`
             : "Donasi SpringHub",
-        paymentMethods: ["OVO", "GOPAY", "DANA", "SHOPEEPAY", "QRIS"],
       });
     } catch (error) {
       try {
@@ -125,16 +160,14 @@ export async function POST(request: Request) {
       const updated = await prisma.donation.update({
         where: { id: created.id },
         data: {
-          invoiceId: invoice.id,
-          expiresAt: invoice.expiryDate
-            ? new Date(invoice.expiryDate)
-            : new Date(Date.now() + 24 * 60 * 60 * 1000),
+          invoiceId: snap.token,
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         },
       });
       savedInvoiceId = updated.invoiceId;
     } catch (updateError) {
       console.error(
-        "Failed to attach Xendit invoice id:",
+        "Failed to attach Midtrans snap token:",
         updateError instanceof Error ? updateError.message : updateError
       );
     }
@@ -145,7 +178,7 @@ export async function POST(request: Request) {
         id: created.id,
         invoiceId: savedInvoiceId,
       },
-      invoiceUrl: invoice.invoiceUrl,
+      invoiceUrl: snap.redirectUrl,
     });
   } catch (error: unknown) {
     console.error("Invoice creation error:", error instanceof Error ? error.message : error);

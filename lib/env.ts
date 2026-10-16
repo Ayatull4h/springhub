@@ -15,8 +15,9 @@ const envSchema = z.object({
   // ── High — features will break without these ──────────────────────────
   UPLOAD_DIR: z.string().optional().default("/data/uploads"),
   UPLOAD_URL_PREFIX: z.string().optional().default("/uploads"),
-  XENDIT_SECRET_KEY: z.string().optional(),
-  XENDIT_WEBHOOK_TOKEN: z.string().optional(),
+  MIDTRANS_SERVER_KEY: z.string().optional(),
+  MIDTRANS_CLIENT_KEY: z.string().optional(),
+  MIDTRANS_IS_PRODUCTION: z.string().optional(),
   REDIS_URL: z.string().optional(),
   REDIS_QUEUE_URL: z.string().optional(),
   S3_ENDPOINT: z.string().optional(),

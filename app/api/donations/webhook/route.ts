@@ -1,19 +1,20 @@
 import { NextResponse } from "next/server";
 import { prisma, getErrorMessage, isDatabaseError } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
-import { createHash, timingSafeEqual } from "crypto";
 import type { DonationStatus } from "@prisma/client";
 import { webhookLimiter } from "@/lib/rate-limit";
+import { verifyMidtransSignature, type MidtransNotification } from "@/lib/midtrans";
 
 /**
- * Xendit webhook handler for payment status notifications.
+ * Midtrans webhook handler for payment status notifications.
  *
- * Verifies callback using the x-callback-token header via constant-time
- * comparison. When XENDIT_WEBHOOK_TOKEN is not configured the webhook is
- * rejected outright — except in staging (NEXT_PUBLIC_STAGING=true) where
- * the payload is accepted and logged for testing.
+ * Security (all must pass):
+ * 1. signature_key verified (SHA-512 constant-time) — rejects forged calls.
+ * 2. gross_amount cross-checked against the stored donation row — rejects
+ *    tampered amounts (e.g. pay Rp10.000 credited as Rp1.000.000).
+ * 3. Rate-limited per IP; no secrets ever logged.
  *
- * Docs: https://developers.xendit.co/api-reference/#webhooks
+ * Docs: https://docs.midtrans.com/docs/http-notification
  */
 export async function POST(request: Request) {
   try {
@@ -24,54 +25,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
-    const expectedToken = process.env.XENDIT_WEBHOOK_TOKEN;
-
-    if (!expectedToken) {
-      if (process.env.NEXT_PUBLIC_STAGING === "true") {
-        console.warn("XENDIT_WEBHOOK_TOKEN tidak diset — menerima webhook (staging log-only)");
-      } else {
-        console.error("XENDIT_WEBHOOK_TOKEN tidak diset — menolak webhook");
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-    } else {
-      const token = request.headers.get("x-callback-token") || "";
-      const tokenHash = createHash("sha256").update(token).digest();
-      const expectedHash = createHash("sha256").update(expectedToken).digest();
-      if (!timingSafeEqual(tokenHash, expectedHash)) {
-        console.warn("Invalid webhook callback token");
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-    }
-
-    const body = await request.json();
-    const safeLog = { id: body.id, external_id: body.external_id, status: body.status };
-    console.log("Xendit webhook received:", JSON.stringify(safeLog));
-
-    const { id, external_id, status, paid_at } = body;
-
-    if (!id && !external_id) {
-      return NextResponse.json({ error: "Missing invoice id" }, { status: 400 });
-    }
-
-    const statusMap: Record<string, string> = {
-      PAID: "paid",
-      SETTLED: "paid",
-      EXPIRED: "expired",
-      FAILED: "failed",
+    const body = (await request.json()) as MidtransNotification;
+    const safeLog = {
+      order_id: body.order_id,
+      status_code: body.status_code,
+      transaction_status: body.transaction_status,
     };
+    console.log("Midtrans webhook received:", JSON.stringify(safeLog));
 
-    const localStatus = statusMap[status];
-    if (!localStatus) {
-      console.log("Unhandled Xendit status:", status, "for invoice:", id);
-      return NextResponse.json({ success: true, status: "ignored" });
+    // 1. Verifikasi signature — tanpa server key / mismatch = tolak
+    if (!verifyMidtransSignature(body)) {
+      console.warn("Invalid Midtrans signature for order:", body.order_id);
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // ── Idempotency check ──
-    // Xendit may send duplicate webhooks. Check if already processed.
+    const { order_id, transaction_status, fraud_status, payment_type, transaction_time } = body;
+
+    if (!order_id) {
+      return NextResponse.json({ error: "Missing order id" }, { status: 400 });
+    }
+
+    // ── Idempotency lookup ──
     const existing = await prisma.donation.findFirst({
-      where: external_id
-        ? { OR: [{ invoiceId: id || "" }, { externalId: external_id }] }
-        : { invoiceId: id },
+      where: { OR: [{ invoiceId: order_id }, { externalId: order_id }] },
       select: { id: true, status: true, projectId: true, amountIdr: true, userId: true, donorName: true, donorEmail: true, tierId: true },
     });
 
@@ -79,9 +55,37 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Donation not found" }, { status: 404 });
     }
 
+    // 2. Cross-check nominal — tolak bila webhook bilang beda dari DB
+    const notifiedAmount = parseInt(body.gross_amount || "", 10);
+    if (!Number.isFinite(notifiedAmount) || notifiedAmount !== existing.amountIdr) {
+      console.warn(
+        `Amount mismatch for donation ${existing.id}: db=${existing.amountIdr} webhook=${body.gross_amount}`
+      );
+      return NextResponse.json({ error: "Amount mismatch" }, { status: 400 });
+    }
+
     // If already paid, skip (idempotent)
     if (existing.status === "paid") {
       return NextResponse.json({ success: true, status: "already_processed" });
+    }
+
+    // Status mapping — capture hanya dihitung bila fraud lolos
+    let localStatus: DonationStatus | null = null;
+    if (transaction_status === "settlement") {
+      localStatus = "paid";
+    } else if (transaction_status === "capture") {
+      localStatus = fraud_status === "challenge" ? null : "paid";
+    } else if (transaction_status === "pending") {
+      return NextResponse.json({ success: true, status: "pending" });
+    } else if (transaction_status === "deny" || transaction_status === "cancel") {
+      localStatus = "failed";
+    } else if (transaction_status === "expire") {
+      localStatus = "expired";
+    }
+
+    if (!localStatus) {
+      console.log("Unhandled Midtrans status:", transaction_status, "for order:", order_id);
+      return NextResponse.json({ success: true, status: "ignored" });
     }
 
     // ── Atomic compare-and-set: only one concurrent webhook wins ──
@@ -93,7 +97,7 @@ export async function POST(request: Request) {
         },
         data: {
           status: localStatus as DonationStatus,
-          paidAt: paid_at ? new Date(paid_at) : localStatus === "paid" ? new Date() : null,
+          paidAt: transaction_time ? new Date(transaction_time) : localStatus === "paid" ? new Date() : null,
         },
       });
 
@@ -114,7 +118,7 @@ export async function POST(request: Request) {
             reportId: null,
             amount: pointsAwarded,
             reason: `donasi Rp${existing.amountIdr.toLocaleString("id-ID")}`,
-            metadata: JSON.stringify({ invoiceId: id, donationId: existing.id }),
+            metadata: JSON.stringify({ orderId: order_id, donationId: existing.id, paymentType: payment_type || null }),
           },
         });
 
@@ -151,7 +155,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, status: "already_processed" });
     }
 
-    console.log(`Donation ${localStatus} — processed ${existing.id}`);
+    console.log(`Donation ${localStatus} — processed ${existing.id} via Midtrans`);
 
     return NextResponse.json({ success: true, updated: true });
   } catch (error) {

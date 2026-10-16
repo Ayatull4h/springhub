@@ -35,6 +35,34 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [expandedPhoto, setExpandedPhoto] = useState<string | null>(null);
+  const [donorName, setDonorName] = useState("");
+  const [donorEmail, setDonorEmail] = useState("");
+  const [donateAmount, setDonateAmount] = useState("50000");
+  const [donating, setDonating] = useState(false);
+  const [donateError, setDonateError] = useState("");
+
+  async function donateToProject() {
+    if (!project || donating) return;
+    const amount = parseInt(donateAmount, 10);
+    if (!donorName.trim()) { setDonateError("Nama wajib diisi"); return; }
+    if (isNaN(amount) || amount < 1000) { setDonateError("Minimum donasi Rp 1.000"); return; }
+    setDonating(true); setDonateError("");
+    try {
+      const { token } = await fetch("/api/csrf").then(r => r.json());
+      const res = await fetch("/api/donations/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { "x-csrf-token": token } : {}) },
+        body: JSON.stringify({ amountIdr: amount, donorName, donorEmail, projectId: project.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal membuat donasi");
+      if (data.invoiceUrl) window.open(data.invoiceUrl, "_blank");
+    } catch (err: any) {
+      setDonateError(err.message || "Gagal membuat donasi");
+    } finally {
+      setDonating(false);
+    }
+  }
 
   const fetchDetail = useCallback(async () => {
     const id = params?.id as string;
@@ -145,10 +173,28 @@ export default function ProjectDetailPage() {
               </a>
             )}
 
-            {/* Donasi — TERTUNDA */}
-            <button disabled className="btn-primary w-full mt-2 opacity-50 cursor-not-allowed">
-              Donasi (Tertunda — butuh Xendit)
-            </button>
+            {/* Donasi via Midtrans */}
+            <div className="mt-2 space-y-2 border-t border-ink-line pt-3">
+              <input
+                value={donorName} onChange={e => setDonorName(e.target.value)}
+                placeholder="Nama Anda" aria-label="Nama donatur"
+                className="w-full rounded-md border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
+              />
+              <input
+                value={donorEmail} onChange={e => setDonorEmail(e.target.value)}
+                placeholder="Email (opsional)" type="email" aria-label="Email donatur"
+                className="w-full rounded-md border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
+              />
+              <input
+                value={donateAmount} onChange={e => setDonateAmount(e.target.value)}
+                placeholder="Jumlah (Rp)" type="number" min={1000} aria-label="Jumlah donasi"
+                className="w-full rounded-md border border-ink-line bg-white px-3 py-2 text-sm dark:bg-slate-800"
+              />
+              {donateError && <p className="text-xs text-red-600">{donateError}</p>}
+              <button onClick={donateToProject} disabled={donating} className="btn-primary w-full mt-2 disabled:opacity-50">
+                {donating ? "Memproses..." : "Donasi via Midtrans"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

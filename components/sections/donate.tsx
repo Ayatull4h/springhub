@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Heart, CheckCircle2, Loader2, Layers, Droplets, Telescope } from "lucide-react";
-import { DONATION_TIERS } from "@/lib/xendit";
+import { DONATION_TIERS } from "@/lib/midtrans";
 import { useI18n } from "@/lib/i18n";
 import { BkkCloudBox } from "./bkk-decor";
 
@@ -52,7 +52,7 @@ export function DonateSection() {
     <div id="donate" className="rounded-[60%_40%_55%_45%/55%_45%_60%_40%] bg-white p-8 shadow-elevated ring-2 ring-bkk-100 dark:bg-slate-900 dark:ring-slate-700">
       <CheckCircle2 className="h-12 w-12 text-emerald-500" />
       <h3 className="mt-4 text-xl font-bold">Permintaan Donasi Terkirim</h3>
-      <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Xendit yang terbuka.</p>
+      <p className="mt-2 text-sm text-ink-muted">Silakan selesaikan pembayaran di halaman Midtrans yang terbuka.</p>
     </div>
   );
 
