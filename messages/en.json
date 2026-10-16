@@ -184,7 +184,7 @@
   "eco.kepek": "Kepek Fish",
   "donate.title": "Support",
   "donate.titleAccent": "Conservation Efforts",
-  "donate.description": "Donations are processed through Xendit (cards, virtual accounts, e-wallets, QRIS). Every rupiah is tied to a measurable output reported by our field volunteers — and only admin-verified projects are open for funding.",
+  "donate.description": "Donations are processed through Midtrans (cards, virtual accounts, e-wallets, QRIS). Every rupiah is tied to a measurable output reported by our field volunteers — and only admin-verified projects are open for funding.",
   "donate.selectImpact": "Support Data-Driven Conservation",
   "donate.chooseImpact": "Choose your impact area",
   "donate.supporting": "You're supporting",
