@@ -1,7 +1,7 @@
 # Manual Test — SpringHub
-**Tanggal**: 8 September 2026 (Update: download ZIP per springs + jadwal event + 3 kartu media + popup scroll + thumbnail YT otomatis, hapus 29 dummy, prod 268 springs)
+**Tanggal**: 21 Oktober 2026 (Update: Pulangin Air — jumlah rorak 1/5/10/25/100, input manual dihapus, maksimal 100, jatuh tempo 30 hari)
 **Domain**: https://www.springhub.id (produksi) + http://76.13.198.18:8080 (staging, basic auth 181ff4f6c436d9a69f9dd12e / 1a20e619d2d431d66ac60b17)
-**Total Test**: ~225 test case — 26 kategori ( +12 download/event/media, +8 event mendatang)
+**Total Test**: ~235 test case — 27 kategori ( +10 Pulangin Air)
 
 > Cara pakai: Baca langkah-langkahnya, coba satu per satu, tulis **PASS** atau **FAIL** di kolom Hasil.
 > Kalo bingung ada petunjuk, baca lagi langkahnya pelan-pelan.
@@ -347,8 +347,8 @@ Gunakan terminal untuk test ini.
 |---|---|---|---|
 | 21.1 | Spring baru pending | Lapor monitoring → spring baru dibuat dengan status "pending" (bukan langsung active) | |
 | 21.2 | Spring tidak muncul di publik | Spring pending harusnya belum muncul di `/api/springs` | |
-| 21.3 | Admin setujui spring | `POST /api/admin/springs/:id/approve` — spring jadi active | |
-| 21.4 | Admin panel spring | Buka `/admin/map/springs` — daftar spring, filter status pending/active/merged | |
+| 21.3 | Admin setujui spring | Approve laporan di `/admin/review` — spring tertaut otomatis jadi active | |
+| 21.4 | Halaman spring lama dihapus | Buka `/admin/map/springs` — harus `404`; tidak ada approval spring terpisah | |
 | 21.5 | Search spring API | `curl "$API/api/springs/search?q=Cibeureum"` — harusnya return spring yang namanya mengandung "Cibeureum" | |
 | 21.6 | Search minimal 2 huruf | `curl "$API/api/springs/search?q=C"` — harusnya return `[]` karena minimal 2 karakter | |
 
@@ -401,7 +401,8 @@ Gunakan terminal untuk test ini.
 | Test 24 — Full Data Flow (17) | 0 | 0 | Belum diuji |
 | Test 25 — Download, Event & Media (12) | 0 | 0 | Belum diuji (fitur 8 Sep 2026) |
 | Test 26 — Jadwal Mendatang (8) | 0 | 0 | Belum diuji (fitur 9 Sep 2026) |
-| **TOTAL** | **/** | **/** | **225 test** |
+| Test 27 — Pulangin Air (10) | 0 | 0 | Belum diuji (fitur 21 Okt 2026) |
+| **TOTAL** | **/** | **/** | **235 test** |
 
 ---
 
@@ -416,7 +417,7 @@ Gunakan 2 browser (atau incognito) — 1 sebagai **volunteer**, 1 sebagai **admi
 | 24.3 | Spring pending tidak muncul publik | `curl $API/api/springs` → spring baru **belum** ada (hanya active 268 prod / 269 staging) | |
 | 24.4 | Admin lihat pending | Login admin → `GET /api/admin/reports?status=pending` → harus ada laporan "Uji Flow" dengan 3 foto | |
 | 24.5 | Admin approve (min 3 foto) | `POST /api/admin/reports/:id/approve` dengan CSRF → harus `200` + `status:"approved"`, poin +100 (cek `/api/admin/users` poin ucup naik) | |
-| 24.6 | Aktivasi spring (jika baru) | `GET /api/admin/springs?status=pending` → cari spring "Uji Flow" → `POST /api/admin/springs/:id/approve` → `200` | |
+| 24.6 | Aktivasi spring otomatis | Setelah approve laporan, spring "Uji Flow" otomatis `active`; endpoint/menu approval spring terpisah sudah dihapus | |
 | 24.7 | Publik muncul setelah approve | `curl $API/api/reports?limit=5` → laporan baru **muncul** dengan `snappedLat/Lng` (bukan precise), tanpa `email`/`phone` | |
 | 24.8 | Publik springs muncul | `curl $API/api/springs` → total `268+1` prod / `269+1` staging, spring baru ada di list | |
 | 24.9 | Detail spring publik | `curl $API/api/springs/:id` → harus `200` dengan `reports[]` (hanya approved + isActive), `photos[].url` = `/uploads/reports/...` | |
@@ -464,3 +465,47 @@ Login admin dulu (`admin@springhub.id` / `demo12345`), buka `www.springhub.id/ad
 | 26.6 | Admin lihat pendaftar | Buka `/admin/events` → Pendaftar → harus ada tabel nama/domisi/hari/WA/email + Export CSV terdownload | |
 | 26.7 | Jadikan rekap | Klik Rekap → cek Latest Media → harus ada kartu "Rekap: ..." | |
 | 26.8 | Reminder H-1 | Tunggu cron per jam → pendaftar event besok terima email "Pengingat: ..." (cek `/var/log/springhub-event-reminder.log`) | |
+
+---
+
+## Test 27 — Pulangin Air: Jumlah Rorak & Jatuh Tempo (10 test) — BARU 21 Okt 2026
+
+Login admin dulu (`admin@springhub.id` / `demo12345`), lalu pastikan `$COOKIE`, `$CSRF`, dan `$API` dari bagian **Persiapan** masih berlaku. Kalau API membalas `401 Masuk dulu`, ulangi login.
+
+| # | Yang Dicek | Cara Cek | Hasil |
+|---|---|---|---|
+| 27.1 | Halaman Pulangin Air terbuka | Buka `www.springhub.id/pulangin-air` — harus tampil penjelasan rorak, harga **Rp 20.000/rorak**, dan tombol pesan | |
+| 27.2 | Halaman pesan terbuka | Buka `www.springhub.id/pulangin-air/pesan` — harus tampil langkah 1 (lokasi), langkah 2 (jumlah rorak), dan ringkasan biaya | |
+| 27.3 | Pilihan jumlah benar | Di bagian **“2. Berapa rorak?”** hanya ada tombol angka: **1, 5, 10, 25, 100** (tidak ada 50) | |
+| 27.4 | Isian manual hilang | Di area jumlah rorak **tidak ada kotak input angka**. Buka DevTools → Console → jalankan `document.querySelectorAll('input[type="number"]').length` → hasil harus **0** | |
+| 27.5 | Total mengikuti pilihan | Klik tiap tombol dan cek ringkasan: 1 → **Rp 20.000**, 5 → **Rp 100.000**, 10 → **Rp 200.000**, 25 → **Rp 500.000**, 100 → **Rp 2.000.000** | |
+| 27.6 | Hanya satu pilihan aktif | Setelah memilih salah satu angka, hanya tombol itu yang berwarna aktif; tombol lain kembali normal | |
+| 27.7 | Batas bawah ditolak | Kirim API `quantity: 0` (perintah di bawah) → harus **400** dengan pesan `Jumlah rorak 1 sampai 100` | |
+| 27.8 | Angka 100 diterima | Kirim API `quantity: 100` + `targetKind: "invalid"` → harus **400 “Target tidak valid”**. Artinya quantity 100 **lolos** validasi jumlah, lalu gagal di validasi target | |
+| 27.9 | Angka 101 ditolak | Kirim API `quantity: 101` → harus **400** dengan pesan `Jumlah rorak 1 sampai 100` dan `Between 1 and 100 pits` | |
+| 27.10 | Jatuh tempo 30 hari | Di halaman pesan, teks harus **“Jika belum semua rorak dibuat dalam 30 hari”**. Ganti bahasa ke EN → harus **“If not every pit is built within 30 days”**. Teks “90 hari” tidak boleh muncul | |
+
+**Perintah API untuk 27.7–27.9** (tidak membuat pesanan karena divalidasi sebelum pembayaran):
+
+```bash
+# 27.7 — batas bawah
+curl -s -b "$COOKIE" -X POST "$API/api/pulangin/orders" \
+  -H "Content-Type: application/json" \
+  -H "x-csrf-token: $CSRF" \
+  -d '{"quantity":0,"targetKind":"springhub_pick"}'
+# Harus: {"error":"Jumlah rorak 1 sampai 100","errorEn":"Between 1 and 100 pits"}
+
+# 27.8 — 100 lolos validasi jumlah
+curl -s -b "$COOKIE" -X POST "$API/api/pulangin/orders" \
+  -H "Content-Type: application/json" \
+  -H "x-csrf-token: $CSRF" \
+  -d '{"quantity":100,"targetKind":"invalid"}'
+# Harus: {"error":"Target tidak valid",...}
+
+# 27.9 — 101 ditolak
+curl -s -b "$COOKIE" -X POST "$API/api/pulangin/orders" \
+  -H "Content-Type: application/json" \
+  -H "x-csrf-token: $CSRF" \
+  -d '{"quantity":101,"targetKind":"springhub_pick"}'
+# Harus: {"error":"Jumlah rorak 1 sampai 100","errorEn":"Between 1 and 100 pits"}
+```
