@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rencana Pembayaran Pulangin Air — Opsi, Saran & Alur</title>
+<style>
+  :root { --ink: #1e293b; --muted: #64748b; --brand: #059669; --amber: #d97706; --rose: #e11d48; --line: #e2e8f0; --bg: #f8fafc; --card: #ffffff; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); margin: 0; line-height: 1.65; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { font-size: 1.8rem; margin: 0 0 4px; }
+  h2 { font-size: 1.3rem; margin: 40px 0 12px; padding-top: 16px; border-top: 2px solid var(--line); }
+  h3 { font-size: 1.05rem; margin: 20px 0 8px; }
+  p, li { font-size: 0.95rem; }
+  .sub { color: var(--muted); margin-top: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 12px 0; background: var(--card); }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #f1f5f9; }
+  .tag { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; }
+  .tag.rec { background: #d1fae5; color: #065f46; }
+  .tag.no { background: #fee2e2; color: #991b1b; }
+  .tag.opt { background: #fef3c7; color: #92400e; }
+  .flow { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px 16px; margin: 16px 0; }
+  .step { border: 2px solid var(--brand); border-radius: 10px; padding: 10px 14px; margin: 0 auto; max-width: 520px; background: #ecfdf5; font-size: 0.9rem; }
+  .step.admin { border-color: var(--amber); background: #fffbeb; }
+  .step.sys { border-color: #64748b; background: #f8fafc; }
+  .arrow { text-align: center; font-size: 1.3rem; color: var(--muted); line-height: 1.4; }
+  .arrow small { display: block; font-size: 0.75rem; }
+  .diamond { border: 2px solid var(--amber); background: #fffbeb; border-radius: 10px; padding: 10px 14px; margin: 0 auto; max-width: 520px; font-size: 0.9rem; }
+  .cols { display: grid; gap: 12px; }
+  @media (min-width: 640px) { .cols { grid-template-columns: 1fr 1fr; } }
+  .check { list-style: none; padding: 0; }
+  .check li { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-size: 0.9rem; }
+  .check li::before { content: "☐ "; }
+  code { background: #f1f5f9; padding: 1px 6px; border-radius: 4px; font-size: 0.85em; }
+  @media print { body { background: #fff; } .wrap { max-width: 100%; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Rencana Pembayaran Pulangin Air</h1>
+<p class="sub">Semua kemungkinan + saran + alur. Status: November 2026. Dokumen ini bilingual secukupnya; istilah teknis Inggris dipertahankan.</p>
+
+<h2>1. Posisi sekarang (fakta)</h2>
+<ul>
+  <li>Kode yang <strong>live</strong>: Xendit (invoice + webhook token). Key asli belum tentu ada.</li>
+  <li>Kode Midtrans (Snap + webhook signature): ada di branch lain, <strong>belum live</strong>, belum ada key. Whitelist IP webhook Midtrans <strong>belum ada di kode mana pun</strong> (masih rencana).</li>
+  <li>QRIS statis GoPay merchant tersedia (a.n. Fainta Susilo Negoro) + tombol donasi sedang di-hide.</li>
+  <li>Pembeli <strong>belum dapat poin</strong> apa pun hari ini.</li>
+</ul>
+
+<h2>2. Semua kemungkinan</h2>
+
+<h3>Opsi A — Midtrans penuh (tunggu ACC) <span class="tag opt">menunggu kunci</span></h3>
+<p>Otomatis 100%: Snap → webhook → lunas. Butuh server key + dashboard config + webhook URL terdaftar. Tidak bisa jalan sebelum ACC turun.</p>
+
+<h3>Opsi B — Transfer manual + verifikasi admin <span class="tag rec">rekomendasi — jalan besok</span></h3>
+<p>Pembeli transfer ke QRIS/rekening + klik "Saya sudah bayar" (+ bukti opsional). Admin cocokkan mutasi → Setujui → order terbuka. Tanpa kunci, tanpa fee gateway, tanpa integrasi.</p>
+
+<h3>Opsi C — Hibrida (B sekarang, A menyusul) <span class="tag rec">rekomendasi arsitektur</span></h3>
+<p>Satu "jalur sukses" yang sama untuk dua pemicu (klik admin / webhook Midtrans). Efeknya identik: status lunas + poin + notifikasi + kwitansi. Saat ACC turun, yang diganti hanya pemicunya.</p>
+
+<h3>Opsi D — GoPay merchant API semi-otomatis <span class="tag opt">syarat: cek akses API</span></h3>
+<p>Server menarik riwayat mutasi GoPay sendiri → sodorkan kandidat cocok ke admin → admin klik Setujui. Tetap butuh kredensial merchant + riset API.</p>
+
+<h3>Opsi E — Xendit sementara <span class="tag no">tidak disarankan</span></h3>
+<p>Bongkar-pasang dua kali, key belum pasti asli, dan arah sudah ditetapkan ke Midtrans. Buang waktu.</p>
+
+<table>
+  <tr><th></th><th>A: Midtrans</th><th>B: Manual</th><th>D: GoPay API</th></tr>
+  <tr><td>Jalan kapan</td><td>Setelah ACC + key</td><td>Besok</td><td>Setelah riset + kredensial</td></tr>
+  <tr><td>Fee/transaksi</td><td>Fee gateway (VA/kartu/QRIS dinamis)</td><td>Nol (QRIS statis ~0,7%)</td><td>Nol</td></tr>
+  <tr><td>Usaha admin</td><td>Nol</td><td>±10 detik/order</td><td>Klik konfirmasi</td></tr>
+  <tr><td>Risiko</td><td>Kunci bocor, webhook palsu (ditangkal signature)</td><td>Salah cocok manual (ditangkal jejak audit)</td><td>Scope API terbatas</td></tr>
+</table>
+
+<h2>3. Pencocokan tanpa kode unik — paket yang disarankan</h2>
+<ul>
+  <li>Tombol "Saya sudah bayar" + upload bukti <strong>wajib</strong> + opsi kirim via WA admin.</li>
+  <li>Antrean admin: nominal yang harusnya vs bukti vs tombol Setujui/Tolak + hubungi WA + <strong>jejak audit</strong> (siapa, kapan, order apa).</li>
+  <li>Auto-batal 1×24 jam supaya antrean tidak menumpuk.</li>
+  <li>Notifikasi HP GoPay merchant sebagai bel pendamping.</li>
+  <li>Kode unik hanya cadangan darurat bila ada 2 nominal sama dalam 1 jam.</li>
+</ul>
+
+<h2>4. Skema poin pembeli (perlu keputusan)</h2>
+<ul>
+  <li><strong>Usulan:</strong> samakan dengan relawan — mis. Rp 10.000 = 25 poin (20.000 = 50 poin). Donatur besar otomatis menuju 20.000 → bisa ajukan proyek. Adil + memotivasi.</li>
+  <li>Alternatif: tanpa poin (pembeli murni bayar). Alternatif 2: poin khusus donasi terpisah (rumit, tidak disarankan).</li>
+</ul>
+
+<h2>5. Flowchart — alur pembeli</h2>
+<div class="flow">
+  <div class="step">🛒 Checkout: pilih jumlah → total + kode order (mis. PA-7K3Q)</div>
+  <div class="arrow">↓<small>pilih metode</small></div>
+  <div class="diamond">Midtrans tersedia?<br>YA → Snap (otomatis) &nbsp;|&nbsp; TIDAK → QRIS/transfer manual</div>
+  <div class="arrow">↓<small>manual: bayar + klik "Saya sudah bayar" (+ bukti)</small></div>
+  <div class="step admin">👩‍💼 Admin verifikasi (mutasi/bukti) → Setujui / Tolak</div>
+  <div class="arrow">↓<small>jalur sukses (sama untuk dua pemicu)</small></div>
+  <div class="step sys">✅ Lunas → poin masuk → notifikasi + kwitansi → slot builder dibuka</div>
+</div>
+
+<h2>6. Flowchart — verifikasi admin (manual)</h2>
+<div class="flow">
+  <div class="step admin">📋 Antrean "menunggu verifikasi": nominal vs bukti vs tombol</div>
+  <div class="arrow">↓</div>
+  <div class="diamond">Cocok?<br>YA → Setujui &nbsp;|&nbsp; TIDAK → Tolak + alasan &nbsp;|&nbsp; RAGU → hubungi WA pembeli</div>
+  <div class="arrow">↓<small>setiap klik tercatat (siapa, kapan)</small></div>
+  <div class="step sys">⏰ Lewat 1×24 jam tanpa bayar → auto-batal, slot kembali</div>
+</div>
+
+<h2>7. Flowchart — webhook Midtrans (nanti)</h2>
+<div class="flow">
+  <div class="step">💳 Midtrans menelepon <code>/api/pulangin/midtrans/notify</code></div>
+  <div class="arrow">↓<small>cek 1: IP ada di whitelist? → cek 2: signature SHA-512 valid?</small></div>
+  <div class="diamond">Keduanya lolos?<br>TIDAK → tolak 401/403 + catat &nbsp;|&nbsp; YA → lanjut</div>
+  <div class="arrow">↓<small>idempoten: sudah lunas? abaikan</small></div>
+  <div class="step sys">✅ Masuk jalur sukses yang SAMA seperti verifikasi manual</div>
+</div>
+
+<h2>8. Checklist keputusan (untukmu)</h2>
+<ul class="check">
+  <li>Jalankan opsi B (manual) sekarang?</li>
+  <li>Skema poin pembeli: ikut usulan (Rp 10rb = 25 poin) atau angka lain?</li>
+  <li>Upload bukti: wajib atau opsional?</li>
+  <li>Batas bayar manual: 1×24 jam, oke?</li>
+  <li>Donasi ikut pola yang sama nanti (saat kartu dibuka)?</li>
+  <li>Riset API GoPay merchant: lanjutkan atau tunda?</li>
+</ul>
+
+<p class="sub">Dibuat otomatis dari diskusi. Perubahan berikutnya menimpa file ini.</p>
+</div>
+</body>
+</html>
