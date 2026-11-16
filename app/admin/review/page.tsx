@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, XCircle, Clock, MapPin, Sparkles, X, Star } from "lucide-react";
 import Image from "next/image";
 import { useI18n } from "@/lib/i18n";
+import { composeStory, supportedStoryForm } from "@/lib/story-template";
 
 type ReportPhoto = {
   id: string;
@@ -37,10 +38,21 @@ export default function AdminReviewPage() {
   const [loading, setLoading] = useState(true);
   const [actionMsg, setActionMsg] = useState("");
   const [enlargedPhoto, setEnlargedPhoto] = useState<string | null>(null);
+  const [enlargedList, setEnlargedList] = useState<string[]>([]);
+  const [revPage, setRevPage] = useState(1);
+  const REV_PER_PAGE = 10;
+
+  useEffect(() => {
+    setRevPage((p) => Math.min(p, Math.max(1, Math.ceil(reports.length / REV_PER_PAGE))));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reports.length]);
   const [notes, setNotes] = useState<Record<string, string>>({});
+  const [narratives, setNarratives] = useState<Record<string, string>>({});
+  const [narrativesEn, setNarrativesEn] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState<Record<string, boolean>>({});
   const [featured, setFeatured] = useState<Record<string, string>>({}); // reportId → photoId
   const [photos, setPhotos] = useState<Record<string, ReportPhoto[]>>({});
+  const [nearby, setNearby] = useState<Record<string, { loading: boolean; list: Array<{ id: string; name: string; status: string; distanceM: number; sameName: boolean }> | null }>>({});
 
   const formLabels: Record<string, string> = {
     "spring-monitoring": t("profile.form.springMonitoring"),
@@ -67,6 +79,26 @@ export default function AdminReviewPage() {
           }));
         }
         setPhotos(photoMap);
+        // Prefill narasi otomatis dari template (ID + EN) — admin tinggal poles.
+        // Entri yang sudah diubah admin tidak ditimpa.
+        setNarratives((prev) => {
+          const next = { ...prev };
+          for (const r of pending) {
+            if (next[r.id] === undefined && supportedStoryForm(r.formSlug)) {
+              next[r.id] = composeStory(r.formSlug, r.fieldData, {}, "id").narrative;
+            }
+          }
+          return next;
+        });
+        setNarrativesEn((prev) => {
+          const next = { ...prev };
+          for (const r of pending) {
+            if (next[r.id] === undefined && supportedStoryForm(r.formSlug)) {
+              next[r.id] = composeStory(r.formSlug, r.fieldData, {}, "en").narrative;
+            }
+          }
+          return next;
+        });
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -83,7 +115,11 @@ export default function AdminReviewPage() {
       const res = await fetch(`/api/admin/reports/${id}/approve`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-csrf-token": token },
-        body: JSON.stringify({ featuredPhotoId: featured[id] || null }),
+        body: JSON.stringify({
+          featuredPhotoId: featured[id] || null,
+          landingNarrative: narratives[id]?.trim() || "",
+          landingNarrativeEn: narrativesEn[id]?.trim() || "",
+        }),
       });
       if (res.ok) {
         setActionMsg(t("admin.reviews.approve") + "!");
@@ -99,8 +135,21 @@ export default function AdminReviewPage() {
     setTimeout(() => setActionMsg(""), 3000);
   }
 
-  async function handleReject(id: string) {
-    setProcessing((p) => ({ ...p, [id]: true }));
+  async function checkNearby(id: string) {
+    setNearby((n) => ({ ...n, [id]: { loading: true, list: null } }));
+    try {
+      const { token } = await fetch("/api/csrf").then((r) => r.json());
+      const res = await fetch(`/api/admin/reports/${id}/nearby-springs`, {
+        headers: { "x-csrf-token": token },
+      });
+      const data = await res.json();
+      setNearby((n) => ({ ...n, [id]: { loading: false, list: data.nearby ?? [] } }));
+    } catch {
+      setNearby((n) => ({ ...n, [id]: { loading: false, list: [] } }));
+    }
+  }
+
+  async function handleReject(id: string) {    setProcessing((p) => ({ ...p, [id]: true }));
     try {
       const { token } = await fetch("/api/csrf").then(r => r.json());
       const res = await fetch(`/api/admin/reports/${id}/reject`, {
@@ -152,7 +201,7 @@ export default function AdminReviewPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {reports.map((r) => {
+          {reports.slice((revPage - 1) * REV_PER_PAGE, revPage * REV_PER_PAGE).map((r) => {
             let fieldData: Record<string, unknown> = {};
             try { fieldData = JSON.parse(r.fieldData || "{}"); } catch { fieldData = {}; }
             return (
@@ -201,7 +250,10 @@ export default function AdminReviewPage() {
                         <div key={photo.id} className="relative">
                           <button
                             type="button"
-                            onClick={() => setEnlargedPhoto(photo.url)}
+                            onClick={() => {
+                              setEnlargedList(photos[r.id].map((p) => p.url));
+                              setEnlargedPhoto(photo.url);
+                            }}
                             className={`h-16 w-16 overflow-hidden rounded-lg border-2 transition-all ${
                               featured[r.id] === photo.id
                                 ? "border-brand-500 ring-2 ring-brand-500/30"
@@ -213,6 +265,7 @@ export default function AdminReviewPage() {
                               alt=""
                               width={64}
                               height={64}
+                              loading="lazy"
                               className="h-full w-full object-cover"
                               unoptimized
                             />
@@ -262,6 +315,89 @@ export default function AdminReviewPage() {
                   </div>
                 )}
 
+                {/* Cek duplikat lokasi — titik lain ≤50 m */}
+                <div className="mt-2">
+                  {!nearby[r.id] ? (
+                    <button
+                      type="button"
+                      onClick={() => checkNearby(r.id)}
+                      className="text-[11px] font-medium text-brand-600 hover:underline dark:text-brand-400"
+                    >
+                      Cek titik sekitar (duplikat?)
+                    </button>
+                  ) : nearby[r.id].loading ? (
+                    <p className="text-[11px] text-ink-muted">Memeriksa titik sekitar…</p>
+                  ) : nearby[r.id].list!.length === 0 ? (
+                    <p className="text-[11px] text-emerald-700 dark:text-emerald-300">
+                      ✓ Tidak ada titik lain dalam 50 m — aman berdiri sendiri.
+                    </p>
+                  ) : (
+                    <div className="rounded-md border border-amber-300/60 bg-amber-50/70 p-2 text-[11px] dark:border-amber-700/50 dark:bg-amber-900/20">
+                      <p className="font-semibold text-amber-800 dark:text-amber-200">
+                        ⚠️ Ada titik lain di dekat sini:
+                      </p>
+                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-amber-900 dark:text-amber-100">
+                        {nearby[r.id].list!.map((s) => (
+                          <li key={s.id}>
+                            {s.name} — ±{s.distanceM} m ({s.status})
+                            {s.sameName ? " · nama SAMA" : " · nama BEDA"}
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-1 text-amber-800 dark:text-amber-200">
+                        Kalau ternyata titik yang sama dengan nama beda, gabungkan lewat Manajemen Spring → Gabung.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {["spring-monitoring", "spring-restoration", "tree-planting", "trench-development"].includes(r.formSlug) && (
+                  <div className="mt-3 rounded-md border border-emerald-300/40 bg-emerald-50/60 p-3 dark:border-emerald-700/40 dark:bg-emerald-900/20">
+                    <label
+                      htmlFor={`landing-narrative-${r.id}`}
+                      className="text-xs font-semibold text-emerald-800 dark:text-emerald-200"
+                    >
+                      {t("admin.reviews.landingNarrative", "Narasi singkat untuk landing page")}
+                    </label>
+                    <textarea
+                      id={`landing-narrative-${r.id}`}
+                      value={narratives[r.id] || ""}
+                      onChange={(e) =>
+                        setNarratives((n) => ({ ...n, [r.id]: e.target.value }))
+                      }
+                      maxLength={1000}
+                      rows={2}
+                      placeholder={t(
+                        "admin.reviews.landingNarrativePlaceholder",
+                        "Tulis 1–2 kalimat tentang sebelum dan sesudah restorasi..."
+                      )}
+                      className="mt-1.5 w-full resize-y rounded-md border border-ink-line bg-white px-3 py-2 text-xs focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 dark:bg-slate-800 dark:text-white"
+                    />
+                    <textarea
+                      id={`landing-narrative-en-${r.id}`}
+                      value={narrativesEn[r.id] || ""}
+                      onChange={(e) =>
+                        setNarrativesEn((n) => ({ ...n, [r.id]: e.target.value }))
+                      }
+                      maxLength={1000}
+                      rows={2}
+                      placeholder="English version (auto-filled, edit if needed)…"
+                      className="mt-1.5 w-full resize-y rounded-md border border-ink-line bg-white px-3 py-2 text-xs focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 dark:bg-slate-800 dark:text-white"
+                    />
+                    <div className="mt-1 flex items-start justify-between gap-3">
+                      <p className="text-[10px] text-ink-muted">
+                        {t(
+                          "admin.reviews.landingNarrativeHint",
+                          "Akan tampil di section Jejak Pulih setelah laporan disetujui. Maks. 1000 karakter."
+                        )}
+                      </p>
+                      <span className="shrink-0 text-[10px] tabular-nums text-ink-subtle">
+                        {(narratives[r.id] || "").length}/{(narrativesEn[r.id] || "").length} · 1000
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Actions */}
                 <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-ink-line pt-3">
                   <input
@@ -302,15 +438,39 @@ export default function AdminReviewPage() {
         </div>
       )}
 
+      {Math.ceil(reports.length / REV_PER_PAGE) > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-2">
+          <button
+            type="button"
+            onClick={() => setRevPage((p) => Math.max(1, p - 1))}
+            disabled={revPage <= 1}
+            className="rounded-md border border-ink-line px-3 py-1 text-xs disabled:opacity-40"
+          >
+            ←
+          </button>
+          <span className="text-xs text-ink-muted">
+            {revPage} / {Math.max(1, Math.ceil(reports.length / REV_PER_PAGE))}
+          </span>
+          <button
+            type="button"
+            onClick={() => setRevPage((p) => Math.min(Math.ceil(reports.length / REV_PER_PAGE), p + 1))}
+            disabled={revPage >= Math.ceil(reports.length / REV_PER_PAGE)}
+            className="rounded-md border border-ink-line px-3 py-1 text-xs disabled:opacity-40"
+          >
+            →
+          </button>
+        </div>
+      )}
+
       {enlargedPhoto && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-          onClick={() => setEnlargedPhoto(null)}
+          onClick={() => { setEnlargedPhoto(null); setEnlargedList([]); } }
         >
           <div className="relative max-h-[90vh] max-w-[90vw]">
             <button
               type="button"
-              onClick={() => setEnlargedPhoto(null)}
+              onClick={() => { setEnlargedPhoto(null); setEnlargedList([]); } }
               className="absolute -right-3 -top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-700 shadow-lg hover:bg-slate-100"
               aria-label="Tutup"
             >
@@ -324,6 +484,34 @@ export default function AdminReviewPage() {
               className="h-auto max-h-[85vh] w-auto max-w-[85vw] rounded-lg object-contain"
               unoptimized
             />
+            {enlargedList.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const i = enlargedList.indexOf(enlargedPhoto);
+                    setEnlargedPhoto(enlargedList[(i - 1 + enlargedList.length) % enlargedList.length]);
+                  }}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70"
+                  aria-label="Foto sebelumnya"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const i = enlargedList.indexOf(enlargedPhoto);
+                    setEnlargedPhoto(enlargedList[(i + 1) % enlargedList.length]);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70"
+                  aria-label="Foto berikutnya"
+                >
+                  ›
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
